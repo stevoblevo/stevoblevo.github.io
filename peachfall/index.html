@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="./favicon.svg" />
+    <title>Anewgam: The Peachfall</title>
+    <script type="module" crossorigin src="./assets/main-BPeuWIE_.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/main-CVicfXhU.css">
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="game" width="1280" height="720" aria-label="The Peachfall"></canvas>
+      <div id="overlay" class="overlay">
+        <header class="topbar">
+          <div class="brand">
+            <p class="eyebrow">ANEWGAM</p>
+            <h1>The Peachfall</h1>
+          </div>
+          <div class="controls">
+            <button type="button" id="btn-mute" aria-pressed="false">Mute</button>
+            <label class="vol">
+              Volume
+              <input id="volume" type="range" min="0" max="1" step="0.05" value="0.55" />
+            </label>
+            <button type="button" id="btn-motion">Motion</button>
+            <button type="button" id="btn-reset">Reset save</button>
+          </div>
+        </header>
+        <div id="hud" class="hud" hidden></div>
+        <div id="caption" class="caption" role="status" aria-live="polite"></div>
+        <div id="dialogue" class="dialogue" hidden></div>
+        <div id="labels" class="labels"></div>
+        <div id="title-doors" class="doors">
+          <button type="button" id="play-dream" data-testid="play-dream">PLAY THE DREAM</button>
+          <button type="button" id="watch-dream" data-testid="watch-dream">WATCH THE DREAM</button>
+          <button type="button" id="open-gallery" class="ghost">Gallery</button>
+        </div>
+        <div id="touch-pad" class="touch-pad" hidden>
+          <button type="button" data-dir="left" aria-label="Move left">◀</button>
+          <button type="button" data-dir="down" aria-label="Move down">▼</button>
+          <button type="button" data-dir="up" aria-label="Move up">▲</button>
+          <button type="button" data-dir="right" aria-label="Move right">▶</button>
+          <button type="button" id="touch-act" data-act="action">Meet</button>
+          <button type="button" id="touch-kneel" data-act="kneel">Kneel</button>
+          <button type="button" id="touch-sit" data-act="sit">Sit</button>
+          <button type="button" id="touch-look" data-act="lookAway">Look away</button>
+        </div>
+        <div id="notes" class="notes" hidden>
+          <button type="button" data-note="0">✦</button>
+          <button type="button" data-note="1">✧</button>
+          <button type="button" data-note="2">★</button>
+        </div>
+        <p id="hint" class="hint"></p>
+      </div>
+    </div>
+  <script src="./heat-beacon.js" defer></script>
+</body>
+</html>

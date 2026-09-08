@@ -1,0 +1,198 @@
+{
+  "schema": "anewgam-creative-pack-manifest-v1",
+  "pack": "anewgam_peachfall_grok_handoff_20260825",
+  "created_at": "2026-08-25",
+  "scope": "Original Anewgam Princess tower / Peachfall / Forced Kid Mode / fragment assumption sequence",
+  "source_images_preserved": true,
+  "entry_count": 28,
+  "entries": [
+    {
+      "path": "ASSET_GUIDE.md",
+      "bytes": 2461,
+      "sha256": "d008f2559364378b782209bcca50aff8c11da7042f2f8b5f6b81c708d248a20f",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3107,
+      "sha256": "bfcb2d1fb47adceb9ef9aaa5f03ac42f33a5dc5294d34ba6a8d088fe87a2dcce",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "START_HERE.txt",
+      "bytes": 855,
+      "sha256": "aaf120e50a0d9c5f52eaa351c8d234d834540e58204b9c0aeec62849bb9e079a",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/01_ORIGINAL_DREAM_CAPTURE.md",
+      "bytes": 1646,
+      "sha256": "066fe8e75cf312e233052b0afed3db6b005e22628b57e81477c0096bcf15c42b",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/02_CREATIVE_CANON_AND_CHARACTER_CONTINUITY.md",
+      "bytes": 1814,
+      "sha256": "8c43c9cc730560886113c437bb4d17deca39ca4a76698bbcc8951d26791d4cb3",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/03_STORY_GAMEPLAY_AND_REASSEMBLY.md",
+      "bytes": 3499,
+      "sha256": "7b8a0f27ee81eeee03565c13c2791f24f3945c8df73c5a875977bfcd25435b35",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/04_TOWER_LORE.md",
+      "bytes": 2182,
+      "sha256": "00737dd2399fc1f3d8aeed2fadedde1f1ce3dbf69babfb62fbf8078ae33d6091",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/05_GEN22_FORMAT_RULE.md",
+      "bytes": 1014,
+      "sha256": "5823dbed242b62397a08ec15f86e10dd6ed2f6b935ce5ac6d6e65cd139f76e92",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/06_GEN22_PAGE_2_BEATS_13_TO_22.md",
+      "bytes": 3018,
+      "sha256": "73b2676d258cc5b1b8c7629fb15f8ea80b53d42f8b612d5a2d49dbed680dfe2f",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/07_CAPTION_AND_UI_MAP.md",
+      "bytes": 1316,
+      "sha256": "d5ed7cf6510c6ce30e7765f13b5abfeae2eeb5ed16868a1de8ea4e158ae13d29",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "canon/08_VISUAL_AND_TONE_GUARDRAILS.md",
+      "bytes": 1386,
+      "sha256": "ea8a7e2924ae1fc196c16e651edeb431689fbadffc438ed91d8fb9a036aa6f95",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "images/anchors/01_gen22_page1_the_princess_who_could_not_leave_the_tower.png",
+      "bytes": 3501875,
+      "sha256": "3f7b8574b635d2efccb96702f981031bee5ead528626fc34373e6efb7c07d361",
+      "mime_type": "image/png",
+      "width": 1122,
+      "height": 1402
+    },
+    {
+      "path": "images/anchors/02_astral_assembly_sae_and_little_princesses.png",
+      "bytes": 3267642,
+      "sha256": "91ac394a078c812f2b4202330d5180e7f2da4da5087cb988e84aeff6cf0adb77",
+      "mime_type": "image/png",
+      "width": 1122,
+      "height": 1402
+    },
+    {
+      "path": "images/anchors/03_gameplay_assume_her_fragments.png",
+      "bytes": 2966503,
+      "sha256": "1496e0ae46b11d188bb81eaad66ff85ba6a30e72431a26110e50c5fb5165ef84",
+      "mime_type": "image/png",
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "images/continuity/04_sae_dream_guide_portrait.png",
+      "bytes": 2583799,
+      "sha256": "82e85c61cf92a255e3c67f506afbe3b20754119f60b92f06e1687d48ee3075d3",
+      "mime_type": "image/png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "path": "images/continuity/05_princess_letter_storyload.png",
+      "bytes": 2738688,
+      "sha256": "ee85c6be1a0ff872be586efe226375709fd6d8cbabd59d0fde7b38892f5aedc2",
+      "mime_type": "image/png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "path": "images/continuity/06_sae_and_knight_future_key_art.png",
+      "bytes": 2912676,
+      "sha256": "e6d2c1d2838ad10aa4eef6cb9680e7d16a1312664e957d8ba8bb3b44155738a7",
+      "mime_type": "image/png",
+      "width": 1122,
+      "height": 1402
+    },
+    {
+      "path": "images/continuity/07_storyload_dreambound_promises_storyboard.png",
+      "bytes": 2975609,
+      "sha256": "23cc64c0c5983e239fe82738eb39f4cfb28a1f63625601d9f95ad659e74c3f2e",
+      "mime_type": "image/png",
+      "width": 1122,
+      "height": 1402
+    },
+    {
+      "path": "images/continuity/08_gen22_watercolor_page1_of_2.png",
+      "bytes": 3184987,
+      "sha256": "c5c91bd7dce1d45e9f7c6953eafcc4b8dc05aa583128d99ab568a127997b4542",
+      "mime_type": "image/png",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "images/continuity/09_play_creates_the_world_concept.png",
+      "bytes": 3227367,
+      "sha256": "a979f382e4ca13eb31b924bdf9b3d11c58f66828d01b125e12635b65fc948256",
+      "mime_type": "image/png",
+      "width": 1122,
+      "height": 1402
+    },
+    {
+      "path": "mission.json",
+      "bytes": 2040,
+      "sha256": "3942ec6983c4bde0179032b0733ac14abe7a502b53faa3b9c334f43504868b98",
+      "mime_type": "application/json"
+    },
+    {
+      "path": "preview/contact_sheet.jpg",
+      "bytes": 646636,
+      "sha256": "bf98db4496a58adc8356012f63526cb48e3b0c5471ef1207d847d940204d2735",
+      "mime_type": "image/jpeg",
+      "width": 1260,
+      "height": 1146
+    },
+    {
+      "path": "prompts/GROK_BOT_MASTER_PROMPT.txt",
+      "bytes": 2634,
+      "sha256": "0abfcb5d0810a9cc3583c83923889dd365178a07ad1b1084060c3689820496e7",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "prompts/GROK_BOT_ONE_MESSAGE_COMPACT.txt",
+      "bytes": 712,
+      "sha256": "0a7f47af1336b84de9e71d33f482e64395bb8be92579c8ace9a3e56d24e83a02",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "prompts/GROK_IMAGINE_COMPACT_PROMPT.txt",
+      "bytes": 1214,
+      "sha256": "6cff8853a7e33469205d7cfd1dbfb40406eb992ee3afbf8ab28be3698ccf6345",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "prompts/GROK_IMAGINE_MASTER_PROMPT.txt",
+      "bytes": 4382,
+      "sha256": "b00d49705634300aacdcf16bd5d886f43800e7a321b4dff3733b7219fac9d4e9",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "result_pack_template/RESULT_PACK_CONTRACT.md",
+      "bytes": 1290,
+      "sha256": "9297457940d345c5b1fd5a251f9d4f6925f09da628e4d49f80832146cdf07793",
+      "mime_type": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "result_pack_template/receipt.example.json",
+      "bytes": 416,
+      "sha256": "4b841fbf5d978d3af307df5639e7e08326911c4b1d4ad9e837d14ced380f92d7",
+      "mime_type": "application/json"
+    }
+  ]
+}

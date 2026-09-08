@@ -1,0 +1,53 @@
+{
+  "schema": "anewgam-creative-handoff-v1",
+  "request_id": "anewgam-peachfall-grok-20260825",
+  "title": "Continue The Peachfall as Gen22 Page 2 and supporting game imagery",
+  "requested_by": "Steven",
+  "prepared_for": [
+    "Grok Imagine",
+    "Grok bot"
+  ],
+  "source_state": {
+    "dream_capture": "canonical",
+    "design_exploration": "provisional",
+    "implementation_candidate": "ready_for_visualization",
+    "implemented": false
+  },
+  "desired_outcome": "A coherent visual continuation that preserves the original Anewgam tower-fall, Peachfall, Forced Kid Mode, assumption, and world-making dream logic.",
+  "start_point": "images/anchors/01_gen22_page1_the_princess_who_could_not_leave_the_tower.png",
+  "allowed_scope": [
+    "Gen22 Page 2 visual continuation",
+    "character portraits and in-game screenshots",
+    "animatic/help-video shot planning",
+    "design exploration that remains labeled provisional",
+    "prompt refinement and visual style exploration"
+  ],
+  "forbidden_scope": [
+    "overwriting or altering source images",
+    "claiming game implementation",
+    "realistic gore, corpse, crushed anatomy, or lingering injury",
+    "sexualization of little Princess aspects",
+    "generic rescue-princess framing",
+    "flattening the dream into generic product copy"
+  ],
+  "deliverables": [
+    "GEN22_PAGE_2.png",
+    "ASTRAL_ASSEMBLY_PORTRAIT.png",
+    "PEACHFALL_GAMEPLAY_SCREENSHOT.png",
+    "ANIMATIC_SHOTLIST.md",
+    "DESIGN_NOTES.md",
+    "PROMPTS_USED",
+    "manifest.json",
+    "SHA256SUMS.txt",
+    "receipt.json"
+  ],
+  "done_criteria": [
+    "Page 2 contains beats 13 through 22 and ends on the quiet fragment/tower reveal",
+    "Sae and Steven retain visual continuity",
+    "the little aspects are distinct characters rather than tokens",
+    "peach mercy and world-making are legible",
+    "source files are preserved",
+    "result pack contains mechanical file evidence"
+  ],
+  "continuation_path": "Return a separate Result Pack following result_pack_template/RESULT_PACK_CONTRACT.md"
+}

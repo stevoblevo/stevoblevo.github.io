@@ -1,0 +1,24 @@
+ANEWGAM // THE PEACHFALL // GROK HANDOFF
+
+TWO DOORS
+
+1. GROK IMAGINE
+   Attach these three images:
+   - images/anchors/01_gen22_page1_the_princess_who_could_not_leave_the_tower.png
+   - images/anchors/02_astral_assembly_sae_and_little_princesses.png
+   - images/anchors/03_gameplay_assume_her_fragments.png
+
+   Then paste:
+   - prompts/GROK_IMAGINE_MASTER_PROMPT.txt
+
+2. GROK BOT
+   Upload this entire ZIP, then paste:
+   - prompts/GROK_BOT_MASTER_PROMPT.txt
+
+The canonical creative source is canon/01_ORIGINAL_DREAM_CAPTURE.md.
+The current visual continuation is canon/06_GEN22_PAGE_2_BEATS_13_TO_22.md.
+
+IMPORTANT
+- Preserve the strange tenderness. Do not flatten this into generic fantasy-product language.
+- This pack contains dream capture, design exploration, and implementation candidates.
+- It does not claim that any game feature is implemented.
