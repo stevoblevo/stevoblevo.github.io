@@ -1,5 +1,5 @@
 (function(){
-  var ENDPOINT = window.__SAEDOW_HEAT__ || 'https://temporary-nimble-hawthorn-5atc0nd.vercel.app/api/heat';
+  var ENDPOINT = window.__SAEDOW_HEAT__ || 'https://eve-turner-gps-chat.trycloudflare.com/api/heat';
   var sid = localStorage.getItem('pf_heat_sid');
   if(!sid){ sid = Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('pf_heat_sid', sid); }
   function send(kind, extra){
