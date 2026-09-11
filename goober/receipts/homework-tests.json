@@ -1,0 +1,196 @@
+{
+  "unit_output": "TAP version 13\n# Subtest: ten requested areas exist, assigned by Steven\nok 1 - ten requested areas exist, assigned by Steven\n  ---\n  duration_ms: 1.713441\n  ...\n# Subtest: every tutorial is a puzzle, experiment, hints and evidence\nok 2 - every tutorial is a puzzle, experiment, hints and evidence\n  ---\n  duration_ms: 0.284083\n  ...\n# Subtest: only expected official source domains\nok 3 - only expected official source domains\n  ---\n  duration_ms: 0.282895\n  ...\n# Subtest: unknown homework cannot be silently created\nok 4 - unknown homework cannot be silently created\n  ---\n  duration_ms: 0.32684\n  ...\n# Subtest: ready is candidate, never approved/completed authority\nok 5 - ready is candidate, never approved/completed authority\n  ---\n  duration_ms: 0.358651\n  ...\n# Subtest: blank evidence or wrong check blocks ready\nok 6 - blank evidence or wrong check blocks ready\n  ---\n  duration_ms: 0.258449\n  ...\n# Subtest: missing attempt rejected\nok 7 - missing attempt rejected\n  ---\n  duration_ms: 0.255634\n  ...\n# Subtest: invalid status rejected\nok 8 - invalid status rejected\n  ---\n  duration_ms: 0.156576\n  ...\n# Subtest: blocker needs next question but not a perfect quiz\nok 9 - blocker needs next question but not a perfect quiz\n  ---\n  duration_ms: 0.34065\n  ...\n# Subtest: unverified extension cannot be marked ready\nok 10 - unverified extension cannot be marked ready\n  ---\n  duration_ms: 0.198863\n  ...\n# Subtest: bounded notes\nok 11 - bounded notes\n  ---\n  duration_ms: 0.192085\n  ...\n# Subtest: latest valid record is shown; prior content retained\nok 12 - latest valid record is shown; prior content retained\n  ---\n  duration_ms: 0.466364\n  ...\n# Subtest: unrelated or conflicting record is not homework\nok 13 - unrelated or conflicting record is not homework\n  ---\n  duration_ms: 0.817375\n  ...\n# Subtest: check-in is human-readable and not a sending claim\nok 14 - check-in is human-readable and not a sending claim\n  ---\n  duration_ms: 0.310656\n  ...\n# Subtest: existing field-log presentation is human-readable\nok 15 - existing field-log presentation is human-readable\n  ---\n  duration_ms: 0.240162\n  ...\n# Subtest: rising price can lose after both fees\nok 16 - rising price can lose after both fees\n  ---\n  duration_ms: 0.252373\n  ...\n# Subtest: slippage makes the sample worse\nok 17 - slippage makes the sample worse\n  ---\n  duration_ms: 0.220455\n  ...\n# Subtest: paper lab rejects nonfinite and invalid values\nok 18 - paper lab rejects nonfinite and invalid values\n  ---\n  duration_ms: 0.312174\n  ...\n1..18\n# tests 18\n# suites 0\n# pass 18\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 75.888777\n",
+  "browser_report": {
+    "tested_at": "2026-09-11T21:51:44.303Z",
+    "origin": "http://127.0.0.1:4981",
+    "checks": [
+      {
+        "name": "HW is a native selected navigation tab",
+        "passed": true
+      },
+      {
+        "name": "ten assignments visible",
+        "passed": true
+      },
+      {
+        "name": "assigned by Steven, not game renamed",
+        "passed": true
+      },
+      {
+        "name": "initial statuses are not started",
+        "passed": true
+      },
+      {
+        "name": "visiting HW writes nothing",
+        "passed": true
+      },
+      {
+        "name": "quest link is directly addressable",
+        "passed": true
+      },
+      {
+        "name": "three experiments and two clues",
+        "passed": true
+      },
+      {
+        "name": "empty attempt is not accepted",
+        "passed": true
+      },
+      {
+        "name": "wrong understanding answer does not mark ready",
+        "passed": true
+      },
+      {
+        "name": "ready evidence uses existing local record",
+        "passed": true
+      },
+      {
+        "name": "no teacher approval or dispatch claim",
+        "passed": true
+      },
+      {
+        "name": "ready state and evidence survive reload",
+        "passed": true
+      },
+      {
+        "name": "copy makes a draft, not a send",
+        "passed": true
+      },
+      {
+        "name": "main log shows formatted homework and preserves old note",
+        "passed": true
+      },
+      {
+        "name": "Frontrunner source gate blocks unverified install completion",
+        "passed": true
+      },
+      {
+        "name": "blocked task keeps next question",
+        "passed": true
+      },
+      {
+        "name": "paper trade calculates both-sided fees",
+        "passed": true
+      },
+      {
+        "name": "simulation evidence fills draft but saves nothing",
+        "passed": true
+      },
+      {
+        "name": "HW leaves normal game surface usable",
+        "passed": true
+      },
+      {
+        "name": "starter game scores three signals as30",
+        "passed": true
+      },
+      {
+        "name": "starter reset returns0",
+        "passed": true
+      },
+      {
+        "name": "HW overview no overflow 320",
+        "passed": true
+      },
+      {
+        "name": "quest no overflow 320",
+        "passed": true
+      },
+      {
+        "name": "HW overview no overflow 390",
+        "passed": true
+      },
+      {
+        "name": "phone has a visible native HW tab",
+        "passed": true
+      },
+      {
+        "name": "quest no overflow 390",
+        "passed": true
+      },
+      {
+        "name": "HW overview no overflow 768",
+        "passed": true
+      },
+      {
+        "name": "quest no overflow 768",
+        "passed": true
+      },
+      {
+        "name": "HW overview no overflow 1440",
+        "passed": true
+      },
+      {
+        "name": "quest no overflow 1440",
+        "passed": true
+      },
+      {
+        "name": "unknown assignment not silently substituted",
+        "passed": true
+      },
+      {
+        "name": "existing21-record gallery and source remain",
+        "passed": true
+      },
+      {
+        "name": "no background external requests or account access",
+        "passed": true
+      },
+      {
+        "name": "no page runtime exceptions",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "scope": "Fresh isolated browser with synthetic notes, not Aiden account or device setup. Service worker tested separately."
+  },
+  "offline_report": {
+    "tested_at": "2026-09-11T21:54:52.491Z",
+    "origin": "http://127.0.0.1:4981",
+    "environment": "Fresh isolated Chromium with actual service worker and offline network emulation; synthetic learner records only. Not a physical iPhone/Windows installation test.",
+    "checks": [
+      {
+        "name": "new service worker controls HW after reload",
+        "passed": true
+      },
+      {
+        "name": "HW opens offline from its installed shell",
+        "passed": true
+      },
+      {
+        "name": "offline hero and homework styling loaded",
+        "passed": true
+      },
+      {
+        "name": "saved discovery restored offline",
+        "passed": true
+      },
+      {
+        "name": "new local blocker saves while offline",
+        "passed": true
+      },
+      {
+        "name": "cached coding exercise works offline",
+        "passed": true
+      },
+      {
+        "name": "SaveBambi entry and HW discoveries share the original log",
+        "passed": true
+      },
+      {
+        "name": "original export preserves three hash-linked records",
+        "passed": true
+      },
+      {
+        "name": "no page runtime exceptions",
+        "passed": true
+      }
+    ],
+    "errors": []
+  },
+  "test_sources": {
+    "tests/hw-browser.cjs": "const {chromium}=require('/usr/local/lib/node_modules/playwright');const fs=require('node:fs');\n(async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});const base=process.env.ORIGIN||'http://127.0.0.1:4981';const context=await browser.newContext({viewport:{width:1440,height:980},serviceWorkers:'block',permissions:['clipboard-read','clipboard-write']}),page=await context.newPage();const checks=[],errors=[],requests=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>requests.push(r.url()));const ok=(name,pass)=>{checks.push({name,passed:!!pass});if(!pass)throw Error(name)};async function log(){return page.evaluate(async()=>{const m=await import('/goober/project$/saedow-store.js');return await m.verify(await m.load());});}\ntry{\nawait page.goto(base+'/goober/#log',{waitUntil:'networkidle'});await page.waitForSelector('.local-chip:has-text(\"DEVICE-LOCAL\")');await page.getByLabel('Title',{exact:true}).fill('Before HW \u00b7 keep this note');await page.getByRole('button',{name:'Keep it here',exact:false}).click();await page.waitForSelector('.entry h3:has-text(\"Before HW\")');\nawait page.locator('.rail a[href=\"#hw\"]').click();await page.waitForSelector('.hw');ok('HW is a native selected navigation tab',await page.locator('.rail a[href=\"#hw\"]').getAttribute('aria-current')==='page');ok('ten assignments visible',await page.locator('.hw-card').count()===10);ok('assigned by Steven, not game renamed',await page.locator('.hw-hero-copy').innerText().then(t=>t.includes('ASSIGNMENTS FROM STEVEN')));ok('initial statuses are not started',await page.locator('.hw-card-bottom').allTextContents().then(a=>a.filter(x=>x.includes('Not started')).length===9));ok('visiting HW writes nothing',(await log()).length===1);\nawait page.screenshot({path:'/tmp/goober-hw-desktop.png',fullPage:true});await page.locator('.hw-card').filter({hasText:'Make a safe launch pad'}).click();await page.waitForSelector('#quest-title:has-text(\"Make a safe launch pad\")');ok('quest link is directly addressable',page.url().endsWith('#hw/ai-prep'));ok('three experiments and two clues',await page.locator('.hw-steps li').count()===3&&await page.locator('.hw-hints-title + details').count()===1);\nawait page.getByRole('button',{name:'Ready to show Steven',exact:true}).click();await page.waitForSelector('.hw-notice');ok('empty attempt is not accepted',(await log()).length===1);await page.getByLabel('What did you try?',{exact:true}).fill('I made a practice folder and checked a simple claim.');await page.getByLabel('What happened? Show the proof.',{exact:true}).fill('The visible test matched the expected result. No personal files were used.');await page.getByLabel('What is the next puzzle?',{exact:true}).fill('Open my own account.');await page.getByLabel('The confidence of its answer',{exact:true}).check();await page.getByRole('button',{name:'Ready to show Steven',exact:true}).click();ok('wrong understanding answer does not mark ready',(await log()).length===1);await page.getByLabel('The expected tool/version and a working test on your PC',{exact:true}).check();await page.getByRole('button',{name:'Ready to show Steven',exact:true}).click();await page.waitForSelector('.hw-notice:has-text(\"Evidence prepared\")');let items=await log();ok('ready evidence uses existing local record',items.length===2&&items[1].source==='anewgam:hw:ai-prep'&&items[1].state==='candidate');ok('no teacher approval or dispatch claim',JSON.parse(items[1].body).review==='not-submitted'&&items[1].authority==='none');await page.reload({waitUntil:'networkidle'});await page.waitForSelector('.hw-state:has-text(\"Ready to show Steven\")');ok('ready state and evidence survive reload',await page.getByLabel('What did you try?',{exact:true}).inputValue().then(t=>t.includes('practice folder')));\nawait page.getByRole('button',{name:'Copy check-in for Steven',exact:false}).click();ok('copy makes a draft, not a send',await page.evaluate(()=>navigator.clipboard.readText()).then(t=>t.includes('not sent or teacher-approved')&&t.includes('ready to show')));\nawait page.locator('.rail a[href=\"#log\"]').click();await page.waitForSelector('.entry h3:has-text(\"HW \u00b7\")');ok('main log shows formatted homework and preserves old note',await page.locator('.entry').count()===2&&await page.locator('.entry').first().innerText().then(t=>t.includes('HW learner report')));\nawait page.goto(base+'/goober/#hw/frontrunner',{waitUntil:'networkidle'});await page.waitForSelector('#quest-title:has-text(\"Frontrunner\")');ok('Frontrunner source gate blocks unverified install completion',await page.getByRole('button',{name:'Ready to show Steven',exact:true}).isDisabled());await page.getByLabel('What did you try?',{exact:true}).fill('I could not identify the exact publisher.');await page.getByLabel('What is the next puzzle?',{exact:true}).fill('Need the intended official listing.');await page.getByRole('button',{name:'Keep this blocker',exact:true}).click();await page.waitForSelector('.hw-notice:has-text(\"blocker\")');ok('blocked task keeps next question',JSON.parse((await log()).at(-1).body).status==='blocked');\nawait page.goto(base+'/goober/#hw/crypto-lab',{waitUntil:'networkidle'});await page.waitForSelector('#paper-title');await page.getByRole('button',{name:'Reveal the paper result',exact:true}).click();ok('paper trade calculates both-sided fees',await page.locator('.hw-paper-result').innerText().then(t=>t.includes('$1,010.00')&&t.includes('$1,009.80')&&t.includes('-$0.20')));await page.getByRole('button',{name:'Add this result to my evidence',exact:false}).click();ok('simulation evidence fills draft but saves nothing',await page.getByLabel('What happened? Show the proof.',{exact:true}).inputValue().then(t=>t.includes('Paper test only'))&&(await log()).length===3);page.once('dialog',d=>d.accept());await page.locator('.rail nav a[href=\"#world\"]').click();await page.waitForSelector('.hero');ok('HW leaves normal game surface usable',await page.locator('.role-card').count()===3);\nawait page.goto(base+'/goober/hw/signal-lab.html',{waitUntil:'networkidle'});for(let i=0;i<3;i++)await page.getByRole('button',{name:'Collect a signal',exact:true}).click();ok('starter game scores three signals as30',await page.locator('#score').innerText()==='30');await page.getByRole('button',{name:'Reset',exact:true}).click();ok('starter reset returns0',await page.locator('#score').innerText()==='0');\nfor(const width of [320,390,768,1440]){await page.setViewportSize({width,height:844});await page.goto(base+'/goober/#hw',{waitUntil:'networkidle'});await page.waitForSelector('.hw-card');ok('HW overview no overflow '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));if(width===390){await page.screenshot({path:'/tmp/goober-hw-mobile.png',fullPage:true});ok('phone has a visible native HW tab',await page.locator('.mobile-dock a[href=\"#hw\"]').isVisible());}await page.goto(base+'/goober/#hw/hermes',{waitUntil:'networkidle'});await page.waitForSelector('#quest-title:has-text(\"Hermes\")');ok('quest no overflow '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}\nawait page.goto(base+'/goober/#hw/not-a-real-assignment',{waitUntil:'networkidle'});await page.waitForSelector('.hw-note');ok('unknown assignment not silently substituted',await page.locator('#quest-title').count()===0);await page.goto(base+'/goober/gallery/#smell-device-reference',{waitUntil:'networkidle'});await page.waitForSelector('dialog[open]');ok('existing21-record gallery and source remain',await page.locator('#filmstrip button').count()===21);ok('no background external requests or account access',requests.every(u=>new URL(u).origin===base));ok('no page runtime exceptions',errors.length===0);\n}catch(e){checks.push({name:'browser test failure',passed:false,error:String(e)});}const report={tested_at:new Date().toISOString(),origin:base,checks,errors,scope:'Fresh isolated browser with synthetic notes, not Aiden account or device setup. Service worker tested separately.'};fs.writeFileSync('/tmp/goober-hw-browser.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));await browser.close();})().catch(e=>{console.error(e);process.exit(1)});\n",
+    "tests/hw-core.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';\nimport {quests,assignmentData,makeHomeworkDraft,homeworkState,homeworkSummary,paperTrade,resolveQuest,displayEntryBody} from '../hw-core.test.mjs';\nconst good={status:'ready',attempt:'I made the practice folder and compared a claim.',observation:'The expected result was checked.',next:'Try the next question.',answer:1};\nfunction entry(draft){return {...draft,id:'fixture',created_at:'2026-09-11T00:00:00Z',scope:'device-local',authority:'none',acceptance:'self-reported',previous:'0'.repeat(64),hash:'a'.repeat(64)};}\ntest('ten requested areas exist, assigned by Steven',()=>{assert.equal(quests.length,10);assert.equal(assignmentData.assigned_by,'Steven');for(const id of ['ai-prep','claude-account','first-code','hermes','claude-code','obs','x-account','agenc','frontrunner','crypto-lab'])assert.ok(resolveQuest(id));});\ntest('every tutorial is a puzzle, experiment, hints and evidence',()=>{for(const q of quests){assert.equal(q.steps.length,3);assert.equal(q.hints.length,2);assert.ok(q.proof.length>25);assert.equal(q.check.choices.length,3);assert.ok(q.sources.length>0);}});\ntest('only expected official source domains',()=>{const allow=new Set(['support.claude.com','code.claude.com','hermes-agent.nousresearch.com','github.com','developer.mozilla.org','obsproject.com','help.x.com','agenc.ag','support.google.com','www.investor.gov','ethereum.org']);for(const s of Object.values(assignmentData.sources))assert.ok(allow.has(new URL(s.url).hostname));});\ntest('unknown homework cannot be silently created',()=>assert.throws(()=>resolveQuest('secret-steven-task')));\ntest('ready is candidate, never approved/completed authority',()=>{const d=makeHomeworkDraft('ai-prep',good);assert.equal(d.state,'candidate');const body=JSON.parse(d.body);assert.equal(body.review,'not-submitted');assert.equal(body.assigned_by,'Steven');assert.equal(d.authority,undefined);});\ntest('blank evidence or wrong check blocks ready',()=>{assert.throws(()=>makeHomeworkDraft('ai-prep',{...good,observation:''}));assert.throws(()=>makeHomeworkDraft('ai-prep',{...good,answer:0}));});\ntest('missing attempt rejected',()=>assert.throws(()=>makeHomeworkDraft('ai-prep',{...good,attempt:' '})));\ntest('invalid status rejected',()=>assert.throws(()=>makeHomeworkDraft('ai-prep',{...good,status:'approved'})));\ntest('blocker needs next question but not a perfect quiz',()=>{assert.throws(()=>makeHomeworkDraft('frontrunner',{...good,status:'blocked',next:''}));assert.equal(JSON.parse(makeHomeworkDraft('frontrunner',{...good,status:'blocked',answer:null}).body).status,'blocked');});\ntest('unverified extension cannot be marked ready',()=>assert.throws(()=>makeHomeworkDraft('frontrunner',good)));\ntest('bounded notes',()=>assert.throws(()=>makeHomeworkDraft('ai-prep',{...good,attempt:'x'.repeat(1801)})));\ntest('latest valid record is shown; prior content retained',()=>{const a=entry(makeHomeworkDraft('ai-prep',{...good,status:'started'})),b=entry(makeHomeworkDraft('ai-prep',good));const list=[a,b];assert.equal(homeworkState(list)['ai-prep'].value.status,'ready');assert.equal(list.length,2);});\ntest('unrelated or conflicting record is not homework',()=>{const d=entry(makeHomeworkDraft('ai-prep',good));assert.deepEqual(homeworkState([{...d,source:'typed-here'},{...d,body:'{}'},{...d,body:d.body.replace('\"assignment\":\"ai-prep\"','\"assignment\":\"hermes\"')}]),{});});\ntest('check-in is human-readable and not a sending claim',()=>{const summary=homeworkSummary([entry(makeHomeworkDraft('ai-prep',good))]);assert.ok(summary.includes('not sent or teacher-approved'));assert.ok(summary.includes('ready to show'));assert.ok(summary.includes('not started'));});\ntest('existing field-log presentation is human-readable',()=>{const e=entry(makeHomeworkDraft('ai-prep',good));assert.ok(displayEntryBody(e).startsWith('HW learner report'));assert.equal(displayEntryBody({...e,source:'typed-here'}),e.body);});\ntest('rising price can lose after both fees',()=>{const p=paperTrade({quantity:10,entry:100,exit:102,fee:1,slippage:0});assert.ok(Math.abs(p.debit-1010)<1e-9);assert.ok(Math.abs(p.credit-1009.8)<1e-9);assert.ok(Math.abs(p.net+.2)<1e-9);});\ntest('slippage makes the sample worse',()=>assert.ok(paperTrade({quantity:10,entry:100,exit:102,fee:1,slippage:1}).net<-.2));\ntest('paper lab rejects nonfinite and invalid values',()=>{for(const patch of [{entry:NaN},{quantity:-1},{fee:11},{slippage:-1},{exit:-1},{entry:0}])assert.throws(()=>paperTrade({quantity:10,entry:100,exit:102,fee:1,slippage:0,...patch}));});\n",
+    "tests/hw-offline.cjs": "const {chromium}=require('/usr/local/lib/node_modules/playwright');const fs=require('node:fs');\n(async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});const origin=process.env.ORIGIN||'http://127.0.0.1:4981';const ctx=await browser.newContext({viewport:{width:390,height:844}}),p=await ctx.newPage();const checks=[],errors=[];p.on('pageerror',e=>errors.push(e.message));const ok=(name,x)=>{checks.push({name,passed:!!x});if(!x)throw Error(name);};\ntry{\nawait p.goto(origin+'/goober/#hw/ai-prep',{waitUntil:'networkidle'});await p.waitForSelector('.local-chip:has-text(\"DEVICE-LOCAL\")');await p.evaluate(()=>navigator.serviceWorker.ready);await p.reload({waitUntil:'networkidle'});await p.waitForSelector('#quest-title');ok('new service worker controls HW after reload',await p.evaluate(()=>!!navigator.serviceWorker.controller));\nawait p.getByLabel('What did you try?',{exact:true}).fill('Offline fixture: wrote a bounded practice goal.');await p.getByRole('button',{name:'Save discovery',exact:true}).click();await p.waitForSelector('.hw-notice:has-text(\"Discovery saved\")');\nawait ctx.setOffline(true);await p.reload({waitUntil:'networkidle'});await p.waitForSelector('.hw-card');await p.waitForSelector('.local-chip:has-text(\"DEVICE-LOCAL\")');ok('HW opens offline from its installed shell',await p.locator('#hw-title').count()===1);ok('offline hero and homework styling loaded',await p.locator('.hw-hero>img').evaluate(i=>i.complete&&i.naturalWidth>0)&&await p.locator('.hw-hero').evaluate(e=>getComputedStyle(e).position==='relative'));ok('saved discovery restored offline',await p.getByLabel('What did you try?',{exact:true}).inputValue().then(t=>t.includes('Offline fixture')));\nawait p.getByLabel('What is the next puzzle?',{exact:true}).fill('Offline fixture: reconnect to sign up for my own account.');await p.getByRole('button',{name:'Keep this blocker',exact:true}).click();await p.waitForSelector('.hw-notice:has-text(\"blocker\")');ok('new local blocker saves while offline',true);\nawait p.goto(origin+'/goober/hw/signal-lab.html',{waitUntil:'networkidle'});for(let i=0;i<3;i++)await p.getByRole('button',{name:'Collect a signal',exact:true}).click();ok('cached coding exercise works offline',await p.locator('#score').innerText()==='30');\nawait ctx.setOffline(false);await p.goto(origin+'/goober/project$/?picture=garden#cockpit',{waitUntil:'networkidle'});await p.waitForSelector('body[data-keep-ready=true]');await p.getByLabel('Why does it matter?',{exact:true}).fill('Regression fixture: keep earlier gallery action working.');await p.getByRole('button',{name:'Keep with this project',exact:true}).click();await p.waitForSelector('#result:not([hidden])');await p.getByRole('link',{name:'See it in your field log',exact:false}).click();await p.waitForSelector('.entry');ok('SaveBambi entry and HW discoveries share the original log',await p.locator('.entry').count()===3&&await p.locator('.entry').allTextContents().then(t=>t.some(x=>x.includes('Regression fixture'))&&t.some(x=>x.includes('HW learner report'))));\nconst [download]=await Promise.all([p.waitForEvent('download'),p.getByRole('button',{name:'Export',exact:false}).click()]);await download.saveAs('/tmp/goober-hw-offline-export.json');const packet=JSON.parse(fs.readFileSync('/tmp/goober-hw-offline-export.json','utf8'));ok('original export preserves three hash-linked records',packet.schema==='saedow/0.1'&&packet.entries.length===3&&packet.entries[1].previous===packet.entries[0].hash&&packet.entries[2].previous===packet.entries[1].hash);ok('no page runtime exceptions',errors.length===0);\n}catch(e){checks.push({name:'offline/regression test failed',passed:false,error:String(e)});}const report={tested_at:new Date().toISOString(),origin,environment:'Fresh isolated Chromium with actual service worker and offline network emulation; synthetic learner records only. Not a physical iPhone/Windows installation test.',checks,errors};fs.writeFileSync('/tmp/goober-hw-offline.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));await browser.close();})().catch(e=>{console.error(e);process.exit(1)});\n"
+  }
+}

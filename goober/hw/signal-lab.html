@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Signal Lab · your first game rule</title><style>body{margin:0;background:#17101f;color:#f5e9f6;font:17px/1.8 system-ui}main{max-width:700px;margin:10vh auto;padding:25px}h1{font:44px Georgia,serif}button{font:inherit;border:1px solid #a17bb0;background:#dcb8ee;color:#28182e;border-radius:25px;padding:12px 25px;margin:10px 12px 10px 0;cursor:pointer}output{font:64px Georgia,serif;color:#f1d3a0;display:block;margin:20px 0}code{background:#2e1d38;padding:4px 8px;border-radius:5px}p{color:#c8b5d3}a{color:#edc895}:focus-visible{outline:3px solid #edc895;outline-offset:4px}</style></head><body><main><small>HW / CODE / PDD DISCOVERY LAB</small><h1>One signal.<br>One rule you can change.</h1><p>Predict three clicks before you begin. Then change one constant in this HTML file and test again.</p><output id="score" aria-live="polite">0</output><button id="collect">Collect a signal</button><button id="reset">Reset</button><p id="count">0 signals collected</p><p>Save this page as <code>signal-lab.html</code>. Open it in a text editor. Find <code>POINTS_PER_SIGNAL = 10</code>, change 10 to 25, save, and reopen the file in your browser. Three clicks: 30 before, 75 after. Reset must still return 0.</p><p>No network calls, files changed by the page, accounts, payments or analytics. This is your little practice space.</p><a href="https://stevoblevo.github.io/goober/#hw/first-code">Back to the assignment ↗</a></main><script>
+// Your first mod: change only the points-per-signal constant, then test it.
+const POINTS_PER_SIGNAL = 10;
+let collected = 0;
+function render() {
+  document.getElementById('score').textContent = String(collected * POINTS_PER_SIGNAL);
+  document.getElementById('count').textContent = collected + ' signals collected';
+}
+document.getElementById('collect').addEventListener('click', () => { collected += 1; render(); });
+document.getElementById('reset').addEventListener('click', () => { collected = 0; render(); });
+</script></body></html>

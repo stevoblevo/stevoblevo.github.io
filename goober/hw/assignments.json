@@ -1,0 +1,489 @@
+{
+  "schema": "anewgam.homework-assignments/1",
+  "project": "saelion://anewgam/goober",
+  "assigned_by": "Steven",
+  "assigned_to": "Aiden / Goober",
+  "assigned_on": "2026-09-11",
+  "revision": "2026-09-11-hw-1",
+  "mode": "PDD discovery game mode",
+  "tutorial_loop": [
+    "Puzzle",
+    "Try",
+    "Observe",
+    "Evidence",
+    "Next puzzle"
+  ],
+  "authorship": "Themes and required tools assigned by Steven; discovery exercises authored by Sae.",
+  "review": "Local learner reports, not authenticated Steven approval. No automatic teacher delivery.",
+  "sources_checked": "2026-09-11",
+  "sources": {
+    "claude": {
+      "label": "Claude account help",
+      "url": "https://support.claude.com/en/articles/8325609-how-do-i-sign-up-for-the-pro-plan",
+      "note": "Use the free-account sign-up steps only; upgrading is not part of this assignment."
+    },
+    "claude-code": {
+      "label": "Claude Code quickstart",
+      "url": "https://code.claude.com/docs/en/quickstart"
+    },
+    "hermes": {
+      "label": "Hermes official installation",
+      "url": "https://hermes-agent.nousresearch.com/docs/getting-started/installation"
+    },
+    "hermes-source": {
+      "label": "Nous Research source",
+      "url": "https://github.com/NousResearch/hermes-agent"
+    },
+    "mdn": {
+      "label": "MDN: your first website",
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Your_first_website"
+    },
+    "obs": {
+      "label": "OBS official quickstart",
+      "url": "https://obsproject.com/kb/quick-start-guide"
+    },
+    "x": {
+      "label": "X account setup",
+      "url": "https://help.x.com/en/using-x/create-x-account"
+    },
+    "x-security": {
+      "label": "X two-factor authentication",
+      "url": "https://help.x.com/en/managing-your-account/two-factor-authentication"
+    },
+    "agenc": {
+      "label": "AgenC Core official docs",
+      "url": "https://agenc.ag/docs/core"
+    },
+    "agenc-home": {
+      "label": "AgenC Core",
+      "url": "https://agenc.ag/core"
+    },
+    "chrome": {
+      "label": "Chrome: manage extensions",
+      "url": "https://support.google.com/chrome/answer/2664769"
+    },
+    "crypto-risk": {
+      "label": "Investor.gov: crypto risks",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-alerts/crypto-asset-securities"
+    },
+    "wallet-safety": {
+      "label": "Ethereum: security and scams",
+      "url": "https://ethereum.org/en/security/"
+    }
+  },
+  "quests": [
+    {
+      "id": "ai-prep",
+      "title": "Make a safe launch pad",
+      "zone": "AI prep",
+      "device": "Phone + PC",
+      "minutes": 15,
+      "ability": "Ask better questions",
+      "puzzle": "Can you tell an answer from evidence, and a helpful tool from something that needs permission?",
+      "steps": [
+        "Create or choose one practice folder on your PC. Keep your game saves, documents, passwords and wallets outside it. On phone, start with a note describing the practice project.",
+        "Pick a tiny goal: change a game score, record a clip, or explain one piece of code. Write what would count as success before asking an AI.",
+        "Ask an available AI for a plan, then name one claim you would check yourself. If you have no account yet, do the Claude quest next."
+      ],
+      "hints": [
+        "A good prompt names the goal, the files it may touch, what must stay unchanged, and how to test the result.",
+        "Try: Help me understand this practice project. First explain; do not install, send, delete, or spend anything. Ask before changes."
+      ],
+      "proof": "A three-line goal, a clear practice-folder boundary, and one independent check you will perform.",
+      "check": {
+        "question": "An AI says it installed a tool. What proves it?",
+        "choices": [
+          "The confidence of its answer",
+          "The expected tool/version and a working test on your PC",
+          "A generated picture of the app"
+        ],
+        "answer": 1,
+        "explanation": "An answer is a claim. Check the actual result where it is supposed to exist."
+      },
+      "sources": [
+        "mdn"
+      ],
+      "links": [
+        {
+          "label": "Next: create your Claude account",
+          "url": "#hw/claude-account"
+        }
+      ],
+      "caution": "Never paste passwords, recovery codes, seed phrases, API keys, or personal documents into homework notes."
+    },
+    {
+      "id": "claude-account",
+      "title": "Open your own Claude account",
+      "zone": "AI prep",
+      "device": "Phone or PC",
+      "minutes": 15,
+      "ability": "Your first AI conversation",
+      "puzzle": "Can you get an explanation you understand rather than just an answer you copy?",
+      "steps": [
+        "Open claude.ai through the button below and sign up or sign in with your own account. Use the free option for this first task; no subscription purchase is assigned here.",
+        "Ask Claude to explain one Rocket League mechanic, a tiny JavaScript function, or an OBS setting. Ask it to quiz you with one question rather than do all your work.",
+        "Reopen the conversation. Explain the idea back in your own words and check a factual claim against a reliable source."
+      ],
+      "hints": [
+        "You can begin in a phone browser. A desktop installer is not needed for the account quest.",
+        "If login or the free allowance blocks you, write the exact non-secret message in your discovery log. Never save an email login link or authentication code here."
+      ],
+      "proof": "Your own short explanation, one checked claim, and confirmation you can reopen your conversation. Do not include login details.",
+      "check": {
+        "question": "What belongs in a homework check-in?",
+        "choices": [
+          "My login link and recovery code",
+          "An explanation and a sanitized description of what worked",
+          "A shared family password"
+        ],
+        "answer": 1,
+        "explanation": "Show learning and results, not credentials."
+      },
+      "sources": [
+        "claude"
+      ],
+      "links": [
+        {
+          "label": "Open Claude",
+          "url": "https://claude.ai/"
+        }
+      ]
+    },
+    {
+      "id": "first-code",
+      "title": "Change the rules of a tiny game",
+      "zone": "Code",
+      "device": "PC; preview on phone",
+      "minutes": 25,
+      "ability": "Read → change → test",
+      "puzzle": "One signal is worth 10 points. Can you make it worth 25 and prove that only the intended rule changed?",
+      "steps": [
+        "Open Signal Lab below. Collect three signals, predict the score, and reset. This is a small local exercise, not your actual game account.",
+        "Save the starter HTML to your practice folder. Open it in a text editor, find POINTS_PER_SIGNAL, and change 10 to 25. Reopen the file in your browser.",
+        "Test three signals and reset again. Explain what HTML, CSS and JavaScript each did. Leave a short next puzzle, such as a bonus after five signals."
+      ],
+      "hints": [
+        "Three signals should score 30 before the edit and 75 afterward. Reset should still return the score to 0.",
+        "Change one constant first. Ask AI to explain the affected lines rather than rewriting the whole file. Keep the original copy so you can undo your experiment."
+      ],
+      "proof": "The changed line, the before/after three-signal scores, and a reset test. A filename or short screen recording is enough for your check-in.",
+      "check": {
+        "question": "After changing the constant to 25, what should three signals score?",
+        "choices": [
+          "25",
+          "75",
+          "300"
+        ],
+        "answer": 1,
+        "explanation": "Three events at 25 each produce 75. The reset behavior is a separate test."
+      },
+      "sources": [
+        "mdn"
+      ],
+      "links": [
+        {
+          "label": "Open Signal Lab",
+          "url": "/goober/hw/signal-lab.html"
+        },
+        {
+          "label": "Save the starter HTML",
+          "url": "/goober/hw/signal-lab.html"
+        }
+      ],
+      "lab": "code"
+    },
+    {
+      "id": "hermes",
+      "title": "Give Hermes a small first job",
+      "zone": "Agents",
+      "device": "PC",
+      "minutes": 25,
+      "ability": "Meet a local agent",
+      "puzzle": "Can you start Hermes in a harmless practice space without handing it your whole digital life?",
+      "steps": [
+        "Check whether Hermes is already installed. Keep any existing profiles, memory and settings. Use the official Nous Research installation page; native Windows Desktop is available, so this quest does not require Linux or dual boot.",
+        "Install from that official page only if it is missing. Choose your own approved model/provider setup. Stop at a payment or credential decision until the plan is clear with Steven.",
+        "Open your practice project and ask Hermes to explain it before making changes. Show one useful answer and how you stopped the session. Leave messaging, contacts, wallet access, background jobs and device control disconnected for this first run."
+      ],
+      "hints": [
+        "If the CLI is available, hermes --version is a useful first check. A window opening is not proof that a provider connection works.",
+        "An existing installation is a starting point, not permission to wipe it. If security software raises a warning, record it and review the source; do not disable protection to force an install."
+      ],
+      "proof": "Version or app-about information, one harmless response, and the scope you allowed. No provider keys or private configuration.",
+      "check": {
+        "question": "The first Hermes task should have access to…",
+        "choices": [
+          "Your whole drive and contacts",
+          "Only the selected practice context needed for the task",
+          "Your wallet to test all features"
+        ],
+        "answer": 1,
+        "explanation": "Start with a small, explicit scope. Other integrations can be separate reviewed quests."
+      },
+      "sources": [
+        "hermes",
+        "hermes-source"
+      ],
+      "links": [
+        {
+          "label": "Official Hermes install guide",
+          "url": "https://hermes-agent.nousresearch.com/docs/getting-started/installation"
+        },
+        {
+          "label": "Official Hermes downloads",
+          "url": "https://hermes-agent.nousresearch.com/"
+        }
+      ],
+      "command": "hermes --version"
+    },
+    {
+      "id": "claude-code",
+      "title": "Make one change with Claude Code",
+      "zone": "Code",
+      "device": "PC",
+      "minutes": 25,
+      "ability": "Guide a coding agent",
+      "puzzle": "Can you direct one small edit, inspect it, test it, and reverse it?",
+      "steps": [
+        "Use the official Claude Code quickstart and check whether it is already installed. A free Claude chat account does not by itself provide the paid/provider access required for Claude Code. Review access and cost with Steven first.",
+        "For Windows, the official guide offers WinGet. The optional command below installs Claude Code on your PC; it is not run by this page. Check the version afterward.",
+        "Start in a COPY of Signal Lab, select an approval-based permission mode, and ask for a one-line change only. Review what changed, repeat the three-signal/reset tests, then show how you would undo it. Never turn on permission bypass for this exercise."
+      ],
+      "hints": [
+        "Use the directory holding your copy, not the home directory. Ask: Explain this file. Propose changing only the score constant; wait before editing.",
+        "claude --version checks the installation. A successful login and a useful answer are separate checks. If your access plan is not ready, save the blocker rather than buy credits automatically."
+      ],
+      "proof": "Version, the exact small diff, successful before/after tests, and your undo plan. Keep API keys and authentication screenshots out.",
+      "check": {
+        "question": "Claude changed five unrelated files. What is the useful next move?",
+        "choices": [
+          "Accept because the tool is smart",
+          "Stop, inspect the diff, and narrow or undo the change",
+          "Give it administrator access"
+        ],
+        "answer": 1,
+        "explanation": "A working result still needs the intended scope. Unrelated edits are a reason to inspect, not to widen access."
+      },
+      "sources": [
+        "claude-code"
+      ],
+      "links": [
+        {
+          "label": "Official Claude Code quickstart",
+          "url": "https://code.claude.com/docs/en/quickstart"
+        }
+      ],
+      "command": "winget install --id Anthropic.ClaudeCode --exact\nclaude --version"
+    },
+    {
+      "id": "obs",
+      "title": "Capture a clean 20-second proof",
+      "zone": "Capture",
+      "device": "PC",
+      "minutes": 20,
+      "ability": "Record what really happened",
+      "puzzle": "Can you show your screen and voice, find the saved clip, and keep private tabs out of it?",
+      "steps": [
+        "Open the existing six-card OBS field guide. Install from obsproject.com only if OBS is missing. Create one scene with one intended source.",
+        "Check your microphone and desktop audio, set an output folder, then record a 20-second local demonstration of Signal Lab or a practice page. This is not a livestream.",
+        "Stop, locate the file, play it back, and inspect the picture AND audio. Remove private tabs, notifications, names and account details before sharing a clip."
+      ],
+      "hints": [
+        "A moving meter does not prove the saved clip has sound. Play the actual file.",
+        "A black screen is a puzzle: confirm the intended capture source and window first. Keep the original recording before experimenting with conversions."
+      ],
+      "proof": "The saved clip filename, duration, whether picture and audio both worked, and one thing you checked for privacy.",
+      "check": {
+        "question": "The strongest proof of a successful recording is…",
+        "choices": [
+          "A screenshot of OBS settings",
+          "The saved clip playing with the intended picture and sound",
+          "OBS merely running"
+        ],
+        "answer": 1,
+        "explanation": "Test the delivered artifact, not just the configuration."
+      },
+      "sources": [
+        "obs"
+      ],
+      "links": [
+        {
+          "label": "Use the existing OBS field guide",
+          "url": "/goober/learn/obs-windows-11/"
+        },
+        {
+          "label": "Official OBS quickstart",
+          "url": "https://obsproject.com/kb/quick-start-guide"
+        }
+      ]
+    },
+    {
+      "id": "x-account",
+      "title": "Set up your own X identity",
+      "zone": "Accounts",
+      "device": "Phone or PC",
+      "minutes": 15,
+      "ability": "Own your account",
+      "puzzle": "Can you join the conversation without giving away more than you intended?",
+      "steps": [
+        "Open X using its official signup route, or sign in to your own existing account. Choose a handle and profile information you are comfortable making public. Do not reuse someone else’s account.",
+        "Review discoverability and privacy settings. Follow the official two-factor instructions for an authentication app or security key, and keep recovery details privately.",
+        "Draft one short post about something you learned or built. Posting, following and messaging remain your choices; nothing in this homework posts automatically."
+      ],
+      "hints": [
+        "Your email, phone, recovery code and login QR do not belong in a public screenshot or homework proof.",
+        "A draft is enough. Choose whether to post after checking what is visible."
+      ],
+      "proof": "A sanitized description of account readiness and your short post draft. Do not include credentials or recovery codes.",
+      "check": {
+        "question": "An agent asks for your X session cookie. What should you do?",
+        "choices": [
+          "Paste it into this notebook",
+          "Decline and use the service’s legitimate authorization flow only when you choose",
+          "Post it so support can inspect it"
+        ],
+        "answer": 1,
+        "explanation": "A session cookie can act as account access. Do not move it through chat or homework notes."
+      },
+      "sources": [
+        "x",
+        "x-security"
+      ],
+      "links": [
+        {
+          "label": "Create or open X",
+          "url": "https://x.com/i/flow/signup"
+        },
+        {
+          "label": "X account safety",
+          "url": "https://help.x.com/en/managing-your-account/two-factor-authentication"
+        }
+      ]
+    },
+    {
+      "id": "agenc",
+      "title": "Meet AgenC before giving it a job",
+      "zone": "Agents",
+      "device": "PC / supported environment",
+      "minutes": 25,
+      "ability": "Distinguish agent from marketplace",
+      "puzzle": "Which part is a local coding agent, and which part can involve money or public activity?",
+      "steps": [
+        "Open the official AgenC Core docs. Identify the local agent/Core separately from the marketplace and token. This assignment is about the software, not buying an asset.",
+        "Check the documented platform and setup route against your PC. The current quickstart shows macOS/Linux and an npm launcher; do not invent Windows instructions or change your OS for this card. Confirm the appropriate route with Steven before installation.",
+        "When the supported setup is ready, use the official install path, then inspect agenc --help in the practice context. Run a small explain-only session only after choosing a provider, costs and permissions. Do not connect a funded wallet, claim marketplace tasks or enable outbound channels in this first test."
+      ],
+      "hints": [
+        "You can finish useful recon before an installation: write down the Core/marketplace difference and the exact supported environment you found.",
+        "Official Core docs describe X or xAI sign-in for Grok. Authorization belongs in that real flow, not in a copied cookie or key inside your notes."
+      ],
+      "proof": "The official docs you checked, supported environment, Core-versus-marketplace explanation, and either a harmless help/session result or the precise remaining install blocker.",
+      "check": {
+        "question": "Does using AgenC Core mean this homework requires buying its token?",
+        "choices": [
+          "Yes, software and token are the same task",
+          "No; keep software setup and financial activity separate",
+          "Yes, if a social post says so"
+        ],
+        "answer": 1,
+        "explanation": "A software assignment is not permission or a requirement to buy tokens or fund an agent."
+      },
+      "sources": [
+        "agenc",
+        "agenc-home"
+      ],
+      "links": [
+        {
+          "label": "Read AgenC Core docs",
+          "url": "https://agenc.ag/docs/core"
+        }
+      ],
+      "command": "agenc --help"
+    },
+    {
+      "id": "frontrunner",
+      "title": "Verify the Frontrunner extension",
+      "zone": "Source check",
+      "device": "PC browser",
+      "minutes": 15,
+      "ability": "Verify before installing",
+      "puzzle": "Steven named Frontrunner. Can we identify the exact extension, publisher and requested access before installing anything?",
+      "steps": [
+        "Record the exact product name and official publisher/store link when Steven’s intended reference is available. The precise Frontrunner listing has not been verified in this assignment pack.",
+        "Compare that listing with the publisher’s own official site or repository. Read the requested site permissions and explain why each is needed.",
+        "Leave installation blocked until the exact item is confirmed. If it can trade, send posts or read account sessions, make those powers a separate decision. Learning the right identity is useful progress; a guessed installer is not."
+      ],
+      "hints": [
+        "A similar name, high search ranking or glossy page is not a verified publisher link.",
+        "Do not treat this as a front-running trading strategy lesson or replace it with an unrelated extension. Keep the named task and the missing evidence."
+      ],
+      "proof": "The exact official listing and publisher, permissions you reviewed, and confirmation of the intended item—or a clear “listing still needed” blocker.",
+      "check": {
+        "question": "Which evidence is needed before extension installation?",
+        "choices": [
+          "Matching name alone",
+          "The exact official listing, publisher and permissions for the intended extension",
+          "The first sponsored search result"
+        ],
+        "answer": 1,
+        "explanation": "Identify the software and its access before asking the browser to trust it."
+      },
+      "sources": [
+        "chrome"
+      ],
+      "links": [
+        {
+          "label": "How Chrome extension permissions work",
+          "url": "https://support.google.com/chrome/answer/2664769"
+        }
+      ],
+      "source_hold": true,
+      "caution": "No Frontrunner installation link is supplied until the exact intended product is verified."
+    },
+    {
+      "id": "crypto-lab",
+      "title": "Trade on paper. Notice the hidden cost.",
+      "zone": "Crypto lab",
+      "device": "Phone or PC",
+      "minutes": 25,
+      "ability": "Understand risk before exposure",
+      "puzzle": "A made-up asset rises 2%. Can the trade still lose money after fees and slippage?",
+      "steps": [
+        "Use the practice calculator here. Predict the result before revealing it: 10 units, entry $100, exit $102, and a 1% fee on each side.",
+        "Try a lower exit price and add slippage. Record the total entry cost, exit proceeds and net result for three cases. These are invented numbers, not live prices or forecasts.",
+        "Explain seed phrase versus public address, spot versus leverage, and why a social-media promise of guaranteed returns is a warning. Before any real trading, separately review the platform, risks, spending limit and custody with Steven."
+      ],
+      "hints": [
+        "With no slippage, buying 10 units costs $1,010 including the entry fee. Selling produces $1,009.80 after the exit fee. A 2% price rise still gives a $0.20 loss.",
+        "Do not fund a wallet to solve this puzzle. Never put a seed phrase, private key, exchange login or API secret into an AI or homework note."
+      ],
+      "proof": "Three paper scenarios with fees/slippage included, one loss case, and your own explanation of the risk and custody terms.",
+      "check": {
+        "question": "With the default numbers and zero slippage, the net result is…",
+        "choices": [
+          "+$20.00",
+          "−$0.20",
+          "Guaranteed profit"
+        ],
+        "answer": 1,
+        "explanation": "Both sides charge a fee: $1,009.80 received minus $1,010.00 spent = −$0.20."
+      },
+      "sources": [
+        "crypto-risk",
+        "wallet-safety"
+      ],
+      "links": [
+        {
+          "label": "Understand crypto risks",
+          "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-alerts/crypto-asset-securities"
+        },
+        {
+          "label": "Wallet and scam safety",
+          "url": "https://ethereum.org/en/security/"
+        }
+      ],
+      "lab": "paper",
+      "caution": "Simulation only. No wallet, exchange connection, real order, leverage or return promise."
+    }
+  ]
+}

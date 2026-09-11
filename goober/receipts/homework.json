@@ -1,0 +1,188 @@
+{
+  "schema": "saelion.homework-tab/1",
+  "recorded_at": "2026-09-11T21:58:07.539051+00:00",
+  "status": "implemented-and-locally-tested; public deployment pending",
+  "url": "https://stevoblevo.github.io/goober/#hw",
+  "project": "saelion://anewgam/goober",
+  "assigned_by": "Steven",
+  "assigned_to": "Aiden / Goober",
+  "assignment_count": 10,
+  "assigned_topics": [
+    {
+      "id": "ai-prep",
+      "title": "Make a safe launch pad"
+    },
+    {
+      "id": "claude-account",
+      "title": "Open your own Claude account"
+    },
+    {
+      "id": "first-code",
+      "title": "Change the rules of a tiny game"
+    },
+    {
+      "id": "hermes",
+      "title": "Give Hermes a small first job"
+    },
+    {
+      "id": "claude-code",
+      "title": "Make one change with Claude Code"
+    },
+    {
+      "id": "obs",
+      "title": "Capture a clean 20-second proof"
+    },
+    {
+      "id": "x-account",
+      "title": "Set up your own X identity"
+    },
+    {
+      "id": "agenc",
+      "title": "Meet AgenC before giving it a job"
+    },
+    {
+      "id": "frontrunner",
+      "title": "Verify the Frontrunner extension"
+    },
+    {
+      "id": "crypto-lab",
+      "title": "Trade on paper. Notice the hidden cost."
+    }
+  ],
+  "pedagogy": "PDD discovery game mode: Puzzle -> Try -> Observe -> Evidence -> Next puzzle. Each assignment has three experiments, two clues, a proof target and an understanding check.",
+  "due_date": null,
+  "source_data": "../hw/assignments.json",
+  "editable_source": "../hw/source.json",
+  "live_receipt": "homework-live.json",
+  "tests": "homework-tests.json",
+  "storage": {
+    "database": "anewgam-goober-v1",
+    "schema": "saedow/0.1",
+    "new_database": false,
+    "entry_kind": "quest",
+    "entry_source_prefix": "anewgam:hw:",
+    "ready_means": "learner evidence is ready to show, not teacher-approved or automatically sent",
+    "note_encryption": false,
+    "cloud_sync": false
+  },
+  "new_features": [
+    "Native desktop and phone HW navigation",
+    "Direct per-assignment URLs",
+    "Hints and understanding questions",
+    "Discovery/blocker/ready check-ins in existing field log",
+    "Human-readable main-log display",
+    "Copyable check-in, no outbound messaging",
+    "Signal Lab: a runnable HTML game-rule exercise",
+    "Paper trade lab with two-sided fees and slippage",
+    "Cached HW shell and Signal Lab for offline practice after initial load"
+  ],
+  "source_verification": {
+    "checked_on": "2026-09-11",
+    "official_sources": {
+      "claude": {
+        "label": "Claude account help",
+        "url": "https://support.claude.com/en/articles/8325609-how-do-i-sign-up-for-the-pro-plan",
+        "note": "Use the free-account sign-up steps only; upgrading is not part of this assignment."
+      },
+      "claude-code": {
+        "label": "Claude Code quickstart",
+        "url": "https://code.claude.com/docs/en/quickstart"
+      },
+      "hermes": {
+        "label": "Hermes official installation",
+        "url": "https://hermes-agent.nousresearch.com/docs/getting-started/installation"
+      },
+      "hermes-source": {
+        "label": "Nous Research source",
+        "url": "https://github.com/NousResearch/hermes-agent"
+      },
+      "mdn": {
+        "label": "MDN: your first website",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Your_first_website"
+      },
+      "obs": {
+        "label": "OBS official quickstart",
+        "url": "https://obsproject.com/kb/quick-start-guide"
+      },
+      "x": {
+        "label": "X account setup",
+        "url": "https://help.x.com/en/using-x/create-x-account"
+      },
+      "x-security": {
+        "label": "X two-factor authentication",
+        "url": "https://help.x.com/en/managing-your-account/two-factor-authentication"
+      },
+      "agenc": {
+        "label": "AgenC Core official docs",
+        "url": "https://agenc.ag/docs/core"
+      },
+      "agenc-home": {
+        "label": "AgenC Core",
+        "url": "https://agenc.ag/core"
+      },
+      "chrome": {
+        "label": "Chrome: manage extensions",
+        "url": "https://support.google.com/chrome/answer/2664769"
+      },
+      "crypto-risk": {
+        "label": "Investor.gov: crypto risks",
+        "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-alerts/crypto-asset-securities"
+      },
+      "wallet-safety": {
+        "label": "Ethereum: security and scams",
+        "url": "https://ethereum.org/en/security/"
+      }
+    },
+    "frontrunner": "Exact intended official extension/publisher listing not verified. Assignment retained as source-check; no guessed install link and no ready/install completion offered.",
+    "hermes": "Current official Nous Research documentation includes native Windows Desktop; no Linux install is required by this assignment.",
+    "claude_code": "Official quickstart and account-access requirements consulted; paid access is a separate decision, not silently purchased.",
+    "agenc": "Current Core docs distinguish the coding agent and support X/xAI provider sign-in. Windows support is not invented from the macOS/Linux quickstart.",
+    "financial_scope": "Fictional paper scenarios only; no prices fetched, funds deposited, wallet linked, leverage or real order."
+  },
+  "verification": {
+    "unit_checks": 18,
+    "native_browser_checks": 34,
+    "offline_and_regression_checks": 9,
+    "failures": 0,
+    "javascript_exceptions": [],
+    "hw_typecheck": "passed",
+    "ui_review": "Actual desktop, mobile and quest screenshots inspected through the connected image reader.",
+    "physical_device_install": "not-performed"
+  },
+  "repairs": [
+    "Restore assignment evidence only after existing IndexedDB entries finish loading; do not replace restored values with initial empty state.",
+    "Give discovery textareas explicit accessible names so restored content does not alter labels.",
+    "A browser test selector was narrowed to distinguish the world tab from the wordmark."
+  ],
+  "publication_guardrail": {
+    "old_file_count_limit": 150,
+    "new_file_count_limit": 256,
+    "reason": "Preserve existing gallery, guides, sources and receipts while adding HW; no files dropped to meet a small previous bound.",
+    "compressed_limit_bytes": 25000000,
+    "uncompressed_limit_bytes": 40000000,
+    "retained_checks": [
+      "Pinned archive SHA256",
+      "Exact permitted CloudFront prefix",
+      "Only goober subtree",
+      "No traversal or symlinks",
+      "Static manifest hash verification",
+      "Recognized existing Goober directory before replacement"
+    ]
+  },
+  "unchanged_intent": [
+    "Same installed public origin",
+    "Existing artwork, gallery, OBS guide and SaveBambi paths",
+    "Existing field-log schema and database",
+    "Aiden retains his own accounts",
+    "No OS, disk, tunnel or account changes"
+  ],
+  "not_claimed": [
+    "Learner actually completed any assignment",
+    "Accounts already created or software installed",
+    "Authenticated teacher review",
+    "Automatic delivery to Steven",
+    "Live Saedo or Skein task dispatch",
+    "Real cryptocurrency trades",
+    "Global skill registration"
+  ]
+}

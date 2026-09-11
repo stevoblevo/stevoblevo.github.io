@@ -1,6 +1,6 @@
 {
   "id": "/goober/",
-  "name": "Anewgam · Goober",
+  "name": "Anewgam \u00b7 Goober",
   "short_name": "Anewgam",
   "description": "Your world, your field log, your next good run.",
   "start_url": "/goober/",
@@ -25,6 +25,11 @@
   ],
   "shortcuts": [
     {
+      "name": "HW \u00b7 assignments from Steven",
+      "short_name": "HW",
+      "url": "/goober/#hw"
+    },
+    {
       "name": "Field log",
       "url": "/goober/#log"
     },
@@ -33,7 +38,7 @@
       "url": "/goober/#sources"
     },
     {
-      "name": "Your PC · setup guide",
+      "name": "Your PC \u00b7 setup guide",
       "url": "/goober/#setup"
     }
   ]

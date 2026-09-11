@@ -1,5 +1,5 @@
-const CACHE='goober-pages-shell-v1';const BASE='/goober/';
-const CORE=['','app.js','style.css','manifest.webmanifest','assets/crossing.webp','assets/garden.webp','assets/sanctuary.webp','assets/icon-192.png','assets/icon-512.png'].map(p=>BASE+p);
+const CACHE='goober-pages-shell-v2-hw';const BASE='/goober/';
+const CORE=['','app.js','style.css','manifest.webmanifest','assets/crossing.webp','assets/garden.webp','assets/sanctuary.webp','assets/icon-192.png','assets/icon-512.png','hw/hw.css','hw/signal-lab.html','assets/rediscovered/peachfall-02.webp'].map(p=>BASE+p);
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('goober-pages-shell-')&&k!==CACHE)await caches.delete(k);await self.clients.claim();})()));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||!u.pathname.startsWith(BASE)||u.pathname.startsWith(BASE+'saedow/')||e.request.cache==='no-store')return;
