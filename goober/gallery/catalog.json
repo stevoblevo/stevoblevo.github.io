@@ -450,11 +450,33 @@
       "preview_url": "/goober/learn/obs-windows-11/cards/thumb-test.webp",
       "thumbnail_url": "/goober/learn/obs-windows-11/cards/thumb-test.webp",
       "transformation": "Authored instructional diagram, verified QR, 640px thumbnail; not new fictional-world art."
+    },
+    {
+      "id": "smell-device-reference",
+      "title": "Smell-device reference · corrected screenshot",
+      "room": "references",
+      "media_kind": "reference-screenshot",
+      "description": "The corrected source picture Steven selected. The conversation text is a reference, not independently verified factual guidance. The unrelated sidebar, browser address and other window content are excluded.",
+      "title_status": "descriptive reference title; not a game name",
+      "source_kind": "User-supplied screenshot; public-safe crop",
+      "source_filename": "smell-device-reference-public.png",
+      "original_url": "/goober/assets/references/smell-device-reference-public.png",
+      "original_sha256": "bf97fcd41e78256b2161b25bbee0e03af101187f602f4eed1f28b4b00ebb6003",
+      "original_bytes": 230812,
+      "width": 757,
+      "height": 1210,
+      "thumbnail_url": "/goober/assets/references/smell-device-reference-thumb.webp",
+      "preview_url": "/goober/assets/references/smell-device-reference-thumb.webp",
+      "public_derivative": true,
+      "raw_original_public": false,
+      "transformation": "Exact crop558,90,1315,1300 from1466x1984 source. Source SHA256 f51300a35671e858cee37916736d6174033b1b130eec316614058fc0e4e85af5. Public original URL means the full-resolution crop, not the private source.",
+      "cloudfront_original": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/4c970a0d-47d5-4dc8-8401-c6591c072480.png"
     }
   ],
   "original_count": 12,
   "disclosure": "Only already-public selected art; private inventory is not embedded.",
   "source_truth": "Concept art and storyboards, not evidence of deployed software or actual events.",
   "process_count": 2,
-  "instruction_count": 6
+  "instruction_count": 6,
+  "reference_count": 1
 }

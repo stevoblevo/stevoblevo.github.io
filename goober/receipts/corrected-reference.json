@@ -1,0 +1,36 @@
+{
+  "schema": "saelion.corrected-reference/0.1",
+  "recorded_at": "2026-09-11T12:04:14.267326+00:00",
+  "state": "static candidate; live validation pending",
+  "source_sha256": "f51300a35671e858cee37916736d6174033b1b130eec316614058fc0e4e85af5",
+  "public_crop_sha256": "bf97fcd41e78256b2161b25bbee0e03af101187f602f4eed1f28b4b00ebb6003",
+  "crop_xyxy": [
+    558,
+    90,
+    1315,
+    1300
+  ],
+  "source_size": [
+    1466,
+    1984
+  ],
+  "crop_pixel_equality": "verified in attachment runtime",
+  "source_visibility": "private original; public crop only",
+  "gallery_id": "smell-device-reference",
+  "project_context": "/goober/project$/#cockpit",
+  "literal_owner_route": "aiden.anewgam/project$#cockpit",
+  "route_interpretation": "Public same-site context card linking the existing Goober field log; not a DNS or privileged command.",
+  "naming": "Nephew/nephwe is relationship/project vocabulary, not a game rename.",
+  "friction": [
+    "Corrected source was available despite an earlier missing-image claim.",
+    "Media upload is an intermediate step; gallery visibility requires verification.",
+    "Remote build storage expired between tool calls; final static release is exported in its producing call."
+  ],
+  "save_bambi": "Care-and-continuation avenue defined in existing owner design document; not installed as global command.",
+  "scope": [
+    "Existing20 catalog entries retained",
+    "Reference is not counted as new original world art",
+    "No automatic form or note mutation",
+    "No host or tunnel changes"
+  ]
+}
