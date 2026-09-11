@@ -1,0 +1,17 @@
+{
+  "schema": "saelion.gallery-change/0.1",
+  "recorded_at": "2026-09-11",
+  "status": "candidate-awaiting-browser-check",
+  "base_public_commit": "93e7ef4c4c1469d4586dc2ad49efdc7345f37b85",
+  "gallery_html_git_blob": "af9005ee51ada3510696fd001913af9471ec01aa",
+  "source_art": "../assets/asset-provenance.json",
+  "existing_source_trail": "../receipts/trail.json",
+  "coverage": "coverage.json",
+  "art_plan": "art-yarn.md",
+  "new_original_artworks": 0,
+  "original_artworks_reused": 3,
+  "original_bytes_modified": false,
+  "public_screenshots_added": 0,
+  "live_skein_ingestion": "not-submitted",
+  "other_sites_or_accounts_modified": false
+}

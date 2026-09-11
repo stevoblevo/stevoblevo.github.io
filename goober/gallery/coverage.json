@@ -1,0 +1,13 @@
+{
+  "schema": "saelion.gallery-coverage/0.1",
+  "recorded_at": "2026-09-11",
+  "scope": "Images surfaced in the Goober build conversation, not the entire ChatGPT Library",
+  "attachment_inventory": {"records_returned": 7, "pagination_complete": true, "distinct_backing_images": 6, "duplicate_reference": "The recovered Crossing original was surfaced twice"},
+  "public_collection": {"original_artworks": 3, "display_variants": 3, "canonical_manifest": "../assets/asset-provenance.json", "art_ids": ["crossing", "garden", "sanctuary"]},
+  "not_publicly_displayed": {"context_screenshots": 3, "treatment": "Preserved in the owner-facing inventory, not uploaded here. Source and privacy review precedes any public derivative."},
+  "additional_viewed_references": {"count": 2, "kind": "Library pictures viewed through tools but absent from the attachment listing", "treatment": "Recorded separately for curation; not counted as public artworks or silently published."},
+  "unrecovered_media": "The supplied Grok video remains a separate unrecovered source; its presence as a link does not add a gallery image or recovered film.",
+  "limits": ["This is not a claim that every inline preview or image mentioned in a long conversation has been ingested.", "No automatic chat or Library synchronization is implemented.", "Owner-private Art Plane records are not exposed through this public page."],
+  "all_chat_images_public": false,
+  "new_image_generation_this_change": false
+}
