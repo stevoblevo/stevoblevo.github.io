@@ -1,0 +1,15 @@
+{
+  "schema": "saelion.static-release/0.1",
+  "application": "Anewgam · Goober / Take 3",
+  "source_commit": "8d67bbe0c9b3be572440861570dc91674b8b84f0",
+  "archive_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/a38e3fa7-e170-4d7c-9f79-9394c1ba4dec.zip",
+  "archive_sha256": "58d4df5a5a9ab32372dceb2e2024be27b331fe027aa525498b9f1c77a291c6e6",
+  "archive_bytes": 7821328,
+  "mount": "/goober/",
+  "intended_url": "https://stevoblevo.github.io/goober/",
+  "local_verification": {"browser_checks": 16, "offline_scope_checks": 4, "failures": 0},
+  "preservation": "Existing root website and Peachfall files remain unchanged. Only the Goober subtree and its delivery workflow are added.",
+  "privacy": "Public app shell; no family contact details or account credentials seeded. Browser-local notes and selected MP4 files remain unsynchronized and unencrypted.",
+  "world_state": "Device-local playtest; not canonical Skein acceptance or device authority.",
+  "release_status": "pending live anonymous verification"
+}
