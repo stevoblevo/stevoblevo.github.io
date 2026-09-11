@@ -1,0 +1,23 @@
+{
+  "schema": "saelion.gallery-live-check/0.1",
+  "recorded_at": "2026-09-11T09:00:23.824Z",
+  "status": "verified-anonymous-public-access",
+  "url": "https://stevoblevo.github.io/goober/gallery/",
+  "deployed_commit_tested": "8659379e9e182bf7169c43c0289e85d4db4949c2",
+  "gallery_html_sha256": "5cdebbf553d00a0d5b3184befa13f03befc15a34ddd5d35221204ad32d66d7fa",
+  "gallery_html_git_blob": "af9005ee51ada3510696fd001913af9471ec01aa",
+  "main_entry_html_sha256": "3d5be4397d893bf2b57ffd4d54fcbf971994e0e85c0a11d1e648354a9263bf38",
+  "prior_build_receipt": "receipt.json",
+  "prior_build_receipt_sha256": "402078ec1c968f4b211bf0cf3787ed71f5b800a38d07d40a7dd3a7dd40b036fe",
+  "source_trail_head_sha256": "124e3a577fe127ed8fd7c41d10168e90b236bd1e933f48b70d99ed46a499cc8e",
+  "anonymous_http_status": 200,
+  "browser_context": "Fresh anonymous headless Chromium",
+  "browser_checks_passed": 22,
+  "browser_checks_failed": 0,
+  "javascript_errors": [],
+  "viewports": [320, 390, 768, 1440],
+  "checked": ["three artwork previews", "uncropped original viewer", "original/display switching", "full-size viewing", "keyboard navigation and Escape", "original SHA256 verification", "search and empty state", "image-specific links on fresh page load", "gallery entry on existing app", "existing app startup", "direct original links without JavaScript", "coverage and work-plan links"],
+  "scope": "Public gallery and same-site entry only; no new art generation, private screenshot publication, physical device installation, or live Skein acceptance.",
+  "limits": ["No automatic chat or Library synchronization", "Only three recovered original artworks are selected so far", "Gallery offline caching is not claimed", "Changing only the fragment on an already-open gallery does not reopen the viewer; picture-specific URLs were tested on fresh page load"],
+  "note": "This is the later live observation. The prior build receipt is retained unchanged as a historical pre-deployment record."
+}
