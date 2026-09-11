@@ -55,3 +55,9 @@ The fresh attachment list contains17 records across10 source-name groups. Three 
 Semantic naming has an in-app public resolver: saelion://anewgam/goober, saelion://anewgam/goober/gallery, saelion://world/peachfall. The existing installed origin is unchanged. Local host aliases and ChromeNAS sharing remain inactive until native host access, precise scope, DNS/TLS, authentication, revocation and live allow/deny proofs exist. No public network probe or private share listing is embedded.
 
 The twelve-picture enrichment release must preserve atlas.css, atlas.js, catalog.json, enrichment.css/enrichment.js and earlier source receipts when exporting again. Main app.js, original source files and its current service worker remain untouched. Actual online validation is recorded separately from the local33-check report. Do not mark new gallery offline support or full Art Plane convergence done.
+
+## Trace reconciliation and relay priority
+
+The current conversation listing has18 references. The whole raw chat and every tool invocation are not claimed captured; source/disposition and delivery checkpoints are preserved. Two already-public review images are now separately selectable under Process. Original artwork count remains12. Previously blocked Goober boards and owner-private screenshots are not silently released.
+
+The next priority is the actual local relay binding. A tested read-only host readiness candidate is retained with the existing relay issue; no household service, DNS or tunnel activation is claimed. Preserve the installed public origin and its local records. Do not publish a speculative .local/public relay link as a working destination.

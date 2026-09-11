@@ -1,0 +1,53 @@
+{
+  "schema": "saelion.search-ingress-trail/0.1",
+  "recorded_at": "2026-09-11T10:30:11.782438+00:00",
+  "scope": "Consolidated source and delivery checkpoints; not a complete raw transcript or every tool request.",
+  "previous_receipts": [
+    "trail.json",
+    "enrichment.json",
+    "enrichment-live.json",
+    "../gallery/browser-live.json"
+  ],
+  "current_listing": {
+    "conversation_image_references": 18,
+    "pagination_complete": true,
+    "original_artworks_public": 12,
+    "process_images_linked": 2,
+    "new_originals_generated": 0,
+    "all_private_images_public": false,
+    "all_inline_previews_reconciled": false
+  },
+  "events": [
+    {
+      "kind": "recovery",
+      "source": "Current conversation image listing and earlier saved image inventory",
+      "result": "Preserved the distinction between originals, repeated references, owner-only context, and unexported source boards."
+    },
+    {
+      "kind": "process-ingress",
+      "source": "Previously confirmed public CloudFront artifacts",
+      "result": "Two review images linked under Process; not counted as additional original art.",
+      "asset_ids": [
+        "browser-study",
+        "art-proof"
+      ]
+    },
+    {
+      "kind": "export-limit",
+      "result": "Previously blocked source pictures remain held; no alternate export route was used to bypass the restriction."
+    },
+    {
+      "kind": "relay-source",
+      "result": "Recovered existing relay contract; naming does not establish a deployed service."
+    },
+    {
+      "kind": "relay-candidate",
+      "result": "Read-only host readiness code staged and locally tested, not executed on the household host.",
+      "unit_tests_passed": 12
+    },
+    {
+      "kind": "activation",
+      "result": "No DNS, tunnel, NAS share, domain purchase or local host service change performed."
+    }
+  ]
+}

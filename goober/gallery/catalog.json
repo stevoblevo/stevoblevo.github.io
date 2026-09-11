@@ -304,9 +304,48 @@
       "preview_sha256": "277be12e496e214aa37ee1e0be269a62deb17960ff604de5ec9af7aed5f5f845",
       "asset_id": "sha256:a979f382e4ca13eb31b924bdf9b3d11c58f66828d01b125e12635b65fc948256",
       "logical_id": "saelion://art/sha256/a979f382e4ca13eb31b924bdf9b3d11c58f66828d01b125e12635b65fc948256"
+    },
+    {
+      "id": "browser-study",
+      "title": "Earlier image-browser study",
+      "description": "Previously published process image from this build. Not an additional original artwork or the current screen.",
+      "room": "process",
+      "media_kind": "process-evidence",
+      "title_status": "descriptive process title",
+      "source_filename": "browser-study.png",
+      "source_kind": "Previously confirmed public CloudFront review",
+      "original_url": "/goober/assets/process/browser-study.png",
+      "original_sha256": "9e33d28fe2ca882df2df3567fdae649479578296c22fd2d71ac99d34b9ba74fd",
+      "original_bytes": 1124916,
+      "width": 1500,
+      "height": 1240,
+      "preview_url": "/goober/assets/process/browser-study-thumb.webp",
+      "thumbnail_url": "/goober/assets/process/browser-study-thumb.webp",
+      "cloudfront_original": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/0a944fa1-c23d-43ae-a2e2-a97b4672a29a.png",
+      "transformation": "Public source bytes preserved; 640px aspect-preserving preview."
+    },
+    {
+      "id": "art-proof",
+      "title": "Recovered-world contact sheet",
+      "description": "Previously published process image from this build. Not an additional original artwork or the current screen.",
+      "room": "process",
+      "media_kind": "process-evidence",
+      "title_status": "descriptive process title",
+      "source_filename": "art-proof.jpg",
+      "source_kind": "Previously confirmed public CloudFront review",
+      "original_url": "/goober/assets/process/art-proof.jpg",
+      "original_sha256": "3c4eb14a62f83dc209346531b41a367ecc1632b91ff912f2b1f6dfbe1739ab33",
+      "original_bytes": 355705,
+      "width": 1200,
+      "height": 1050,
+      "preview_url": "/goober/assets/process/art-proof-thumb.webp",
+      "thumbnail_url": "/goober/assets/process/art-proof-thumb.webp",
+      "cloudfront_original": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/c4ae5ec0-b82c-4df6-952e-c71fd6660c2c.jpg",
+      "transformation": "Public source bytes preserved; 640px aspect-preserving preview."
     }
   ],
   "original_count": 12,
   "disclosure": "Only already-public selected art; private inventory is not embedded.",
-  "source_truth": "Concept art and storyboards, not evidence of deployed software or actual events."
+  "source_truth": "Concept art and storyboards, not evidence of deployed software or actual events.",
+  "process_count": 2
 }

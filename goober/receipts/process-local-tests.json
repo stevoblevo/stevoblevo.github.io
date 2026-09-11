@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-11T10:30:43.073Z",
+  "base": "http://127.0.0.1:4922",
+  "checks": [
+    {
+      "name": "Fourteen records are displayed",
+      "pass": true
+    },
+    {
+      "name": "Count distinguishes original art and process",
+      "pass": true
+    },
+    {
+      "name": "Process room has only two reviews",
+      "pass": true
+    },
+    {
+      "name": "Earlier review image opens from preserved bytes",
+      "pass": true
+    },
+    {
+      "name": "CloudFront source link retained",
+      "pass": true
+    },
+    {
+      "name": "Process image SHA256 matches",
+      "pass": true
+    },
+    {
+      "name": "Earlier original image link still opens",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow 320",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow 390",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow 1280",
+      "pass": true
+    },
+    {
+      "name": "Trace states scope honestly",
+      "pass": true
+    },
+    {
+      "name": "No runtime exceptions",
+      "pass": true
+    }
+  ],
+  "errors": []
+}
