@@ -1,5 +1,20 @@
 {
-  "schema": "saelion.field-guide-live/0.1",
-  "state": "awaiting-anonymous-live-check",
-  "install_state": "not-verified"
+  "schema":"saelion.field-guide-live/0.1",
+  "state":"verified-anonymous-public-access",
+  "tested_at":"2026-09-11T10:51:04.044Z",
+  "url":"https://stevoblevo.github.io/goober/learn/obs-windows-11/",
+  "publication_pointer_commit":"e468546a2fd7a92baff04454fa82105cb18c8357",
+  "release_archive_sha256":"2853a408ba921ee88d089848535125731ca823d37eafb3e38903b9b5d89364ab",
+  "guide_html_sha256":"0e846def8e9ad0a6ac6119b9f08e7dccb2d8d385df76f7c2c456eb7c5cbb58f0",
+  "guide_js_sha256":"5edebae7dc21bbc8ff219d021519e49822cc9e8da3ae5fddab4042e53938f13c",
+  "share_kit":{"url":"https://stevoblevo.github.io/goober/learn/obs-windows-11/share-kit.zip","bytes":4644711,"sha256":"01968eb060802d28ba52ea325573387df7ea2b76290af19ac51a1f07162544da","downloaded_live_hash_match":true},
+  "validation":{"browser":"Fresh anonymous Chromium","checks_passed":34,"checks_failed":0,"javascript_errors":[],"viewports":[320,390,768,1440],"checked":["six steps and six1200x675images","normal and portable folder examples","copy path, single post, full thread and narration","local checklist reload","all share-kit and text downloads","step-specific QR anchors","no horizontal overflow","main-world guide link","existing field-log save/reload","existing artwork preserved plus six Learn cards","guide-card original opens in gallery","no unrequested external network traffic","no-JavaScript fallback"],"six_final_PNG_QRs_decoded_before_publication":true},
+  "social_content":{"posts":8,"maximum_plain_text_characters":206,"status":"draft; not posted","narration":"121-word read-aloud script; no voice recording claimed"},
+  "gallery":{"world_artworks":12,"process_images":2,"instruction_cards":6,"total_records":20},
+  "host_installation":"not-performed-or-verified",
+  "actual_user_directory":"not-inspected",
+  "private_test_recording":"not-made-on-user-host",
+  "local_network_or_tunnel_changes":"none",
+  "live_Skeinintegration":"not-submitted",
+  "scope":"Website and publication checks only. Browser checkmarks are self-reported, not proof of installed OBS."
 }
