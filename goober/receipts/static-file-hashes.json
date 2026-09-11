@@ -16,7 +16,7 @@
   "goober/assets/outpost.webp": "868327e237c43d92571e96e7d6dd609f5cd11ba581a55d80ebf5e4cf1a839c8b",
   "goober/assets/sanctuary-original.png": "40cdf167d6761961b1aa5269dd9f72d34a1445ac6864f20c5306ea6047aeacf1",
   "goober/assets/sanctuary.webp": "ccf28debce9adc077bf5e11e9e422b9ae4d4824b15179d321f682a257983e2f5",
-  "goober/index.html": "6b617d2cbeaa3ca670a32733bfc60b71ab60284bf46009e772cc6e6da163d9c4",
+  "goober/index.html": "3d5be4397d893bf2b57ffd4d54fcbf971994e0e85c0a11d1e648354a9263bf38",
   "goober/manifest.webmanifest": "2b6c6a3dd97d736f7fc9cd295e1be02f690048690c1869d3866c4229c2e8cb98",
   "goober/presets/cover.png": "64bc7ebc2913c50b1f480fbc3065d10d2a217a5ab395e32ee439efd768191b09",
   "goober/presets/explain.png": "2716aa8e7cac992eeabfb1245088d0d3b1a438b61c2ecdd97dd96fbc5b912ff5",
@@ -50,5 +50,9 @@
   "goober/setup/index.html": "74295a8f5a1fbbc7938f5a8919439d110138a474a7998e90c9560d82ea5e5a9a",
   "goober/source/export-goober-pages.ts": "89137ed1580b0072b740f10bb520256f248532493d889493eabcc2be6cd35c51",
   "goober/style.css": "6e5580b5e5e16f2b6b23a27089b361630de68c355c41d342d0e629ffe2bafc99",
-  "goober/sw.js": "e39c9a2bb72ff05ef7d9556df3c8c7856d4697dd57d5afdcfe8b7afbd736d231"
+  "goober/sw.js": "e39c9a2bb72ff05ef7d9556df3c8c7856d4697dd57d5afdcfe8b7afbd736d231",
+  "goober/gallery/index.html": "5cdebbf553d00a0d5b3184befa13f03befc15a34ddd5d35221204ad32d66d7fa",
+  "goober/gallery/coverage.json": "c4a72071b144cbcc42c72a5f7fb05e8a8ccf031448a69eeb626afe5454ee96ef",
+  "goober/gallery/art-yarn.md": "1c584dbe890e4163d5613ab5b053d90d198db95788a219591d76c17c6a5f2aa9",
+  "goober/gallery/receipt.json": "402078ec1c968f4b211bf0cf3787ed71f5b800a38d07d40a7dd3a7dd40b036fe"
 }

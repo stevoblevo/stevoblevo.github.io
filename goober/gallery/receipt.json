@@ -1,7 +1,7 @@
 {
   "schema": "saelion.gallery-change/0.1",
   "recorded_at": "2026-09-11",
-  "status": "candidate-awaiting-browser-check",
+  "status": "browser-verified-awaiting-public-deployment",
   "base_public_commit": "93e7ef4c4c1469d4586dc2ad49efdc7345f37b85",
   "gallery_html_git_blob": "af9005ee51ada3510696fd001913af9471ec01aa",
   "source_art": "../assets/asset-provenance.json",
@@ -13,5 +13,41 @@
   "original_bytes_modified": false,
   "public_screenshots_added": 0,
   "live_skein_ingestion": "not-submitted",
-  "other_sites_or_accounts_modified": false
+  "other_sites_or_accounts_modified": false,
+  "source_trail_head_sha256": "124e3a577fe127ed8fd7c41d10168e90b236bd1e933f48b70d99ed46a499cc8e",
+  "tested_at": "2026-09-11T08:56:14.064Z",
+  "browser_checks_passed": 22,
+  "browser_checks_failed": 0,
+  "javascript_errors": [],
+  "validation_scope": "Headless Chromium at a local static origin; four viewport sizes. This is not physical-device installation.",
+  "checks": [
+    "gallery served and all three cards present",
+    "all artwork previews loaded",
+    "viewer opens complete original",
+    "original and display variation switch",
+    "full-size zoom toggles",
+    "keyboard navigation changes artwork",
+    "original bytes match existing SHA256",
+    "Escape closes viewer",
+    "search finds two garden artworks",
+    "empty search state is honest",
+    "image-specific direct link opens correct original on page load",
+    "no horizontal overflow at 320",
+    "no horizontal overflow at 390",
+    "no horizontal overflow at 768",
+    "no horizontal overflow at 1440",
+    "gallery record link coverage.json",
+    "gallery record link art-yarn.md",
+    "gallery record link receipt.json",
+    "existing app has visible gallery entry",
+    "existing app still starts",
+    "original links work without JavaScript",
+    "no JavaScript runtime errors"
+  ],
+  "known_limits": [
+    "Picture-specific hash links open the viewer on a full page load; changing only the hash on an already open page does not reopen it.",
+    "No new original art or automatic Library ingestion in this slice.",
+    "Gallery offline caching is not claimed.",
+    "Next full artifact export must retain the gallery subtree and its entry link."
+  ]
 }
