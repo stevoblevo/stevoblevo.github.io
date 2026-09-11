@@ -1,0 +1,139 @@
+{
+  "at": "2026-09-11T10:00:31.464Z",
+  "origin": "http://127.0.0.1:4911",
+  "checks": [
+    {
+      "name": "public gallery returns200",
+      "passed": true
+    },
+    {
+      "name": "twelve distinct artwork tiles",
+      "passed": true
+    },
+    {
+      "name": "all twelve artwork thumbnails loaded",
+      "passed": true
+    },
+    {
+      "name": "origin room filters to four originals",
+      "passed": true
+    },
+    {
+      "name": "original filename search",
+      "passed": true
+    },
+    {
+      "name": "missing search does not fabricate images",
+      "passed": true
+    },
+    {
+      "name": "roomy layout control",
+      "passed": true
+    },
+    {
+      "name": "preserved original is default",
+      "passed": true
+    },
+    {
+      "name": "filmstrip has all twelve",
+      "passed": true
+    },
+    {
+      "name": "quarter step zoom",
+      "passed": true
+    },
+    {
+      "name": "pointer drag pans image",
+      "passed": true
+    },
+    {
+      "name": "reset restores zoom",
+      "passed": true
+    },
+    {
+      "name": "preview is an explicit derivative",
+      "passed": true
+    },
+    {
+      "name": "recovered original bytes verify",
+      "passed": true
+    },
+    {
+      "name": "keyboard advances original",
+      "passed": true
+    },
+    {
+      "name": "Escape exits and restores scrolling",
+      "passed": true
+    },
+    {
+      "name": "legacy image-specific link preserved",
+      "passed": true
+    },
+    {
+      "name": "confirmed CloudFront original link",
+      "passed": true
+    },
+    {
+      "name": "gallery no horizontal overflow 320",
+      "passed": true
+    },
+    {
+      "name": "gallery no horizontal overflow 390",
+      "passed": true
+    },
+    {
+      "name": "gallery no horizontal overflow 768",
+      "passed": true
+    },
+    {
+      "name": "gallery no horizontal overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "main world retains working application",
+      "passed": true
+    },
+    {
+      "name": "main has three illustrated new doorways",
+      "passed": true
+    },
+    {
+      "name": "main hero uses recovered landscape",
+      "passed": true
+    },
+    {
+      "name": "existing field log still saves",
+      "passed": true
+    },
+    {
+      "name": "existing field log persists",
+      "passed": true
+    },
+    {
+      "name": "world strip removed in log view",
+      "passed": true
+    },
+    {
+      "name": "three logical resources resolve to real public routes",
+      "passed": true
+    },
+    {
+      "name": "unknown or substituted private route rejected",
+      "passed": true
+    },
+    {
+      "name": "no background requests to private network or third party",
+      "passed": true
+    },
+    {
+      "name": "no JavaScript runtime exceptions",
+      "passed": true
+    },
+    {
+      "name": "all original links work without JavaScript",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

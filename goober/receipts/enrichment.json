@@ -1,0 +1,91 @@
+{
+  "schema": "saelion.site-enrichment/0.1",
+  "recorded_at": "2026-09-11T10:04:30.840420+00:00",
+  "state": "local-browser-tested; live publication pending",
+  "base_pages_commit": "cecac87068b9efd1650ce9e49117aa23f1fa5dea",
+  "public_url": "https://stevoblevo.github.io/goober/",
+  "art": {
+    "before": 3,
+    "after": 12,
+    "added_originals": 9,
+    "source": "Existing public Anewgam Peachfall source pack",
+    "original_integrity": "All nine additional originals checked against their existing SHA-256 manifest",
+    "new_generation": false,
+    "binary_ownership": "Originals stay at their existing /peachfall/source/images paths; only display derivatives added under Goober",
+    "source_catalog": "../gallery/catalog.json"
+  },
+  "recovered_ui_lineage": {
+    "name": "Anewgam GalleryView",
+    "reused_patterns": [
+      "named rooms",
+      "thumbnail filmstrip",
+      "drag pan",
+      "wheel and keyboard zoom",
+      "original image progression"
+    ],
+    "integration_limit": "Public projection interactions adapted; old WorldSave and quest authority not imported"
+  },
+  "changed": [
+    "main hero and three illustrated gallery doorways",
+    "catalog-driven twelve-image gallery",
+    "named rooms and full viewport pan/zoom viewer",
+    "in-app logical resource resolver",
+    "coverage and source receipts"
+  ],
+  "public_logical_names": [
+    "saelion://anewgam/goober",
+    "saelion://anewgam/goober/gallery",
+    "saelion://world/peachfall"
+  ],
+  "runtime_boundary": {
+    "private_host_probe": false,
+    "local_dns_written": false,
+    "tunnel_created": false,
+    "NAS_share_exposed": false,
+    "chatgpt_native_site_published": false
+  },
+  "cloudfront": [
+    {
+      "id": "crossing",
+      "http_status": 200,
+      "sha256_match": true
+    },
+    {
+      "id": "garden",
+      "http_status": 200,
+      "sha256_match": true
+    },
+    {
+      "id": "sanctuary",
+      "http_status": 200,
+      "sha256_match": true
+    }
+  ],
+  "hero_derivative": {
+    "source_id": "peachfall-03",
+    "local_path": "../assets/rediscovered/world-hero.webp",
+    "operation": "1600x900 aspect-preserving center fit using Pillow",
+    "sha256": "03baacde5ccc29878627ba4f0a49a1006df38ae5c2f5f2c88e565bf6539fc8b8",
+    "confirmed_cdn": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/6e6062e8-a67e-4ce9-8854-6b9215ff6039.webp"
+  },
+  "verification": {
+    "local_checks_passed": 33,
+    "local_checks_failed": 0,
+    "runtime_exceptions": [],
+    "viewports": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "visual_review": "Actual source contact sheet and browser screenshots were inspected through the connected Linear image reader."
+  },
+  "limitations": [
+    "No claim of full Library/chat ingestion",
+    "Private/blocked pictures not transferred",
+    "No native Sites publication",
+    "No new LAN binding or private share",
+    "Gallery offline support remains unclaimed; existing app service-worker and records unchanged",
+    "This public resolver is not Skein authority or an installed OS protocol handler"
+  ]
+}

@@ -1,13 +1,27 @@
 {
-  "schema": "saelion.gallery-coverage/0.1",
-  "recorded_at": "2026-09-11",
-  "scope": "Images surfaced in the Goober build conversation, not the entire ChatGPT Library",
-  "attachment_inventory": {"records_returned": 7, "pagination_complete": true, "distinct_backing_images": 6, "duplicate_reference": "The recovered Crossing original was surfaced twice"},
-  "public_collection": {"original_artworks": 3, "display_variants": 3, "canonical_manifest": "../assets/asset-provenance.json", "art_ids": ["crossing", "garden", "sanctuary"]},
-  "not_publicly_displayed": {"context_screenshots": 3, "treatment": "Preserved in the owner-facing inventory, not uploaded here. Source and privacy review precedes any public derivative."},
-  "additional_viewed_references": {"count": 2, "kind": "Library pictures viewed through tools but absent from the attachment listing", "treatment": "Recorded separately for curation; not counted as public artworks or silently published."},
-  "unrecovered_media": "The supplied Grok video remains a separate unrecovered source; its presence as a link does not add a gallery image or recovered film.",
-  "limits": ["This is not a claim that every inline preview or image mentioned in a long conversation has been ingested.", "No automatic chat or Library synchronization is implemented.", "Owner-private Art Plane records are not exposed through this public page."],
+  "schema": "saelion.gallery-coverage/0.2",
+  "recorded_at": "2026-09-11T10:04:30.840420+00:00",
+  "scope": "Current conversation attachment listing plus selected earlier Anewgam public source pack; not the entire Library",
+  "attachment_listing": {
+    "records": 17,
+    "pagination_complete": true,
+    "source_name_groups": 10,
+    "note": "Seven repeat references share existing artwork/screenshot names; not asserted as a fresh byte-level deduplication of every representation."
+  },
+  "conversation_public_artwork_families": 3,
+  "earlier_public_artwork_families_added": 9,
+  "public_originals_total": 12,
+  "held_source_groups": {
+    "context_screenshots": 3,
+    "unconfirmed_portrait": 1,
+    "unexported_new_concept_boards": 2,
+    "owner_routing_board": 1
+  },
+  "held_reason": "Private context, unresolved selection or unavailable permitted connector export. No false publicly working URLs created. Exact owner references kept outside the public site.",
+  "earlier_tool_only_references": "Mint/pearl portrait and an operations image remain separately recorded, not counted as newly published art.",
+  "video": "Original Grok video remains unrecovered; existing explicit original link/local playback controls preserved.",
+  "catalog": "catalog.json",
   "all_chat_images_public": false,
-  "new_image_generation_this_change": false
+  "all_inline_previews_reconciled": false,
+  "new_model_generated_images": 0
 }
