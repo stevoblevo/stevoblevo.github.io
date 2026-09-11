@@ -1,0 +1,29 @@
+{
+  "schema": "saelion.gallery-browser-live/0.1",
+  "tested_at": "2026-09-11T09:27:36.929Z",
+  "url": "https://stevoblevo.github.io/goober/gallery/",
+  "status": "verified-anonymous-public-access",
+  "deployment_commit_tested": "4ec99d863fd495a4d982feeb5fac14dc1eb91f32",
+  "release_pointer_commit": "f0d332ed08f8ac3e74cccb305007fddf9cec2d4d",
+  "build_receipt": "browser-receipt.json",
+  "archive_sha256": "5337666830b5f49b0a9606e35e7c72153c49763bbd3db3eab110ad1e814a5e94",
+  "files": {
+    "index.html": "85ce863329fd6a6d26fb1140253d8a5cb2da42f9f0bba861f9e08bfe40f6d9a9",
+    "browser.css": "2ceb50e7a7c17c26b3b93df26f9e4b3bd0b83bfd66ff90025f59cd8afaddb8e4",
+    "browser.js": "a00ba3c945df4ad562ce4471f2651829bff8d96d9010398a6b34a462871f601b"
+  },
+  "verification": {
+    "browser": "Fresh anonymous headless Chromium",
+    "checks_passed": 27,
+    "checks_failed": 0,
+    "javascript_errors": [],
+    "viewports": [320, 390, 768, 1440],
+    "features_checked": ["image wall above fold", "original title preservation", "topic filters", "stored filename search", "empty state", "density control", "full-viewport original viewer", "curated related-image navigation", "stable ID and filename display", "crop/original toggle", "natural-size viewing", "original byte verification", "keyboard navigation and Escape", "same-page and fresh-page fragment links", "art yarn and coverage reachability", "same-origin runtime requests", "original links without JavaScript"],
+    "main_app_http": 200,
+    "existing_peachfall_http": 200
+  },
+  "privacy": "No private source images, screenshots, unconfirmed portraits, person identities or personal notes were added. No external reverse-image search or image upload is implemented.",
+  "collection": "Three original artwork families; existing display crops are not new originals.",
+  "limits": ["No new original art generated", "No automatic Library synchronization", "Related images are curated, not computed visual similarity", "No gallery offline caching claim", "No live Skein acceptance", "No physical-device installation test"],
+  "history": "The prior gallery and build receipts remain unchanged. This later observation records the deployed image-browser behavior."
+}
