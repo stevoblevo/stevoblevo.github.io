@@ -1,0 +1,22 @@
+{
+  "schema": "saelion.public-mount/0.1",
+  "source_commit": "8d67bbe0c9b3be572440861570dc91674b8b84f0",
+  "target_url": "https://stevoblevo.github.io/goober/",
+  "source_owner": "existing owner-requested Goober application",
+  "adaptation": "Same React app component, client entry instead of Worker SSR; root-relative runtime paths mounted under /goober/. Gameplay, local record format, source image bytes and existing hash trail unchanged.",
+  "live_status": "pending-deployment-verification",
+  "privacy": "Public app shell; notes and local MP4 are browser-local, unencrypted, not synchronized. Other pages at this host are not private security boundaries.",
+  "skein_acceptance": "not-submitted",
+  "evidence": [
+    "/goober/receipts/trail.json",
+    "/goober/assets/asset-provenance.json"
+  ],
+  "no_account_required": true,
+  "exporter_sha256": "89137ed1580b0072b740f10bb520256f248532493d889493eabcc2be6cd35c51",
+  "local_mount_tests": {
+    "browser_checks": 16,
+    "offline_and_scope_checks": 4,
+    "failures": 0
+  },
+  "source_archive": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/f2742b8c-83f8-4e8e-a066-c14c420e5aa2.zip"
+}

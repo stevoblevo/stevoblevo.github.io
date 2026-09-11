@@ -1,0 +1,38 @@
+{
+  "schema": "saelion.setup-proposal/0.1",
+  "recorded_at": "2026-09-11",
+  "status": "preparation-only",
+  "candidate": "Bazzite KDE NVIDIA desktop; Omarchy alternative",
+  "candidate_basis": "Previously recorded RTX 2060 and gaming/development use; must recheck on host.",
+  "preferred_disk_strategy": "Separate SSD if available and approved; no assumed partition map.",
+  "host_inventory": "not-collected-in-this-build",
+  "actual_install": "not-performed",
+  "identity_or_remote_authority": "not-granted-by-this-page",
+  "proofs_required": [
+    "fresh metadata-only inventory",
+    "private recovery route and tested backup",
+    "exact ISO and checksum",
+    "specific keep/change partition plan",
+    "attended effect-boundary approval",
+    "Windows and Linux boot tests",
+    "GPU/network/audio validation",
+    "bounded Saelion enrollment and rollback proof"
+  ],
+  "security_boundaries": [
+    "no TPM clear",
+    "no automatic security disablement",
+    "no Windows disk full erase",
+    "no EFI/Recovery formatting",
+    "no secrets in public records"
+  ],
+  "inventory_method": "Manual read-only Windows screens; no installer or script executed.",
+  "sources": [
+    "https://omarchy.org/manual/dual-boot-install/",
+    "https://omarchy.org/manual/getting-started/",
+    "https://docs.bazzite.gg/General/Installation_Guide/install-guide/",
+    "https://docs.bazzite.gg/General/FAQ/",
+    "https://bazzite.gg/",
+    "https://www.epicgames.com/help/c-34254770/c-38015632/a25107496",
+    "https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/operations-guide"
+  ]
+}

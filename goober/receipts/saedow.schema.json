@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SaeDow local continuity capsule 0.1",
+  "description": "Portable unencrypted notes. Hash chain integrity is not identity or action authority. Importers must verify each linked SHA-256 over canonical sorted-key JSON excluding hash.",
+  "type": "object",
+  "required": [
+    "schema",
+    "entries"
+  ],
+  "properties": {
+    "schema": {
+      "const": "saedow/0.1"
+    },
+    "exported_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scope": {
+      "const": "device-local"
+    },
+    "identity": {
+      "const": "not-enrolled"
+    },
+    "skein_acceptance": {
+      "const": "not-submitted"
+    },
+    "entries": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "why",
+          "next_proof",
+          "source",
+          "body",
+          "kind",
+          "state",
+          "id",
+          "created_at",
+          "scope",
+          "authority",
+          "acceptance",
+          "previous",
+          "hash"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 600,
+            "minLength": 1
+          },
+          "why": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "next_proof": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 8000
+          },
+          "kind": {
+            "enum": [
+              "note",
+              "idea",
+              "quest",
+              "request",
+              "practice"
+            ]
+          },
+          "state": {
+            "enum": [
+              "imagined",
+              "explored",
+              "candidate",
+              "completed",
+              "superseded"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scope": {
+            "const": "device-local"
+          },
+          "authority": {
+            "const": "none"
+          },
+          "acceptance": {
+            "const": "self-reported"
+          },
+          "previous": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

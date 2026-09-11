@@ -1,0 +1,8 @@
+{
+  "source": "/assets/crossing-original.jpg",
+  "output": "/assets/goober-cover.jpg",
+  "operation": "Pillow fit 1200x800 center .55,.45; left-to-right ink overlay; deterministic text typesetting",
+  "sha256": "d6a59f536ffbc560c135af8b0f206fec07d560dc23b6d811f8eca53dd8a784d4",
+  "new_model_generation": false,
+  "canonical_logo_claim": false
+}

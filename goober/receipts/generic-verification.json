@@ -1,0 +1,41 @@
+{
+  "schema": "anewgam-generic-verification/1",
+  "observed_at": "2026-09-11T07:40:22.160785+00:00",
+  "environment": "isolated Linux headless Chromium; local HTTP test origin",
+  "checks": [
+    {
+      "command": "bun test tests/generic-core.test.ts",
+      "result": "8 passed, 0 failed; 11 expectations; hash consistency is not a signature or authority"
+    },
+    {
+      "command": "node tests/generic.browser.cjs",
+      "result": "passed: create, plain-text rendering, reload persistence, append-only correction, search, offline reload, 320/375/768/1365 widths without horizontal overflow, no page errors"
+    },
+    {
+      "command": "node tests/generic-game.browser.cjs",
+      "result": "passed after timer/startup repair: keyboard steering, signal collection, 45-second real-time run, exactly one saved score record, reload persistence, no page errors"
+    }
+  ],
+  "repair": "Game clock now measures elapsed foreground time separately from capped physics steps; startup is effect-bound rather than timer-racy. Initial fast steering test failed before final passing run.",
+  "hashes": {
+    "src/anewgam/FieldlogApp.tsx": "d93dc1fca57c9aec52bdee3895b53e508d1d733a0e5cefd012da6321d942226c",
+    "src/anewgam/BoostRun.tsx": "7045a75eb529df569ce70dd046a0b5a931f69b36ce56c0ee9a1d01b6cd81a59f",
+    "src/anewgam/Dialogs.tsx": "137a29d57733d7a3d59e47180e980660a4b02be9d0514c1fc6c7afb9f581efdd",
+    "src/lib/saedow.ts": "1c49b21c142166628e977c38d52c990f8181d86449fb3b385ca344771a7bbe4d",
+    "scripts/build-fieldlog.ts": "fff8ba9f8527a9af7ac5a5b6d3eea611e22a254aeb6bf7da242c03cd536a2547",
+    "public/saedow/app.js": "a143da1dc3e7e443a5920f854a4e7da7f6aa5a52c5cc2f36d350c5697ec7f9ef",
+    "public/saedow/style.css": "2b7b73ecb291269ec19b356051f5493f4365a661d5ee8ebde57fadf5791fda20",
+    "public/saedow/sw.js": "c94bc50c7da444b5b64231a70e4de17cb6880834e7333166d141ce0556a12944",
+    "public/saedow/index.html": "a3ec6bd9420370db71df0f390bdb3a0c7439ef81b327b2116164c406137f25cd",
+    "public/saedow/manifest.webmanifest": "f542d71b3968b1e593ed6d28354d0eccd2ac6e6f5a5795279158dfdd8bbf783c"
+  },
+  "not_proven": [
+    "installation on Alligndesk",
+    "physical iPhone/Safari execution",
+    "cross-device sync",
+    "Skein acceptance",
+    "identity authentication",
+    "visual inspection of exported screenshots"
+  ],
+  "authority": "none"
+}

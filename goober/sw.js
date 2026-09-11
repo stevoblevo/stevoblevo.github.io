@@ -1,0 +1,7 @@
+const CACHE='goober-pages-shell-v1';const BASE='/goober/';
+const CORE=['','app.js','style.css','manifest.webmanifest','assets/crossing.webp','assets/garden.webp','assets/sanctuary.webp','assets/icon-192.png','assets/icon-512.png'].map(p=>BASE+p);
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('goober-pages-shell-')&&k!==CACHE)await caches.delete(k);await self.clients.claim();})()));
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||!u.pathname.startsWith(BASE)||u.pathname.startsWith(BASE+'saedow/')||e.request.cache==='no-store')return;
+if(e.request.mode==='navigate'&&u.pathname===BASE){e.respondWith(fetch(e.request).then(async r=>{if(r.ok)(await caches.open(CACHE)).put(BASE,r.clone());return r;}).catch(()=>caches.match(BASE)));return;}
+if(!CORE.includes(u.pathname))return;e.respondWith(fetch(e.request).then(async r=>{if(r.ok)(await caches.open(CACHE)).put(e.request,r.clone());return r;}).catch(()=>caches.match(e.request)));});

@@ -1,0 +1,87 @@
+{
+  "at": "2026-09-11T08:02:53.916Z",
+  "environment": "Compiled Worker local harness, headless Chromium; source failure simulated after independent actual HTTP403 observation; MP4 is synthetic test data, not recovered source",
+  "results": [
+    {
+      "name": "navigation alias /$",
+      "passed": true
+    },
+    {
+      "name": "navigation alias /%3E",
+      "passed": true
+    },
+    {
+      "name": "navigation alias /setup",
+      "passed": true
+    },
+    {
+      "name": "setup has four bounded steps",
+      "passed": true
+    },
+    {
+      "name": "no page overflow at phone width",
+      "passed": true
+    },
+    {
+      "name": "setup step persists as a request candidate",
+      "passed": true
+    },
+    {
+      "name": "video host not contacted until requested",
+      "passed": true
+    },
+    {
+      "name": "blocked source gives recovery instructions",
+      "passed": true
+    },
+    {
+      "name": "original link stays available",
+      "passed": true
+    },
+    {
+      "name": "validated local MP4 loads",
+      "passed": true
+    },
+    {
+      "name": "local MP4 actually plays",
+      "passed": true
+    },
+    {
+      "name": "bad input does not replace saved video",
+      "passed": true
+    },
+    {
+      "name": "local MP4 survives reload",
+      "passed": true
+    },
+    {
+      "name": "local MP4 recovers offline",
+      "passed": true
+    },
+    {
+      "name": "no additional Grok requests during reloads",
+      "passed": true
+    },
+    {
+      "name": "bird remains a saved idea, not implementation",
+      "passed": true
+    },
+    {
+      "name": "setup no overflow at 320",
+      "passed": true
+    },
+    {
+      "name": "setup no overflow at 768",
+      "passed": true
+    },
+    {
+      "name": "setup no overflow at 1440",
+      "passed": true
+    },
+    {
+      "name": "no JavaScript runtime exceptions",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-09-11T07:45:14.701Z",
+  "environment": "Compiled Worker local harness + Chromium service worker; not physical Edge or Safari",
+  "results": [
+    {
+      "name": "public shell service worker activated",
+      "passed": true
+    },
+    {
+      "name": "compiled main app reloads offline with persisted notes",
+      "passed": true
+    },
+    {
+      "name": "new local note can be kept offline",
+      "passed": true
+    },
+    {
+      "name": "generic bundle is served and has isolated database",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,87 @@
+{
+  "timestamp": "2026-09-11T07:44:33.855Z",
+  "environment": "http://127.0.0.1:4200; headless Chromium; no device install; service workers blocked for this test",
+  "results": [
+    {
+      "name": "main rendered",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "hero asset loaded",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "role changes story path",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "three-step opening completes",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "story survives reload",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "saved entry renders safe text",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "local search finds exact note",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "export includes 5 hash-linked entries",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "in-app source and trail verification",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "iPhone and Windows install guidance is present",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "unsupported automatic installation not claimed",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "no horizontal overflow at 390",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "no horizontal overflow at 320",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "no horizontal overflow at 768",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "verified import into empty browser profile",
+      "passed": true,
+      "details": ""
+    }
+  ],
+  "errors": []
+}

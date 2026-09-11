@@ -1,0 +1,40 @@
+{
+  "id": "/goober/",
+  "name": "Anewgam · Goober",
+  "short_name": "Anewgam",
+  "description": "Your world, your field log, your next good run.",
+  "start_url": "/goober/",
+  "scope": "/goober/",
+  "display": "standalone",
+  "background_color": "#12111a",
+  "theme_color": "#17141f",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/goober/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/goober/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Field log",
+      "url": "/goober/#log"
+    },
+    {
+      "name": "Sources and receipts",
+      "url": "/goober/#sources"
+    },
+    {
+      "name": "Your PC · setup guide",
+      "url": "/goober/#setup"
+    }
+  ]
+}

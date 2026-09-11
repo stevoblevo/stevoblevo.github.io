@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-11T08:31:52.294Z",
+  "environment": "Local /goober/ deployment mount, fresh Chromium mobile context",
+  "checks": [
+    "Main notes persist through offline reload",
+    "Generic app loads with separate browser database",
+    "Generic app reloads offline",
+    "Setup direct link works"
+  ],
+  "errors": [],
+  "physical_iPhone": "not-tested"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "saelion.media-ingress/0.1",
+  "label": "Take 3 / user-provided Grok video",
+  "source_url": "https://assets.grok.com/users/d04206d6-ae5b-4e6e-8788-54c1ae6a26c1/generated/9856989a-f523-40bc-a327-9fc9c3f58b93/generated_video.mp4?cache=1",
+  "observed_at": "2026-09-11T07:50:48Z",
+  "observation": {"method":"direct HTTPS GET through connected build sandbox","http_status":403,"bytes_received":0},
+  "content_sha256": null,
+  "duration_seconds": null,
+  "source_recovered": false,
+  "relationship_to_earlier_three_video_claims": "unverified; do not equate this URL with any legacy video by title",
+  "implemented_fallbacks": ["user-initiated remote video element", "original link in a new tab", "copy original URL", "validated browser-local MP4 with local SHA-256 receipt"],
+  "not_implemented": ["hosted mirror", "credential forwarding", "authorization bypass", "cross-device media sync"],
+  "poster": {"path":"/assets/crossing.webp","meaning":"existing concept art; NOT a recovered video frame"},
+  "status": "source-blocked; recovery UI implemented"
+}

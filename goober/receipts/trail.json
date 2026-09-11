@@ -1,0 +1,345 @@
+{
+  "schema": "saelion.source-trail/0.1",
+  "scope": "public-build-evidence",
+  "identity_attestation": "none",
+  "skein_ingestion": "not-submitted",
+  "events": [
+    {
+      "sequence": 1,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "owner-request",
+      "status": "received",
+      "details": {
+        "summary": "Create Goober Anewgam using existing generated Library art; include optional lore and reusable SaeDow. Preserve and link evidence inside the application.",
+        "source": "owner messages in current conversation",
+        "public_disclosure": "Alias and game interests only; private personal/account/device details excluded.",
+        "authority_limit": "Website creation and reusable source artifacts; not cross-person private access."
+      },
+      "previous": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "9309fed33e5cc609262519b2b69462c9bdf762b63d204d06b4e44a6358852e15"
+    },
+    {
+      "sequence": 2,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "artwork-recovered",
+      "status": "bytes-verified",
+      "details": {
+        "id": "crossing",
+        "title": "Protect the Lantern",
+        "source_kind": "ChatGPT Library",
+        "file_id": "file_00000000c4b081fbad0d9e1c7e525c57",
+        "classification": "recovered_artwork_not_runtime_proof",
+        "generation": "Library artwork; original generation model and date not verified",
+        "original": "/assets/crossing-original.jpg",
+        "original_sha256": "9d135e48e0da0fd166ec7d30148ebc39a8637ea1e69b19ebe921ccce1fd6697f",
+        "original_bytes": 737552,
+        "display": "/assets/crossing.webp",
+        "display_sha256": "8d9385fecd293ad081efdf65dd08661e907b5c786c6da3ecac1626662fef49b8",
+        "transformation": {
+          "method": "Pillow crop then aspect-preserving thumbnail and WebP compression",
+          "crop_xyxy": [
+            260,
+            40,
+            1490,
+            780
+          ],
+          "max_size": [
+            1440,
+            1100
+          ],
+          "quality": 85
+        },
+        "permission_basis": "Owner requested reuse and linking of existing generated Library art in this Anewgam site."
+      },
+      "previous": "9309fed33e5cc609262519b2b69462c9bdf762b63d204d06b4e44a6358852e15",
+      "hash": "069c4a1b20bd517af0d314d25037a5d6ba759e1b8491f4db4f149e3099fdd0cc"
+    },
+    {
+      "sequence": 3,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "artwork-recovered",
+      "status": "bytes-verified",
+      "details": {
+        "id": "garden",
+        "title": "EverDelve: Garden Central",
+        "source_kind": "ChatGPT Library",
+        "file_id": "file_000000004a8081f5a7b97633730d6617",
+        "classification": "recovered_artwork_not_runtime_proof",
+        "generation": "Library metadata identifies this as model-generated; creation 2026-09-10",
+        "original": "/assets/garden-original.png",
+        "original_sha256": "cb466592f30ec1c4b24fa7ce7b7d16b39fb856ca14821c656020dfaba44d1e83",
+        "original_bytes": 2433686,
+        "display": "/assets/garden.webp",
+        "display_sha256": "3f8ec419e89f1036e07d5db842bd02f9f191bc7742c012ed804cd33ea7005e52",
+        "transformation": {
+          "method": "Pillow crop then aspect-preserving thumbnail and WebP compression",
+          "crop_xyxy": [
+            360,
+            0,
+            1420,
+            900
+          ],
+          "max_size": [
+            1440,
+            1100
+          ],
+          "quality": 85
+        },
+        "permission_basis": "Owner requested reuse and linking of existing generated Library art in this Anewgam site."
+      },
+      "previous": "069c4a1b20bd517af0d314d25037a5d6ba759e1b8491f4db4f149e3099fdd0cc",
+      "hash": "b140e83a35fed97d648ab14bd86acc9825d5487e0e98894f2b8a91b57e6527fb"
+    },
+    {
+      "sequence": 4,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "artwork-recovered",
+      "status": "bytes-verified",
+      "details": {
+        "id": "sanctuary",
+        "title": "Enchanted Tower Garden Sanctuary",
+        "source_kind": "ChatGPT Library",
+        "file_id": "file_00000000b33881f5a33cbe8d9377b63e",
+        "classification": "recovered_artwork_not_runtime_proof",
+        "generation": "Library metadata identifies this as model-generated; creation 2026-09-10",
+        "original": "/assets/sanctuary-original.png",
+        "original_sha256": "40cdf167d6761961b1aa5269dd9f72d34a1445ac6864f20c5306ea6047aeacf1",
+        "original_bytes": 2921352,
+        "display": "/assets/sanctuary.webp",
+        "display_sha256": "ccf28debce9adc077bf5e11e9e422b9ae4d4824b15179d321f682a257983e2f5",
+        "transformation": {
+          "method": "Pillow crop then aspect-preserving thumbnail and WebP compression",
+          "crop_xyxy": [
+            405,
+            0,
+            1380,
+            950
+          ],
+          "max_size": [
+            1440,
+            1100
+          ],
+          "quality": 85
+        },
+        "permission_basis": "Owner requested reuse and linking of existing generated Library art in this Anewgam site."
+      },
+      "previous": "b140e83a35fed97d648ab14bd86acc9825d5487e0e98894f2b8a91b57e6527fb",
+      "hash": "86e8f4397a6fadb049dd7dcd837fac86fd22fac6cf26f88fe2c92e7921baf043"
+    },
+    {
+      "sequence": 5,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "legacy-crossing-board",
+      "status": "reported-not-recovered",
+      "details": {
+        "source_file_id": "file_00000000551881f6ba780b26f3f3b7a7",
+        "source_sha256": "af5fb22c9a64ce939a3299654b6570a3925fb88cdd96786e333b4299671f4464",
+        "board_kept_out_of_public_assets": true,
+        "reported_videos": [
+          {
+            "title": "Protect the Lantern Cinematic",
+            "duration_seconds_reported": 10,
+            "asset_id_reported": "5b2e6041-6a23-4a87-839a-f407be00d89a"
+          },
+          {
+            "title": "GO Launch Activation",
+            "duration_seconds_reported": 6,
+            "asset_id_reported": "646efec8-b41c-4e2e-a095-d223a0530665"
+          },
+          {
+            "title": "True Faith Connection",
+            "duration_seconds_reported": 10,
+            "asset_id_reported": "5b4621c1-ad50-4748-820f-8b0cff8f295e"
+          }
+        ],
+        "reported_paths": [
+          "site/assets/videos/",
+          "scenes.json"
+        ],
+        "lookup": "Library broad and exact-title/identifier searches did not recover the video bytes or scene manifest. This is not proof of absence.",
+        "runtime_status": "Not linked as playable videos; no video creation claimed."
+      },
+      "previous": "86e8f4397a6fadb049dd7dcd837fac86fd22fac6cf26f88fe2c92e7921baf043",
+      "hash": "ba2bea1ff5f5e8ff93b3ea9cc274c47215b9328e97b7e1967f973befa6e5c51d"
+    },
+    {
+      "sequence": 6,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "continuity-and-lore",
+      "status": "candidate-implementation",
+      "details": {
+        "principle": "SaeDow remembers enough to continue; stored content is not execution authority.",
+        "architecture_source_file_id": "file_00000000394081fdbe4e7bd1756b518d",
+        "new_fiction": [
+          "Outrider",
+          "Artificer",
+          "Wayfinder"
+        ],
+        "existing_roles": "Princess and Knight remain relationship/story viewpoints, not permissions.",
+        "world_state": "Device-local playtest strand; no canonical shared-world writes."
+      },
+      "previous": "ba2bea1ff5f5e8ff93b3ea9cc274c47215b9328e97b7e1967f973befa6e5c51d",
+      "hash": "1c97d057e6767f849d80cf8efe0316ea225dd3e89917fc085724b2116786d455"
+    },
+    {
+      "sequence": 7,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "site-infrastructure",
+      "status": "created-not-yet-deployed",
+      "details": {
+        "website_id": "321c5d6c-dea7-4989-960d-eb4df7a18858",
+        "slug": "anewgam-goober",
+        "source_commit": "1ee5e6e84233a02fcd380d19b5885aae185494a5",
+        "stack": "React + TanStack Start, Cloudflare Worker through connected website tool",
+        "paid_generation_submitted": false,
+        "database_binding_enabled": false,
+        "public_feed_publication_requested": false
+      },
+      "previous": "1c97d057e6767f849d80cf8efe0316ea225dd3e89917fc085724b2116786d455",
+      "hash": "60ae476f5d37b8822f91673af050fd429bd2b5e839aa6005172f15183a186208"
+    },
+    {
+      "sequence": 8,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "concurrent-contributions",
+      "status": "preserved-and-coordinated",
+      "details": {
+        "crossing_stream": "Main UI, recovered Crossing art, source trail, common SaeDow schema.",
+        "outpost_stream": "Generic /saedow/ edition, isolated local storage, Signal Run component.",
+        "coordination_record": "app/GOOBER-COLLABORATION.md",
+        "resolution": "Preserve both; main CSS matches main route; generic styles isolated; shared schema with separate browser database namespaces."
+      },
+      "previous": "60ae476f5d37b8822f91673af050fd429bd2b5e839aa6005172f15183a186208",
+      "hash": "3728505fb5c1b86a89f79f361319b0d819de9c3e95f0f271ac5bc6f2763d83b4"
+    },
+    {
+      "sequence": 9,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "device-and-governance-boundaries",
+      "status": "not-connected",
+      "details": {
+        "local_ops_discovery": "Search for Saelion Local Operations did not return a matching available connector.",
+        "all_devices": "No remote installation performed, no device pairing, account access, messaging, or TV control.",
+        "skein": "Portable evidence only; no live ingestion or acceptance.",
+        "saedo": "Requests remain local draft notes; no work dispatched."
+      },
+      "previous": "3728505fb5c1b86a89f79f361319b0d819de9c3e95f0f271ac5bc6f2763d83b4",
+      "hash": "4f6112e516f311300959a4466ea53d6c5795279b540c28ea11eff54363f2a22c"
+    },
+    {
+      "sequence": 10,
+      "recorded_at": "2026-09-11T07:36:31Z",
+      "kind": "initial-preflight",
+      "status": "passed-after-concurrent-edit-settled",
+      "details": {
+        "command": "bun run typecheck",
+        "result": "tsc --noEmit completed with no diagnostics at 07:35 UTC",
+        "earlier_attempt": "A still-being-written generic component briefly failed JSX parsing; it was preserved and completed by its contributing stream.",
+        "tool_friction": "Two source-write requests exceeded the 16000-character command limit and were rejected before execution; smaller subsequent writes completed."
+      },
+      "previous": "4f6112e516f311300959a4466ea53d6c5795279b540c28ea11eff54363f2a22c",
+      "hash": "729121d4fc8d5603a95357e57b4b0f17bf172c1f06c7d2711f72a9cd6f1b22b3"
+    },
+    {
+      "sequence": 11,
+      "recorded_at": "2026-09-11T07:42:56Z",
+      "kind": "main-validation",
+      "status": "passed",
+      "details": {
+        "unit_tests": 17,
+        "unit_failures": 0,
+        "browser_checks": 16,
+        "browser_errors": 0,
+        "browser_environment": "local Vite dev + headless Chromium",
+        "viewports": [
+          1440,
+          390,
+          320,
+          768
+        ],
+        "art_bytes_verified": 6,
+        "reports": [
+          "/receipts/main-unit-tests.txt",
+          "/receipts/main-verification.json"
+        ],
+        "repaired_findings": [
+          "Scaffold development SSR CommonJS configuration",
+          "Tablet hero intrinsic aspect-ratio overflow"
+        ],
+        "scope_limit": "No physical-device installation or cloud continuity claimed."
+      },
+      "previous": "729121d4fc8d5603a95357e57b4b0f17bf172c1f06c7d2711f72a9cd6f1b22b3",
+      "hash": "783d8dd7ec04b837babb8bcb3dbac937c4077f9bdae2f26ffc6843087378fd40"
+    },
+    {
+      "sequence": 12,
+      "recorded_at": "2026-09-11T08:06:05Z",
+      "kind": "take3-source-observation",
+      "status": "source-blocked",
+      "details": {
+        "source_receipt": "/receipts/take3-video.json",
+        "observed_http_status": 403,
+        "received_bytes": 0,
+        "content_hash": null,
+        "duration": null,
+        "relationship_to_legacy_three_videos": "unverified",
+        "fallback": "Explicit original link/player plus validated browser-local MP4; no mirror or credential forwarding."
+      },
+      "previous": "783d8dd7ec04b837babb8bcb3dbac937c4077f9bdae2f26ffc6843087378fd40",
+      "hash": "511c5be10b4fa1885956005c748977539571766150dfffdeed0e14e42de978a0"
+    },
+    {
+      "sequence": 13,
+      "recorded_at": "2026-09-11T08:06:05Z",
+      "kind": "pc-setup-proposal",
+      "status": "prepared-not-installed",
+      "details": {
+        "receipt": "/receipts/dual-boot-preparation.json",
+        "view": "/#setup",
+        "aliases": [
+          "/$",
+          "/>",
+          "/setup"
+        ],
+        "candidate": "Bazzite KDE NVIDIA desktop; Omarchy remains an alternative",
+        "host_inventory": "not-collected",
+        "host_mutation": "none",
+        "review_basis": "Current official OS, Microsoft, and Epic sources; previous GPU record must be rechecked.",
+        "bird_sketch": "Sae-bird/Blubird remains imagined, not canon or implementation."
+      },
+      "previous": "511c5be10b4fa1885956005c748977539571766150dfffdeed0e14e42de978a0",
+      "hash": "7db0d2762fc3f3aa96ef50a13d581673d3e9fd6602e1ef628cec3b1b5de250e2"
+    },
+    {
+      "sequence": 14,
+      "recorded_at": "2026-09-11T08:06:05Z",
+      "kind": "take3-validation",
+      "status": "passed",
+      "details": {
+        "feature_commit": "38e5d529a5403c74494ed12668ff21688ccd0bcd",
+        "integration_commit": "55e1b5634fe1e3038ef3d5849489d35c5d3e3553",
+        "unit_tests": 34,
+        "unit_failures": 0,
+        "browser_checks": 20,
+        "browser_errors": 0,
+        "source_media_used_in_tests": "Synthetic fixture only; Grok original was not recovered",
+        "tested": [
+          "navigation aliases",
+          "setup notes",
+          "source failure recovery",
+          "local MP4 playback",
+          "reload and offline recovery",
+          "no unsolicited source fetch",
+          "invalid file rejection",
+          "phone/tablet/desktop layout"
+        ],
+        "reports": [
+          "/receipts/take3-verification.json",
+          "/receipts/take3-unit-tests.txt"
+        ]
+      },
+      "previous": "7db0d2762fc3f3aa96ef50a13d581673d3e9fd6602e1ef628cec3b1b5de250e2",
+      "hash": "124e3a577fe127ed8fd7c41d10168e90b236bd1e933f48b70d99ed46a499cc8e"
+    }
+  ]
+}

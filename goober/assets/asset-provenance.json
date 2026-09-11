@@ -1,0 +1,86 @@
+[
+  {
+    "id": "crossing",
+    "title": "Protect the Lantern",
+    "source_kind": "ChatGPT Library",
+    "file_id": "file_00000000c4b081fbad0d9e1c7e525c57",
+    "classification": "recovered_artwork_not_runtime_proof",
+    "generation": "Library artwork; original generation model and date not verified",
+    "original": "/goober/assets/crossing-original.jpg",
+    "original_sha256": "9d135e48e0da0fd166ec7d30148ebc39a8637ea1e69b19ebe921ccce1fd6697f",
+    "original_bytes": 737552,
+    "display": "/goober/assets/crossing.webp",
+    "display_sha256": "8d9385fecd293ad081efdf65dd08661e907b5c786c6da3ecac1626662fef49b8",
+    "transformation": {
+      "method": "Pillow crop then aspect-preserving thumbnail and WebP compression",
+      "crop_xyxy": [
+        260,
+        40,
+        1490,
+        780
+      ],
+      "max_size": [
+        1440,
+        1100
+      ],
+      "quality": 85
+    },
+    "permission_basis": "Owner requested reuse and linking of existing generated Library art in this Anewgam site."
+  },
+  {
+    "id": "garden",
+    "title": "EverDelve: Garden Central",
+    "source_kind": "ChatGPT Library",
+    "file_id": "file_000000004a8081f5a7b97633730d6617",
+    "classification": "recovered_artwork_not_runtime_proof",
+    "generation": "Library metadata identifies this as model-generated; creation 2026-09-10",
+    "original": "/goober/assets/garden-original.png",
+    "original_sha256": "cb466592f30ec1c4b24fa7ce7b7d16b39fb856ca14821c656020dfaba44d1e83",
+    "original_bytes": 2433686,
+    "display": "/goober/assets/garden.webp",
+    "display_sha256": "3f8ec419e89f1036e07d5db842bd02f9f191bc7742c012ed804cd33ea7005e52",
+    "transformation": {
+      "method": "Pillow crop then aspect-preserving thumbnail and WebP compression",
+      "crop_xyxy": [
+        360,
+        0,
+        1420,
+        900
+      ],
+      "max_size": [
+        1440,
+        1100
+      ],
+      "quality": 85
+    },
+    "permission_basis": "Owner requested reuse and linking of existing generated Library art in this Anewgam site."
+  },
+  {
+    "id": "sanctuary",
+    "title": "Enchanted Tower Garden Sanctuary",
+    "source_kind": "ChatGPT Library",
+    "file_id": "file_00000000b33881f5a33cbe8d9377b63e",
+    "classification": "recovered_artwork_not_runtime_proof",
+    "generation": "Library metadata identifies this as model-generated; creation 2026-09-10",
+    "original": "/goober/assets/sanctuary-original.png",
+    "original_sha256": "40cdf167d6761961b1aa5269dd9f72d34a1445ac6864f20c5306ea6047aeacf1",
+    "original_bytes": 2921352,
+    "display": "/goober/assets/sanctuary.webp",
+    "display_sha256": "ccf28debce9adc077bf5e11e9e422b9ae4d4824b15179d321f682a257983e2f5",
+    "transformation": {
+      "method": "Pillow crop then aspect-preserving thumbnail and WebP compression",
+      "crop_xyxy": [
+        405,
+        0,
+        1380,
+        950
+      ],
+      "max_size": [
+        1440,
+        1100
+      ],
+      "quality": 85
+    },
+    "permission_basis": "Owner requested reuse and linking of existing generated Library art in this Anewgam site."
+  }
+]

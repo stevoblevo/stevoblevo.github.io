@@ -1,0 +1,25 @@
+bun test v1.4.2 (744846f84)
+
+tests/saedow.test.ts:
+(pass) canonical ordering is stable [0.47ms]
+(pass) known SHA-256 [0.96ms]
+(pass) empty log is valid [0.27ms]
+(pass) two entries survive export and verification [1.79ms]
+(pass) tampered content is rejected [0.54ms]
+(pass) reordered entries are rejected [0.51ms]
+(pass) duplicate identity is rejected [0.69ms]
+(pass) even rehashed authority claims are rejected [0.34ms]
+(pass) even rehashed cross-person scope is rejected [0.34ms]
+(pass) empty title rejected [0.04ms]
+(pass) oversized text rejected [0.06ms]
+(pass) unsupported state rejected [0.03ms]
+(pass) three optional roles have distinct routes [0.18ms]
+(pass) three-step story has complete actions and content [0.06ms]
+(pass) downloaded original and derivative hashes match [16.97ms]
+(pass) portable trail chain matches actual records [1.74ms]
+(pass) app manifest is installable in structure and not an authority claim [0.19ms]
+
+ 17 pass
+ 0 fail
+ 74 expect() calls
+Ran 17 tests across 1 file. [33.00ms]

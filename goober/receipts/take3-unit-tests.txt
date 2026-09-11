@@ -1,0 +1,46 @@
+bun test v1.4.2 (744846f84)
+
+tests/generic-core.test.ts:
+(pass) canonical object order is stable [0.35ms]
+(pass) hash-linked chain verifies internally [2.55ms]
+(pass) edited content fails verification [0.41ms]
+(pass) reordered chain fails verification [0.52ms]
+(pass) duplicate identities fail verification [0.30ms]
+(pass) oversize and empty records fail [0.10ms]
+(pass) unknown state is not accepted [0.03ms]
+(pass) envelope conveys no enrollment or acceptance [0.04ms]
+
+tests/saedow.test.ts:
+(pass) canonical ordering is stable [0.04ms]
+(pass) known SHA-256 [0.14ms]
+(pass) empty log is valid [0.07ms]
+(pass) two entries survive export and verification [0.74ms]
+(pass) tampered content is rejected [0.30ms]
+(pass) reordered entries are rejected [0.31ms]
+(pass) duplicate identity is rejected [0.55ms]
+(pass) even rehashed authority claims are rejected [0.29ms]
+(pass) even rehashed cross-person scope is rejected [0.22ms]
+(pass) empty title rejected [0.03ms]
+(pass) oversized text rejected [0.05ms]
+(pass) unsupported state rejected [0.03ms]
+(pass) three optional roles have distinct routes [0.13ms]
+(pass) three-step story has complete actions and content [0.06ms]
+(pass) downloaded original and derivative hashes match [17.58ms]
+(pass) portable trail chain matches actual records [1.59ms]
+(pass) app manifest is installable in structure and not an authority claim [0.17ms]
+
+tests/take3.test.ts:
+(pass) source host preserved [0.06ms]
+(pass) MP4 header accepted for later decoding [0.31ms]
+(pass) empty data rejected [0.10ms]
+(pass) unsupported container rejected [0.07ms]
+(pass) non-MP4 extension rejected [0.04ms]
+(pass) file size limit [0.01ms]
+(pass) source observation remains unrecovered [0.06ms]
+(pass) setup remains a proposal [0.04ms]
+(pass) setup shortcut is navigation [0.05ms]
+
+ 34 pass
+ 0 fail
+ 99 expect() calls
+Ran 34 tests across 3 files. [38.00ms]
