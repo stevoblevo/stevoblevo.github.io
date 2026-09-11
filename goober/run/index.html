@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17141f">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Signal Run">
+<title>Signal Run · Anewgam</title>
+<link rel="icon" href="/goober/assets/icon-192.png">
+<style>
+:root{--gold:#eac37d;--violet:#b693f4;--ink:#12111a;--paper:#f3eee6;--muted:#8d7a63}
+*{box-sizing:border-box}
+html,body{margin:0;background:#12111a;color:var(--paper);font:16px/1.5 Georgia,serif}
+body{min-height:100dvh;display:flex;flex-direction:column;padding:18px 16px 28px}
+a{color:var(--gold)}
+header{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:14px}
+.eyebrow{font:11px/1.4 ui-monospace,monospace;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+h1{font-size:28px;font-weight:400;margin:4px 0 0}
+.nav{display:flex;gap:14px;font:12px/1.4 ui-monospace,monospace}
+.boost-hud{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:11px/1.6 ui-monospace,monospace;color:var(--gold);margin-bottom:10px}
+.boost-hud em{font-style:normal;letter-spacing:.08em;color:var(--muted)}
+.boost-hud em.hot{color:var(--violet)}
+canvas{display:block;width:100%;max-width:920px;aspect-ratio:720/420;height:auto;border-radius:8px;background:#10131c;touch-action:none;cursor:crosshair}
+.boost-under{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:16px 0;flex-wrap:wrap}
+.boost-under p{margin:0;font-size:14px;max-width:38rem}
+.primary{background:var(--gold);border:0;border-radius:5px;padding:12px 20px;color:#271e2b;font:13px/1.2 ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+.touch-controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.touch-controls button{touch-action:none;user-select:none;min-width:49px;min-height:49px;border:1px solid #70597e;border-radius:8px;background:#1b1724;color:var(--paper)}
+.small{font:12px/1.7 ui-sans-serif,system-ui,sans-serif;color:var(--muted);max-width:40rem}
+.status{min-height:1.2em;font:12px/1.5 ui-monospace,monospace;color:var(--violet)}
+@media(max-width:640px){h1{font-size:22px}.boost-under{display:block}.primary{margin-top:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="eyebrow">Keep the Crossing lit</div>
+    <h1>Signal Run</h1>
+  </div>
+  <nav class="nav">
+    <a href="/goober/">World</a>
+    <a href="/goober/#log">Field log</a>
+    <a href="/goober/saedow/">Notebook</a>
+  </nav>
+</header>
+<section class="boost">
+  <div class="boost-hud">
+    <span id="hud-approach">SIGNAL RUN / 45 SEC</span>
+    <b id="hud-score">0 signals</b>
+    <em id="hud-combo">FIND YOUR LINE</em>
+    <span id="hud-time">45s</span>
+  </div>
+  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run field. Drag to steer."></canvas>
+  <div class="boost-under">
+    <p id="line">Collect gold signals. Keep a clean line through the ruins. Drag to steer.</p>
+    <button class="primary" id="start">Start 45-second run <span>↗</span></button>
+  </div>
+  <div class="touch-controls">
+    <button type="button" data-key="ArrowLeft">←</button>
+    <button type="button" data-key="ArrowUp">↑</button>
+    <button type="button" data-key="ArrowDown">↓</button>
+    <button type="button" data-key="ArrowRight">→</button>
+    <button type="button" data-key=" ">Boost</button>
+    <button type="button" data-key="Shift">Brake</button>
+  </div>
+  <p class="status" id="status"></p>
+  <p class="small">Drag the field to steer · WASD / arrows · Space boost · Shift brake. Violet lanterns appear on a hot line. A faint violet ghost is your last route. Local skill toy — not a leaderboard, not a wager. A finished run can be kept in this browser’s Crossing field log.</p>
+</section>
+<script src="./run.js"></script>
+</body>
+</html>
