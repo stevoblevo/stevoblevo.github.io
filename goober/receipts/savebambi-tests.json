@@ -1,0 +1,116 @@
+{
+  "unit_report": "TAP version 13\n# Subtest: old context link keeps exact corrected source\nok 1 - old context link keeps exact corrected source\n  ---\n  duration_ms: 1.199557\n  ...\n# Subtest: any selected public catalog picture is eligible\nok 2 - any selected public catalog picture is eligible\n  ---\n  duration_ms: 1.0229\n  ...\n# Subtest: unknown picture is not substituted\nok 3 - unknown picture is not substituted\n  ---\n  duration_ms: 0.2521\n  ...\n# Subtest: ambiguous picture query rejected\nok 4 - ambiguous picture query rejected\n  ---\n  duration_ms: 0.151318\n  ...\n# Subtest: other person project is not silently resolved\nok 5 - other person project is not silently resolved\n  ---\n  duration_ms: 0.176234\n  ...\n# Subtest: unapproved URL, traversal and encoded path rejected\nok 6 - unapproved URL, traversal and encoded path rejected\n  ---\n  duration_ms: 0.173946\n  ...\n# Subtest: incomplete or duplicate catalog rejected\nok 7 - incomplete or duplicate catalog rejected\n  ---\n  duration_ms: 0.192143\n  ...\n# Subtest: empty reason rejected\nok 8 - empty reason rejected\n  ---\n  duration_ms: 0.225664\n  ...\n# Subtest: overlong input rejected\nok 9 - overlong input rejected\n  ---\n  duration_ms: 0.212232\n  ...\n# Subtest: input text does not execute or create authority\nok 10 - input text does not execute or create authority\n  ---\n  duration_ms: 0.301078\n  ...\n# Subtest: idea note and request retain distinct maturity\nok 11 - idea note and request retain distinct maturity\n  ---\n  duration_ms: 0.214466\n  ...\n# Subtest: repeat same draft uses existing receipt\nok 12 - repeat same draft uses existing receipt\n  ---\n  duration_ms: 0.248518\n  ...\n# Subtest: changed reason appends once\nok 13 - changed reason appends once\n  ---\n  duration_ms: 0.200643\n  ...\n# Subtest: failed validation or storage is not accepted\nok 14 - failed validation or storage is not accepted\n  ---\n  duration_ms: 1.399954\n  ...\n1..14\n# tests 14\n# suites 0\n# pass 14\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 74.445078\n",
+  "browser_report": {
+    "tested_at": "2026-09-11T18:48:59.856Z",
+    "origin": "http://127.0.0.1:4951",
+    "environment": "Fresh isolated Chromium profiles; synthetic notes, no user account data; service workers blocked to test this feature",
+    "checks": [
+      {
+        "name": "same project opens the exact corrected picture",
+        "passed": true
+      },
+      {
+        "name": "opening does not save another entry",
+        "passed": true
+      },
+      {
+        "name": "existing database and entry remain",
+        "passed": true
+      },
+      {
+        "name": "reason required, no silent partial save",
+        "passed": true
+      },
+      {
+        "name": "double submit appends only one note",
+        "passed": true
+      },
+      {
+        "name": "save shows committed receipt",
+        "passed": true
+      },
+      {
+        "name": "no injected markup in result",
+        "passed": true
+      },
+      {
+        "name": "source, meaning and next step saved together",
+        "passed": true
+      },
+      {
+        "name": "entry is imagined, local, and has no action authority",
+        "passed": true
+      },
+      {
+        "name": "exact retry reuses the existing note",
+        "passed": true
+      },
+      {
+        "name": "native field log reads the new entry without import",
+        "passed": true
+      },
+      {
+        "name": "saved entry survives main-app reload",
+        "passed": true
+      },
+      {
+        "name": "normal app export retains the same schema and all notes",
+        "passed": true
+      },
+      {
+        "name": "gallery hands off another exact picture",
+        "passed": true
+      },
+      {
+        "name": "gallery selection does not save on its own",
+        "passed": true
+      },
+      {
+        "name": "project page no overflow 320",
+        "passed": true
+      },
+      {
+        "name": "project page no overflow 390",
+        "passed": true
+      },
+      {
+        "name": "project page no overflow 768",
+        "passed": true
+      },
+      {
+        "name": "project page no overflow 1440",
+        "passed": true
+      },
+      {
+        "name": "unknown image is not substituted or saved",
+        "passed": true
+      },
+      {
+        "name": "another project cannot be opened through this hook",
+        "passed": true
+      },
+      {
+        "name": "concurrent append never loses existing notes",
+        "passed": true
+      },
+      {
+        "name": "all runtime requests remain on this site",
+        "passed": true
+      },
+      {
+        "name": "no JavaScript runtime exceptions",
+        "passed": true
+      },
+      {
+        "name": "tampered history blocks writes, not silently repaired",
+        "passed": true
+      },
+      {
+        "name": "without JavaScript only explicit links remain, save disabled",
+        "passed": true
+      }
+    ],
+    "errors": []
+  },
+  "test_harness_correction": "First browser assertion read innerText inside a collapsed receipt details element; corrected to read stored textContent. No application failure or data loss occurred in that assertion."
+}

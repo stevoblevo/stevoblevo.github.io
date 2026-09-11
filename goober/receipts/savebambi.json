@@ -1,0 +1,56 @@
+{
+  "schema": "saelion.savebambi-local/0.1",
+  "recorded_at": "2026-09-11T18:52:14.013521+00:00",
+  "status": "implemented-local-browser-action; live verification pending",
+  "name": "$aveBambi \u00b7 keep the thread",
+  "route": "/goober/project$/#cockpit",
+  "scope": "Goober public picture context into the existing browser-local field log",
+  "source_selection": "Explicit public catalog ID; corrected reference remains the default of the pre-existing context URL. Unknown/duplicate/other-project selectors reject without image substitution.",
+  "trigger": "Explicit Keep with this project form submission. Opening any link never appends a note.",
+  "writes": {
+    "database": "anewgam-goober-v1",
+    "object_store": "log",
+    "key": "entries",
+    "schema": "saedow/0.1",
+    "new_database": false,
+    "authority": "none",
+    "acceptance": "self-reported",
+    "existing_notes": "Verified before append. Existing compare-head transaction protects against lost concurrent updates.",
+    "repeat": "Sequential identical saves reuse an existing matching entry instead of appending a duplicate."
+  },
+  "source_module": {
+    "source_path": "app/src/lib/saedow.ts",
+    "observed_checkout_commit": "127c92817b7d3e25f3ce52b6cef72aff3f3a4b7f",
+    "source_sha256": "1c49b21c142166628e977c38d52c990f8181d86449fb3b385ca344771a7bbe4d",
+    "compiler": "TypeScript5.8.3 transpileModule, ES2022 module/target",
+    "operation": "TypeScript-to-JavaScript generation of the fetched existing module; no semantic store changes.",
+    "browser_module": "../project$/saedow-store.js"
+  },
+  "retained_with_note": [
+    "user title and note",
+    "why it matters",
+    "optional next step",
+    "source picture deep link",
+    "source SHA-256",
+    "same project context"
+  ],
+  "validation": {
+    "unit_checks": 14,
+    "local_browser_checks": 26,
+    "failed_checks": 0,
+    "page_exceptions": [],
+    "visual_review": "Actual desktop/phone browser screenshots inspected through the connected image reader; selected reference/art present and form layout clear."
+  },
+  "integration": "Gallery viewer offers this local keep action for every currently selected public picture. The native main-app field log reads, reloads and exports these entries with no import or schema migration.",
+  "limits": [
+    "Not a global installed CLI/skill handler",
+    "No autonomous care or worker dispatch",
+    "No cross-device synchronization or encryption",
+    "No home-network/DNS/tunnel changes",
+    "This additional project page is not yet cached for offline opening",
+    "No user device or existing user records were accessed from the build sandbox"
+  ],
+  "verification_report": "savebambi-tests.json",
+  "test_sources": "savebambi-test-sources.json",
+  "design_lineage": "Existing Bambi care/continuation direction and project-doorway work; this is the bounded keep-context slice, not the whole outcome."
+}
