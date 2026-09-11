@@ -1,15 +1,18 @@
 {
   "schema": "saelion.static-release/0.1",
-  "application": "Anewgam · Goober / Take 3",
+  "application": "Anewgam · Goober / image-first gallery",
   "source_commit": "8d67bbe0c9b3be572440861570dc91674b8b84f0",
-  "archive_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/a38e3fa7-e170-4d7c-9f79-9394c1ba4dec.zip",
-  "archive_sha256": "58d4df5a5a9ab32372dceb2e2024be27b331fe027aa525498b9f1c77a291c6e6",
-  "archive_bytes": 7821328,
+  "gallery_base_commit": "1d099af733fe06248fcba7b690f2eb50540dbfbc",
+  "archive_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/ebd70aec-086d-4720-bce4-5b739591b180.zip",
+  "archive_sha256": "5337666830b5f49b0a9606e35e7c72153c49763bbd3db3eab110ad1e814a5e94",
+  "archive_bytes": 7841586,
   "mount": "/goober/",
   "intended_url": "https://stevoblevo.github.io/goober/",
-  "local_verification": {"browser_checks": 16, "offline_scope_checks": 4, "failures": 0},
-  "preservation": "Existing root website and Peachfall files remain unchanged. Only the Goober subtree and its delivery workflow are added.",
-  "privacy": "Public app shell; no family contact details or account credentials seeded. Browser-local notes and selected MP4 files remain unsynchronized and unencrypted.",
+  "gallery_url": "https://stevoblevo.github.io/goober/gallery/",
+  "local_verification": {"browser_checks": 27, "failures": 0, "javascript_errors": 0, "runtime_requests": "same-origin only", "archive_roundtrip_sha256": "verified"},
+  "preservation": "All 58 existing Goober files retained. Only gallery/index.html and gallery/art-yarn.md changed among the existing files, plus the regenerated hash manifest. Added gallery/browser.css, browser.js and browser-receipt.json. Original artwork bytes, source title strings, app bundle, service worker and stored browser records unchanged. Other site subtrees are not modified.",
+  "privacy": "Public selected artwork only. No private Library pictures, unconfirmed portraits, screenshots, credentials or personal source notes added. No queries or images sent to external image-search providers.",
   "world_state": "Device-local playtest; not canonical Skein acceptance or device authority.",
-  "release_status": "pending live anonymous verification"
+  "release_status": "gallery update locally verified; awaiting anonymous live check",
+  "receipt": "/goober/gallery/browser-receipt.json"
 }
