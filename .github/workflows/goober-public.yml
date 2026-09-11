@@ -1,0 +1,50 @@
+name: Publish Goober without a sign-in gate
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/goober-public.yml'
+      - '.github/scripts/publish-goober.py'
+      - 'goober-release.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: goober-public-delivery
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}goober/
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 1
+      - name: Verify and unpack only the Goober release
+        run: python3 .github/scripts/publish-goober.py
+      - name: Preserve the generated Goober files without changing existing pages
+        run: |
+          git config user.name 'Saelion delivery'
+          git config user.email 'saelion-delivery@users.noreply.github.com'
+          git add -- goober
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish verified Goober Anewgam static release'
+            git push origin HEAD:master
+          fi
+      - name: Stage the existing site and Goober together
+        run: |
+          mkdir -p "$RUNNER_TEMP/complete-site"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/complete-site"
+          rm -rf "$RUNNER_TEMP/complete-site/.github"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/complete-site
+      - name: Deploy the public site
+        id: deploy
+        uses: actions/deploy-pages@v4
