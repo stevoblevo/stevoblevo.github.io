@@ -1,0 +1,10 @@
+{
+  "schema":"saelion.process-gallery-live/0.1",
+  "tested_at":"2026-09-11T10:34:26.346Z",
+  "url":"https://stevoblevo.github.io/goober/gallery/",
+  "verification":{"environment":"Fresh anonymous headless Chromium","checks_passed":12,"checks_failed":0,"javascript_errors":[],"viewports":[320,390,1280],"features":["fourteen displayed records","twelve original artworks distinct from two process images","process room filtering","full review image loads","CloudFront original links","original SHA256 verification","prior Garden image deep link","responsive layouts","scope-limited ingress receipt"]},
+  "collection":{"original_artworks":12,"process_images":2,"new_original_artwork":0},
+  "archive_sha256":"4c661184d4688f42ec5eeaf03c18f260ddc15d5120b6e5306009f98c3e45ad16",
+  "history":"Later live observation supplements the existing local test record and ingress trail; no prior evidence is rewritten.",
+  "limits":{"local_relay_installed":false,"DNS_changed":false,"domain_purchased":false,"NAS_share_exposed":false,"worker_launched":false,"complete_raw_chat_capture":false}
+}
