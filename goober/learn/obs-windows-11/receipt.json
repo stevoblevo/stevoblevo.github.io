@@ -1,0 +1,91 @@
+{
+  "schema": "saelion.field-guide-build/0.1",
+  "recorded_at": "2026-09-11T10:48:38.177512+00:00",
+  "id": "obs-windows-11-first-recording",
+  "state": "locally-verified; live publication pending",
+  "scope": "OBS Studio installation-directory and first-recording guide on existing Goober site",
+  "interpretation": "OBS Studio; no prior completed-install checkpoint recovered",
+  "host_installation": "not-performed-or-verified-by-this-work",
+  "actual_user_directories": "not-inspected",
+  "sources": [
+    {
+      "title": "Official OBS download",
+      "url": "https://obsproject.com/download"
+    },
+    {
+      "title": "OBS quick start",
+      "url": "https://obsproject.com/kb/quick-start-guide"
+    },
+    {
+      "title": "Recording path, MKV and remux",
+      "url": "https://obsproject.com/kb/standard-recording-output-guide"
+    },
+    {
+      "title": "OBS Portable mode",
+      "url": "https://obsproject.com/kb/portable-mode"
+    },
+    {
+      "title": "OBS support: settings folder and export",
+      "url": "https://obsproject.com/forum/threads/where-are-the-personal-settings-located.95819/"
+    },
+    {
+      "title": "OBS official documentation: install folder example",
+      "url": "https://obsproject.com/kb/virtual-camera-troubleshooting"
+    }
+  ],
+  "source_checked_on": "2026-09-11",
+  "delivered_content": [
+    "normal versus portable directory map",
+    "six-step local checklist",
+    "six1200x675PNG share cards",
+    "eight-post unposted X/Twitter thread",
+    "121-word narration transcript; no audio recording claimed",
+    "plain-text fallback",
+    "image brief",
+    "six guide images linked in existing gallery"
+  ],
+  "graphics": {
+    "generation": "deterministic HTML/CSS composition with existing public background art",
+    "not_claimed": "No native OBS screenshot, real host recording, generative new artwork or completed installation",
+    "six_final_card_QRs_decoded": true,
+    "metadata": "PNG saelion.context; no credentials or personal paths",
+    "manifest": "cards/manifest.json"
+  },
+  "validation": {
+    "browser_checks_passed": 34,
+    "failed": 0,
+    "runtime_exceptions": [],
+    "viewports": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "notes": "Validated step links, path-mode switch, clipboard controls, progress reload, all share files, preserved app field log and20-image gallery. A mobile long-URL overflow was repaired before these final checks."
+  },
+  "post_lengths": [
+    184,
+    198,
+    179,
+    206,
+    182,
+    204,
+    194,
+    204
+  ],
+  "maximum_post_length": 206,
+  "publication_to_social_accounts": "not-requested-and-not-performed",
+  "privacy": {
+    "remote_control": false,
+    "streaming_connection": false,
+    "private_file_read": false,
+    "background_network_probe": false,
+    "browser_storage": "Own checkbox list under goober.obs-guide.v1; existing records not modified"
+  },
+  "older_work_preserved": [
+    "existing app bundle and service worker",
+    "twelve world artworks and two process views",
+    "earlier receipts and route semantics"
+  ],
+  "next_host_proof": "Launch installed OBS on target PC, confirm actual paths and devices, make a private test clip and watch the saved result. No tool in this work executed that host proof."
+}

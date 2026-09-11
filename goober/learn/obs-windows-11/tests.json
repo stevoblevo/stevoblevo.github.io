@@ -1,0 +1,144 @@
+{
+  "at": "2026-09-11T10:47:38.073Z",
+  "origin": "http://127.0.0.1:5011",
+  "checks": [
+    {
+      "name": "guide HTTP200 and hydrated",
+      "passed": true
+    },
+    {
+      "name": "six instructional steps",
+      "passed": true
+    },
+    {
+      "name": "installer path distinguished from settings",
+      "passed": true
+    },
+    {
+      "name": "portable mode changes examples",
+      "passed": true
+    },
+    {
+      "name": "recordings remain a separate choice",
+      "passed": true
+    },
+    {
+      "name": "copy button copies only the literal path",
+      "passed": true
+    },
+    {
+      "name": "progress updates to one",
+      "passed": true
+    },
+    {
+      "name": "checklist survives reload",
+      "passed": true
+    },
+    {
+      "name": "six local checkmarks, no installation claim",
+      "passed": true
+    },
+    {
+      "name": "six full-resolution share cards load",
+      "passed": true
+    },
+    {
+      "name": "eight posts present",
+      "passed": true
+    },
+    {
+      "name": "every post has concise plain-text length",
+      "passed": true
+    },
+    {
+      "name": "individual thread copy works",
+      "passed": true
+    },
+    {
+      "name": "whole thread copy works",
+      "passed": true
+    },
+    {
+      "name": "narration copy works",
+      "passed": true
+    },
+    {
+      "name": "download share-kit.zip",
+      "passed": true
+    },
+    {
+      "name": "download thread.txt",
+      "passed": true
+    },
+    {
+      "name": "download narration.txt",
+      "passed": true
+    },
+    {
+      "name": "download walkthrough.txt",
+      "passed": true
+    },
+    {
+      "name": "download image-brief.md",
+      "passed": true
+    },
+    {
+      "name": "download cards/manifest.json",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow 320",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow 390",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow 768",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "QR step anchor lands on the right section",
+      "passed": true
+    },
+    {
+      "name": "guide is linked inside existing app",
+      "passed": true
+    },
+    {
+      "name": "existing field log still saves and reloads",
+      "passed": true
+    },
+    {
+      "name": "expanded gallery plus guide cards",
+      "passed": true
+    },
+    {
+      "name": "six guide cards surfaced in gallery",
+      "passed": true
+    },
+    {
+      "name": "gallery opens the guide-card original",
+      "passed": true
+    },
+    {
+      "name": "no unrequested third-party network traffic",
+      "passed": true
+    },
+    {
+      "name": "no runtime page errors",
+      "passed": true
+    },
+    {
+      "name": "download and readable fallback without JavaScript",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "scope": "website behavior only; no host installation"
+}

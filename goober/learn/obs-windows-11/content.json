@@ -1,0 +1,119 @@
+{
+  "schema": "saelion.field-guide/0.1",
+  "id": "obs-windows-11-first-recording",
+  "title": "Keep the moment. Know where it goes.",
+  "scope": "OBS Studio on Windows 11; normal installer unless Portable is selected",
+  "host_installation": "not-verified",
+  "checked_on": "2026-09-11",
+  "steps": [
+    {
+      "id": "download",
+      "number": "01",
+      "eyebrow": "START AT THE SOURCE",
+      "title": "The real OBS. The ordinary installer.",
+      "copy": "Open the OBS Project download page. Choose Windows and the appropriate installer for your PC. Review the installer before allowing changes. Avoid sponsored look-alike downloads.",
+      "proof": "OBS opens on your PC. This checklist cannot detect or install it.",
+      "source": "https://obsproject.com/download",
+      "source_label": "Official download",
+      "card_title": "Start at obsproject.com",
+      "card_body": "Windows → installer → open OBS.\nNo mirror sites. No mystery bundle."
+    },
+    {
+      "id": "folders",
+      "number": "02",
+      "eyebrow": "THE DIRECTORY MAP",
+      "title": "Three folders. Three different jobs.",
+      "copy": "App files run OBS. Settings keep scenes and profiles. Recordings go where you choose in Output settings. Changing the install directory does not select the recording destination.",
+      "proof": "You know where the app, its settings and the next clip belong.",
+      "source": "https://obsproject.com/kb/standard-recording-output-guide",
+      "source_label": "Recording path guide",
+      "card_title": "App ≠ settings ≠ recordings",
+      "card_body": "APP / runs OBS\nSETTINGS / keeps your setup\nRECORDINGS / keeps your clips"
+    },
+    {
+      "id": "scene",
+      "number": "03",
+      "eyebrow": "ONE CLEAN SCENE",
+      "title": "Start small. Capture the right thing.",
+      "copy": "Run Tools → Auto-Configuration Wizard for recording. Add one scene, then Game Capture for a game or Window Capture for an app. Use Display Capture only when you intend to show the whole display.",
+      "proof": "The preview shows your intended content, not an unrelated window.",
+      "source": "https://obsproject.com/kb/quick-start-guide",
+      "source_label": "OBS quick start",
+      "card_title": "One scene. One clear source.",
+      "card_body": "Game or Window Capture first.\nShow only what belongs in the story."
+    },
+    {
+      "id": "audio",
+      "number": "04",
+      "eyebrow": "HEAR IT BEFORE THEY DO",
+      "title": "Check the meters. Protect the edges.",
+      "copy": "Speak, then play a little sound. Check the mixer; choose the intended devices in Settings → Audio. Mute what you do not need. Close private windows and quiet notifications.",
+      "proof": "Your sentence and intended app sound are audible in the saved test.",
+      "source": "https://obsproject.com/kb/quick-start-guide",
+      "source_label": "Audio and testing",
+      "card_title": "Picture + voice + privacy",
+      "card_body": "Check sound. Hide private windows.\nYour first audience is you."
+    },
+    {
+      "id": "output",
+      "number": "05",
+      "eyebrow": "A PLACE FOR THE CLIP",
+      "title": "Choose the destination first.",
+      "copy": "In Settings → Output, set Recording Path to a writable folder you can find. Start with MKV for resilience when recording stops unexpectedly. Check free space before a long session.",
+      "proof": "The chosen folder exists and a short test file can be written there.",
+      "source": "https://obsproject.com/kb/standard-recording-output-guide",
+      "source_label": "Output and formats",
+      "card_title": "Pick the folder. Record to MKV.",
+      "card_body": "Settings → Output → Recording Path\nChoose a folder you can find again."
+    },
+    {
+      "id": "test",
+      "number": "06",
+      "eyebrow": "PROOF BEFORE PUBLISH",
+      "title": "Record. Stop. Watch. Then share.",
+      "copy": "Make a private one-minute test. Stop and open the saved file. Check picture, voice, app sound and privacy. Run a longer test before a long session. Use File → Remux Recordings for an MP4 copy.",
+      "proof": "You watched the saved clip. Completing a checklist does not broadcast it.",
+      "source": "https://obsproject.com/kb/standard-recording-output-guide",
+      "source_label": "Remux without re-recording",
+      "card_title": "The saved clip is the proof.",
+      "card_body": "One private minute → watch it back.\nMKV → Remux → MP4 when needed."
+    }
+  ],
+  "thread": [
+    "1/8 OBS on Windows 11 gets less confusing when you separate three things: the app, its settings, and your recordings. A recording-first setup flow—no stream key, no surprise broadcast.",
+    "2/8 Start at https://obsproject.com/download and choose the Windows installer for your PC. Keep the normal installer path unless you need a different one. Your recording folder is a separate choice.",
+    "3/8 App folder: runs OBS. Settings: keeps scenes/profiles. Recordings: set in Settings → Output → Recording Path. Do not hunt through Program Files for the clip you just recorded.",
+    "4/8 Run Tools → Auto-Configuration Wizard for recording. Start with one scene and one source: Game Capture for a game, Window Capture for an app. Display Capture shows the whole display—choose deliberately.",
+    "5/8 Speak and play some sound. Check the mixer. Close private tabs, mute unwanted devices, and quiet notifications. Moving meters help; listening to the saved clip is the real check.",
+    "6/8 Choose a writable recording folder and start with MKV. OBS recommends it for interrupted-recording resilience. Need MP4 afterward? File → Remux Recordings. Keep the original until the copy is checked.",
+    "7/8 Record one private minute. Stop. Find the file. Watch and listen. Check picture, voice, app sound, and privacy. Do a longer test before longer sessions. A test recording is not a livestream.",
+    "8/8 Visual guide, folder map, six share cards and narration: https://stevoblevo.github.io/goober/learn/obs-windows-11/ Built with Saelion. Your checklist—not a claim that we installed OBS on your machine."
+  ],
+  "narration": "Before your first OBS recording, separate three places: the app, the settings, and the clips. Download OBS Studio from the official project. Use the normal Windows installer unless you deliberately need Portable mode. The app folder is not your recording folder. Open Settings, then Output, and choose where your clips should land. Run the Auto-Configuration Wizard for recording. Add one scene and capture only the game or window you intend to show. Check your voice and app sound, then close private windows and quiet notifications. Record one private minute in MKV. Stop, open the actual file, and watch it back. Picture, voice, app sound, privacy. Need an MP4? Use File, Remux Recordings. First prove the saved clip. Then tell the story.",
+  "sources": [
+    {
+      "title": "Official OBS download",
+      "url": "https://obsproject.com/download"
+    },
+    {
+      "title": "OBS quick start",
+      "url": "https://obsproject.com/kb/quick-start-guide"
+    },
+    {
+      "title": "Recording path, MKV and remux",
+      "url": "https://obsproject.com/kb/standard-recording-output-guide"
+    },
+    {
+      "title": "OBS Portable mode",
+      "url": "https://obsproject.com/kb/portable-mode"
+    },
+    {
+      "title": "OBS support: settings folder and export",
+      "url": "https://obsproject.com/forum/threads/where-are-the-personal-settings-located.95819/"
+    },
+    {
+      "title": "OBS official documentation: install folder example",
+      "url": "https://obsproject.com/kb/virtual-camera-troubleshooting"
+    }
+  ]
+}

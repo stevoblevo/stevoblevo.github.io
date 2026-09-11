@@ -1,0 +1,17 @@
+OBS Studio on Windows 11 / X thread / draft, not posted
+
+1/8 OBS on Windows 11 gets less confusing when you separate three things: the app, its settings, and your recordings. A recording-first setup flow—no stream key, no surprise broadcast.
+
+2/8 Start at https://obsproject.com/download and choose the Windows installer for your PC. Keep the normal installer path unless you need a different one. Your recording folder is a separate choice.
+
+3/8 App folder: runs OBS. Settings: keeps scenes/profiles. Recordings: set in Settings → Output → Recording Path. Do not hunt through Program Files for the clip you just recorded.
+
+4/8 Run Tools → Auto-Configuration Wizard for recording. Start with one scene and one source: Game Capture for a game, Window Capture for an app. Display Capture shows the whole display—choose deliberately.
+
+5/8 Speak and play some sound. Check the mixer. Close private tabs, mute unwanted devices, and quiet notifications. Moving meters help; listening to the saved clip is the real check.
+
+6/8 Choose a writable recording folder and start with MKV. OBS recommends it for interrupted-recording resilience. Need MP4 afterward? File → Remux Recordings. Keep the original until the copy is checked.
+
+7/8 Record one private minute. Stop. Find the file. Watch and listen. Check picture, voice, app sound, and privacy. Do a longer test before longer sessions. A test recording is not a livestream.
+
+8/8 Visual guide, folder map, six share cards and narration: https://stevoblevo.github.io/goober/learn/obs-windows-11/ Built with Saelion. Your checklist—not a claim that we installed OBS on your machine.

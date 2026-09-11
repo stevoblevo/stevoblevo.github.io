@@ -1,0 +1,33 @@
+Keep the moment. Know where it goes.
+OBS Studio / Windows 11
+Guide only; host installation not verified.
+
+01 The real OBS. The ordinary installer.
+Open the OBS Project download page. Choose Windows and the appropriate installer for your PC. Review the installer before allowing changes. Avoid sponsored look-alike downloads.
+Check: OBS opens on your PC. This checklist cannot detect or install it.
+Source: https://obsproject.com/download
+
+02 Three folders. Three different jobs.
+App files run OBS. Settings keep scenes and profiles. Recordings go where you choose in Output settings. Changing the install directory does not select the recording destination.
+Check: You know where the app, its settings and the next clip belong.
+Source: https://obsproject.com/kb/standard-recording-output-guide
+
+03 Start small. Capture the right thing.
+Run Tools → Auto-Configuration Wizard for recording. Add one scene, then Game Capture for a game or Window Capture for an app. Use Display Capture only when you intend to show the whole display.
+Check: The preview shows your intended content, not an unrelated window.
+Source: https://obsproject.com/kb/quick-start-guide
+
+04 Check the meters. Protect the edges.
+Speak, then play a little sound. Check the mixer; choose the intended devices in Settings → Audio. Mute what you do not need. Close private windows and quiet notifications.
+Check: Your sentence and intended app sound are audible in the saved test.
+Source: https://obsproject.com/kb/quick-start-guide
+
+05 Choose the destination first.
+In Settings → Output, set Recording Path to a writable folder you can find. Start with MKV for resilience when recording stops unexpectedly. Check free space before a long session.
+Check: The chosen folder exists and a short test file can be written there.
+Source: https://obsproject.com/kb/standard-recording-output-guide
+
+06 Record. Stop. Watch. Then share.
+Make a private one-minute test. Stop and open the saved file. Check picture, voice, app sound and privacy. Run a longer test before a long session. Use File → Remux Recordings for an MP4 copy.
+Check: You watched the saved clip. Completing a checklist does not broadcast it.
+Source: https://obsproject.com/kb/standard-recording-output-guide

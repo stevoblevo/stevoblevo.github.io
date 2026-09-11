@@ -1,0 +1,50 @@
+[
+  {
+    "file": "01-download.png",
+    "bytes": 773064,
+    "sha256": "f8a4a3ddbe32b780c146c484b7b55321e4d889cb589d1adcd3b46f7fa6a55d44",
+    "qr_url": "https://stevoblevo.github.io/goober/learn/obs-windows-11/#step-download",
+    "qr_decode": "passed-on-final-rendered-card",
+    "image_type": "deterministic instructional diagram; not an OBS UI screenshot"
+  },
+  {
+    "file": "02-folders.png",
+    "bytes": 783313,
+    "sha256": "787b2f6270d5d33b796af4d9ae807b13df20da552283d674e2edd552b2b63092",
+    "qr_url": "https://stevoblevo.github.io/goober/learn/obs-windows-11/#step-folders",
+    "qr_decode": "passed-on-final-rendered-card",
+    "image_type": "deterministic instructional diagram; not an OBS UI screenshot"
+  },
+  {
+    "file": "03-scene.png",
+    "bytes": 753861,
+    "sha256": "ad5c2d2307bb922ac61d51e49f3d8099d310a2951878dacb8816381f179cd326",
+    "qr_url": "https://stevoblevo.github.io/goober/learn/obs-windows-11/#step-scene",
+    "qr_decode": "passed-on-final-rendered-card",
+    "image_type": "deterministic instructional diagram; not an OBS UI screenshot"
+  },
+  {
+    "file": "04-audio.png",
+    "bytes": 772409,
+    "sha256": "4cbeb1f64ea2d5114aed2e97ec4a5b985191bce24b348917bf2e47f8a698e5c6",
+    "qr_url": "https://stevoblevo.github.io/goober/learn/obs-windows-11/#step-audio",
+    "qr_decode": "passed-on-final-rendered-card",
+    "image_type": "deterministic instructional diagram; not an OBS UI screenshot"
+  },
+  {
+    "file": "05-output.png",
+    "bytes": 777463,
+    "sha256": "d902a9cc85976a7b94f41cd7b6d1c8a204e6fb5eb656d28dc1c3e180e9609b18",
+    "qr_url": "https://stevoblevo.github.io/goober/learn/obs-windows-11/#step-output",
+    "qr_decode": "passed-on-final-rendered-card",
+    "image_type": "deterministic instructional diagram; not an OBS UI screenshot"
+  },
+  {
+    "file": "06-test.png",
+    "bytes": 779380,
+    "sha256": "c8ee47e9b5f7f83a48ec1055e3b042563fcedcea0fce47951da04e081f97e1f1",
+    "qr_url": "https://stevoblevo.github.io/goober/learn/obs-windows-11/#step-test",
+    "qr_decode": "passed-on-final-rendered-card",
+    "image_type": "deterministic instructional diagram; not an OBS UI screenshot"
+  }
+]
