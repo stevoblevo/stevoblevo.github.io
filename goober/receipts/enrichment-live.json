@@ -1,0 +1,36 @@
+{
+  "schema": "saelion.site-enrichment-live/0.1",
+  "tested_at": "2026-09-11T10:07:37.910Z",
+  "status": "verified-anonymous-public-access",
+  "url": "https://stevoblevo.github.io/goober/",
+  "gallery": "https://stevoblevo.github.io/goober/gallery/",
+  "names": "https://stevoblevo.github.io/goober/lattice/",
+  "deployed_commit_tested": "7a369b26efc41e03e70a95256c10c50656ebee27",
+  "release_pointer_commit": "8271f9c73e0396697b73b10d92ac83653a378170",
+  "archive_sha256": "ffe278243f50098a3d415f26bb5f9eb591195ce54aea5a23c723c41fc464f9d9",
+  "archive_roundtrip": "verified",
+  "files": {
+    "index.html": "bfd1b726c02e96fe890a15f113a465caa057d5d5120e4d3d3c0fbb654d0811eb",
+    "gallery/index.html": "5468607d194db9e384f17b91aa071a84b85f3a4852b94122c73a8c3de9af26c8",
+    "gallery/atlas.js": "4465df48111eaecb3363ccd1927098014292232e0408b59f6f41e2a91b05af31",
+    "gallery/atlas.css": "7b06df86e7bc4b861f100edc4832fe994052bd47799934825a9305f4549cebac",
+    "gallery/catalog.json": "e7db428c5ac661e999443d22662679082cd11782ac9b8aac1a4148b144d99108",
+    "enrichment.js": "dc99390a7d5ae0d29baf8b882f1e324fec6de242be53a6074894f99d56ae180f",
+    "enrichment.css": "00747a1c7384edb334112427a9c01d1bed8b5009c7a32ba11397649532053b43",
+    "lattice/resolve.js": "566e6594e2955ab89bf649d5c61f3cbb423b326c85dfd1d45af4cc73011629ea"
+  },
+  "verification": {
+    "browser": "Fresh anonymous headless Chromium",
+    "checks_passed": 33,
+    "checks_failed": 0,
+    "javascript_errors": [],
+    "viewports": [320, 390, 768, 1440],
+    "checked": ["twelve distinct originals and loaded thumbnails", "named-room filters", "original filename search", "empty state", "density", "full-original viewer", "twelve-item filmstrip", "zoom controls and reset", "pointer drag pan", "explicit derivative switch", "original SHA-256 verification", "keyboard and Escape", "legacy picture links", "CloudFront source links", "responsive gallery", "main hero and illustrated gallery doors", "existing field log save and reload", "three public semantic routes", "unknown/private route rejection", "no private or third-party background requests", "original links without JavaScript"],
+    "public_HTTP200_paths": ["/", "/peachfall/", "/goober/", "/goober/gallery/", "/goober/lattice/"]
+  },
+  "art": {"originals_before":3,"originals_after":12,"additional_original_hashes_verified":9,"new_AI_generation":false,"CloudFront_original_hash_matches":3},
+  "continuity": "Installed origin, main app bundle, service worker and local record format retained. No user's browser data was accessed or cleared.",
+  "network_limits": {"local_DNS_written":false,"private_NAS_share_exposed":false,"tunnel_created":false,"native_ChatGPT_Site_published":false},
+  "scope_limits": ["Selected public artwork, not automatic Library ingestion", "Blocked/private source images not exported", "No original Grok-video recovery", "No new gallery offline support claim", "Logical names are not installed OS protocol handlers or authority", "No live Skein acceptance or Saedo worker launch"],
+  "history": "Earlier receipts remain unchanged. This is the later live observation for the richer same-origin surface."
+}
