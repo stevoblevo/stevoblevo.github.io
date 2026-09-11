@@ -39,3 +39,9 @@ Reuse the implemented original-link and browser-local MP4 recovery path. Once au
 
 ## Completion rules
 A plan is not a worker dispatch. Candidate code is not a live result. A matching hash is not an authenticated identity or a true claim. Public delivery means the link opens anonymously and the feature works. This yarn names next actions and acceptance checks; no background worker or new hosting service is started by saving it.
+
+## Image-first layout correction · 11 September 2026
+
+Owner asked for the familiar Yandex-style browsing direction. The current gallery now has an image-first dense wall, prominent search, filters and density control, a full-viewport original viewer with a related-picture side panel, and separate stable IDs / stored filenames. Source notes and this yarn are folded below the pictures instead of occupying the first screen. Related pictures are curated same-world links, NOT an implemented computer-vision similarity search. No pictures or queries are sent to Yandex/Grok. The original/crop distinction, byte verification, keyboard navigation and existing deep links remain; same-page fragment navigation was repaired.
+
+The browser change receipt records 27 local checks, with live delivery recorded separately after publication. The public collection is still three original artworks. Correct prior-image labels remain a private curation question; no unconfirmed portrait was substituted. The new pinned public release includes the complete existing gallery, not the older payload that omitted it. Future source exports must preserve browser.css and browser.js along with index.html and the earlier plan/receipts.

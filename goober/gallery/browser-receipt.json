@@ -1,0 +1,144 @@
+{
+  "schema": "saelion.gallery-browser-change/0.1",
+  "recorded_at": "2026-09-11T09:25:37.338372+00:00",
+  "change": "Yandex-inspired image-first gallery on the same origin; not a Yandex service integration",
+  "status": "local-tests-passed; live check pending",
+  "prior_pages_commit": "1d099af733fe06248fcba7b690f2eb50540dbfbc",
+  "prior_gallery_html_sha256": "5cdebbf553d00a0d5b3184befa13f03befc15a34ddd5d35221204ad32d66d7fa",
+  "source_files": {
+    "index.html": "85ce863329fd6a6d26fb1140253d8a5cb2da42f9f0bba861f9e08bfe40f6d9a9",
+    "browser.css": "2ceb50e7a7c17c26b3b93df26f9e4b3bd0b83bfd66ff90025f59cd8afaddb8e4",
+    "browser.js": "a00ba3c945df4ad562ce4471f2651829bff8d96d9010398a6b34a462871f601b"
+  },
+  "checks": [
+    {
+      "name": "three public original families, no padded duplicates",
+      "passed": true
+    },
+    {
+      "name": "image wall begins above fold",
+      "passed": true
+    },
+    {
+      "name": "original titles intact",
+      "passed": true
+    },
+    {
+      "name": "garden filter yields two families",
+      "passed": true
+    },
+    {
+      "name": "stored source filename is searchable",
+      "passed": true
+    },
+    {
+      "name": "truthful empty state",
+      "passed": true
+    },
+    {
+      "name": "density is functional",
+      "passed": true
+    },
+    {
+      "name": "full-viewport viewer",
+      "passed": true
+    },
+    {
+      "name": "original selected by default",
+      "passed": true
+    },
+    {
+      "name": "curated same-world related images",
+      "passed": true
+    },
+    {
+      "name": "stable ID and filename visible",
+      "passed": true
+    },
+    {
+      "name": "related picture navigation works",
+      "passed": true
+    },
+    {
+      "name": "recorded crop toggle works",
+      "passed": true
+    },
+    {
+      "name": "natural-size view works",
+      "passed": true
+    },
+    {
+      "name": "original byte verification retained",
+      "passed": true
+    },
+    {
+      "name": "keyboard next works",
+      "passed": true
+    },
+    {
+      "name": "escape restores page scrolling",
+      "passed": true
+    },
+    {
+      "name": "same-page fragment selection fixed",
+      "passed": true
+    },
+    {
+      "name": "no gallery overflow 320",
+      "passed": true
+    },
+    {
+      "name": "no gallery overflow 390",
+      "passed": true
+    },
+    {
+      "name": "no gallery overflow 768",
+      "passed": true
+    },
+    {
+      "name": "no gallery overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "fresh-page image link retained",
+      "passed": true
+    },
+    {
+      "name": "art plan and coverage remain reachable",
+      "passed": true
+    },
+    {
+      "name": "all runtime resources remain same-origin",
+      "passed": true
+    },
+    {
+      "name": "no runtime exceptions",
+      "passed": true
+    },
+    {
+      "name": "original links survive without JavaScript",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "preserved": [
+    "three original artwork families and recorded title strings",
+    "original/display byte hashes",
+    "existing gallery path and image IDs",
+    "existing app bundle and service worker",
+    "browser-local notes and MP4 records; no data mutation"
+  ],
+  "not_claimed": [
+    "new original artworks",
+    "complete Library/chat ingestion",
+    "AI reverse image search",
+    "identity inference from portraits",
+    "private-catalog exposure",
+    "live Skein acceptance",
+    "offline gallery caching"
+  ],
+  "naming": "Stable gallery ID, recorded title and stored original filename are separate; unknown names are not guessed.",
+  "privacy": "No private Library pictures, screenshots or personal source notes were added; runtime requests in the browser test stayed same-origin.",
+  "upstream_reference": "https://www.yandex.com/support/browser/en/search-and-browse/search-image",
+  "visual_review": "Review screenshots were generated; this receipt does not claim manual visual inspection."
+}
