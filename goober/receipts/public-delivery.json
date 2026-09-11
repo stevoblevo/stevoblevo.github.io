@@ -4,7 +4,7 @@
   "target_url": "https://stevoblevo.github.io/goober/",
   "source_owner": "existing owner-requested Goober application",
   "adaptation": "Same React app component, client entry instead of Worker SSR; root-relative runtime paths mounted under /goober/. Gameplay, local record format, source image bytes and existing hash trail unchanged.",
-  "live_status": "pending-deployment-verification",
+  "live_status": "verified-anonymous-public-access",
   "privacy": "Public app shell; notes and local MP4 are browser-local, unencrypted, not synchronized. Other pages at this host are not private security boundaries.",
   "skein_acceptance": "not-submitted",
   "evidence": [
@@ -18,5 +18,25 @@
     "offline_and_scope_checks": 4,
     "failures": 0
   },
-  "source_archive": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/f2742b8c-83f8-4e8e-a066-c14c420e5aa2.zip"
+  "source_archive": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/f2742b8c-83f8-4e8e-a066-c14c420e5aa2.zip",
+  "live_verification": {
+    "tested_at": "2026-09-11T08:34:30.458Z",
+    "deployed_github_commit": "c3f036dc64432b70a29b6ee864f292b4cf68976f",
+    "anonymous_http_status": 200,
+    "fresh_browser_context": true,
+    "browser": "headless Chromium",
+    "browser_checks_passed": 16,
+    "browser_checks_failed": 0,
+    "javascript_errors": 0,
+    "viewports_tested": [
+      1440,
+      390,
+      320,
+      768
+    ],
+    "offline_reload": "passed in a separate live-origin browser session",
+    "pwa_scope": "https://stevoblevo.github.io/goober/",
+    "physical_iPhone_or_Alligndesk_installation": "not-performed",
+    "existing_root_and_peachfall_pages": "remain HTTP200; application export added only goober subtree"
+  }
 }
