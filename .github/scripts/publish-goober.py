@@ -15,7 +15,7 @@ if len(data) > 25_000_000 or hashlib.sha256(data).hexdigest() != release['archiv
 with tempfile.TemporaryDirectory(prefix='goober-verified-') as temp:
     stage = Path(temp)
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
-        if len(archive.infolist()) > 150 or sum(i.file_size for i in archive.infolist()) > 40_000_000:
+        if len(archive.infolist()) > 256 or sum(i.file_size for i in archive.infolist()) > 40_000_000:
             raise SystemExit('Unexpected archive size')
         for item in archive.infolist():
             path = PurePosixPath(item.filename)
