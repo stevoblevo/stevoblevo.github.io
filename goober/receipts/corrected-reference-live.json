@@ -1,0 +1,27 @@
+{
+  "schema":"saelion.corrected-reference-live/0.1",
+  "tested_at":"2026-09-11T12:07:39.657Z",
+  "status":"verified-anonymous-public-access",
+  "deployed_commit_tested":"5ff93fd6979f7c3e6acce12b8f48d08be385f197",
+  "release_pointer_commit":"e2ec8a9098b4bb10117277e5c249ba42e57f84eb",
+  "gallery_url":"https://stevoblevo.github.io/goober/gallery/#smell-device-reference",
+  "context_url":"https://stevoblevo.github.io/goober/project$/#cockpit",
+  "existing_field_log":"https://stevoblevo.github.io/goober/#log",
+  "public_image_sha256":"bf97fcd41e78256b2161b25bbee0e03af101187f602f4eed1f28b4b00ebb6003",
+  "source_receipt":"corrected-reference.json",
+  "archive_sha256":"4f5d808f668bbd91833c2d93db6a2244c9727e4fbad2f0e8019513e3703b97b0",
+  "archive_roundtrip_verified":true,
+  "verification":{
+    "browser":"Fresh anonymous Chromium; no existing user browser data",
+    "checks_passed":17,
+    "checks_failed":0,
+    "runtime_exceptions":[],
+    "checks":["exact corrected image and757x1210 dimensions","public-crop label","visible context link","21-record filmstrip","crop SHA-256 verification","References filter","six prior learning cards","filename/topic search","no horizontal overflow at320/390/1440","same-origin project card","link to existing field log","no automatic note write","local note save/reload","no page exceptions","context links without JavaScript"]
+  },
+  "collection":{"world_artworks":12,"process_images":2,"learning_cards":6,"reference_screenshots":1},
+  "privacy":"Only an exact crop is public. Browser URL, unrelated sidebar conversations, and other window content remain outside the published image. The complete source screenshot was not uploaded to this site.",
+  "context_scope":"A static reference card links the existing field log. It is not a new cockpit backend, authenticated session, automatic context sync, or worker dispatch.",
+  "naming":"Nephew/nephwe is generic relationship/project vocabulary, not a game name. $aveBambi is a proposed care-and-continuation avenue, documented but not installed globally.",
+  "unchanged":["main app bundle","main stylesheet","service worker","existing enrichment script","prior20 gallery records","local record format"],
+  "not_claimed":["independent verification of third-party screenshot assertions","new original world art","live Skein acceptance","new DNS or tunnel","physical-device installation","automatic note transfer"]
+}
