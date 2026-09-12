@@ -52,21 +52,21 @@ canvas{display:block;width:100%;max-width:920px;aspect-ratio:720/420;height:auto
     <em id="hud-combo">FIND YOUR LINE</em>
     <span id="hud-time">45s</span>
   </div>
-  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run field. Drag to steer."></canvas>
+  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run field. A and D turn. W goes. S eases."></canvas>
   <div class="boost-under">
-    <p id="line">Collect gold signals. Keep a clean line through the ruins. Drag to steer.</p>
+    <p id="line">Collect gold signals. Turn, then go. Keep a clean line through the ruins.</p>
     <button class="primary" id="start">Start 45-second run <span>↗</span></button>
   </div>
   <div class="touch-controls">
-    <button type="button" data-key="ArrowLeft">←</button>
-    <button type="button" data-key="ArrowUp">↑</button>
-    <button type="button" data-key="ArrowDown">↓</button>
-    <button type="button" data-key="ArrowRight">→</button>
-    <button type="button" data-key=" ">Boost</button>
-    <button type="button" data-key="Shift">Brake</button>
+    <button type="button" data-key="a" aria-label="Turn left">↺</button>
+    <button type="button" data-key="w" aria-label="Go">↑</button>
+    <button type="button" data-key="s" aria-label="Ease">↓</button>
+    <button type="button" data-key="d" aria-label="Turn right">↻</button>
+    <button type="button" data-key=" ">Burst</button>
+    <button type="button" data-key="Shift">Ease</button>
   </div>
   <p class="status" id="status"></p>
-  <p class="small">Drag the field to steer · WASD / arrows · Space boost · Shift brake. Violet lanterns appear on a hot line. A faint violet ghost is your last route. Local skill toy — not a leaderboard, not a wager. A finished run can be kept in this browser’s Crossing field log.</p>
+  <p class="small">A/D or ← → turn · W go · S ease · Space burst · Shift extra drag. Drag the field to aim the nose. Violet lanterns appear on a hot line. A faint violet ghost is your last route. Local skill toy — not a leaderboard, not a wager. A finished run can be kept in this browser’s Crossing field log.</p>
 </section>
 <script src="./run.js"></script>
 </body>

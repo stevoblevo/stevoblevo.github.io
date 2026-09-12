@@ -3,11 +3,13 @@ const RUINS=[[118,92,46,86],[312,268,58,40],[508,78,42,120],[248,148,28,28],[572
 const GHOST_KEY='anewgam-signal-run-ghost-v1';
 const DB='anewgam-goober-v1';
 const ROOT='0'.repeat(64);
+const TURN=3.2;
+const THRUST=420;
 const canvas=document.getElementById('field');
 const ctx=canvas.getContext('2d');
 const keys=new Set();
-let pointer=null,running=false,paused=false,raf=0;
-let x=180,y=230,vx=0,vy=0,elapsed=0,last=0,pulse=0;
+let pointer=null,running=false,paused=false,raf=0,steer=0;
+let x=180,y=230,vx=0,vy=0,heading=0,elapsed=0,last=0,pulse=0;
 let score=0,combo=0,comboMax=0,clean=0,hits=0,lanterns=0;
 let target={x:520,y:210,kind:'spark'};
 const trail=[],crumbs=[],ghostPath=[];
@@ -15,6 +17,29 @@ let ghost=[];
 try{ghost=JSON.parse(localStorage.getItem(GHOST_KEY)||'[]');}catch{ghost=[];}
 
 function $(id){return document.getElementById(id);}
+function pressed(){
+  const out=new Set();
+  keys.forEach(k=>{
+    const n=String(k);
+    out.add(n);
+    if(n==='KeyA'||n==='a'||n==='A')out.add('a');
+    if(n==='KeyD'||n==='d'||n==='D')out.add('d');
+    if(n==='KeyW'||n==='w'||n==='W')out.add('w');
+    if(n==='KeyS'||n==='s'||n==='S')out.add('s');
+    if(n==='Space'||n===' ')out.add(' ');
+    if(n==='ShiftLeft'||n==='ShiftRight'||n==='Shift')out.add('Shift');
+    if(n==='ArrowLeft')out.add('ArrowLeft');
+    if(n==='ArrowRight')out.add('ArrowRight');
+    if(n==='ArrowUp')out.add('ArrowUp');
+    if(n==='ArrowDown')out.add('ArrowDown');
+  });
+  return out;
+}
+function wrap(a){
+  while(a>Math.PI)a-=Math.PI*2;
+  while(a<-Math.PI)a+=Math.PI*2;
+  return a;
+}
 function hud(){
   $('hud-score').textContent=score+' signals';
   $('hud-time').textContent=Math.max(0,Math.ceil(45-elapsed))+'s';
@@ -47,7 +72,7 @@ function bounce(){
     x+=Math.sign(dx||1)*10;y+=Math.sign(dy||1)*10;
   }
 }
-function draw(){
+function draw(thrusting){
   ctx.fillStyle='#10131c';ctx.fillRect(0,0,W,H);
   const g=ctx.createRadialGradient(target.x,target.y,10,360,210,420);
   g.addColorStop(0,'rgba(234,195,125,0.07)');g.addColorStop(1,'#10131c');
@@ -71,25 +96,40 @@ function draw(){
   ctx.lineWidth=3;ctx.beginPath();ctx.arc(target.x,target.y,18*glow,0,7);ctx.stroke();
   ctx.beginPath();ctx.arc(target.x,target.y,5,0,7);ctx.stroke();
   if(target.kind==='lantern'){ctx.fillStyle='rgba(182,147,244,0.18)';ctx.beginPath();ctx.arc(target.x,target.y,28*glow,0,7);ctx.fill();}
-  ctx.save();ctx.translate(x,y);ctx.rotate(Math.atan2(vy,vx)||0);
+  ctx.save();ctx.translate(x,y);ctx.rotate(heading);
+  if(thrusting){
+    ctx.fillStyle='rgba(234,195,125,0.85)';
+    ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(-22,-5);ctx.lineTo(-18,0);ctx.lineTo(-22,5);ctx.closePath();ctx.fill();
+  }
   ctx.fillStyle='#f3eee6';ctx.beginPath();ctx.moveTo(17,0);ctx.lineTo(-12,-10);ctx.lineTo(-6,0);ctx.lineTo(-12,10);ctx.closePath();ctx.fill();
   ctx.restore();
 }
 function tick(now){
   const step=last?Math.max(0,(now-last)/1000):0;
   const dt=Math.min(step,.05);last=now;pulse+=dt*6;
+  let thrusting=false;
   if(running&&!paused){
     elapsed+=step;
-    let ax=0,ay=0;
-    if(keys.has('ArrowLeft')||keys.has('a'))ax--;
-    if(keys.has('ArrowRight')||keys.has('d'))ax++;
-    if(keys.has('ArrowUp')||keys.has('w'))ay--;
-    if(keys.has('ArrowDown')||keys.has('s'))ay++;
-    if(pointer){const dx=pointer.x-x,dy=pointer.y-y,len=Math.hypot(dx,dy)||1;ax+=dx/len;ay+=dy/len;}
-    const boost=keys.has(' ')?2.05:1;
-    const length=Math.hypot(ax,ay)||1;
-    if(ax||ay||pointer){vx+=(ax/length)*400*boost*dt;vy+(ay/length)*400*boost*dt;vx+=(ax/length)*400*boost*dt;vy+=(ay/length)*400*boost*dt;}
-    const drag=Math.pow(keys.has('Shift')?.16:.42,dt);
+    const down=pressed();
+    if(down.has('ArrowLeft')||down.has('a'))heading-=TURN*dt;
+    if(down.has('ArrowRight')||down.has('d'))heading+=TURN*dt;
+    heading+=steer*dt;
+    heading=wrap(heading);
+    let thrust=0;
+    if(down.has('ArrowUp')||down.has('w'))thrust+=1;
+    if(down.has('ArrowDown')||down.has('s'))thrust-=0.45;
+    if(pointer){
+      const want=Math.atan2(pointer.y-y,pointer.x-x);
+      heading=wrap(heading+wrap(want-heading)*Math.min(1,2.4*dt));
+      thrust+=0.85;
+    }
+    const boost=down.has(' ')?2.05:1;
+    if(thrust){
+      thrusting=thrust>0;
+      vx+=Math.cos(heading)*thrust*THRUST*boost*dt;
+      vy+=Math.sin(heading)*thrust*THRUST*boost*dt;
+    }
+    const drag=Math.pow(down.has('Shift')?.16:.42,dt);
     vx*=drag;vy*=drag;x+=vx*dt;y+=vy*dt;
     if(x<30||x>690){vx*=-.65;x=Math.max(30,Math.min(690,x));bounce();}
     if(y<30||y>390){vy*=-.65;y=Math.max(30,Math.min(390,y));bounce();}
@@ -112,13 +152,13 @@ function tick(now){
     hud();
     if(elapsed>=45)finish();
   }
-  draw();
+  draw(thrusting);
   raf=requestAnimationFrame(tick);
 }
 function reset(){
-  x=180;y=230;vx=0;vy=0;elapsed=0;last=0;score=0;combo=0;comboMax=0;clean=0;hits=0;lanterns=0;
+  x=180;y=230;vx=0;vy=0;heading=0;elapsed=0;last=0;score=0;combo=0;comboMax=0;clean=0;hits=0;lanterns=0;steer=0;
   trail.length=0;crumbs.length=0;ghostPath.length=0;target={x:520,y:210,kind:'spark'};
-  $('line').textContent='Collect gold signals. Keep a clean line through the ruins. Drag to steer.';
+  $('line').textContent='Collect gold signals. Turn, then go. Keep a clean line through the ruins.';
   $('start').textContent='Start 45-second run \u2197';
   $('status').textContent='';
   hud();
@@ -189,13 +229,22 @@ function toLocal(e){
   const box=canvas.getBoundingClientRect();
   return {x:(e.clientX-box.left)*(W/box.width),y:(e.clientY-box.top)*(H/box.height)};
 }
+function codeOf(e){
+  if(e.code&&e.code!=='Unidentified')return e.code;
+  return e.key;
+}
 document.addEventListener('keydown',e=>{
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d',' ','Shift'].includes(e.key)){e.preventDefault();keys.add(e.key);}
+  const k=codeOf(e);
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD','w','a','s','d','W','A','S','D',' ','Space','Shift','ShiftLeft','ShiftRight'].includes(k)||['w','a','s','d',' '].includes(e.key)){
+    e.preventDefault();keys.add(k);if(e.key)keys.add(e.key);
+  }
 });
-document.addEventListener('keyup',e=>keys.delete(e.key));
+document.addEventListener('keyup',e=>{
+  keys.delete(codeOf(e));keys.delete(e.key);
+});
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden&&running){paused=true;$('line').textContent='Paused while this tab is hidden.';}
-  else if(running){paused=false;last=performance.now();$('line').textContent='Collect gold signals. Keep a clean line through the ruins.';}
+  else if(running){paused=false;last=performance.now();$('line').textContent='Collect gold signals. Turn, then go. Keep a clean line through the ruins.';}
 });
 canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pointer=toLocal(e);});
 canvas.addEventListener('pointermove',e=>{if(pointer)pointer=toLocal(e);});
@@ -208,4 +257,12 @@ document.querySelectorAll('.touch-controls button').forEach(btn=>{
   btn.addEventListener('pointercancel',()=>keys.delete(key));
 });
 $('start').addEventListener('click',start);
-hud();draw();raf=requestAnimationFrame(tick);
+window.__controlsTest={
+  getYaw:()=>heading,
+  getSpeed:()=>Math.hypot(vx,vy),
+  getX:()=>x,
+  getY:()=>y,
+  setKeys:(codes)=>{keys.clear();(codes||[]).forEach(c=>keys.add(c));},
+  setSteer:(v)=>{steer=Number(v)||0;}
+};
+hud();draw(false);raf=requestAnimationFrame(tick);
