@@ -52,22 +52,22 @@ canvas{display:block;width:100%;max-width:920px;aspect-ratio:720/420;height:auto
     <em id="hud-combo">FIND YOUR LINE</em>
     <span id="hud-time">45s</span>
   </div>
-  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run field. A and D turn. W goes. S eases."></canvas>
+  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run. Arrow keys or WASD. Left and right turn. Up goes."></canvas>
   <div class="boost-under">
-    <p id="line">Collect gold signals. Turn, then go. Keep a clean line through the ruins.</p>
+    <p id="line">Collect gold signals. Arrows or WASD. Left and right turn. Up goes.</p>
     <button class="primary" id="start">Start 45-second run <span>↗</span></button>
   </div>
   <div class="touch-controls">
-    <button type="button" data-key="a" aria-label="Turn left">↺</button>
-    <button type="button" data-key="w" aria-label="Go">↑</button>
-    <button type="button" data-key="s" aria-label="Ease">↓</button>
-    <button type="button" data-key="d" aria-label="Turn right">↻</button>
-    <button type="button" data-key=" ">Burst</button>
-    <button type="button" data-key="Shift">Hush</button>
+    <button type="button" data-key="ArrowLeft" aria-label="Turn left">←</button>
+    <button type="button" data-key="ArrowUp" aria-label="Go">↑</button>
+    <button type="button" data-key="ArrowDown" aria-label="Ease">↓</button>
+    <button type="button" data-key="ArrowRight" aria-label="Turn right">→</button>
+    <button type="button" data-key=" ">Boost</button>
+    <button type="button" data-key="Shift">Brake</button>
   </div>
   <p class="status" id="status"></p>
-  <p class="small">A/D or arrows turn · W go · S ease · Space burst · Shift hush. Drag the field to aim the nose. Violet lanterns appear on a hot line. A faint violet ghost is your last route. Local skill toy — not a leaderboard, not a wager. A finished run can be kept in this browser’s Crossing field log.</p>
+  <p class="small">Arrows or WASD. Left/right turn. Up goes. Space boost. Shift brake. Drag to aim. Local skill toy — not a leaderboard, not a wager.</p>
 </section>
-<script src="./run.js"></script>
+<script src="./run.v2.js?v=2"></script>
 </body>
 </html>
