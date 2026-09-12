@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17141f">
+<title>Play · Anewgam</title>
+<style>
+:root{--gold:#eac37d;--violet:#b693f4;--ink:#12111a;--paper:#f3eee6;--muted:#8d7a63}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font:18px/1.55 Georgia,serif;padding:22px}
+a{color:var(--gold)}
+.eyebrow{font:11px/1.4 ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+h1{font-weight:400;font-size:clamp(2rem,6vw,3.4rem);margin:8px 0 12px}
+.lede{max-width:38rem;color:#e7dcc8}
+.grid{display:grid;gap:14px;margin:28px 0;max-width:40rem}
+.card{display:block;border:1px solid #70597e;border-radius:12px;padding:18px 20px;background:#1b1724;color:var(--paper);text-decoration:none}
+.card:hover{border-color:var(--gold)}
+.card b{display:block;font:22px/1.2 Georgia,serif;margin-bottom:6px}
+.card small{color:var(--muted);font:13px/1.5 ui-sans-serif,system-ui,sans-serif}
+.note{max-width:40rem;color:var(--muted);font-size:14px}
+nav a{margin-right:14px;font:12px/1.4 ui-monospace,monospace}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/goober/">World</a>
+  <a href="/goober/#approach">Approach</a>
+  <a href="/goober/run/">Signal Run</a>
+  <a href="/goober/lattice/">Named doors</a>
+</nav>
+<p class="eyebrow">Aiden’s door · connects, does not copy</p>
+<h1>Play the dream. Or watch it.</h1>
+<p class="lede">Two sites stay two sites. This page is the handshake. Peachfall is Steven’s game — public, cloud, or local on Blevodesk. Goober is Aiden’s world. No work from either side gets thrown away.</p>
+<div class="grid">
+  <a class="card" href="/peachfall/">
+    <b>Watch / Play · public Peachfall</b>
+    <small>stevoblevo.github.io/peachfall — tap WATCH THE DREAM first. PLAY THE DREAM is Aiden’s try.</small>
+  </a>
+  <a class="card" href="https://pilot-plum-acorn-finch.grok.me/">
+    <b>Cloud build · Grok preview</b>
+    <small>Same slice when the GitHub door is behind. Does not replace the public copy.</small>
+  </a>
+  <a class="card" href="http://127.0.0.1:5173/">
+    <b>Blevodesk local · only if Steven is running it</b>
+    <small>Explicit localhost:5173. This page does not scan the network. If nothing is listening, the browser just fails closed.</small>
+  </a>
+  <a class="card" href="/goober/run/">
+    <b>Signal Run · Aiden’s toy</b>
+    <small>Stays on this PWA. Arrows or WASD. Separate from Peachfall.</small>
+  </a>
+</div>
+<p class="note">PWA scope stays <code>/goober/</code> so install is Aiden’s world. Peachfall stays its own origin path. Unify later by pointing this handshake, not by merging trees. Local binding: not connected. Authority: none.</p>
+</body>
+</html>
