@@ -4,6 +4,7 @@
   "authority": "none",
   "routes": [
     {"id": "saelion://anewgam/goober", "name": "Goober’s world", "url": "/goober/", "state": "public-route", "action": "open"},
+    {"id": "saelion://anewgam/goober/tower", "name": "The Tower thread", "url": "/goober/#tower", "state": "public-route", "action": "open"},
     {"id": "saelion://anewgam/goober/gallery", "name": "The atlas", "url": "/goober/gallery/", "state": "public-route", "action": "open"},
     {"id": "saelion://anewgam/goober/play", "name": "Play handshake", "url": "/goober/play/", "state": "public-route", "action": "open"},
     {"id": "saelion://anewgam/goober/run", "name": "Signal Run", "url": "/goober/run/", "state": "public-route", "action": "open"},
@@ -13,5 +14,5 @@
   ],
   "local_binding": {"state": "not-connected", "endpoint": null, "network_probe": false},
   "private_media": {"state": "not-connected", "endpoint": null, "anonymous_listing": false},
-  "note": "Logical names are in-app resource identifiers, not installed OS protocol handlers, DNS records, or action permission. This file projects public routes only; it is not canonical Skein authority. Peachfall stays its own tree. Goober /play is the handshake, not a copy."
+  "note": "Logical names are in-app resource identifiers, not installed OS protocol handlers, DNS records, or action permission. This file projects public routes only; it is not canonical Skein authority. The Tower is an anchor inside the existing Goober PWA, not another cockpit. Peachfall stays its own tree. Goober /play is the handshake, not a copy."
 }

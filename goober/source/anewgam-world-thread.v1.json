@@ -1,0 +1,105 @@
+{
+  "schema": "saelion.anewgam.world-thread/1.0",
+  "title": "Play Creates the World",
+  "status": "published-public-projection",
+  "publication": {
+    "date": "2026-09-13",
+    "basis": "owner-directed",
+    "scope": "public world-law, public artwork provenance, and device-local candidate play",
+    "skein_acceptance": "not-connected"
+  },
+  "source": {
+    "gallery_id": "peachfall-09",
+    "canonical_original": "/peachfall/source/images/continuity/09_play_creates_the_world_concept.png",
+    "canonical_original_sha256": "a979f382e4ca13eb31b924bdf9b3d11c58f66828d01b125e12635b65fc948256",
+    "display": "/goober/assets/rediscovered/peachfall-09.webp",
+    "display_sha256": "277be12e496e214aa37ee1e0be269a62deb17960ff604de5ec9af7aed5f5f845",
+    "dimensions_px": {
+      "width": 1122,
+      "height": 1402
+    },
+    "ingress_equivalence": {
+      "sha256": "d6ba5ec72d710b564a822e8a0ef4ad40982d24c3dece60b6e704f57bc61bd883",
+      "pixel_difference_count": 0,
+      "note": "The owner-supplied ingress and canonical public PNG have identical pixels but different byte encodings. The existing canonical public bytes are reused."
+    },
+    "designation": "public-concept-art"
+  },
+  "world_law": {
+    "premise": "play creates the world",
+    "action_effects": [
+      "steps_leave_paths",
+      "seams_mend",
+      "tools_appear",
+      "solutions_emerge",
+      "symbols_connect",
+      "meaning_forms"
+    ],
+    "memory_direction": "forward",
+    "succession": "princess_discovers__knight_inherits",
+    "legacy_rule": "every_deliberately_kept_answer_can_become_legacy"
+  },
+  "roles": {
+    "player": "acts, chooses, and explicitly keeps a candidate trace",
+    "princess": "discovers and leaves legible traces",
+    "knight": "inherits prior traces and continues the thread",
+    "model": "interprets or performs proposals; never owns canonical truth",
+    "skein": "preserves canonical evidence, provenance, and accepted story state",
+    "saedo": "owns durable work and its acceptance record",
+    "guardian": "authorizes or rejects real-world side effects"
+  },
+  "thread_event": {
+    "required": [
+      "event_id",
+      "parent_ids",
+      "actor_role",
+      "action",
+      "answer",
+      "provenance",
+      "status"
+    ],
+    "status_values": [
+      "proposed",
+      "accepted",
+      "inherited",
+      "superseded"
+    ],
+    "acceptance": "explicit-only",
+    "append_rule": "accepted events append; prior accepted evidence is not rewritten",
+    "inheritance_rule": "an inherited event cites every accepted parent it continues",
+    "side_effect_rule": "real-world actions require a Guardian decision recorded in provenance"
+  },
+  "browser_projection": {
+    "route": "/goober/#tower",
+    "logical_id": "saelion://anewgam/goober/tower",
+    "candidate_store": "existing Goober SaeDow field log",
+    "scope": "device-local",
+    "authority": "none",
+    "acceptance": "self-reported",
+    "automatic_save": false,
+    "automatic_dispatch": false
+  },
+  "invariants": [
+    "canonical truth is Skein-backed",
+    "durable work has a Saedo acceptance record",
+    "model output remains a proposal until explicitly accepted",
+    "history is extended or superseded, never silently erased",
+    "public story traces contain no secret, private UI, credential, or local-path material"
+  ],
+  "privacy": {
+    "default": "private-until-designated-public",
+    "publish_allow": [
+      "user-designated public art",
+      "derived world-law text",
+      "provenance hashes",
+      "accepted public story events"
+    ],
+    "publish_deny": [
+      "private screenshots",
+      "private chat or operator UI",
+      "local filesystem paths",
+      "credentials, tokens, or host details",
+      "unaccepted private traces"
+    ]
+  }
+}

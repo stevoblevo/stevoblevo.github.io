@@ -1,6 +1,6 @@
 {
-  "schema": "saelion.gallery-coverage/0.2",
-  "recorded_at": "2026-09-11T10:30:11.782438+00:00",
+  "schema": "saelion.gallery-coverage/0.3",
+  "recorded_at": "2026-09-13T09:20:00Z",
   "scope": "Current conversation attachment listing plus selected earlier Anewgam public source pack; not the entire Library",
   "attachment_listing": {
     "records": 18,
@@ -11,6 +11,9 @@
   "conversation_public_artwork_families": 3,
   "earlier_public_artwork_families_added": 9,
   "public_originals_total": 12,
+  "public_keeper_artworks_added": 7,
+  "public_catalog_records_total": 28,
+  "keeper_note": "Seven owner-designated public keeper WebPs are source and display for their entries; no larger original is claimed. Their catalog shape and wall tiles are verified with the same closed-path and SHA-256 rules as the earlier records.",
   "held_source_groups": {
     "context_screenshots": 3,
     "unconfirmed_portrait": 1,

@@ -15,6 +15,15 @@ export function choosePicture(catalog,query=''){
  const item=matching[0];if(typeof item.title!=='string'||item.title.length>500||typeof item.description!=='string'||!/^[0-9a-f]{64}$/.test(item.original_sha256))throw Error('The source record is incomplete.');
  return Object.freeze({id:item.id,title:item.title,description:item.description,original:sourcePath(item.original_url),thumbnail:sourcePath(item.thumbnail_url),hash:item.original_sha256,publicCrop:item.public_derivative===true,link:ORIGIN+'/goober/gallery/#'+item.id});
 }
+const THREADS=Object.freeze({
+ path:Object.freeze({id:'path',title:'Tower thread · Leave a path',note:'I chose to mark a route the next player can recognize.',why:'Discovery becomes history when the choice is deliberately kept.',next:'Continue Peachfall and look for a trace another player could inherit.'}),
+ seam:Object.freeze({id:'seam',title:'Tower thread · Mend a seam',note:'I chose to repair one broken connection and name what changed.',why:'A mended seam lets the world remember how separate pieces became one path.',next:'Name the connection, then test whether the next player can follow it.'}),
+ tool:Object.freeze({id:'tool',title:'Tower thread · Shape a tool',note:'I chose to shape one useful thing the next player can inherit.',why:'A tool turns one player’s answer into another player’s possibility.',next:'Make the smallest version and leave one clue for how to use it.'})
+});
+export function chooseThread(query=''){
+ const params=new URLSearchParams(query);if(params.getAll('thread').length>1)throw Error('Choose one Tower thread, not several conflicting choices.');
+ const id=params.get('thread');if(id===null)return null;if(!Object.hasOwn(THREADS,id))throw Error('That Tower thread is not supported.');return THREADS[id];
+}
 function field(value,max,label,required=false){if(typeof value!=='string'||value.length>max)throw Error(label+' is too long or invalid.');const clean=value.trim();if(required&&!clean)throw Error('Add '+label.toLowerCase()+' before keeping this thread.');return clean;}
 export function makeDraft(values,picture){
  const title=field(values.title,600,'Title',true),note=field(values.note,6000,'Note'),why=field(values.why,600,'Why it matters',true),next=field(values.next,600,'Next step');

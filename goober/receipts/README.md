@@ -18,9 +18,28 @@ Records are device/browser-profile-local IndexedDB data, not an authenticated pr
 
 No account enrollment, live Sae/AI chat, Steam link, messaging, Roku control, home-system authority, Saedo worker, or remote installation was performed. The app's Install view gives real browser steps. Physical iPhone and Windows Edge installation remains to be verified by use on those devices.
 
-The site uses no app database, analytics SDK, or custom advertising tracker. The hosting platform serves the page and may keep normal access/error logs; its editor bridge is platform-managed. No family contact details, accident details, email addresses, or account credentials are seeded in the public app.
+The site uses no server-side app database, analytics SDK, or custom advertising tracker. Its local field logs use the device/browser-profile IndexedDB described above. The previously wired Peachfall heat beacon was removed from the shipped page; the hosting platform may still keep normal access/error logs. No family contact details, accident details, email addresses, or account credentials are seeded in the public app.
 
 Source provenance is embedded in the site; source/build exports and verification reports supplement this packet. Deployment is recorded separately only after the hosting tool confirms it.
+
+`/goober/receipts/archive/89185c985927/static-file-hashes.json` belongs to the historical release pinned by `/goober-release.json`; it is not a manifest of the current deployed tree. The manual archive importer verifies the manifest copy inside that downloaded archive before it can replace a reviewed import branch.
+
+## Tower story thread
+
+`/#tower` is an additive story-mode seam in the existing Goober PWA. It reuses
+the already-public `peachfall-09` concept and links a chosen path, seam, or tool
+to the existing project form and SaeDow field log. Opening or choosing does not
+save; the player must review the candidate and explicitly choose Keep. The log
+remains device-local, unencrypted, authority-none, and unsubmitted to Skein.
+
+The public world-law and source hashes are recorded at
+`/goober/source/anewgam-world-thread.v1.json`. The separately supplied operator
+context is deliberately excluded from public assets and receipts.
+
+The seven public Skein-knot keeper entries now carry the complete Atlas shape
+and visible wall tiles. The route resolver’s exact allowlist matches every
+declared public route. The checked-in tree is the publication source; CI only
+verifies it and cannot restore an older archive or push generated files.
 
 ## Take 3 and PC setup continuation
 The main world now includes a Take 3 media section. Direct retrieval of the supplied Grok asset returned HTTP403 and zero bytes. Original link and click-to-try playback are retained. A visitor can select a local MP4 (maximum 100 MiB); it is validated, hashed and stored only in that browser. A local file is NOT automatically considered identical to the blocked original. The poster is existing Crossing artwork, not a recovered frame. Browser tests used synthetic MP4 data.

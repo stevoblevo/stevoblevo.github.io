@@ -56,6 +56,14 @@ Semantic naming has an in-app public resolver: saelion://anewgam/goober, saelion
 
 The twelve-picture enrichment release must preserve atlas.css, atlas.js, catalog.json, enrichment.css/enrichment.js and earlier source receipts when exporting again. Main app.js, original source files and its current service worker remain untouched. Actual online validation is recorded separately from the local33-check report. Do not mark new gallery offline support or full Art Plane convergence done.
 
+## Tower thread and checked-in publication · 13 September 2026
+
+Status: implemented candidate, awaiting merged/live verification. `/#tower` is an additive story seam inside the existing Goober PWA. It reuses the public `peachfall-09` artwork and carries one of three explicit player choices into the existing project/field-log form. Opening the door does not save, dispatch, or accept anything; the player reviews the prepared candidate and deliberately chooses Keep. No second cockpit or storage system was added.
+
+The gallery catalog regression introduced with the seven keeper pictures is repaired by recording complete public-source fields and giving every keeper a wall tile. The named-door resolver is again in exact parity with its public route projection. Peachfall’s embedded frame now waits for an explicit Watch or Play choice.
+
+Checked-in `master` is the publication source of truth. The custom workflow no longer deletes `goober/`, restores a pinned historical archive, commits generated output, or pushes to `master`; it performs read-only contract verification. The old importer remains guarded for an explicit reviewed full-tree operation only. A future full exporter must still be reconciled before it is used to replace this tree.
+
 ## Trace reconciliation and relay priority
 
 The current conversation listing has18 references. The whole raw chat and every tool invocation are not claimed captured; source/disposition and delivery checkpoints are preserved. Two already-public review images are now separately selectable under Process. Original artwork count remains12. Previously blocked Goober boards and owner-private screenshots are not silently released.

@@ -1,9 +1,34 @@
 #!/usr/bin/env python3
-"""Install only the owner-requested static Goober subtree from a pinned artifact."""
+"""Historical archive importer; checked-in Goober is the publication source.
+
+This tool replaces the complete Goober subtree. It is intentionally disconnected
+from CI and requires an explicit destructive-mode argument for a reviewed import.
+"""
 from pathlib import Path, PurePosixPath
-import hashlib, io, json, shutil, stat, tempfile, urllib.request, zipfile
+import hashlib, io, json, shutil, stat, subprocess, sys, tempfile, urllib.request, zipfile
+
+if sys.argv[1:] != ['--replace-checked-in-goober']:
+    raise SystemExit(
+        'Refusing to replace checked-in goober/. For a reviewed full-archive import, '
+        'run with --replace-checked-in-goober in a clean branch.'
+    )
 
 root = Path.cwd()
+def git(*args):
+    result = subprocess.run(
+        ['git', *args], cwd=root, check=False, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    if result.returncode:
+        raise SystemExit('Cannot verify the import branch and working tree.')
+    return result.stdout.strip()
+
+branch = git('rev-parse', '--abbrev-ref', 'HEAD')
+if not branch.startswith('import/'):
+    raise SystemExit('Archive replacement is permitted only on a dedicated import/* branch.')
+if git('status', '--porcelain=v1', '--untracked-files=all'):
+    raise SystemExit('Archive replacement requires a completely clean working tree.')
+
 release = json.loads((root / 'goober-release.json').read_text())
 url = release['archive_url']
 if not url.startswith('https://d2ol7oe51mr4n9.cloudfront.net/user_3IqvSDNTF5Df9TPdkEhMgmcixLc/'):

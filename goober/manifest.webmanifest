@@ -25,6 +25,11 @@
   ],
   "shortcuts": [
     {
+      "name": "Tower storymode",
+      "short_name": "Tower",
+      "url": "/goober/#tower"
+    },
+    {
       "name": "HW \u00b7 assignments from Steven",
       "short_name": "HW",
       "url": "/goober/#hw"

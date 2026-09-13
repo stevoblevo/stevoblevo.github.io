@@ -1,4 +1,4 @@
-import {choosePicture,makeDraft,keepInExistingLog} from './keep-core.js';
+import {choosePicture,chooseThread,makeDraft,keepInExistingLog} from './keep-core.js';
 import {append,load,verify} from './saedow-store.js';
 const byId=id=>document.getElementById(id),form=byId('keep-form'),status=byId('status'),submit=byId('keep-submit');
 let picture=null,busy=false,dirty=false,ready=false;
@@ -19,8 +19,10 @@ form.addEventListener('submit',async event=>{
 try{
  const response=await fetch('../gallery/catalog.json',{cache:'no-cache'});if(!response.ok)throw Error('The public picture catalog could not be opened.');
  picture=choosePicture(await response.json(),location.search);
+ const thread=chooseThread(location.search);
  byId('picture').src=picture.thumbnail;byId('picture').alt=picture.title;byId('picture-title').textContent=picture.title;byId('picture-description').textContent=picture.description;byId('picture-link').href=picture.link;byId('original-link').href=picture.original;
  byId('source-type').textContent=picture.publicCrop?'Public crop · complete source remains private':'Selected public artwork / source';
- byId('title').value=picture.title+' · keep the thread';byId('source-hash').textContent=picture.hash;
- await verify(await load());ready=true;submit.disabled=false;status.textContent='Nothing has been saved yet. Add why this matters, then choose Keep with this project.';document.body.dataset.keepReady='true';
+ byId('title').value=thread?.title??picture.title+' · keep the thread';byId('source-hash').textContent=picture.hash;
+ if(thread){byId('note').value=thread.note;byId('why').value=thread.why;byId('next').value=thread.next;byId('kind').value='idea';}
+ await verify(await load());ready=true;submit.disabled=false;status.textContent=thread?'Tower draft prepared. Review it, then choose Keep with this project. Nothing has been saved yet.':'Nothing has been saved yet. Add why this matters, then choose Keep with this project.';document.body.dataset.keepReady='true';
 }catch(error){status.textContent=error instanceof Error?error.message:'This project could not be opened.';byId('picture-block').hidden=true;submit.disabled=true;document.body.dataset.keepReady='error';}

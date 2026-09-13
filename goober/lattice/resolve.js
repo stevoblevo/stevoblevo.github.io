@@ -1,3 +1,12 @@
 // Public link projection only. No private-network discovery and no execution semantics.
-const allowed=new Map([['saelion://anewgam/goober','/goober/'],['saelion://anewgam/goober/gallery','/goober/gallery/'],['saelion://world/peachfall','/peachfall/']]);
+const allowed=new Map([
+ ['saelion://anewgam/goober','/goober/'],
+ ['saelion://anewgam/goober/tower','/goober/#tower'],
+ ['saelion://anewgam/goober/gallery','/goober/gallery/'],
+ ['saelion://anewgam/goober/play','/goober/play/'],
+ ['saelion://anewgam/goober/run','/goober/run/'],
+ ['saelion://world/peachfall','/peachfall/'],
+ ['saelion://world/peachfall/watch','/peachfall/'],
+ ['saelion://world/peachfall/play','/peachfall/']
+]);
 export function resolvePublicName(id,projection){const path=allowed.get(id);if(!path)throw Error('Unknown resource name');if(projection.scope!=='public-reading-only'||projection.authority!=='none')throw Error('Unsupported route projection');const matches=projection.routes.filter(r=>r.id===id);if(matches.length!==1)throw Error('Missing or ambiguous route');const r=matches[0];if(r.url!==path||r.state!=='public-route'||r.action!=='open')throw Error('Route is not approved for public opening');return path;}
