@@ -1,0 +1,22 @@
+{
+  "id": "/anewgam-for-steven-cockpit/",
+  "name": "Steven · .anewgam",
+  "short_name": ".anewgam",
+  "description": "Steven's living Saelion cockpit: play, memory, durable work, and consent-bounded crossings.",
+  "start_url": "./#cockpit",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#04100c",
+  "theme_color": "#071510",
+  "categories": ["productivity", "entertainment", "utilities"],
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"},
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+  ],
+  "shortcuts": [
+    {"name":"Sae Drop","short_name":"Drop","url":"./#cockpit"},
+    {"name":"World library","short_name":"Library","url":"./#library"}
+  ]
+}
