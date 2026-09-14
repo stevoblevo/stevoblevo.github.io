@@ -1,168 +1,188 @@
-/* Yandex-image-style wall viewer. Related = overlapping tags. */
+/* Yandex-style wall viewer. Uses window.__libraryItems. Does not own door hashes. */
 (function () {
-  const items = window.__libraryItems || [];
-  if (!items.length) return;
+  const items = () => window.__libraryItems || [];
+  const stage = document.getElementById("ya-stage");
+  const img = document.getElementById("ya-img");
+  const title = document.getElementById("ya-title");
+  const meta = document.getElementById("ya-meta");
+  const related = document.getElementById("ya-related");
+  const count = document.getElementById("ya-count");
+  if (!stage || !img) return;
 
-  const stage = document.getElementById("g-stage");
-  const frame = document.getElementById("g-frame");
-  const imgEl = document.getElementById("g-img");
-  const titleEl = document.getElementById("g-title");
-  const capEl = document.getElementById("g-cap");
-  const relEl = document.getElementById("g-related");
-  const countEl = document.getElementById("g-count");
-  if (!stage || !imgEl) return;
-
-  let list = items.slice();
   let idx = 0;
-  let scale = 1;
-  let ox = 0;
-  let oy = 0;
+  let zoom = 1;
+  let panX = 0;
+  let panY = 0;
+  let dragging = false;
+  let lastX = 0;
+  let lastY = 0;
 
-  function visible() {
-    const f = window.__libraryFilter || "all";
-    const xs = items.filter((x) => f === "all" || x.tags.includes(f) || x.id.includes(f));
-    return xs.length ? xs : items;
+  function srcOf(x) {
+    return (x && (x.image || x.thumbnail)) || "";
   }
 
-  function related(cur) {
-    const tags = new Set(cur.tags || []);
-    return items
-      .filter((x) => x.id !== cur.id && (x.tags || []).some((t) => tags.has(t)))
-      .slice(0, 8);
+  function list() {
+    const xs = items();
+    return xs.length ? xs : [];
   }
 
-  function src(x) {
-    return x.image || x.thumbnail;
+  function relatedOf(x) {
+    const xs = list();
+    const tags = new Set((x.tags || []).map(String));
+    return xs
+      .filter((y) => y.id !== x.id)
+      .map((y) => {
+        const hit = (y.tags || []).filter((t) => tags.has(t)).length;
+        return { y, hit };
+      })
+      .filter((r) => r.hit > 0)
+      .sort((a, b) => b.hit - a.hit)
+      .slice(0, 8)
+      .map((r) => r.y);
   }
 
   function applyTransform() {
-    imgEl.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`;
+    img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
   }
 
-  function resetZoom() {
-    scale = 1;
-    ox = 0;
-    oy = 0;
+  function resetView() {
+    zoom = 1;
+    panX = 0;
+    panY = 0;
     applyTransform();
   }
 
-  function paint() {
-    const cur = list[idx];
-    if (!cur) return;
-    imgEl.src = src(cur);
-    imgEl.alt = cur.alt || cur.title;
-    titleEl.textContent = cur.title;
-    capEl.textContent = (cur.caption || "") + (cur.provenance ? " · " + cur.provenance : "");
-    countEl.textContent = `${idx + 1} / ${list.length}`;
-    resetZoom();
-    relEl.replaceChildren();
-    for (const r of related(cur)) {
+  function openAt(i, pushHash) {
+    const xs = list();
+    if (!xs.length) return;
+    idx = ((i % xs.length) + xs.length) % xs.length;
+    const x = xs[idx];
+    img.src = srcOf(x);
+    img.alt = x.alt || x.title || "";
+    title.textContent = x.title || x.id;
+    meta.textContent = [x.date, x.status, (x.tags || []).join(" · ")].filter(Boolean).join(" · ");
+    count.textContent = `${idx + 1} / ${xs.length}`;
+    related.replaceChildren();
+    for (const y of relatedOf(x)) {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "g-rel";
-      b.title = r.title;
+      b.className = "ya-rel";
+      b.title = y.title;
       const im = document.createElement("img");
-      im.src = r.thumbnail || r.image;
-      im.alt = r.title;
+      im.src = y.thumbnail || srcOf(y);
+      im.alt = y.title || "";
       b.append(im);
-      b.addEventListener("click", () => open(r.id));
-      relEl.append(b);
-    }
-  }
-
-  function open(id) {
-    list = visible();
-    const found = list.findIndex((x) => x.id === id);
-    idx = found >= 0 ? found : 0;
-    if (found < 0) {
-      list = items.slice();
-      idx = Math.max(0, items.findIndex((x) => x.id === id));
+      b.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        openAt(list().findIndex((z) => z.id === y.id), true);
+      });
+      related.append(b);
     }
     stage.hidden = false;
-    document.body.style.overflow = "hidden";
-    paint();
-    imgEl.focus();
+    document.body.classList.add("ya-open");
+    resetView();
+    if (pushHash) {
+      const h = "view=" + encodeURIComponent(x.id);
+      if (location.hash.replace(/^#/, "") !== h) history.replaceState(null, "", "#" + h);
+    }
   }
 
   function close() {
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     stage.hidden = true;
-    document.body.style.overflow = "";
-    resetZoom();
+    document.body.classList.remove("ya-open");
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    if (/^#view=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
   }
 
-  function step(d) {
-    if (!list.length) return;
-    idx = (idx + d + list.length) % list.length;
-    paint();
+  function next(d) {
+    openAt(idx + d, true);
   }
 
-  function toggleFs() {
-    if (!document.fullscreenElement) stage.requestFullscreen().catch(() => {});
-    else document.exitFullscreen().catch(() => {});
-  }
+  window.__openGallery = function (id) {
+    const xs = list();
+    const i = id ? xs.findIndex((x) => x.id === id) : 0;
+    openAt(i < 0 ? 0 : i, true);
+  };
 
-  document.getElementById("grid").addEventListener("click", (e) => {
-    const card = e.target.closest(".card");
+  document.getElementById("grid")?.addEventListener("click", (ev) => {
+    const card = ev.target.closest(".card");
     if (!card) return;
-    open(card.dataset.id);
+    const i = [...document.querySelectorAll("#grid .card")].indexOf(card);
+    if (i >= 0) openAt(i, true);
   });
 
-  document.getElementById("g-close").addEventListener("click", close);
-  document.getElementById("g-prev").addEventListener("click", () => step(-1));
-  document.getElementById("g-next").addEventListener("click", () => step(1));
-  document.getElementById("g-fs").addEventListener("click", toggleFs);
-
-  frame.addEventListener("click", (e) => {
-    if (e.target !== frame && e.target !== imgEl) return;
-    const r = frame.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    if (x < 0.28) step(-1);
-    else if (x > 0.72) step(1);
+  document.getElementById("ya-close")?.addEventListener("click", close);
+  document.getElementById("ya-prev")?.addEventListener("click", () => next(-1));
+  document.getElementById("ya-next")?.addEventListener("click", () => next(1));
+  document.getElementById("ya-full")?.addEventListener("click", () => {
+    if (!document.fullscreenElement) stage.requestFullscreen?.().catch(() => {});
+    else document.exitFullscreen().catch(() => {});
   });
 
-  frame.addEventListener(
-    "wheel",
-    (e) => {
-      e.preventDefault();
-      const next = scale * (e.deltaY < 0 ? 1.12 : 0.9);
-      scale = Math.min(6, Math.max(1, next));
-      if (scale === 1) {
-        ox = 0;
-        oy = 0;
-      }
-      applyTransform();
-    },
-    { passive: false },
-  );
-
-  let drag = false;
-  let sx = 0;
-  let sy = 0;
-  frame.addEventListener("pointerdown", (e) => {
-    if (scale <= 1) return;
-    drag = true;
-    sx = e.clientX - ox;
-    sy = e.clientY - oy;
-    frame.setPointerCapture(e.pointerId);
+  stage.addEventListener("click", (ev) => {
+    if (ev.target.closest(".ya-ui, .ya-rel, #ya-img")) return;
+    const r = stage.getBoundingClientRect();
+    const x = (ev.clientX - r.left) / r.width;
+    if (x < 0.28) next(-1);
+    else if (x > 0.72) next(1);
+    else if (ev.target === stage || ev.target.classList.contains("ya-dim")) close();
   });
-  frame.addEventListener("pointermove", (e) => {
-    if (!drag) return;
-    ox = e.clientX - sx;
-    oy = e.clientY - sy;
+
+  img.addEventListener("dblclick", resetView);
+
+  img.addEventListener("wheel", (ev) => {
+    ev.preventDefault();
+    const nextZ = Math.min(4, Math.max(1, zoom + (ev.deltaY < 0 ? 0.18 : -0.18)));
+    zoom = nextZ;
+    if (zoom === 1) {
+      panX = 0;
+      panY = 0;
+    }
+    applyTransform();
+  }, { passive: false });
+
+  img.addEventListener("pointerdown", (ev) => {
+    if (zoom <= 1) return;
+    dragging = true;
+    lastX = ev.clientX;
+    lastY = ev.clientY;
+    img.setPointerCapture(ev.pointerId);
+  });
+  img.addEventListener("pointermove", (ev) => {
+    if (!dragging) return;
+    panX += ev.clientX - lastX;
+    panY += ev.clientY - lastY;
+    lastX = ev.clientX;
+    lastY = ev.clientY;
     applyTransform();
   });
-  frame.addEventListener("pointerup", () => {
-    drag = false;
+  img.addEventListener("pointerup", () => { dragging = false; });
+
+  window.addEventListener("keydown", (ev) => {
+    if (stage.hidden) {
+      if (ev.key === "g" && !ev.metaKey && !ev.ctrlKey) {
+        openAt(0, true);
+      }
+      return;
+    }
+    if (ev.key === "Escape") close();
+    else if (ev.key === "ArrowLeft") next(-1);
+    else if (ev.key === "ArrowRight") next(1);
+    else if (ev.key === "f" || ev.key === "F") document.getElementById("ya-full")?.click();
+    else if (ev.key === "+" || ev.key === "=") { zoom = Math.min(4, zoom + 0.25); applyTransform(); }
+    else if (ev.key === "-" || ev.key === "_") { zoom = Math.max(1, zoom - 0.25); if (zoom === 1) { panX = 0; panY = 0; } applyTransform(); }
+    else if (ev.key === "0") resetView();
   });
 
-  window.addEventListener("keydown", (e) => {
-    if (stage.hidden) return;
-    if (e.key === "Escape") close();
-    else if (e.key === "ArrowLeft") step(-1);
-    else if (e.key === "ArrowRight") step(1);
-    else if (e.key === "f" || e.key === "F") toggleFs();
-  });
-
-  window.__openGallery = open;
+  function fromHash() {
+    const raw = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+    if (raw === "gallery") openAt(0, false);
+    else if (raw.startsWith("view=")) {
+      const id = raw.slice(5);
+      const i = list().findIndex((x) => x.id === id);
+      if (i >= 0) openAt(i, false);
+    }
+  }
+  window.addEventListener("hashchange", fromHash);
+  fromHash();
 })();
