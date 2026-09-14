@@ -1,10 +1,108 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090b16"><title>Anewgam · Steven passthru library</title><style>:root{color-scheme:dark;--ink:#f8f3e8;--muted:#b9c5d8;--line:#25304a;--cyan:#76e8ff;--gold:#f3cf8f;--rose:#ff9dbf;--r:20px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% -10%,#18274d 0,transparent 34rem),linear-gradient(180deg,#090c16,#06070c);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}.shell{max-width:1180px;margin:auto;padding:20px}.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 22px;border-bottom:1px solid var(--line)}.mark{font-family:Georgia,serif;font-size:clamp(1.7rem,4vw,2.7rem)}.sub{color:var(--muted);max-width:700px}.badge{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--cyan);background:#0b1020}.toolbar,.doors{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0}.toolbar{position:sticky;top:0;z-index:4;background:linear-gradient(180deg,#080b14 75%,transparent)}a.door,button{border:1px solid var(--line);background:#0e1423;color:var(--ink);border-radius:999px;padding:9px 13px;cursor:pointer;text-decoration:none;display:inline-block}button[aria-pressed=true],a.door[aria-current=page]{border-color:#5a89b6;background:#14213a;color:var(--cyan)}a.door.local{opacity:.7}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}.card{background:linear-gradient(180deg,#101526,#0b0e19);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 18px 50px #0007}.thumb{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#05070d}.body{padding:14px}.kicker{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}h2{font-family:Georgia,serif;margin:.2rem 0 .55rem;font-size:1.25rem}.caption{margin:0;color:var(--muted)}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.tag{font-size:.75rem;border:1px solid var(--line);padding:4px 7px;border-radius:999px;color:#d8e4f5}.meta{margin-top:10px;color:#8394ad;font-size:.78rem}.status{color:var(--rose)}.empty{display:none;color:var(--muted);padding:30px 0}.note{margin:24px 0 6px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:#0b0f1b;color:var(--muted)}.note strong{color:var(--ink)}footer{color:#74839a;padding:24px 0 10px;text-align:center;font-size:.85rem}.doors-label{width:100%;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}</style></head><body><div class="shell"><header class="top"><div><div class="mark">Anewgam · passthru library</div><div class="sub">Steven · .anewgam — working visual lineage. GENs, seeds, Polylite, EverDelve, Knight, bluebird. Live doors below. Private polylite stays local.</div></div><div class="badge">GEN2 → GEN22 → GEN4 → GEN23+</div></header><nav class="doors" aria-label="Live gams"><div class="doors-label">Doors · .liv</div><a class="door" href="../peachfall/">Peachfall</a><a class="door" href="../goober/">Crossing</a><a class="door" href="../goober/run/">Signal Run</a><a class="door" href="../goober/with-him/">With him</a><a class="door" href="https://stevoblevo.github.io/cheese-royale/">Cheese Royale</a><a class="door" href="./" aria-current="page">Cockpit</a><a class="door local" href="#polylite" title="private sibling — play on loopback">Polylite local</a></nav><nav class="toolbar" aria-label="Filter library"><button data-filter="all" aria-pressed="true">All</button><button data-filter="gen22">GEN22</button><button data-filter="gen23">GEN23</button><button data-filter="polylite">Polylite</button><button data-filter="night">Night</button><button data-filter="knight">Knight</button><button data-filter="everdelve">EverDelve</button><button data-filter="lov">.lov</button><button data-filter="bluebird">Bluebird</button></nav><main><div id="grid" class="grid"></div><div id="empty" class="empty">Nothing in this slice yet.</div><aside class="note"><strong>Passthru rule.</strong> Public projection carries selected generated creative work and seed notes only. Canonical/source stays private in Anewgam/Skein. Hash doors: <code>#peachfall</code> <code>#everFallen</code> <code>#polylite</code> <code>#sc1.lov</code> <code>#knight</code> <code>#kids</code>. Kids Mod is G-rated and not live. Skein doll is the small one. Tower container waits for attendance.</aside></main><footer>sae://cockpit · quiet signal · context, not permission</footer></div><script>window.__libraryItems=[];</script><script src="item-01.js"></script>
-<script src="item-02.js"></script>
-<script src="item-03.js"></script>
-<script src="item-04.js"></script>
-<script src="item-05.js"></script>
-<script src="item-06.js"></script>
-<script src="item-07.js"></script>
-<script src="item-08.js"></script>
-<script src="item-09.js"></script>
-<script src="item-10.js"></script><script>const items=window.__libraryItems,grid=document.querySelector('#grid'),empty=document.querySelector('#empty');let filter='all';const HASH={peachfall:'peachfall',everfallen:'everdelve',everdelve:'everdelve',polylite:'polylite',polylight:'polylite','sc1.lov':'lov',sc1:'lov',knight:'knight',kknight:'knight',kids:'night',night:'night',goober:'all',cheese:'all'};function matches(x){if(filter==='all')return true;if(x.tags.includes(filter)||x.id.includes(filter))return true;if(filter==='lov'&&(x.tags.includes('lov')||x.tags.includes('night')||x.id.includes('kknight')))return true;return false}function render(){grid.replaceChildren();const xs=items.filter(matches);empty.style.display=xs.length?'none':'block';for(const x of xs){const a=document.createElement('article');a.className='card';a.id=x.id;const img=document.createElement('img');img.className='thumb';img.loading='lazy';img.src=x.thumbnail;img.alt=x.alt;const b=document.createElement('div');b.className='body';b.innerHTML=`<div class="kicker">${x.date} · <span class="status">${x.status}</span></div><h2>${x.title}</h2><p class="caption">${x.caption}</p><div class="tags">${x.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="meta">${x.provenance}</div>`;a.append(img,b);grid.append(a)}}function applyHash(){const raw=(location.hash||'#').slice(1).replace(/^\$/,'').toLowerCase();if(raw==='peachfall'){location.href='../peachfall/';return}if(raw==='goober'||raw==='crossing'){location.href='../goober/';return}if(raw==='cheese'||raw==='cheese-royale'){location.href='https://stevoblevo.github.io/cheese-royale/';return}if(!raw){filter='all'}else{filter=HASH[raw]||raw}for(const b of document.querySelectorAll('[data-filter]'))b.setAttribute('aria-pressed',String(b.dataset.filter===filter));render();if(raw==='sc1.lov'||raw==='sc1'){const el=document.getElementById('gen23-kknight-comes');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})}}for(const btn of document.querySelectorAll('[data-filter]'))btn.addEventListener('click',()=>{filter=btn.dataset.filter;history.replaceState(null,'','#'+(filter==='all'?'':filter));for(const b of document.querySelectorAll('[data-filter]'))b.setAttribute('aria-pressed',String(b===btn));render()});window.addEventListener('hashchange',applyHash);applyHash();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#090b16" />
+  <title>Steven · .anewgam</title>
+  <style>
+    :root{color-scheme:dark;--ink:#f8f3e8;--muted:#b9c5d8;--line:#25304a;--cyan:#76e8ff;--gold:#f3cf8f;--rose:#ff9dbf;--r:20px}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 80% -10%,#18274d 0,transparent 34rem),linear-gradient(180deg,#090c16,#06070c);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+    .shell{max-width:1180px;margin:auto;padding:20px}
+    .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 16px;border-bottom:1px solid var(--line)}
+    .mark{font-family:Georgia,serif;font-size:clamp(1.7rem,4vw,2.7rem)}
+    .sub{color:var(--muted);max-width:700px}
+    .badge{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--cyan);background:#0b1020}
+    .doors{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 4px}
+    .door{border:1px solid var(--line);background:#0e1423;color:var(--ink);border-radius:999px;padding:8px 12px;text-decoration:none;font:inherit;cursor:pointer}
+    .door.on{border-color:#5a89b6;background:#14213a;color:var(--cyan)}
+    #door-note{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:4;padding:12px 0;background:linear-gradient(180deg,#080b14 75%,transparent)}
+    button{border:1px solid var(--line);background:#0e1423;color:var(--ink);border-radius:999px;padding:9px 13px;cursor:pointer}
+    button[aria-pressed=true]{border-color:#5a89b6;background:#14213a;color:var(--cyan)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
+    .card{background:linear-gradient(180deg,#101526,#0b0e19);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 18px 50px #0007}
+    .thumb{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#05070d}
+    .body{padding:14px}
+    .kicker{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+    h2{font-family:Georgia,serif;margin:.2rem 0 .55rem;font-size:1.25rem}
+    .caption{margin:0;color:var(--muted)}
+    .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+    .tag{font-size:.75rem;border:1px solid var(--line);padding:4px 7px;border-radius:999px;color:#d8e4f5}
+    .meta{margin-top:10px;color:#8394ad;font-size:.78rem}
+    .status{color:var(--rose)}
+    .empty{display:none;color:var(--muted);padding:30px 0}
+    .note{margin:24px 0 6px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:#0b0f1b;color:var(--muted)}
+    .note strong{color:var(--ink)}
+    footer{color:#74839a;padding:24px 0 10px;text-align:center;font-size:.85rem}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div>
+        <div class="mark">Steven · .anewgam</div>
+        <div class="sub">Passthru library + live doors. Hash a gam. Private polylite stays on loopback. Companion is the small one.</div>
+      </div>
+      <div class="badge">GEN2 → GEN22 → GEN4 → GEN23+</div>
+    </header>
+    <nav id="doors" class="doors" aria-label="Live doors"></nav>
+    <p id="door-note">Steven · .anewgam</p>
+    <nav class="toolbar" aria-label="Filter library">
+      <button data-filter="all" aria-pressed="true">All</button>
+      <button data-filter="gen22">GEN22</button>
+      <button data-filter="gen23">GEN23</button>
+      <button data-filter="polylite">Polylite</button>
+      <button data-filter="night">Night</button>
+      <button data-filter="knight">Knight</button>
+      <button data-filter="bluebird">Bluebird</button>
+    </nav>
+    <main>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty">Nothing in this slice yet.</div>
+      <aside class="note"><strong>Passthru rule.</strong> Public projection carries selected generated work and seed notes. Canonical source stays private. Tower container, Pages-on-polylite, and goober wipe are not this page. authorityEffect: none.</aside>
+    </main>
+    <footer>sae://cockpit · quiet signal · context, not permission</footer>
+  </div>
+  <script>window.__libraryItems=[];</script>
+  <script src="item-01.js"></script>
+  <script src="item-02.js"></script>
+  <script src="item-03.js"></script>
+  <script src="item-04.js"></script>
+  <script src="item-05.js"></script>
+  <script src="item-06.js"></script>
+  <script src="item-07.js"></script>
+  <script src="item-08.js"></script>
+  <script src="item-09.js"></script>
+  <script src="item-10.js"></script>
+  <script>
+    const items=window.__libraryItems,grid=document.querySelector('#grid'),empty=document.querySelector('#empty');
+    let filter='all';
+    function matches(x){return filter==='all'||x.tags.includes(filter)||x.id.includes(filter)}
+    function render(){
+      grid.replaceChildren();
+      const xs=items.filter(matches);
+      empty.style.display=xs.length?'none':'block';
+      for(const x of xs){
+        const a=document.createElement('article');
+        a.className='card';
+        const img=document.createElement('img');
+        img.className='thumb'; img.loading='lazy'; img.src=x.thumbnail; img.alt=x.alt;
+        const b=document.createElement('div');
+        b.className='body';
+        b.innerHTML=`<div class="kicker">${x.date} · <span class="status">${x.status}</span></div><h2>${x.title}</h2><p class="caption">${x.caption}</p><div class="tags">${x.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="meta">${x.provenance}</div>`;
+        a.append(img,b); grid.append(a);
+      }
+    }
+    window.__setLibraryFilter=function(f){
+      filter=f||'all';
+      for(const b of document.querySelectorAll('[data-filter]')) b.setAttribute('aria-pressed', String(b.dataset.filter===filter));
+      render();
+    };
+    for(const btn of document.querySelectorAll('[data-filter]')) btn.addEventListener('click',()=>window.__setLibraryFilter(btn.dataset.filter));
+    render();
+  </script>
+  <script src="doors.js"></script>
+</body>
+</html>
