@@ -83,6 +83,7 @@
     stage.hidden = false;
     document.querySelector('.shell').inert = true;
     document.querySelector('.side-nav').inert = true;
+    document.querySelectorAll('.sae-family-header,.sae-family-footer').forEach(el => el.inert = true);
     document.getElementById('ya-close').focus();
     document.body.classList.add("ya-open");
     resetView();
@@ -97,6 +98,7 @@
     document.body.classList.remove("ya-open");
     document.querySelector('.shell').inert = false;
     document.querySelector('.side-nav').inert = false;
+    document.querySelectorAll('.sae-family-header,.sae-family-footer').forEach(el => el.inert = false);
     returnFocus?.focus();
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     if (/^#view=|^#gallery$/.test(location.hash)) history.replaceState(null, "", "#library");

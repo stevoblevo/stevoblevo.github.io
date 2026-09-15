@@ -1,9 +1,11 @@
-const CACHE = 'goober-pages-shell-v3-tower';
+const CACHE = 'goober-pages-shell-v4-family';
 const BASE = '/goober/';
 const PRECACHE = [
   '',
   'app.js',
   'style.css',
+  'family.css',
+  'family.js',
   'enrichment.js',
   'enrichment.css',
   'manifest.webmanifest',
