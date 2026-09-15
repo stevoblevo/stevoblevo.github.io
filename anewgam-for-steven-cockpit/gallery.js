@@ -107,7 +107,9 @@
   document.getElementById("grid")?.addEventListener("click", (ev) => {
     const card = ev.target.closest(".card");
     if (!card) return;
-    const i = [...document.querySelectorAll("#grid .card")].indexOf(card);
+    const xs = list();
+    const id = card.dataset.id;
+    const i = id ? xs.findIndex((x) => x.id === id) : [...document.querySelectorAll("#grid .card")].indexOf(card);
     if (i >= 0) openAt(i, true);
   });
 
@@ -177,6 +179,11 @@
   function fromHash() {
     const raw = decodeURIComponent((location.hash || "").replace(/^#/, ""));
     if (raw === "gallery") openAt(0, false);
+    else if (raw === "hires") {
+      if (window.__setLibraryFilter) window.__setLibraryFilter("hires");
+      const i = list().findIndex((x) => (x.tags || []).includes("hires"));
+      if (i >= 0) openAt(i, false);
+    }
     else if (raw.startsWith("view=")) {
       const id = raw.slice(5);
       const i = list().findIndex((x) => x.id === id);

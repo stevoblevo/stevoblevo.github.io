@@ -8,7 +8,9 @@ window.__anewDoors = [
   { id: "everFallen", hash: ["everfallen", "everFallen", "everdelve"], title: "$everFallen", href: null, live: false, line: "Plates in this library · no public play yet" },
   { id: "polylite", hash: ["polylite", "$polylite", "polylight"], title: "$polylite", href: null, live: false, line: "Private sibling · play local / loopback" },
   { id: "sc1", hash: ["sc1.lov", "sc1", "lov"], title: "sc1.lov", href: null, live: false, line: "KkNight comes · day is now night" },
-  { id: "kids", hash: ["kids", "kidsmod"], title: "Kids Mod", href: null, live: false, line: "Family plate · G-rated · not live" }
+  { id: "kids", hash: ["kids", "kidsmod"], title: "Kids Mod", href: null, live: false, line: "Family plate · G-rated · not live" },
+  { id: "hires", hash: ["hires", "hi-res"], title: "Hi-res", href: null, live: false, line: "Recovered originals on this wall" },
+  { id: "atlas", hash: ["atlas"], title: "Atlas", href: "/goober/gallery/", live: true, line: "Goober recovered wall" }
 ];
 
 (function () {
@@ -52,7 +54,7 @@ window.__anewDoors = [
         : "Steven · .anewgam — hash a door or stay with the stills.";
     }
     if (active && window.__setLibraryFilter) {
-      const map = { peachfall: "all", goober: "all", run: "all", "with-him": "all", cheese: "all", everFallen: "gen23", polylite: "polylite", sc1: "night", kids: "polylite" };
+      const map = { peachfall: "peachfall", goober: "all", run: "all", "with-him": "all", cheese: "all", everFallen: "gen23", polylite: "polylite", sc1: "night", kids: "polylite", hires: "hires", atlas: "hires" };
       window.__setLibraryFilter(map[active.id] || "all");
     }
   }
