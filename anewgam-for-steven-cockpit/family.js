@@ -22,9 +22,11 @@
   const caption = document.createElement('output');caption.className='sae-scene-caption';caption.setAttribute('aria-live','polite');
   function paint(){document.body.style.setProperty('--world-image',`url("${scenes[index].image}")`);caption.textContent=scenes[index].name;button.setAttribute('aria-label',`Change scene: ${scenes[index].name}`);}
   button.addEventListener('click',()=>{index=(index+1)%scenes.length;paint();try{localStorage.setItem(key,String(index));}catch{caption.textContent+=' · this visit only';}});
-  control.append(button,caption);tools.append(person,control);head.append(mark(),tools);document.body.prepend(head);
+  const play = document.createElement('a'); play.className='sae-play-link'; play.href=owner==='aiden'?'/goober/run/':'/peachfall/'; play.textContent='▷ Play';
+  control.append(button,caption);tools.append(person,play,control);head.append(mark(),tools);document.body.prepend(head);
   const foot=document.createElement('footer');foot.className='sae-family-footer';foot.append(mark());
   const nav=document.createElement('nav');nav.setAttribute('aria-label','Sae family worlds');
   for(const [label,url] of [['Steven','/anewgam-for-steven-cockpit/'],['Aiden · Goober','/goober/'],['Meema','https://anewgam-for-meema.stevoblevo.chatgpt.site'],['Play · Peachfall','/peachfall/']]){const a=document.createElement('a');a.href=url;a.textContent=label;a.rel='noreferrer';nav.append(a);}
   const note=document.createElement('small');note.textContent='One family of worlds. Your own way through. Each world keeps its own saves.';foot.append(nav,note);document.body.append(foot);paint();
+  if(document.body.classList.contains('ya-open')) { head.inert=true; foot.inert=true; }
 })();

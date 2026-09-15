@@ -1,4 +1,6 @@
 /* Sae family chrome: shared identity, separate worlds and browser saves. */
+.sae-family-header .sae-play-link{display:inline-flex;align-items:center;min-height:44px;padding:9px 18px;border-radius:24px;background:#f0c47d;color:#233322;font-weight:750}
+body.sae-family[data-owner=aiden] main footer{display:flex}
 body.sae-family{--world-image:none;background-image:linear-gradient(90deg,rgba(5,17,16,.91),rgba(5,17,16,.55)),var(--world-image);background-position:center;background-size:cover;background-attachment:fixed}
 body.sae-family[data-owner=aiden]{background-image:linear-gradient(90deg,rgba(18,12,28,.9),rgba(18,12,28,.5)),var(--world-image)}
 .sae-family-header,.sae-family-footer{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 30px;margin-left:182px;border-bottom:1px solid #cfb78840;background:#081e20d9;backdrop-filter:blur(18px);color:#f9eed8;font:14px/1.5 system-ui}
