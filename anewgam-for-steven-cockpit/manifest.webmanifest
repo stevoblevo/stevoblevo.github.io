@@ -17,6 +17,7 @@
   ],
   "shortcuts": [
     {"name":"Sae Drop","short_name":"Drop","url":"./#cockpit"},
+    {"name":"Thread Loom","short_name":"Loom","url":"./#loom"},
     {"name":"World library","short_name":"Library","url":"./#library"}
   ]
 }
