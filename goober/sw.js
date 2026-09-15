@@ -1,4 +1,4 @@
-const CACHE = 'goober-pages-shell-v4-family';
+const CACHE = 'goober-pages-shell-v4b-family';
 const BASE = '/goober/';
 const PRECACHE = [
   '',
@@ -33,7 +33,7 @@ const PRECACHE_PATHS = new Set(PRECACHE.map(url => new URL(url, self.location.or
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(cache => cache.addAll(PRECACHE))
+      .then(cache => cache.addAll(PRECACHE.map(url => new Request(url, {cache:'reload'}))))
       .then(() => self.skipWaiting())
   );
 });
@@ -59,7 +59,7 @@ self.addEventListener('fetch', event => {
 
   if (event.request.mode === 'navigate' && url.pathname === BASE) {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, {cache:'no-cache'})
         .then(async response => {
           if (response.ok) (await caches.open(CACHE)).put(BASE, response.clone());
           return response;
@@ -73,7 +73,7 @@ self.addEventListener('fetch', event => {
   // Cache by pathname so version/search parameters still fall back to the installed bytes.
   const cacheKey = url.pathname;
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, {cache:'no-cache'})
       .then(async response => {
         if (response.ok) (await caches.open(CACHE)).put(cacheKey, response.clone());
         return response;
