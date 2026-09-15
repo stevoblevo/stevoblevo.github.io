@@ -1,5 +1,5 @@
 /* Only this cockpit's allowlisted public shell. Never other worlds or private APIs. */
-const CACHE = 'steven-anewgam-v5-gen2-working';
+const CACHE = 'steven-anewgam-v5b-gen2-working';
 const BASE = new URL('./', self.location.href);
 const SHELL = ['./', './index.html', './app.js', './gen2.css', './advanced.css', './advanced.js', './colour-language.css', './colour-language.v1.json', './sae-expression-states-v1.webp', './click-bloom.svg', './doors.js', './gallery.js', './hires.js', './gen2-art.js', './gen2-dark.webp', './gen2-light.webp', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', ...Array.from({length:10}, (_,i) => './item-'+String(i+1).padStart(2,'0')+'.js')];
 const ALLOWED = new Set(SHELL.map(path => new URL(path, BASE).href));
@@ -12,7 +12,7 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     try {
-      const response = await fetch(event.request);
+      const response = await fetch(event.request, {cache:'no-cache'});
       if (response.ok && response.type !== 'opaque') await cache.put(event.request, response.clone());
       return response;
     } catch {

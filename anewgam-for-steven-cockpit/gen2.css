@@ -1,4 +1,5 @@
 /* Gen2 skin: the screenshot's owner layout plus the existing public library. */
+[hidden] {display:none!important}
 :root { --surface:#0b211a; --surface-2:#102b22; --paper:#071510; --accent:#e8ad85; }
 html[data-theme=light] { color-scheme:light; --ink:#18392e; --muted:#50685a; --line:#c5d0bf; --panel:#fffdf6; --deep:#f6f1e8; --mint:#21684c; --cyan:#116778; --gold:#86550c; --rose:#9e3d5c; --violet:#6f48a7; --surface:#fffdf6; --surface-2:#e9eddf; --paper:#f6f1e8; --accent:#955c37; }
 body { background:radial-gradient(ellipse at 90% 0%,#35614925,transparent 50%),var(--paper); }
@@ -25,6 +26,9 @@ body { background:radial-gradient(ellipse at 90% 0%,#35614925,transparent 50%),v
 .composer textarea{background:var(--paper);color:var(--ink)}.inhale,.install{background:var(--mint);color:var(--paper)}
 .eyebrow{color:var(--accent)}.status,.kicker{color:var(--gold)}.drop{padding:24px}.drop h1{font-size:32px}
 .sub,.truth,.meta,.mission-foot,.tag,.colour-copy p,.boundary,.protocol-strip,.thread-state,.thread-proof {color:var(--muted)}
+.thread-source{color:var(--ink)}.protocol-strip{background:var(--surface-2)}.boundary summary,.colour-grid span,.thread time{color:var(--muted)}
+html[data-theme=light]{--sae-aurose:#955c37;--sae-aurose-soft:#814529;--sae-attend:#86550c;--sae-trust-cyan:#116778}
+html[data-theme=light] .attend-choices button[aria-pressed=true]{background:var(--surface-2);color:var(--ink)}
 .theme-toggle{min-width:90px}.theme-controls{display:flex;gap:8px}.routes{border-color:var(--line);margin-bottom:8px}
 .toolbar{background:var(--paper);gap:6px;position:relative}.library{margin-top:24px}
 .library-search{display:flex;align-items:center;gap:14px;margin-top:16px;color:var(--muted);font-size:13px}
