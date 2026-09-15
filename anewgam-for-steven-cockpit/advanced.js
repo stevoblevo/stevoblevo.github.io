@@ -6,13 +6,14 @@
   const $ = (s, r = document) => r.querySelector(s);
   const toast = api.toast || (() => {});
   const statuses = ["held-local", "in-motion", "proven"];
-  const labels = { "held-local": "HELD LOCAL", "in-motion": "IN MOTION", proven: "PROVEN" };
+  const labels = { "held-local": "HELD LOCAL", "in-motion": "IN MOTION", proven: "OUTCOME RECORDED" };
 
+  let outcomeId = null;
   function normalise(raw) {
     const next = raw && typeof raw === "object" ? raw : {};
     next.blooms = Number.isFinite(Number(next.blooms)) ? Math.max(0, Number(next.blooms)) : 7;
     next.fruit = typeof next.fruit === "string" ? next.fruit.slice(0, 80) : "rose-gold Peach";
-    next.threads = Array.isArray(next.threads) ? next.threads.slice(0, 250).map((t, i) => ({
+    next.threads = Array.isArray(next.threads) ? next.threads.filter(t => t && typeof t === "object").slice(0, 250).map((t, i) => ({
       id: typeof t.id === "string" ? t.id : `legacy-${i}-${Date.now()}`,
       source: String(t.source || "").slice(0, 4000),
       heldAt: t.heldAt || new Date().toISOString(),
@@ -38,18 +39,25 @@
     if (!thread) return;
     if (thread.status === "held-local") thread.status = "in-motion";
     else if (thread.status === "in-motion") {
-      const proof = prompt("What proves this round trip? A result, link, filename, or plain truthful sentence:", thread.proof || "");
-      if (proof === null) return;
-      if (!proof.trim()) return toast("Proof stays open until there is something truthful to name.");
-      thread.proof = proof.trim().slice(0, 2000);
-      thread.status = "proven";
-      s.blooms += 1;
-    } else return toast("This thread is already proven. Its receipt stays visible.");
+      outcomeId = thread.id;
+      $("#outcomeInput").value = thread.proof || "";
+      $("#outcomeDialog").showModal(); $("#outcomeInput").focus(); return;
+    } else return toast("An outcome is already recorded for this thread.");
     thread.updatedAt = new Date().toISOString();
     receipt(s, `thread-${thread.status}`, thread);
     api.setState(s);
-    toast(thread.status === "proven" ? "Round trip proven. The world grew." : "Thread is moving—bounded, visible, unsent.");
+    toast(thread.status === "proven" ? "Outcome recorded locally." : "Marked in motion locally. No remote task was started.");
   }
+
+  $("#outcomeCancel").addEventListener("click", () => $("#outcomeDialog").close());
+  $("#outcomeForm").addEventListener("submit", e => {
+    e.preventDefault(); const proof = $("#outcomeInput").value.trim(); if (!proof) return;
+    const s = state(), thread = s.threads.find(t => t.id === outcomeId);
+    if (!thread || thread.status !== "in-motion") return $("#outcomeDialog").close();
+    thread.proof = proof.slice(0, 2000); thread.status = "proven"; thread.updatedAt = new Date().toISOString();
+    s.blooms++; receipt(s, "outcome-recorded-locally", thread); api.setState(s);
+    $("#outcomeDialog").close(); toast("Outcome saved. Your report, not independent verification.");
+  });
 
   function render() {
     const s = state();
@@ -57,9 +65,9 @@
     $("#heldCount").textContent = counts["held-local"];
     $("#motionCount").textContent = counts["in-motion"];
     $("#provenCount").textContent = counts.proven;
-    const progress = s.threads.length ? Math.round(((counts["in-motion"] * .5 + counts.proven) / s.threads.length) * 100) : 0;
+    const progress = s.threads.length ? Math.round((counts.proven / s.threads.length) * 100) : 0;
     $("#loomProgress").style.width = `${progress}%`;
-    $("#loomProgressText").textContent = s.threads.length ? `${progress}% of ${s.threads.length} thread${s.threads.length === 1 ? "" : "s"} returned with proof` : "No thread begun";
+    $("#loomProgressText").textContent = s.threads.length ? `${counts.proven} of ${s.threads.length} threads have a locally recorded outcome (${progress}%)` : "No thread begun";
     const list = $("#threadList");
     list.replaceChildren();
     $("#threadEmpty").hidden = s.threads.length > 0;
@@ -74,10 +82,10 @@
       head.append(status, time);
       const source = document.createElement("p"); source.className = "thread-source"; source.textContent = thread.source;
       main.append(head, source);
-      if (thread.proof) { const proof = document.createElement("p"); proof.className = "thread-proof"; proof.textContent = `Proof · ${thread.proof}`; main.append(proof); }
+      if (thread.proof) { const proof = document.createElement("p"); proof.className = "thread-proof"; proof.textContent = `Recorded outcome · ${thread.proof}`; main.append(proof); }
       const controls = document.createElement("div"); controls.className = "thread-controls";
-      const act = document.createElement("button"); act.type = "button"; act.className = "prove"; act.textContent = thread.status === "held-local" ? "Begin move" : thread.status === "in-motion" ? "Return proof" : "Proven ✓"; act.disabled = thread.status === "proven"; act.addEventListener("click", () => advance(thread.id));
-      const copy = document.createElement("button"); copy.type = "button"; copy.textContent = "Copy"; copy.addEventListener("click", async () => { await navigator.clipboard?.writeText(thread.source); toast("Original words copied."); });
+      const act = document.createElement("button"); act.type = "button"; act.className = "prove"; act.textContent = thread.status === "held-local" ? "Begin move" : thread.status === "in-motion" ? "Record outcome" : "Recorded ✓"; act.disabled = thread.status === "proven"; act.addEventListener("click", () => advance(thread.id));
+      const copy = document.createElement("button"); copy.type = "button"; copy.textContent = "Copy"; copy.addEventListener("click", async () => { try { if (!navigator.clipboard) throw Error(); await navigator.clipboard.writeText(thread.source); toast("Original words copied."); } catch { toast("Clipboard unavailable. Select the words and copy manually."); } });
       controls.append(act, copy); article.append(main, controls); list.append(article);
     }
     $("#cockpitHealth").textContent = `${navigator.onLine ? "online" : "offline"} · ${s.receipts.length} receipts`;
@@ -88,10 +96,11 @@
 
   function exportState() {
     const s = state();
+    receipt(s, "skein-exported");
     const payload = { format: "sae.anewgam.skein", version: 3, exportedAt: new Date().toISOString(), authorityEffect: "none", state: s };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `steven-anewgam-skein-${new Date().toISOString().slice(0, 10)}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    receipt(s, "skein-exported"); api.setState(s); toast("Portable skein exported with a local receipt.");
+    api.setState(s); toast("Portable skein exported with a local receipt.");
   }
 
   async function importState(file) {
@@ -123,7 +132,7 @@
   $("#importFile")?.addEventListener("change", e => { importState(e.target.files?.[0]); e.target.value = ""; });
   $("#persistState")?.addEventListener("click", async () => {
     if (!navigator.storage?.persist) return toast("This browser manages storage automatically. Export is your portable backup.");
-    const granted = await navigator.storage.persist(); toast(granted ? "Local memory fortified by this browser." : "Browser kept standard storage; export remains available."); health();
+    try { const granted = await navigator.storage.persist(); toast(granted ? "Local memory fortified by this browser." : "Browser kept standard storage; export remains available."); } catch { toast("Storage request unavailable. Export remains available."); } health();
   });
   document.querySelectorAll("[data-attend-choice]").forEach(button => button.addEventListener("click", () => {
     const s = state();

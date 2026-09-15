@@ -39,9 +39,10 @@ window.__anewDoors = [
         el.textContent = d.title;
       } else {
         el.type = "button";
-        el.textContent = d.title + (d.live ? "" : " · hold");
+        el.textContent = d.title + (d.live ? "" : " · plates");
         el.addEventListener("click", () => {
           location.hash = d.hash[0];
+          document.getElementById('library')?.scrollIntoView();
         });
       }
       el.title = d.line;

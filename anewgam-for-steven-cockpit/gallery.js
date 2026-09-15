@@ -16,6 +16,7 @@
   let dragging = false;
   let lastX = 0;
   let lastY = 0;
+  let returnFocus = null;
 
   function srcOf(x) {
     return (x && (x.image || x.thumbnail)) || "";
@@ -78,7 +79,11 @@
       });
       related.append(b);
     }
+    if (stage.hidden) returnFocus = document.activeElement;
     stage.hidden = false;
+    document.querySelector('.shell').inert = true;
+    document.querySelector('.side-nav').inert = true;
+    document.getElementById('ya-close').focus();
     document.body.classList.add("ya-open");
     resetView();
     if (pushHash) {
@@ -90,8 +95,11 @@
   function close() {
     stage.hidden = true;
     document.body.classList.remove("ya-open");
+    document.querySelector('.shell').inert = false;
+    document.querySelector('.side-nav').inert = false;
+    returnFocus?.focus();
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-    if (/^#view=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
+    if (/^#view=|^#gallery$/.test(location.hash)) history.replaceState(null, "", "#library");
   }
 
   function next(d) {
@@ -107,12 +115,15 @@
   document.getElementById("grid")?.addEventListener("click", (ev) => {
     const card = ev.target.closest(".card");
     if (!card) return;
-    const xs = list();
-    const id = card.dataset.id;
-    const i = id ? xs.findIndex((x) => x.id === id) : [...document.querySelectorAll("#grid .card")].indexOf(card);
+    const i = list().findIndex(x => x.id === card.dataset.id);
     if (i >= 0) openAt(i, true);
   });
 
+  document.getElementById('grid')?.addEventListener('keydown', ev => {
+    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches('.card')) {
+      ev.preventDefault(); window.__openGallery(ev.target.dataset.id);
+    }
+  });
   document.getElementById("ya-close")?.addEventListener("click", close);
   document.getElementById("ya-prev")?.addEventListener("click", () => next(-1));
   document.getElementById("ya-next")?.addEventListener("click", () => next(1));
@@ -122,7 +133,7 @@
   });
 
   stage.addEventListener("click", (ev) => {
-    if (ev.target.closest(".ya-ui, .ya-rel, #ya-img")) return;
+    if (ev.target.closest("button, .ya-ui, .ya-rel, #ya-img")) return;
     const r = stage.getBoundingClientRect();
     const x = (ev.clientX - r.left) / r.width;
     if (x < 0.28) next(-1);
@@ -161,6 +172,13 @@
   img.addEventListener("pointerup", () => { dragging = false; });
 
   window.addEventListener("keydown", (ev) => {
+    if (ev.target.closest('input, textarea, select, [contenteditable="true"], dialog')) return;
+    if (!stage.hidden && ev.key === 'Tab') {
+      const buttons = [...stage.querySelectorAll('button:not([disabled])')];
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+    }
     if (stage.hidden) {
       if (ev.key === "g" && !ev.metaKey && !ev.ctrlKey) {
         openAt(0, true);
@@ -177,11 +195,11 @@
   });
 
   function fromHash() {
-    const raw = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+    let raw; try { raw = decodeURIComponent((location.hash || "").replace(/^#/, "")); } catch { return; }
     if (raw === "gallery") openAt(0, false);
     else if (raw === "hires") {
       if (window.__setLibraryFilter) window.__setLibraryFilter("hires");
-      const i = list().findIndex((x) => (x.tags || []).includes("hires"));
+      const i = list().findIndex(x => (x.tags || []).includes("hires"));
       if (i >= 0) openAt(i, false);
     }
     else if (raw.startsWith("view=")) {
