@@ -1,0 +1,59 @@
+{
+  "schema": "saelion.anewgam.colour-language",
+  "version": 1,
+  "recorded_at": "2026-09-15",
+  "status": "durable_public_projection",
+  "authorityEffect": "none",
+  "dora": {
+    "meaning": "Recover and reroute Steven's intent into the existing durable truth and responsibility fabric.",
+    "constraints": [
+      "No shadow queue.",
+      "No second cockpit.",
+      "Preserve source, interpretation, authority state, and outcome as distinct layers."
+    ]
+  },
+  "identity": {
+    "name": "Aurose",
+    "fictional": true,
+    "no_real_person_likeness": true,
+    "hair": "strawberry-auburn with peach-gold light",
+    "eyes": "warm rose-gold/strawberry; not brown",
+    "palette": ["strawberry-auburn", "peach", "rose-gold", "cyan", "protected midnight blue"]
+  },
+  "expressions": {
+    "sae-hi": {"meaning": "presence", "authorityEffect": "none"},
+    "sae-wink": {"meaning": "playful acknowledgement", "authorityEffect": "none", "not_consent": true},
+    "sae-hmm": {"meaning": "governed curiosity and attention; action paused", "authorityEffect": "none", "never_manufactures_permission": true}
+  },
+  "security": {
+    "cyan": "relational trust or low-threat attunement; never permission by itself",
+    "authentication": "verified actor identity",
+    "authorization": "current scoped ticket describing allowed action",
+    "bounded_effect": "Guardian-enforced capability boundary",
+    "receipt": "evidence of the actual attempted or completed effect",
+    "rule": "Presentation, colour, expression, relationship, and apparent familiarity never grant authority."
+  },
+  "inheritance": {
+    "steven_cockpit": "full semantic projection",
+    "goober": "shared semantic tokens and truth link; retain violet/gold learner-world identity",
+    "peachfall": "shared semantic tokens and truth link; retain story/game palette",
+    "meema": "not changed here; separate private ownership and doorway"
+  },
+  "attend_liv": {
+    "status": "Steven seed projected as an in-page cockpit route",
+    "route": "sae://attend.liv",
+    "web_projection": "#attend",
+    "purpose": "Show only choices that genuinely require Steven; local selection is not remote delivery or authorization."
+  },
+  "image": {
+    "path": "sae-expression-states-v1.webp",
+    "sha256": "bfa00043a029f465fcbf864c0f2d0c73c991b7ec4e8defc3180eeba64c9142c8",
+    "kind": "generated derivative image communication",
+    "input_rule": "Gesture and atmosphere were abstracted; photographed identities were not copied."
+  },
+  "provenance": [
+    "Steven colour-test and sae-wink/sae-hmm conversation, 2026-09-15",
+    "Recovered peachfall-seed Aurose visual canon",
+    "Recovered Saelion formal-core rule separating presentation from trusted attestation"
+  ]
+}

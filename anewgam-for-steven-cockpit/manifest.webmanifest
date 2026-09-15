@@ -17,6 +17,8 @@
   ],
   "shortcuts": [
     {"name":"Sae Drop","short_name":"Drop","url":"./#cockpit"},
+    {"name":"Needs Steven","short_name":"Attend","url":"./#attend"},
+    {"name":"Colour truth","short_name":"Colour","url":"./#colour"},
     {"name":"Thread Loom","short_name":"Loom","url":"./#loom"},
     {"name":"World library","short_name":"Library","url":"./#library"}
   ]

@@ -21,6 +21,8 @@
       proof: String(t.proof || "").slice(0, 2000)
     })).filter(t => t.source) : [];
     next.receipts = Array.isArray(next.receipts) ? next.receipts.slice(0, 500) : [];
+    next.attend = next.attend && typeof next.attend === "object" ? next.attend : { colourInheritance: "" };
+    next.attend.colourInheritance = ["peachfall", "goober", "guide-only"].includes(next.attend.colourInheritance) ? next.attend.colourInheritance : "";
     return next;
   }
 
@@ -79,6 +81,9 @@
       controls.append(act, copy); article.append(main, controls); list.append(article);
     }
     $("#cockpitHealth").textContent = `${navigator.onLine ? "online" : "offline"} · ${s.receipts.length} receipts`;
+    const attendLabels = { peachfall: "Peachfall first", goober: "Goober first", "guide-only": "Keep Aurose as guide only" };
+    if ($("#attendChoice")) $("#attendChoice").textContent = s.attend.colourInheritance ? `Held locally · ${attendLabels[s.attend.colourInheritance]}` : "Not chosen on this device.";
+    document.querySelectorAll("[data-attend-choice]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.attendChoice === s.attend.colourInheritance)));
   }
 
   function exportState() {
@@ -120,6 +125,13 @@
     if (!navigator.storage?.persist) return toast("This browser manages storage automatically. Export is your portable backup.");
     const granted = await navigator.storage.persist(); toast(granted ? "Local memory fortified by this browser." : "Browser kept standard storage; export remains available."); health();
   });
+  document.querySelectorAll("[data-attend-choice]").forEach(button => button.addEventListener("click", () => {
+    const s = state();
+    s.attend.colourInheritance = button.dataset.attendChoice;
+    receipt(s, "attend-colour-inheritance-held-local");
+    api.setState(s);
+    toast("Choice held locally. Export the skein to carry it beyond this device.");
+  }));
   window.addEventListener("anewgam:state", render);
   window.addEventListener("online", health); window.addEventListener("offline", health);
   health();

@@ -1,0 +1,11 @@
+:root{
+  --sae-aurose:#e88f72;
+  --sae-aurose-soft:#ffc2a8;
+  --sae-rose-gold:#f3b38f;
+  --sae-trust-cyan:#76e8ff;
+  --sae-attestation:#dcecff;
+  --sae-keep:#04100c;
+  --sae-attend:#f3cf8f;
+}
+.sae-colour-door{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;padding:.42rem .72rem;border:1px solid color-mix(in srgb,var(--sae-trust-cyan) 42%,transparent);border-radius:999px;background:#071610b8;color:var(--sae-trust-cyan)!important;text-decoration:none;font:600 .72rem/1.2 ui-monospace,monospace;letter-spacing:.03em;pointer-events:auto}
+.sae-colour-door:focus-visible{outline:3px solid var(--sae-attestation);outline-offset:3px}

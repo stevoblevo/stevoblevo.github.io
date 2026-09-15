@@ -11,6 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="colour-language.css">
   <link rel="stylesheet" href="advanced.css">
   <title>Steven · .anewgam</title>
   <style>
@@ -25,7 +26,7 @@
 <body>
   <div class="shell">
     <header class="top"><div><div class="mark">Steven · .anewgam</div><div class="sub">Your living POV: play, remember, decide, and let Sae carry the work.</div></div><div class="badge"><span class="pip"></span>Steven is live</div><button class="install" id="installBtn">Install .anewgam</button></header>
-    <nav class="routes" aria-label="Saelion routes"><a class="route" href="#cockpit">sae://cockpit</a><a class="route" href="#loom">sae://loom</a><button class="route" data-local="bb">sae://bb.com · Bluebird</button><button class="route" data-local="bd">sae://bd</button><button class="route" data-local="cn">sae://cn</button><a class="route relay" href="https://relay.saelion.co" rel="noopener">relay.saelion.co ↗</a></nav>
+    <nav class="routes" aria-label="Saelion routes"><a class="route" href="#cockpit">sae://cockpit</a><a class="route" href="#attend">sae://attend.liv</a><a class="route" href="#colour">sae://colour</a><a class="route" href="#loom">sae://loom</a><button class="route" data-local="bb">sae://bb.com · Bluebird</button><button class="route" data-local="bd">sae://bd</button><button class="route" data-local="cn">sae://cn</button><a class="route relay" href="https://relay.saelion.co" rel="noopener">relay.saelion.co ↗</a></nav>
     <nav id="doors" class="doors" aria-label="Live doors"></nav><p id="door-note">Steven · .anewgam</p>
 
     <main id="cockpit" class="cockpit">
@@ -36,6 +37,18 @@
       </div>
       <aside class="panel garden"><p class="eyebrow">YOUR WORLD ANSWERS</p><h2>sae-lions.bloom</h2><div class="world"><div class="moon"></div><div class="hill"></div><div class="tree"><div class="trunk"></div><div class="crown"></div><button class="fruit peach on" data-fruit="rose-gold Peach" aria-label="Choose rose-gold peach"></button><button class="fruit pear" data-fruit="cyan Pear" aria-label="Choose cyan pear"></button><button class="fruit plum" data-fruit="violet Plum" aria-label="Choose violet plum"></button></div><div class="bun">·ᴗ·</div></div><div class="reward"><div><small>TODAY’S FRUIT</small><br><b id="fruitName">rose-gold Peach</b></div><span><b id="bloomCount">7</b> blooms</span></div><p class="truth">Finish truthfully and the world grows. Creative play changes the scene; Guardian still bounds real effects. Nothing crosses worlds by accident.</p></aside>
     </main>
+
+    <aside class="attend panel" id="attend" aria-labelledby="attend-title">
+      <p class="eyebrow">SAE://ATTEND.LIV · RIGHT RAIL</p><h2 id="attend-title">Only what needs Steven</h2>
+      <div class="attend-card"><small>ONE OPEN COLOUR CHOICE</small><strong>Where should Aurose herself enter next?</strong><p>The semantic language is shared now. Character presence remains yours to place.</p><div class="attend-choices"><button data-attend-choice="peachfall">Peachfall first</button><button data-attend-choice="goober">Goober first</button><button data-attend-choice="guide-only">Guide only</button></div><output id="attendChoice">Not chosen on this device.</output></div>
+      <a href="#colour">See the colour truth ↓</a><a href="colour-language.v1.json">Open Dora record ↗</a>
+      <p class="attend-boundary">This choice is stored locally and included in Skein export. It is not sent, executed, or treated as authority.</p>
+    </aside>
+
+    <section class="colour panel" id="colour" aria-labelledby="colour-title">
+      <div class="colour-visual"><img src="sae-expression-states-v1.webp" alt="Aurose expression states: sae-hi presence, sae-wink play, and sae-hmm attention; each marked not authority"></div>
+      <div class="colour-copy"><p class="eyebrow">DORA · COLOUR LANGUAGE V1</p><h2 id="colour-title">Warmth may invite. Only attestation authorizes.</h2><p>Aurose carries identity in strawberry-auburn, peach, and rose-gold. Cyan carries trust and attunement. Protected midnight blue carries the inner keep. None of them unlocks anything.</p><div class="colour-grid"><article><i class="swatch aurose"></i><b>AUROSE</b><span>Fictional identity—not a real-person likeness.</span></article><article><i class="swatch cyan"></i><b>CYAN</b><span>Trust signal—not permission.</span></article><article><i class="swatch attest"></i><b>AUTH</b><span>Verified actor plus current scoped ticket.</span></article><article><i class="swatch bound"></i><b>SEC</b><span>Bounded capability, effect, and receipt.</span></article></div><p class="inheritance">Inherited carefully: Steven cockpit gets the full language; Goober and Peachfall retain their own palettes while linking to this truth.</p></div>
+    </section>
 
     <section class="loom panel" id="loom" aria-labelledby="loom-title">
       <div class="loom-head"><figure class="loom-sigil"><img src="click-bloom.svg" alt="A warm golden click finding its place and growing a green stem"><figcaption>THE CLICK · fragment → fit → bloom</figcaption></figure><div class="loom-intro"><p class="eyebrow">ROUND-TRIP ENGINE · LOCAL FIRST</p><h2 id="loom-title">Thread Loom</h2><p>What Steven says becomes a held thread, then a bounded move, then proof. The original words remain visible at every step.</p></div><div class="loom-actions"><button id="exportState">Export skein</button><button id="importState">Import skein</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></div>
@@ -48,7 +61,7 @@
     </section>
 
     <section class="library" id="library"><div class="library-title"><div><p class="eyebrow">PUBLIC ENRICHED PASSTHRU</p><h2>World plates & seeds</h2></div><p>Every earlier image remains. Filter the lineage or hash a door.</p></div><nav class="toolbar" aria-label="Filter library"><button data-filter="all" aria-pressed="true">All</button><button data-filter="hires">Hi-res</button><button data-filter="gen22">GEN22</button><button data-filter="gen23">GEN23</button><button data-filter="polylite">Polylite</button><button data-filter="night">Night</button><button data-filter="knight">Knight</button><button data-filter="bluebird">Bluebird</button><button type="button" id="open-gallery">Immerse</button></nav><div id="grid" class="grid"></div><div id="empty" class="empty">Nothing in this slice yet.</div><aside class="note"><strong>Passthru rule.</strong> Public projection carries selected generated work and seed notes. Canonical private state stays private. Presentation never grants authority. authorityEffect: none.</aside></section>
-    <footer>sae://cockpit · quiet signal · context, not permission</footer>
+    <footer>sae://cockpit · sae://attend.liv · quiet signal · context, not permission</footer>
   </div>
   <div id="ya-stage" hidden><div class="ya-ui"><small id="ya-count"></small><h3 id="ya-title"></h3><small id="ya-meta"></small><button type="button" id="ya-full">fullscreen</button><button type="button" id="ya-close">close</button></div><button type="button" class="ya-hit" id="ya-prev" aria-label="Previous"></button><div class="ya-frame"><img id="ya-img" alt="" draggable="false"></div><button type="button" class="ya-hit" id="ya-next" aria-label="Next"></button><div id="ya-related" aria-label="Related stills"></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
