@@ -1,0 +1,10 @@
+.device-bridge{margin:0 0 14px;padding:12px 14px;display:grid;gap:9px}
+.device-bridge-head,.device-bridge-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.device-bridge-head strong{font:600 1rem Georgia,serif}
+.device-bridge-head output{margin-left:auto;color:var(--cyan);font-size:.76rem}
+.device-bridge p{margin:0;color:var(--muted);font-size:.82rem}
+.device-bridge-actions button{padding:7px 10px;font-size:.78rem}
+.device-bridge [data-tone="warn"]{color:var(--gold)}
+.device-bridge [data-tone="bad"]{color:var(--rose)}
+.device-bridge [data-tone="ok"]{color:var(--mint)}
+@media(max-width:780px){.device-bridge-head output{width:100%;margin-left:0}}

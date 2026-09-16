@@ -30,3 +30,10 @@ test('service worker only removes its own obsolete caches', async () => {
 test('the recording companion has exactly 22 shots', () => {
   const story = JSON.parse(fs.readFileSync(path.join(dir,'gen22-record.json')));assert.equal(story.shots.length,22);assert.equal(story.authorityEffect,'none');
 });
+test('device chat keeps transport and bridge state separate', () => {
+  const source = fs.readFileSync(path.join(dir,'device-chat.js'),'utf8');
+  assert.match(source,/message-stream-error/);
+  assert.match(source,/bridge:'not-tested'/);
+  assert.match(source,/Pending command held locally/);
+  assert.doesNotMatch(source,/OP9.*failed/i);
+});
