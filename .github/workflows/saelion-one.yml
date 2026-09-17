@@ -46,12 +46,14 @@ jobs:
           trap 'kill "$SERVER_PID" || true' EXIT
           for i in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4317/ >/dev/null && break; sleep 1; done
           python tests/browser.py
+          python tests/art_browser.py
       - name: Package output without changing existing symbolic route names
         if: always()
         run: |
           mkdir -p "$RUNNER_TEMP/saelion-evidence"
           if [ -d dist ]; then tar -czf "$RUNNER_TEMP/saelion-evidence/site.tar.gz" -C dist .; fi
           if [ -d test-results/browser ]; then cp -r test-results/browser "$RUNNER_TEMP/saelion-evidence/browser"; fi
+          if [ -d test-results/art-browser ]; then cp -r test-results/art-browser "$RUNNER_TEMP/saelion-evidence/art-browser"; fi
           if [ -f "$RUNNER_TEMP/unified-home-check.json" ]; then cp "$RUNNER_TEMP/unified-home-check.json" "$RUNNER_TEMP/saelion-evidence/"; fi
           if [ -d "$RUNNER_TEMP/art-arrival" ]; then cp -r "$RUNNER_TEMP/art-arrival" "$RUNNER_TEMP/saelion-evidence/"; fi
           git rev-parse HEAD > "$RUNNER_TEMP/saelion-evidence/source-commit.txt"
