@@ -64,7 +64,7 @@
     }
     library.insertBefore(panel, library.querySelector('.library-search'));
     const info = el('div'); info.id = 'art-route-info'; info.className = 'ya-ui'; info.hidden = true;
-    Object.assign(info.style, {top:'auto', bottom:'84px', left:'12px', right:'12px', maxHeight:'32vh', overflow:'auto', padding:'12px', background:'rgba(5,15,13,.94)', color:'#fff', overflowWrap:'anywhere', pointerEvents:'auto'});
+    Object.assign(info.style, {display:'block', top:'auto', bottom:'84px', left:'12px', right:'12px', maxHeight:'32vh', overflow:'auto', padding:'12px', background:'rgba(5,15,13,.94)', color:'#fff', overflowWrap:'anywhere', pointerEvents:'auto'});
     doc.getElementById('ya-stage')?.append(info);
     let objectURL = null;
     function show(id) {
