@@ -22,14 +22,20 @@
   }
   const record = event => { state.receipts.unshift({at: new Date().toISOString(), event, authorityEffect: 'none'}); state.receipts = state.receipts.slice(0, 500); };
   function hold(source) {
-    if (!source.trim()) return;
-    if (state.threads.length >= 250) return toast('250 threads held. Export your skein before starting another.');
-    const now = new Date().toISOString();
-    state.threads.unshift({id: crypto.randomUUID(), source: source.trim().slice(0, 4000), heldAt: now, updatedAt: now, status: 'held-local', proof: ''});
-    state.blooms++; record('thread-held'); save();
-    toast(memoryOnly ? 'Held in this tab only. Export to keep it.' : 'Thread saved on this device. Nothing sent.');
-    return true;
+    try {
+      const result = window.__saeIngress.append(localStorage, source, {world: 'cockpit'});
+      state = result.state; memoryOnly = false;
+      $('#storageWarning').hidden = true;
+      render(); window.dispatchEvent(new CustomEvent('anewgam:state'));
+      toast('Saved in your existing local loom. Nothing sent; no worker started.');
+      return true;
+    } catch (error) { toast(error.message || 'Could not save. Your input is still here.'); return false; }
   }
+  window.addEventListener('storage', event => {
+    if (event.key !== KEY) return;
+    try { state = window.__saeIngress.read(localStorage); render(); window.dispatchEvent(new CustomEvent('anewgam:state')); }
+    catch (error) { toast(error.message); }
+  });
   window.__anewgam = {key: KEY, getState: () => state, setState: next => { state = next; save(); }, toast, hold};
   function render() {
     $('#fruitName').textContent = state.fruit; $('#bloomCount').textContent = state.blooms;
@@ -43,8 +49,8 @@
     $('#continueBtn').textContent = state.threads.length ? 'Open threads' : 'Begin a thread';
   }
   $('#dropForm').addEventListener('submit', e => {
-    e.preventDefault(); captured = $('#dropInput').value.trim();
-    if (!captured) return toast('Drop a fragment first.');
+    e.preventDefault(); captured = $('#dropInput').value;
+    if (!captured.trim()) return toast('Drop a fragment first.');
     $('#interpretText').textContent = `“${captured}” — ready to hold exactly as written. No AI or remote execution is connected here.`;
     $('#interpret').classList.add('show'); $('#holdBtn').focus();
   });

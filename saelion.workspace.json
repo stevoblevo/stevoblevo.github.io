@@ -1,0 +1,44 @@
+{
+  "schema": "saelion-workspace-v1",
+  "home": {
+    "repository": "stevoblevo/stevoblevo.github.io",
+    "branch": "master",
+    "entry": "/anewgam-for-steven-cockpit/",
+    "desiredOrigin": "https://saelion.co",
+    "domainStatus": "not-verified"
+  },
+  "routes": {
+    "home": "/",
+    "cockpit": "/anewgam-for-steven-cockpit/",
+    "peachfall": "/peachfall/"
+  },
+  "components": {
+    "peachfall": {
+      "repository": "stevoblevo/peachfall-playable",
+      "sourceDirectory": ".worktrees/peachfall",
+      "observedMain": "654957d583d10a5aa34ba23a6980c36b21b8348b",
+      "publishedDirectory": "peachfall",
+      "publishedEngineProvenance": "existing published bundle preserved; exact source-to-bundle equivalence not established",
+      "otherBranches": [
+        "codex/vercel-live-slice",
+        "review/live-slice-20260907-click-walk-audio",
+        "cursor/porchlight-walk-fluidity-80e2"
+      ]
+    }
+  },
+  "deployment": {
+    "githubPages": "existing master branch publication",
+    "vercel": {
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "framework": null
+    },
+    "rule": "Deployment targets consume this workspace; they are not new sources of truth."
+  },
+  "ingress": {
+    "mode": "local-only",
+    "storageKey": "anewgam.steven.cockpit.v2",
+    "remoteAuthority": "none",
+    "backend": "Existing Saelion-owned authenticated ingress must be verified before remote submission is enabled."
+  }
+}

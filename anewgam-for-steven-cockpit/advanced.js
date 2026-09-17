@@ -19,7 +19,10 @@
       heldAt: t.heldAt || new Date().toISOString(),
       updatedAt: t.updatedAt || t.heldAt || new Date().toISOString(),
       status: statuses.includes(t.status) ? t.status : "held-local",
-      proof: String(t.proof || "").slice(0, 2000)
+      proof: String(t.proof || "").slice(0, 2000),
+      world: ["cockpit", "peachfall"].includes(t.world) ? t.world : undefined,
+      ingress: t.ingress === "device-local" ? "device-local" : undefined,
+      authorityEffect: "none"
     })).filter(t => t.source) : [];
     next.receipts = Array.isArray(next.receipts) ? next.receipts.slice(0, 500) : [];
     next.attend = next.attend && typeof next.attend === "object" ? next.attend : { colourInheritance: "" };
@@ -77,7 +80,7 @@
       const main = document.createElement("div");
       main.className = "thread-main";
       const head = document.createElement("div"); head.className = "thread-state";
-      const status = document.createElement("small"); status.textContent = labels[thread.status];
+      const status = document.createElement("small"); status.textContent = labels[thread.status] + (thread.world === "peachfall" ? " · PEACHFALL" : "");
       const time = document.createElement("time"); time.dateTime = thread.updatedAt; time.textContent = new Date(thread.updatedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
       head.append(status, time);
       const source = document.createElement("p"); source.className = "thread-source"; source.textContent = thread.source;
