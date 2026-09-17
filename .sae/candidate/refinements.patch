@@ -2,9 +2,7 @@ diff --git a/anewgam-for-steven-cockpit/advanced.js b/anewgam-for-steven-cockpit
 index bdab755..7b842f2 100644
 --- a/anewgam-for-steven-cockpit/advanced.js
 +++ b/anewgam-for-steven-cockpit/advanced.js
-@@ -19,7 +19,10 @@
-       heldAt: t.heldAt || new Date().toISOString(),
-       updatedAt: t.updatedAt || t.heldAt || new Date().toISOString(),
+@@ -21,3 +21,6 @@
        status: statuses.includes(t.status) ? t.status : "held-local",
 -      proof: String(t.proof || "").slice(0, 2000)
 +      proof: String(t.proof || "").slice(0, 2000),
@@ -12,27 +10,91 @@ index bdab755..7b842f2 100644
 +      ingress: t.ingress === "device-local" ? "device-local" : undefined,
 +      authorityEffect: "none"
      })).filter(t => t.source) : [];
-     next.receipts = Array.isArray(next.receipts) ? next.receipts.slice(0, 500) : [];
-     next.attend = next.attend && typeof next.attend === "object" ? next.attend : { colourInheritance: "" };
-@@ -77,7 +80,7 @@
-       const main = document.createElement("div");
-       main.className = "thread-main";
+@@ -79,3 +82,3 @@
        const head = document.createElement("div"); head.className = "thread-state";
 -      const status = document.createElement("small"); status.textContent = labels[thread.status];
 +      const status = document.createElement("small"); status.textContent = labels[thread.status] + (thread.world === "peachfall" ? " · PEACHFALL" : "");
        const time = document.createElement("time"); time.dateTime = thread.updatedAt; time.textContent = new Date(thread.updatedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-       head.append(status, time);
-       const source = document.createElement("p"); source.className = "thread-source"; source.textContent = thread.source;
+diff --git a/anewgam-for-steven-cockpit/index.html b/anewgam-for-steven-cockpit/index.html
+index 7f57ffd..54fa8dc 100644
+--- a/anewgam-for-steven-cockpit/index.html
++++ b/anewgam-for-steven-cockpit/index.html
+@@ -39,3 +39,3 @@
+         <figure class="gen2-hero"><img id="gen2Hero" src="gen2-dark.webp" alt="Original adult guides Sae and Dora tending a warm bloom together"><figcaption>SAE × DORA · Dark and light. One continuous world.</figcaption></figure>
+-        <section class="panel drop"><p class="eyebrow">SAE DROP · EXACT WORDS, HELD LOCALLY</p><h1>What wants to become real?</h1><p>Talk crooked. Capture your exact words, hold a thread, then record what happened. This public shell does not run a connected AI agent.</p><form id="dropForm" class="composer"><textarea maxlength="4000" id="dropInput" placeholder="Sae, here’s the thing…" aria-label="Tell Sae"></textarea><button class="inhale">Inhale ↗</button></form><div class="interpret" id="interpret"><span><strong>Local capture:</strong> <span id="interpretText"></span></span><button id="holdBtn">Hold as thread</button></div></section>
++        <section class="panel drop"><p class="eyebrow">SAE DROP · EXACT WORDS, HELD LOCALLY</p><h1>What wants to become real?</h1><p>Talk crooked. Capture your exact words, hold a thread, then record what happened. This public shell does not run a connected AI agent.</p><form id="dropForm" class="composer"><textarea id="dropInput" placeholder="Sae, here’s the thing…" aria-label="Tell Sae"></textarea><button class="inhale">Inhale ↗</button></form><div class="interpret" id="interpret"><span><strong>Local capture:</strong> <span id="interpretText"></span></span><button id="holdBtn">Hold as thread</button></div></section>
+         <section class="panel pulse"><div class="section-head"><div><p class="eyebrow">COMMITMENT PULSE</p><h2>What we’re carrying</h2></div><span class="status">IN MOTION</span></div><div class="mission"><div class="mission-icon">✦</div><div><h3>One doorway that survives the chat</h3><p>Unify Steven’s world, durable work, local execution, and proof—without asking him to ferry the system.</p><div class="bar"><i></i></div><div class="mission-foot"><span>No local threads yet</span><button id="continueBtn">Continue</button></div></div></div></section>
+diff --git a/anewgam-for-steven-cockpit/sw.js b/anewgam-for-steven-cockpit/sw.js
+index 05de17b..e4bd718 100644
+--- a/anewgam-for-steven-cockpit/sw.js
++++ b/anewgam-for-steven-cockpit/sw.js
+@@ -10,2 +10,3 @@ self.addEventListener('fetch', event => {
+   const url = new URL(event.request.url);
++  url.hash = ''; // Scene fragments are not a different cached document.
+   if (url.origin !== BASE.origin || url.search || !ALLOWED.has(url.href)) return;
+diff --git a/peachfall/companion.js b/peachfall/companion.js
+index 6983aca..38233a6 100644
+--- a/peachfall/companion.js
++++ b/peachfall/companion.js
+@@ -11,3 +11,3 @@
+   const dialog = document.createElement('dialog'); dialog.className = 'sae-panel'; dialog.id = 'sae-thought-dialog';
+-  dialog.innerHTML = '<form id="sae-thought-form"><h2>A thread from Peachfall</h2><p>Stay playful. Leave the words as they came.</p><label for="sae-thought-input">Your thought</label><textarea id="sae-thought-input" maxlength="4000" placeholder="Sae, when I return…"></textarea><p><small>Saved in the same device-local Thread Loom as your cockpit. Not sent to Sae or Saedo. No worker starts here.</small></p><div class="sae-actions"><button type="submit">Hold in my loom</button><button type="button" id="sae-thought-close">Back to play</button><a href="../anewgam-for-steven-cockpit/#loom">Open my loom</a></div><p role="status" id="sae-thought-status"></p></form>';
++  dialog.innerHTML = '<form id="sae-thought-form"><h2>A thread from Peachfall</h2><p>Stay playful. Leave the words as they came.</p><label for="sae-thought-input">Your thought</label><textarea id="sae-thought-input" placeholder="Sae, when I return…"></textarea><p><small>Saved in the same device-local Thread Loom as your cockpit. Not sent to Sae or Saedo. No worker starts here.</small></p><div class="sae-actions"><button type="submit">Hold in my loom</button><button type="button" id="sae-thought-close">Back to play</button><a href="../anewgam-for-steven-cockpit/#loom">Open my loom</a></div><p role="status" id="sae-thought-status"></p></form>';
+   document.body.append(dialog);
+@@ -17,3 +17,4 @@
+   // Existing game's keyboard handler is global: typing a thought must not move the player.
+-  for (const kind of ['keydown', 'keyup']) dialog.addEventListener(kind, e => e.stopPropagation());
++  dialog.addEventListener('keydown', e => e.stopPropagation());
++  // Let keyup reach the game so a key held before opening does not get stuck.
+   let id = crypto.randomUUID();
+diff --git a/peachfall/sw.js b/peachfall/sw.js
+index 1e69301..92ca972 100644
+--- a/peachfall/sw.js
++++ b/peachfall/sw.js
+@@ -22,2 +22,3 @@ self.addEventListener('fetch', event => {
+   const url = new URL(request.url);
++  url.hash = '';
+   if (url.origin !== BASE.origin || url.search || !ALLOWED.has(url.href)) return;
 diff --git a/tests/browser.py b/tests/browser.py
-index c0a20c2..cc763ce 100644
+index c0a20c2..87c6ac7 100644
 --- a/tests/browser.py
 +++ b/tests/browser.py
-@@ -39,7 +39,7 @@ with sync_playwright() as p:
-     assert state['threads'][0]['status']=='held-local';ok('Peachfall exact-source ingress read back in already-open cockpit')
-     cockpit.goto(BASE+'/anewgam-for-steven-cockpit/#loom');cockpit.wait_for_function('!!window.__anewgam')
+@@ -41,3 +41,3 @@ with sync_playwright() as p:
      assert cockpit.evaluate('window.__anewgam.getState().threads[0].source')==source
 -    assert source.strip() in cockpit.locator('body').inner_text();ok('same thread survives cockpit refresh and renders in existing loom')
 +    assert cockpit.locator('.thread-source').first.text_content()==source;ok('same thread survives cockpit refresh and renders in existing loom')
      page.screenshot(path=str(OUT/'peachfall-thought.png'),full_page=True)
-     page.get_by_role('button',name='Back to play',exact=True).click()
-     page.wait_for_function('navigator.serviceWorker.controller !== null',timeout=20000)
+@@ -50,2 +50,4 @@ with sync_playwright() as p:
+     page.locator('#sae-install-close').click()
++    cockpit.wait_for_function('navigator.serviceWorker.controller !== null', timeout=30000)
++    print('COCKPIT OFFLINE', cockpit.locator('#offlineStatus').inner_text(), flush=True)
+     ctx.set_offline(True);page.reload();page.wait_for_function('!!window.__PEACHFALL__ && !!window.__saeIngress')
+@@ -57,2 +59,9 @@ with sync_playwright() as p:
+     assert page.evaluate('window.__PEACHFALL__.getState().mode')=='watch';ok('original Watch controller still runs from play.html')
++    page.get_by_role('button',name='Hold a thought',exact=True).click()
++    oversized='x'*4001
++    page.locator('#sae-thought-input').fill(oversized)
++    page.get_by_role('button',name='Hold in my loom',exact=True).click()
++    assert page.locator('#sae-thought-input').input_value()==oversized
++    assert '4,000' in page.locator('#sae-thought-status').inner_text()
++    page.get_by_role('button',name='Back to play',exact=True).click();ok('oversized original is retained, not silently truncated by textarea')
+     # Failure fixture affects only this disposable test browser; it is not production state.
+diff --git a/tests/one.test.cjs b/tests/one.test.cjs
+index 1de40cb..b3fae3c 100644
+--- a/tests/one.test.cjs
++++ b/tests/one.test.cjs
+@@ -69 +69,14 @@ test('local development serves the same routes and rejects hidden/private paths'
+ });
++
++test('cockpit offline shell accepts a scene fragment without widening API access',async()=>{
++ const handlers={};let pending;
++ const context={URL,Response,fetch:async()=>{throw Error('offline');},self:{location:{href:'https://example.test/anewgam-for-steven-cockpit/sw.js'},addEventListener:(k,v)=>handlers[k]=v},caches:{open:async()=>({match:async()=>new Response('cached cockpit')})}};
++ vm.runInNewContext(fs.readFileSync(path.join(root,'anewgam-for-steven-cockpit/sw.js'),'utf8'),context);
++ handlers.fetch({request:{url:'https://example.test/anewgam-for-steven-cockpit/#loom',method:'GET',mode:'navigate'},respondWith:p=>pending=p});
++ assert.ok(pending,'fragment navigation must be handled');assert.equal(await(await pending).text(),'cached cockpit');
++});
++test('exact-word ingress fields do not silently truncate in the browser',()=>{
++ const html=fs.readFileSync(path.join(root,'anewgam-for-steven-cockpit/index.html'),'utf8');
++ assert.ok(!html.match(/<textarea[^>]*id="dropInput"[^>]*maxlength/));
++ assert.ok(!fs.readFileSync(path.join(root,'peachfall/companion.js'),'utf8').includes('maxlength="4000"'));
++});
