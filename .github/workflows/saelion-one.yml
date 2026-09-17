@@ -47,12 +47,14 @@ jobs:
                   subprocess.run(['git','apply','--check',str(refinement)],check=True)
                   subprocess.run(['git','apply',str(refinement)],check=True)
                   refinement.unlink()
-              # The first scenario leaves a saved game. Use the real visible reset
-              # button in this disposable fixture before testing the title's Watch door.
               browser_test=Path('tests/browser.py')
               old="    page.goto(BASE+'/peachfall/play.html');page.wait_for_function('!!window.__PEACHFALL__')\n"
               new=old+"    page.get_by_role('button',name='Reset save',exact=True).click()\n"
               text=browser_test.read_text()
+              assert text.count(old)==1
+              text=text.replace(old,new)
+              old='Storage.prototype.setItem = function(){throw new DOMException("QuotaExceeded", "QuotaExceededError")}'
+              new='() => { Storage.prototype.setItem = function(){throw new DOMException("QuotaExceeded", "QuotaExceededError")}; }'
               assert text.count(old)==1
               browser_test.write_text(text.replace(old,new))
               for p in parts:p.unlink()
