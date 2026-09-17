@@ -34,7 +34,6 @@ jobs:
           seeded=all(p.is_file() for p in parts)
           if seeded:
               text=''.join(p.read_text().strip() for p in parts)
-              # Repair a recorded two-character transfer omission, then verify exact source bytes.
               text=text.replace('D8dQadgxsDeE/NX','D8dQadgxs+sDeE/NX')
               data=gzip.decompress(base64.b64decode(text,validate=True))
               assert len(data)==64045
@@ -43,6 +42,11 @@ jobs:
               patch.write_bytes(data)
               subprocess.run(['git','apply','--check',str(patch)],check=True)
               subprocess.run(['git','apply',str(patch)],check=True)
+              refinement=Path('.sae/candidate/refinements.patch')
+              if refinement.is_file():
+                  subprocess.run(['git','apply','--check',str(refinement)],check=True)
+                  subprocess.run(['git','apply',str(refinement)],check=True)
+                  refinement.unlink()
               for p in parts:p.unlink()
           with open(os.environ['GITHUB_OUTPUT'],'a') as output:output.write('seeded='+str(seeded).lower()+'\n')
           PY
@@ -60,14 +64,18 @@ jobs:
           trap 'kill "$SERVER_PID" || true' EXIT
           for i in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4317/ >/dev/null && break; sleep 1; done
           python tests/browser.py
+      - name: Package exact output without changing existing symbolic route names
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/saelion-evidence"
+          if [ -d dist ]; then tar -czf "$RUNNER_TEMP/saelion-evidence/site.tar.gz" -C dist .; fi
+          if [ -d test-results/browser ]; then cp -r test-results/browser "$RUNNER_TEMP/saelion-evidence/browser"; fi
       - name: Preserve browser evidence and usable static output
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: saelion-one-preview-and-evidence
-          path: |
-            test-results/browser/
-            dist/
+          path: ${{ runner.temp }}/saelion-evidence/
           if-no-files-found: warn
           retention-days: 14
       - name: Prepare only the tested source change for candidate readback

@@ -1,0 +1,38 @@
+diff --git a/anewgam-for-steven-cockpit/advanced.js b/anewgam-for-steven-cockpit/advanced.js
+index bdab755..7b842f2 100644
+--- a/anewgam-for-steven-cockpit/advanced.js
++++ b/anewgam-for-steven-cockpit/advanced.js
+@@ -19,7 +19,10 @@
+       heldAt: t.heldAt || new Date().toISOString(),
+       updatedAt: t.updatedAt || t.heldAt || new Date().toISOString(),
+       status: statuses.includes(t.status) ? t.status : "held-local",
+-      proof: String(t.proof || "").slice(0, 2000)
++      proof: String(t.proof || "").slice(0, 2000),
++      world: ["cockpit", "peachfall"].includes(t.world) ? t.world : undefined,
++      ingress: t.ingress === "device-local" ? "device-local" : undefined,
++      authorityEffect: "none"
+     })).filter(t => t.source) : [];
+     next.receipts = Array.isArray(next.receipts) ? next.receipts.slice(0, 500) : [];
+     next.attend = next.attend && typeof next.attend === "object" ? next.attend : { colourInheritance: "" };
+@@ -77,7 +80,7 @@
+       const main = document.createElement("div");
+       main.className = "thread-main";
+       const head = document.createElement("div"); head.className = "thread-state";
+-      const status = document.createElement("small"); status.textContent = labels[thread.status];
++      const status = document.createElement("small"); status.textContent = labels[thread.status] + (thread.world === "peachfall" ? " · PEACHFALL" : "");
+       const time = document.createElement("time"); time.dateTime = thread.updatedAt; time.textContent = new Date(thread.updatedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+       head.append(status, time);
+       const source = document.createElement("p"); source.className = "thread-source"; source.textContent = thread.source;
+diff --git a/tests/browser.py b/tests/browser.py
+index c0a20c2..cc763ce 100644
+--- a/tests/browser.py
++++ b/tests/browser.py
+@@ -39,7 +39,7 @@ with sync_playwright() as p:
+     assert state['threads'][0]['status']=='held-local';ok('Peachfall exact-source ingress read back in already-open cockpit')
+     cockpit.goto(BASE+'/anewgam-for-steven-cockpit/#loom');cockpit.wait_for_function('!!window.__anewgam')
+     assert cockpit.evaluate('window.__anewgam.getState().threads[0].source')==source
+-    assert source.strip() in cockpit.locator('body').inner_text();ok('same thread survives cockpit refresh and renders in existing loom')
++    assert cockpit.locator('.thread-source').first.text_content()==source;ok('same thread survives cockpit refresh and renders in existing loom')
+     page.screenshot(path=str(OUT/'peachfall-thought.png'),full_page=True)
+     page.get_by_role('button',name='Back to play',exact=True).click()
+     page.wait_for_function('navigator.serviceWorker.controller !== null',timeout=20000)
