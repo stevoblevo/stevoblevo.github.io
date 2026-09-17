@@ -52,6 +52,11 @@ jobs:
           PY
       - name: Shared unit, regression and static-build checks
         run: npm run check
+      - name: Declared shell files and served-byte verifier regression checks
+        run: |
+          python -B -m unittest discover -s tests -p 'test_verify_unified_home.py' -v
+          python -B scripts/verify_unified_home.py --root dist --require-pwa > "$RUNNER_TEMP/unified-home-check.json"
+          cat "$RUNNER_TEMP/unified-home-check.json"
       - name: Install pinned browser test dependency
         run: |
           python -m pip install playwright==1.57.0
@@ -70,6 +75,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/saelion-evidence"
           if [ -d dist ]; then tar -czf "$RUNNER_TEMP/saelion-evidence/site.tar.gz" -C dist .; fi
           if [ -d test-results/browser ]; then cp -r test-results/browser "$RUNNER_TEMP/saelion-evidence/browser"; fi
+          if [ -f "$RUNNER_TEMP/unified-home-check.json" ]; then cp "$RUNNER_TEMP/unified-home-check.json" "$RUNNER_TEMP/saelion-evidence/"; fi
       - name: Preserve browser evidence and usable static output
         if: always()
         uses: actions/upload-artifact@v4
