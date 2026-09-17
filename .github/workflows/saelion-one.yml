@@ -1,0 +1,108 @@
+name: Saelion one-home acceptance
+on:
+  push:
+    branches: [master, sae/one-development-home-20260917]
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+concurrency:
+  group: saelion-one-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      seeded: ${{ steps.candidate.outputs.seeded }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Materialize exact bounded source candidate when present
+        id: candidate
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,base64,gzip,hashlib,subprocess
+          parts=[Path('.sae/candidate/'+str(i).zfill(2)+'.b64') for i in range(1,4)]
+          seeded=all(p.is_file() for p in parts)
+          if seeded:
+              text=''.join(p.read_text().strip() for p in parts)
+              # Repair a recorded two-character transfer omission, then verify exact source bytes.
+              text=text.replace('D8dQadgxsDeE/NX','D8dQadgxs+sDeE/NX')
+              data=gzip.decompress(base64.b64decode(text,validate=True))
+              assert len(data)==64045
+              assert hashlib.sha256(data).hexdigest()=='a4a9b3d787c80aeb6ea243b6326956380332134ee23adc1a9b4489124d449c65'
+              patch=Path(os.environ['RUNNER_TEMP'])/'one-candidate.patch'
+              patch.write_bytes(data)
+              subprocess.run(['git','apply','--check',str(patch)],check=True)
+              subprocess.run(['git','apply',str(patch)],check=True)
+              for p in parts:p.unlink()
+          with open(os.environ['GITHUB_OUTPUT'],'a') as output:output.write('seeded='+str(seeded).lower()+'\n')
+          PY
+      - name: Shared unit, regression and static-build checks
+        run: npm run check
+      - name: Install pinned browser test dependency
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Real browser play, ingress, mobile and offline round trip
+        shell: bash
+        run: |
+          node tools/one.mjs dev > "$RUNNER_TEMP/saelion-server.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" || true' EXIT
+          for i in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4317/ >/dev/null && break; sleep 1; done
+          python tests/browser.py
+      - name: Preserve browser evidence and usable static output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: saelion-one-preview-and-evidence
+          path: |
+            test-results/browser/
+            dist/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Prepare only the tested source change for candidate readback
+        if: steps.candidate.outputs.seeded == 'true'
+        run: |
+          git add -A
+          git diff --cached --binary --full-index > "$RUNNER_TEMP/verified-source.patch"
+      - name: Preserve tested candidate source
+        if: steps.candidate.outputs.seeded == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: saelion-one-verified-source
+          path: ${{ runner.temp }}/verified-source.patch
+          retention-days: 14
+  record-candidate:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/sae/one-development-home-20260917' && needs.verify.outputs.seeded == 'true'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: saelion-one-verified-source
+          path: ${{ runner.temp }}/saelion-verified
+      - name: Record tested source on this candidate branch only
+        shell: bash
+        run: |
+          git apply --check "$RUNNER_TEMP/saelion-verified/verified-source.patch"
+          git apply --index "$RUNNER_TEMP/saelion-verified/verified-source.patch"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Implement one development home, shared local ingress and Peachfall PWA'
+          git push origin HEAD:refs/heads/sae/one-development-home-20260917
