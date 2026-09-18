@@ -16,6 +16,9 @@
     "peachfall": {
       "repository": "stevoblevo/peachfall-playable",
       "sourceDirectory": ".worktrees/peachfall",
+      "buildDirectory": "live-slice",
+      "selectedSourceRef": "dec2632cc0e9bde473b8476edd1cf1d75a5d4f69",
+      "selectedSourceStatus": "tested development candidate only; not merged or deployed",
       "observedMain": "654957d583d10a5aa34ba23a6980c36b21b8348b",
       "publishedDirectory": "peachfall",
       "publishedEngineProvenance": "existing published bundle preserved; exact source-to-bundle equivalence not established",
