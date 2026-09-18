@@ -18,7 +18,11 @@ Text is device-local only. Original whitespace is retained; oversized input is r
 
 ## Peachfall source inside the same development workspace
 
-Its engine remains in the existing private `stevoblevo/peachfall-playable` repository. `npm run peachfall:source` checks out the observed main commit in ignored `.worktrees/peachfall/`, using your existing Git authentication; it does not reset existing work. `npm run peachfall:build` runs that checkout's existing tests and build from this root (run its reviewed dependency install first). It does **not** replace the public game. Main, live-slice and newer fluidity branches have not been established as equivalent to the currently published bundle. This release unifies the workspace entry without erasing those separate source lineages.
+Its engine remains in the existing private `stevoblevo/peachfall-playable` repository. `npm run peachfall:source` checks out the explicit `selectedSourceRef` from `saelion.workspace.json` into ignored `.worktrees/peachfall/`, using your existing Git authentication. It refuses to reset an existing checkout. The historical `observedMain` field is **not** the selected build source.
+
+`npm run peachfall:build` runs that checkout's tests and build from **`.worktrees/peachfall/live-slice`**, using its existing package and reviewed dependencies. It refuses to fall back to the older repository-root game when live-slice is missing. Node 24–26 is required by the private game; the static shell alone requires Node 22 or newer. Existing dirty source is preserved. The command does **not** replace the public game, install dependencies automatically, change credentials, or deploy.
+
+The selected source is a development candidate, not an accepted release. Review its exact private PR #4 tests and built-byte evidence before promotion. Main, live-slice and newer fluidity branches have not all been established as equivalent to the currently published bundle. One workspace does not erase those separate source lineages.
 
 Review and promote a verified engine build separately. Never hand-edit minified output or copy private source into the public site. The offline asset list is derived from the actual published directory on each build.
 
@@ -30,6 +34,6 @@ GitHub Pages continues using the existing branch publishing. `npm run build` als
 
 ## Verification and rollback
 
-`npm test` includes the existing cockpit checks plus exact-source ingress, input validation, quota/corrupt-state preservation, offline cache boundaries, and private-file exclusion. Browser acceptance covers actual Play/Watch, holding a Peachfall thought and reading it in the cockpit, refresh, mobile controls and offline reload. See the PR's receipt for what was actually executed.
+`npm test` includes the existing cockpit checks plus exact-source ingress, input validation, quota/corrupt-state preservation, offline cache boundaries, private-file exclusion, and the explicit private build-root contract. Browser acceptance covers actual Play/Watch, holding a Peachfall thought and reading it in the cockpit, refresh, mobile controls and offline reload. See the PR's receipt for what was actually executed. Command-composition fixtures are not native Windows checkout proof.
 
 Publish only the reviewed candidate. Roll back by reverting this change set, not resetting unrelated history. No migration changes the existing thread or game save keys. Old cached game versions retire only within the Peachfall cache namespace; a running game is not forcibly reloaded.
