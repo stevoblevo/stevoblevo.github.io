@@ -69,7 +69,7 @@ def run():
             f = game(page); button(f,'Continue').click()
             frame_obj(page).wait_for_function("window.__peachfall?.getState().scene === 'field'")
             button(f,'Meet the meadow gate').click()
-            expect(f.get_by_text('Welcome back. The peach you left is still here.',exact=True)).to_be_visible()
+            expect(f.get_by_role('dialog',name='The meadow gate',exact=True).get_by_text('Welcome back. The peach you left is still here.',exact=True)).to_be_visible()
             page.screenshot(path=str(OUT/'unified-desktop-return.png'))
             ok('cockpit doorway returns to selected game with the peach and greeting intact')
             page.reload(); f = game(page); button(f,'Continue').click()
