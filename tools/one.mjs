@@ -59,7 +59,7 @@ export async function build(root = ROOT) {
   await writeFile(path.join(output,'build-receipt.json'),JSON.stringify({schema:'saelion-static-build-v1',files:hashes,peachfallOfflineVersion:offline.version,meaning:'Static file identity only; not deployment, DNS, AI, worker execution or accepted outcome.'},null,2)+'\n');
   return {files:Object.keys(hashes).length,offline};
 }
-export function serve(root = ROOT, port = 4317) {
+export function serve(root = ROOT, port = 4317, preview = null) {
   const server = createServer(async (req,res) => {
     try {
       if (!['GET','HEAD'].includes(req.method)) {res.writeHead(405,{'Allow':'GET, HEAD'}); return res.end();}
@@ -68,6 +68,16 @@ export function serve(root = ROOT, port = 4317) {
       if (decoded.includes('\\') || decoded.includes('\0') || decoded.split('/').some(s => s === '..' || s.startsWith('.'))) {res.writeHead(403);return res.end();}
       let rel = decoded.replace(/^\/+/, '');
       if (!rel || rel.endsWith('/')) rel += 'index.html';
+      if (preview) {
+        const item = preview.routes.get('/'+rel);
+        if (item) {
+          res.writeHead(200,{'Content-Type':item.type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Content-Length':item.bytes.length});
+          return res.end(req.method === 'HEAD' ? undefined : item.bytes);
+        }
+        // Never mix the selected engine with the historical public game or its SW.
+        if (rel === 'peachfall' || rel === 'assets') {res.writeHead(308,{'Location':preview.launch});return res.end();}
+        if (rel.startsWith('peachfall/') || rel.startsWith('assets/')) {res.writeHead(404);return res.end('Not in selected preview');}
+      }
       let file = path.resolve(root,rel);
       if (!publicPath(rel)) {
         const candidate = rel + '/index.html';
@@ -90,6 +100,12 @@ async function main() {
   const command = process.argv[2] || 'doctor';
   const workspace = JSON.parse(await readFile(path.join(ROOT,'saelion.workspace.json'),'utf8'));
   if (command === 'build') {console.log(JSON.stringify(await build(),null,2));return;}
+  if (command === 'dev' && process.argv.includes('--peachfall')) {
+    const {selectedPreview} = await import('./peachfall-preview.mjs');
+    const preview = await selectedPreview(ROOT,workspace.components.peachfall);
+    const server = await serve(ROOT,4317,preview);
+    console.log(`One home: http://127.0.0.1:${server.address().port}/\nSelected Peachfall: http://127.0.0.1:${server.address().port}${preview.launch}\nPrivate compiled snapshot; public files and saves unchanged. Not a published/offline release. Ctrl+C stops it.`);return;
+  }
   if (command === 'dev') {await prepare(); const server = await serve(); console.log(`Saelion home: http://127.0.0.1:${server.address().port}/\nLive source files; refresh after editing. Ctrl+C stops this server.`);return;}
   if (command === 'doctor') {console.log(JSON.stringify(workspace,null,2));console.log('Remote AI / Saedo: NOT CONNECTED by this static site. Domain: NOT VERIFIED.');return;}
   if (command === 'source' || command === 'engine') {await privateEngine(command,ROOT,workspace.components.peachfall);return;}
