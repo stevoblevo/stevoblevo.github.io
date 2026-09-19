@@ -139,7 +139,13 @@ with sync_playwright() as p:
         page.set_viewport_size(dict(width=390,height=844))
         page.locator('#importState').scroll_into_view_if_needed()
         choose(page, backup([dict(original, source='different fixture')]))
-        expect(page.locator('#toast')).to_contain_text('conflicts')
+        toast = page.locator('#toast')
+        expect(toast).to_contain_text('conflicts')
+        expect(toast).to_have_css('opacity', '1')  # Wait for the real CSS transition, not just text insertion.
+        box = toast.bounding_box()
+        nav = page.locator('.side-nav').bounding_box()
+        assert box and nav and box['x'] >= 0 and box['x'] + box['width'] <= 390
+        assert box['y'] >= 0 and box['y'] + box['height'] <= nav['y']
         page.screenshot(path=str(OUT/'restore-phone.png'))
         results.append('Phone-width existing import controls remain usable; conflict warning is visible')
         assert not errors, errors
