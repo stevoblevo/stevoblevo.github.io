@@ -43,5 +43,22 @@
     "storageKey": "anewgam.steven.cockpit.v2",
     "remoteAuthority": "none",
     "backend": "Existing Saelion-owned authenticated ingress must be verified before remote submission is enabled."
+  },
+  "externalDoors": {
+    "talk": {
+      "url": "https://anewgam-steven-cockpit.stevoblevo.chatgpt.site/talk?source=cockpit-talk-door",
+      "kind": "existing-private-site",
+      "effect": "navigation-only",
+      "opens": "new-tab",
+      "localDraftTransfer": false,
+      "conversationVerified": false,
+      "sourceRepositoryVerified": false,
+      "observation": {
+        "date": "2026-09-19",
+        "httpStatus": 401,
+        "visibleGate": "Continue with ChatGPT",
+        "meaning": "Unauthenticated check reached the sign-in gate, not the Talk application. This is not proof of chat, continuity or execution."
+      }
+    }
   }
 }

@@ -1,5 +1,6 @@
 /* Live-door map. Private polylite is named, not hosted. */
 window.__anewDoors = [
+  { id: "talk", hash: ["talk"], title: "Talk to Sae ↗", href: "https://anewgam-steven-cockpit.stevoblevo.chatgpt.site/talk?source=cockpit-talk-door", live: false, external: true, line: "Opens your private Talk site in a new tab with ChatGPT sign-in. Local drafts are not sent. Talk requires a network connection." },
   { id: "peachfall", hash: ["peachfall", "$peachfall"], title: "$peachfall", href: "/peachfall/", live: true, line: "Watch / play the dream" },
   { id: "goober", hash: ["goober", "crossing", "anewgam"], title: "Crossing", href: "/goober/", live: true, line: "Aiden door · find your line" },
   { id: "run", hash: ["run", "signal"], title: "Signal Run", href: "/goober/run/", live: true, line: "Ruins · lanterns · no wager" },
@@ -17,6 +18,14 @@ window.__anewDoors = [
   const doors = window.__anewDoors || [];
   const bar = document.getElementById("doors");
   if (!bar) return;
+  const talk = doors.find(d => d.id === "talk");
+  if (talk && !document.getElementById("talk-door-note")) {
+    const note = document.createElement("p");
+    note.id = "talk-door-note";
+    note.textContent = talk.line;
+    note.style.cssText = "color:var(--muted);font-size:.8rem;margin:4px 0 12px";
+    bar.after(note);
+  }
   function norm(h) { return String(h || "").replace(/^#/, "").replace(/^\$/, "").trim(); }
   function current() {
     const raw = norm(location.hash).toLowerCase();
@@ -25,9 +34,16 @@ window.__anewDoors = [
   function paint() {
     const active = current(); bar.replaceChildren();
     for (const d of doors) {
-      const el = d.href && d.live ? document.createElement("a") : document.createElement("button");
+      const el = d.href && (d.live || d.external) ? document.createElement("a") : document.createElement("button");
       el.className = "door" + (active && active.id === d.id ? " on" : ""); el.dataset.door = d.id;
-      if (d.href && d.live) { el.href = d.href; el.textContent = d.title; }
+      if (d.href && (d.live || d.external)) {
+        el.href = d.href; el.textContent = d.title;
+        if (d.external) {
+          el.target = "_blank"; el.rel = "noopener noreferrer";
+          el.referrerPolicy = "no-referrer"; el.dataset.saeTalk = "";
+          el.style.minHeight = "44px"; el.setAttribute("aria-describedby", "talk-door-note");
+        }
+      }
       else { el.type = "button"; el.textContent = d.title + (d.live ? "" : " · plates");
         el.addEventListener("click", () => {location.hash = d.hash[0];document.getElementById('library')?.scrollIntoView();}); }
       el.title = d.line; bar.append(el);
@@ -36,7 +52,7 @@ window.__anewDoors = [
     outward.className = "door"; outward.href = "./magwena/"; outward.textContent = "Magwena ↗";
     outward.title = "Carry a chosen moment, never the whole private dream."; bar.append(outward);
     const note = document.getElementById("door-note");
-    if (note) {note.textContent = active ? (active.live ? "Open live: " : "In this library: ") + active.line : "Steven · .anewgam — hash a door or stay with the stills.";}
+    if (note) {note.textContent = active ? (active.external ? "External private door: " : active.live ? "Open live: " : "In this library: ") + active.line : "Steven · .anewgam — hash a door or stay with the stills.";}
     if (active && window.__setLibraryFilter) {
       const map = { peachfall: "peachfall", goober: "all", run: "all", "with-him": "all", cheese: "all", everFallen: "gen23", polylite: "polylite", sc1: "night", kids: "polylite", hires: "hires", atlas: "hires" };
       window.__setLibraryFilter(map[active.id] || "all");
