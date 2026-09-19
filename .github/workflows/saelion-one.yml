@@ -1,9 +1,9 @@
 name: Saelion one-home acceptance
 on:
   push:
-    branches: [master, sae/one-development-home-20260917]
+    branches: [master, sae/one-development-home-20260917, sae/art-airport-20260917]
   pull_request:
-    branches: [master]
+    branches: [master, sae/one-development-home-20260917]
 permissions:
   contents: read
 concurrency:
@@ -23,6 +23,10 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
+      - name: Owner-requested public art arrival diagnostic, not authenticated tunnel proof
+        if: github.event_name == 'push' && github.ref == 'refs/heads/sae/art-airport-20260917'
+        timeout-minutes: 3
+        run: python -B scripts/art_arrival_probe.py --out "$RUNNER_TEMP/art-arrival"
       - name: Shared unit, regression and static-build checks
         run: npm run check
       - name: Declared shell files and served-byte verifier regression checks
@@ -42,13 +46,16 @@ jobs:
           trap 'kill "$SERVER_PID" || true' EXIT
           for i in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4317/ >/dev/null && break; sleep 1; done
           python tests/browser.py
+          python tests/art_browser.py
       - name: Package output without changing existing symbolic route names
         if: always()
         run: |
           mkdir -p "$RUNNER_TEMP/saelion-evidence"
           if [ -d dist ]; then tar -czf "$RUNNER_TEMP/saelion-evidence/site.tar.gz" -C dist .; fi
           if [ -d test-results/browser ]; then cp -r test-results/browser "$RUNNER_TEMP/saelion-evidence/browser"; fi
+          if [ -d test-results/art-browser ]; then cp -r test-results/art-browser "$RUNNER_TEMP/saelion-evidence/art-browser"; fi
           if [ -f "$RUNNER_TEMP/unified-home-check.json" ]; then cp "$RUNNER_TEMP/unified-home-check.json" "$RUNNER_TEMP/saelion-evidence/"; fi
+          if [ -d "$RUNNER_TEMP/art-arrival" ]; then cp -r "$RUNNER_TEMP/art-arrival" "$RUNNER_TEMP/saelion-evidence/"; fi
           git rev-parse HEAD > "$RUNNER_TEMP/saelion-evidence/source-commit.txt"
       - name: Preserve browser evidence and usable static output
         if: always()
