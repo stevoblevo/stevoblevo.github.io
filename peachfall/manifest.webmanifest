@@ -1,0 +1,32 @@
+{
+  "id": "./",
+  "name": "Peachfall \u00b7 Saelion",
+  "short_name": "Peachfall",
+  "description": "Play or watch the existing Peachfall dream. A room in Saelion, with device-local saves.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1020",
+  "theme_color": "#171520",
+  "icons": [
+    {
+      "src": "../anewgam-for-steven-cockpit/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../anewgam-for-steven-cockpit/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play the dream",
+      "url": "./play.html"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "saelion-home",
+  "private": true,
+  "version": "0.1.0",
+  "description": "One development entry for the existing Saelion home and Peachfall.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node tools/one.mjs dev",
+    "build": "node tools/one.mjs build",
+    "test": "node --test tests/*.test.cjs anewgam-for-steven-cockpit/regression.test.cjs",
+    "check": "npm test && npm run build",
+    "peachfall:source": "node tools/one.mjs source",
+    "peachfall:build": "node tools/one.mjs engine",
+    "doctor": "node tools/one.mjs doctor"
+  }
+}

@@ -1,0 +1,63 @@
+name: Magwena chosen window proof
+on:
+  push:
+    branches: [sae/one-development-home-20260917]
+    paths:
+      - shared/magwena-postcard.js
+      - anewgam-for-steven-cockpit/magwena/**
+      - anewgam-for-steven-cockpit/doors.js
+      - anewgam-for-steven-cockpit/sw.js
+      - index.html
+      - tests/magwena-postcard.test.cjs
+      - tests/fixtures/magwena-chosen-peach.json
+      - tests/browser_magwena.py
+      - .github/workflows/magwena-window.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Shared tests and allowlisted build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/magwena-proof"
+          git rev-parse HEAD > "$RUNNER_TEMP/magwena-proof/source-commit.txt"
+          git archive --format=tar.gz -o "$RUNNER_TEMP/magwena-proof/source.tar.gz" HEAD
+          npm test 2>&1 | tee "$RUNNER_TEMP/magwena-proof/tests.txt"
+          node --test tests/magwena-postcard.test.cjs 2>&1 | tee "$RUNNER_TEMP/magwena-proof/postcard-tests.txt"
+          npm run build 2>&1 | tee "$RUNNER_TEMP/magwena-proof/build.txt"
+      - name: Browser runtime
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Actual reader, export, shared doors and offline return
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 4317 --bind 127.0.0.1 --directory dist > "$RUNNER_TEMP/magwena-proof/server.txt" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" || true' EXIT
+          export MAGWENA_TEST_URL=http://127.0.0.1:4317/
+          export MAGWENA_EVIDENCE_DIR="$RUNNER_TEMP/magwena-proof/browser"
+          python tests/browser_magwena.py 2>&1 | tee "$RUNNER_TEMP/magwena-proof/browser.txt"
+      - name: Preserve source, public build and evidence
+        if: always()
+        run: |
+          if [ -d dist ]; then tar -czf "$RUNNER_TEMP/magwena-proof/site.tar.gz" -C dist .; fi
+          cd "$RUNNER_TEMP/magwena-proof"
+          find . -type f -not -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: magwena-chosen-window-proof
+          path: ${{ runner.temp }}/magwena-proof/
+          retention-days: 14

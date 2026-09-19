@@ -1,0 +1,13 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const m=require('../shared/magwena-postcard.js');
+for(const code of ['pf1.00','pf1.01','pf1.10','pf1.11'])test('roundtrip '+code,()=>assert.equal(m.toCode(m.parse(JSON.stringify(m.fromCode(code),null,2))),code));
+test('extra private data rejected',()=>{for(const key of ['notes','visits','identity','authority','commands','__proto__']){const c=m.fromCode('pf1.11');Object.defineProperty(c,key,{value:'private',enumerable:true});assert.throws(()=>m.read(c));}});
+test('inherited props not copied',()=>{const c=m.fromCode('pf1.00');Object.setPrototypeOf(c,{notes:'secret'});assert.equal(JSON.stringify(m.read(c)).includes('secret'),false);});
+test('strict flags',()=>{for(const value of ['true',null,1,{},[]])assert.throws(()=>m.read({...m.fromCode('pf1.00'),showPeach:value}));});
+test('unknown schema, place and permission rejected',()=>{for(const x of [{schema:'x'},{place:'private'},{permission:'execute'}])assert.throws(()=>m.read({...m.fromCode('pf1.00'),...x}));});
+test('malicious, long, encoded and missing codes rejected',()=>{for(const x of ['',null,'pf1.111','PF1.11','pf1.%31%31','pf1.11?','pf1.11<script>','javascript:alert(1)'])assert.throws(()=>m.fromCode(x));});
+test('duplicate fields rejected',()=>{const x=JSON.stringify(m.fromCode('pf1.00')).replace('{','{"showPeach":true,');assert.throws(()=>m.parse(x));});
+test('oversized payload rejected',()=>assert.throws(()=>m.parse(' '.repeat(2049))));
+test('escaped keys rejected',()=>assert.throws(()=>m.parse(JSON.stringify(m.fromCode('pf1.00')).replace('showPeach','show\\u0050each'))));
+test('full saves and arrays rejected',()=>{for(const x of [null,[],{},'pf1.11',{gateMemory:{peachLeft:true,visits:2}}])assert.throws(()=>m.read(x));});
+test('returned value does not alias supplied object',()=>{const c=m.fromCode('pf1.11'),d=m.read(c);d.showPeach=false;assert.equal(c.showPeach,true);});
