@@ -21,6 +21,9 @@ def game(page):
     page.wait_for_selector('iframe[title="Peachfall selected game"]')
     f = page.frame_locator('iframe[title="Peachfall selected game"]')
     expect(button(f, 'Accessibility & controls')).to_be_visible(timeout=20000)
+    # Menu DOM renders before the async art/loop is ready, especially on return.
+    # Wait for the existing read-only QA handle instead of throwing in a predicate.
+    frame_obj(page).wait_for_function('Boolean(window.__peachfall?.getState)', timeout=30000)
     return f
 def frame_obj(page): return page.locator('iframe').element_handle().content_frame()
 def enter(page):
@@ -28,7 +31,7 @@ def enter(page):
     button(f, 'Enter the dream').click()
     button(f, 'Play the Dream').click()
     for _ in range(5): button(f, 'Continue').click()
-    frame_obj(page).wait_for_function("window.__peachfall.getState().scene === 'field'")
+    frame_obj(page).wait_for_function("window.__peachfall?.getState().scene === 'field'")
     return f
 
 def run():
@@ -64,13 +67,13 @@ def run():
             page.locator('a[data-door="peachfall"]').click()
             assert '?preview=' in page.url
             f = game(page); button(f,'Continue').click()
-            frame_obj(page).wait_for_function("window.__peachfall.getState().scene === 'field'")
+            frame_obj(page).wait_for_function("window.__peachfall?.getState().scene === 'field'")
             button(f,'Meet the meadow gate').click()
             expect(f.get_by_text('Welcome back. The peach you left is still here.',exact=True)).to_be_visible()
             page.screenshot(path=str(OUT/'unified-desktop-return.png'))
             ok('cockpit doorway returns to selected game with the peach and greeting intact')
             page.reload(); f = game(page); button(f,'Continue').click()
-            frame_obj(page).wait_for_function("window.__peachfall.getState().scene === 'field'")
+            frame_obj(page).wait_for_function("window.__peachfall?.getState().scene === 'field'")
             button(f,'Meet the meadow gate').click()
             expect(f.locator('[data-gate-phase=return]')).to_be_visible()
             assert page.evaluate("JSON.parse(localStorage.getItem('anewgam.steven.cockpit.v2')).threads[0].source") == source
