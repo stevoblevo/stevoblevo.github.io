@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e8b892">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="is.liv">
+<meta name="application-name" content="is.liv">
+<meta name="description" content="is.liv · a softer brighter you · colour test">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>is.liv · anewgam</title>
+<style>
+html,body{margin:0;height:100%;background:#f4c9a8;overflow:hidden;overscroll-behavior:none}
+body{min-height:100dvh;min-height:100svh;background:radial-gradient(120% 80% at 88% 8%,#f7e4d6 0%,transparent 46%),radial-gradient(90% 70% at 8% 92%,#e8b892 0%,transparent 42%),linear-gradient(180deg,#f8ddd1 0%,#f4c9a8 52%,#e8b892 100%);touch-action:none;user-select:none}
+.plate{position:fixed;inset:0;display:grid;justify-items:end;align-items:start;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.plate img{display:block;width:100%;height:100%;max-width:100vw;max-height:100dvh;object-fit:contain;object-position:right top;pointer-events:none;-webkit-user-drag:none}
+@media(min-width:900px){.plate{align-items:stretch}.plate img{width:auto;height:100%;max-width:min(56vw,720px);object-position:right center}}
+</style>
+</head>
+<body>
+<main class="plate" aria-label="is.liv colour test">
+<img src="https://isliv.vercel.app/isliv-colour-test.jpg" width="1122" height="1402" alt="is.liv colour test — a softer brighter you" draggable="false" decoding="async" fetchpriority="high">
+</main>
+<script>
+try{history.replaceState(null,'','#view=isliv')}catch(e){}
+</script>
+</body>
+</html>

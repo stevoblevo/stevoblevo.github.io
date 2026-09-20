@@ -1,0 +1,15 @@
+{
+  "id": "./#view=isliv",
+  "name": "is.liv · anewgam",
+  "short_name": "is.liv",
+  "description": "A softer brighter you. Colour test. Beauty lives kinder here.",
+  "start_url": "./#view=isliv",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4c9a8",
+  "theme_color": "#e8b892",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+  ]
+}
