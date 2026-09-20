@@ -1,0 +1,4 @@
+/* Keep touch targets and the poem in separate visual space. */
+.poem{pointer-events:none}
+#peach{-webkit-tap-highlight-color:transparent}
+@media(max-width:820px){.arch{bottom:56%}}

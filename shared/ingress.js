@@ -29,7 +29,70 @@
     storage.setItem(KEY, JSON.stringify(state)); // Quota/denial propagates: never claim a save succeeded.
     return {state, id, duplicate: false};
   }
-  const api = Object.freeze({KEY, MAX_SOURCE, MAX_THREADS, read, append});
+  // Restore threads into the existing store, never truncate or choose a conflicting winner.
+  // This is a synchronous single-key write, not a cross-tab transaction or cloud sync.
+  function restore(storage, payload, {now = new Date().toISOString()} = {}) {
+    const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+    if (!object(payload) || payload.format !== 'sae.anewgam.skein' || payload.version !== 3 ||
+        !object(payload.state) || !Array.isArray(payload.state.threads) ||
+        (payload.authorityEffect !== undefined && payload.authorityEffect !== 'none')) {
+      throw new Error('Choose a version 3 .anewgam skein backup. Nothing was changed.');
+    }
+    const current = read(storage); // Read AFTER the asynchronous file read, not an old tab snapshot.
+    if (current.threads.length > MAX_THREADS || payload.state.threads.length > MAX_THREADS) {
+      throw new Error('This backup or loom exceeds 250 threads. Nothing was shortened or changed.');
+    }
+    // Preserve JSON metadata; compare without depending on object property order.
+    function canonical(value) {
+      if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
+      if (object(value)) return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
+      return JSON.stringify(value);
+    }
+    function checked(thread) {
+      if (!object(thread) || typeof thread.id !== 'string' || !thread.id || thread.id.length > 200 ||
+          typeof thread.source !== 'string' || !thread.source.trim() || thread.source.length > MAX_SOURCE ||
+          (thread.proof !== undefined && (typeof thread.proof !== 'string' || thread.proof.length > 2000)) ||
+          (thread.status !== undefined && !['held-local', 'in-motion', 'proven'].includes(thread.status)) ||
+          (thread.world !== undefined && !['cockpit', 'peachfall'].includes(thread.world)) ||
+          (thread.ingress !== undefined && thread.ingress !== 'device-local') ||
+          (thread.authorityEffect !== undefined && thread.authorityEffect !== 'none') ||
+          ['heldAt', 'updatedAt'].some(key => thread[key] !== undefined &&
+            (typeof thread[key] !== 'string' || !Number.isFinite(Date.parse(thread[key]))))) {
+        throw new Error('A thread has invalid or oversized data. Nothing was shortened or changed.');
+      }
+      return canonical({...thread, status: thread.status || 'held-local', proof: thread.proof || '', authorityEffect: 'none'});
+    }
+    const known = new Map();
+    for (const thread of current.threads) {
+      const signature = checked(thread);
+      if (known.has(thread.id)) throw new Error('The existing loom has duplicate thread IDs. Nothing was changed.');
+      known.set(thread.id, signature);
+    }
+    const added = [];
+    let duplicates = 0;
+    for (const thread of payload.state.threads) {
+      const signature = checked(thread);
+      if (known.has(thread.id)) {
+        if (known.get(thread.id) !== signature) throw new Error('Backup conflicts with an existing thread ID. Nothing was changed; keep both copies.');
+        duplicates++;
+      } else {
+        known.set(thread.id, signature);
+        added.push(JSON.parse(JSON.stringify(thread)));
+      }
+    }
+    if (current.threads.length + added.length > MAX_THREADS) {
+      throw new Error('Restore would exceed 250 threads. Existing threads and the backup were left unchanged.');
+    }
+    if (!added.length) return {state: current, added: 0, duplicates}; // Idempotent: no write or new receipt.
+    current.threads = [...current.threads, ...added]; // Existing order and metadata remain intact.
+    current.receipts = [{at: now, event: 'skein-imported', addedThreads: added.length,
+      authorityEffect: 'none'}, ...current.receipts].slice(0, 500); // Existing bounded local journal.
+    current.blooms = (Number.isFinite(Number(current.blooms)) ? Number(current.blooms) : 7) + added.length;
+    try { storage.setItem(KEY, JSON.stringify(current)); }
+    catch { throw new Error('Storage refused the restore. Existing saved threads were not changed. Keep the backup.'); }
+    return {state: current, added: added.length, duplicates};
+  }
+  const api = Object.freeze({KEY, MAX_SOURCE, MAX_THREADS, read, append, restore});
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.__saeIngress = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

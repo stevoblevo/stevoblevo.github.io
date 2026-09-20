@@ -36,7 +36,15 @@
     try { state = window.__saeIngress.read(localStorage); render(); window.dispatchEvent(new CustomEvent('anewgam:state')); }
     catch (error) { toast(error.message); }
   });
-  window.__anewgam = {key: KEY, getState: () => state, setState: next => { state = next; save(); }, toast, hold};
+  function restoreThreads(payload) {
+    if (memoryOnly) throw new Error('This tab has unsaved changes. Export them before restoring a backup.');
+    const result = window.__saeIngress.restore(localStorage, payload);
+    state = result.state; // Apply to this tab only AFTER the write succeeds (or an identical replay).
+    $('#storageWarning').hidden = true;
+    render(); window.dispatchEvent(new CustomEvent('anewgam:state'));
+    return result;
+  }
+  window.__anewgam = {key: KEY, getState: () => state, setState: next => { state = next; save(); }, toast, hold, restoreThreads};
   function render() {
     $('#fruitName').textContent = state.fruit; $('#bloomCount').textContent = state.blooms;
     $$('[data-fruit]').forEach(b => { b.classList.toggle('on', b.dataset.fruit === state.fruit); b.setAttribute('aria-pressed', String(b.dataset.fruit === state.fruit)); });

@@ -10,16 +10,17 @@
 
   let outcomeId = null;
   function normalise(raw) {
-    const next = raw && typeof raw === "object" ? raw : {};
+    const next = raw && typeof raw === "object" ? JSON.parse(JSON.stringify(raw)) : {};
     next.blooms = Number.isFinite(Number(next.blooms)) ? Math.max(0, Number(next.blooms)) : 7;
     next.fruit = typeof next.fruit === "string" ? next.fruit.slice(0, 80) : "rose-gold Peach";
-    next.threads = Array.isArray(next.threads) ? next.threads.filter(t => t && typeof t === "object").slice(0, 250).map((t, i) => ({
+    next.threads = Array.isArray(next.threads) ? next.threads.filter(t => t && typeof t === "object").map((t, i) => ({
+      ...t,
       id: typeof t.id === "string" ? t.id : `legacy-${i}-${Date.now()}`,
-      source: String(t.source || "").slice(0, 4000),
+      source: String(t.source || ""),
       heldAt: t.heldAt || new Date().toISOString(),
       updatedAt: t.updatedAt || t.heldAt || new Date().toISOString(),
       status: statuses.includes(t.status) ? t.status : "held-local",
-      proof: String(t.proof || "").slice(0, 2000),
+      proof: String(t.proof || ""),
       world: ["cockpit", "peachfall"].includes(t.world) ? t.world : undefined,
       ingress: t.ingress === "device-local" ? "device-local" : undefined,
       authorityEffect: "none"
@@ -107,17 +108,16 @@
   }
 
   async function importState(file) {
-    if (!file || file.size > 2_000_000) return toast("Choose a .json skein smaller than 2 MB.");
+    if (!file || file.size > 2_000_000) return toast("Choose a .json skein smaller than 2 MB. Nothing was changed.");
+    let parsed;
+    try { parsed = JSON.parse(await file.text()); }
+    catch { return toast("That backup could not be read as JSON. Nothing was changed."); }
     try {
-      const parsed = JSON.parse(await file.text());
-      if (parsed.format !== "sae.anewgam.skein" || !parsed.state) throw new Error("format");
-      const incoming = normalise(parsed.state); const current = state();
-      const byId = new Map(current.threads.map(t => [t.id, t]));
-      for (const t of incoming.threads) if (!byId.has(t.id)) byId.set(t.id, t);
-      current.threads = [...byId.values()].sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0, 250);
-      current.blooms = Math.max(current.blooms, incoming.blooms);
-      receipt(current, "skein-imported"); api.setState(current); toast("Skein merged. Existing local threads were preserved.");
-    } catch { toast("That file is not a valid .anewgam skein."); }
+      if (!api.restoreThreads) throw new Error("Reload the cockpit before restoring. Nothing was changed.");
+      const result = api.restoreThreads(parsed);
+      toast(result.added ? `Restored ${result.added} thread(s) locally. Existing threads preserved; nothing sent.`
+        : "These threads are already here. Nothing was changed.");
+    } catch (error) { toast(error.message || "Restore failed. Keep the backup; nothing was sent."); }
   }
 
   function health() {
