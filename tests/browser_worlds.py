@@ -18,6 +18,9 @@ with sync_playwright() as p:
     browser = p.chromium.launch(**kwargs)
     context = browser.new_context(viewport={'width':1440,'height':960}, reduced_motion='reduce', service_workers='block')
     page = context.new_page(); page.on('pageerror', lambda e: errors.append(str(e)))
+    # Install before any application schedules timers/animation frames. Installing
+    # midway through a document leaves native callbacks outside the test clock.
+    page.clock.install()
     try:
         page.goto(BASE+'/anewgam-for-steven-cockpit/')
         page.locator('#sae-worlds-open').click()
@@ -27,7 +30,6 @@ with sync_playwright() as p:
         page.wait_for_function('() => !!window.game && !!window.__saeJourney')
         page.locator('[data-action="light"]').click()
         before = page.evaluate('game.getEvents()')
-        page.clock.install()
         page.locator('#sae-worlds-open').click()
         page.locator('#sae-world-dialog li').filter(has_text='The Nougat Thread').get_by_role('link',name='Watch',exact=True).click()
         page.clock.run_for(4000)
@@ -56,7 +58,7 @@ with sync_playwright() as p:
         original = page.evaluate('structuredClone(__PEACHFALL__.getState())')
         saved = page.evaluate('localStorage.getItem("peachfall-playable-v1")')
         page.locator('#sae-watch').click(); page.clock.run_for(9000)
-        assert page.evaluate('__PEACHFALL__.getState().scene') != 'title'
+        assert page.evaluate('__PEACHFALL__.getState().scene') not in ('title', 'tower')
         page.locator('#sae-takeover').click()
         assert page.evaluate('__PEACHFALL__.getState().mode') == 'play'
         ok('Peachfall Watch drives the preserved engine and Take over keeps its current scene')
@@ -66,7 +68,7 @@ with sync_playwright() as p:
         for _ in range(16):
             page.clock.run_for(30000)
             if page.evaluate('__PEACHFALL__.getState().ending') == 'to_be_continued': break
-        assert page.evaluate('__PEACHFALL__.getState().ending') == 'to_be_continued'
+        assert page.evaluate('__PEACHFALL__.getState().ending') == 'to_be_continued', page.evaluate('__PEACHFALL__.getState()')
         assert page.evaluate('Object.values(__PEACHFALL__.getState().gifts).every(Boolean)')
         assert page.evaluate('localStorage.getItem("peachfall-playable-v1")') == saved
         page.locator('#btn-mute').click()

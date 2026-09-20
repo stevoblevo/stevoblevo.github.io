@@ -3,7 +3,7 @@
   "baseCommit": "a9737616bc28e9cd8fde7f94f8d0a490395be0a2",
   "status": "tested-candidate-not-deployed",
   "unitTests": {
-    "passed": 123,
+    "passed": 124,
     "failed": 0
   },
   "gooberContracts": {
@@ -82,7 +82,7 @@
       "saelion.workspace.json": "fac51f4e4c1331b3533fc44dbf9b0bc4a831f2a19410b48ae90261e4b3ce502d"
     }
   },
-  "browser": "Chromium 153.0.0 from @sparticuz/chromium; Python Playwright 1.57.0. Existing suites used installed executable override only. New suite used accelerated browser clock; reviewer used normal clock.",
+  "browser": "Chromium 143.0.0 from @sparticuz/chromium 143.0.4; Python Playwright 1.57.0. Final new suite uses accelerated browser clock installed before application code. Earlier 153.0.0 suite and normal-clock review also passed; Chromium 143 first-visit failure was reproduced and repaired.",
   "notProved": [
     "production deployment",
     "all private/external game adapters",
@@ -90,5 +90,12 @@
     "physical phone",
     "existing-install service-worker upgrade",
     "Skein acceptance"
-  ]
+  ],
+  "ciRepair": {
+    "initialCommit": "0751dbaa739ccc0586e88f1d4449b5c37006cf5e",
+    "failedRun": "https://github.com/stevoblevo/stevoblevo.github.io/actions/runs/35527869063",
+    "cause": "Preserved engine requests three /source/images/anchors/ image paths absent from site root. A broken drawImage stops the animation loop in Chromium 143.",
+    "repair": "Byte-identical aliases of existing published images at exactly the requested URLs; exact allowlist and offline manifest entries. Engine unchanged.",
+    "localProof": "All 11 new browser milestones passed in Chromium 143, 124 unit tests passed, static build and PWA verifier passed."
+  }
 }

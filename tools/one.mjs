@@ -10,6 +10,14 @@ import {fileURLToPath} from 'node:url';
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIRS = new Set(['anewgam-for-steven-cockpit','peachfall','goober','images','javascripts','stylesheets','shorts','shared','docs']);
 const ROOT_FILES = new Set(['index.html','404.html','goober-release.json','params.json']);
+// The preserved engine requests these three published images from the site root.
+// Keep exact aliases; never expose a general source/ directory.
+const PEACHFALL_IMAGE_ALIASES = [
+  'source/images/anchors/01_gen22_page1_the_princess_who_could_not_leave_the_tower.png',
+  'source/images/anchors/02_astral_assembly_sae_and_little_princesses.png',
+  'source/images/anchors/03_gameplay_assume_her_fragments.png'
+];
+for (const alias of PEACHFALL_IMAGE_ALIASES) ROOT_FILES.add(alias);
 const EXT = new Set(['.html','.css','.js','.mjs','.json','.webmanifest','.svg','.png','.jpg','.jpeg','.webp','.avif','.gif','.ico','.mp4','.webm','.mp3','.wav','.ogg','.woff','.woff2','.ttf','.txt','.md']);
 const PRIVATE_SEGMENT = /^(?:\.|node_modules$|test-results$|playwright-report$|dist$)/;
 const MIME = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.webmanifest':'application/manifest+json','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.mp4':'video/mp4','.mp3':'audio/mpeg','.woff2':'font/woff2'};
@@ -33,7 +41,7 @@ async function filesUnder(root, relative = '') {
 export async function prepare(root = ROOT) {
   await prepareWorlds(root);
   const files = (await filesUnder(path.join(root,'peachfall'))).filter(f => !['sw.js','offline-files.js'].includes(f) && publicPath(`peachfall/${f}`));
-  const paths = ['./', ...files.map(f => './'+f), '../shared/ingress.js', '../shared/worlds.js', '../shared/ways.js', '../shared/ways.css', '../anewgam-for-steven-cockpit/colour-language.css', '../anewgam-for-steven-cockpit/icon-192.png', '../anewgam-for-steven-cockpit/icon-512.png'];
+  const paths = ['./', ...files.map(f => './'+f), ...PEACHFALL_IMAGE_ALIASES.map(f => '../'+f), '../shared/ingress.js', '../shared/worlds.js', '../shared/ways.js', '../shared/ways.css', '../anewgam-for-steven-cockpit/colour-language.css', '../anewgam-for-steven-cockpit/icon-192.png', '../anewgam-for-steven-cockpit/icon-512.png'];
   const hash = createHash('sha256');
   let totalBytes = 0;
   for (const rel of paths.filter(x => x !== './')) {

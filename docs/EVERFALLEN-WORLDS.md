@@ -19,6 +19,8 @@ The existing `saelion.workspace.json` owns the world inventory. `shared/worlds.j
 
 `npm run check` runs the unit/build gate. With Python Playwright installed and `npm run dev` running, `npm run runthrough` drives the browser journeys and writes screenshots and results under `test-results/browser/worlds`. Browser results must be read before claiming a pass. A chapter imported from a candidate branch is still a candidate.
 
+Peachfall’s preserved engine requests three existing anchor images at `/source/images/anchors/`. Exact byte-identical aliases now serve those paths and are cached offline. This repairs a first-visit rendering failure found in Chromium 143; other files under `/source/` remain outside the public allowlist.
+
 The shared controls stop or pause Watch when the Worlds dialog opens or the page becomes hidden. Watch never sends an AI request. The playable moment remains available on Take over. Browser saves keep their existing scope; links do not provide cross-device or cross-origin save synchronization.
 
 ## Known gaps retained in the same inventory
