@@ -7,9 +7,10 @@ const canvas=document.getElementById('field');
 const ctx=canvas.getContext('2d');
 const keys=new Set();
 let pointer=null,running=false,paused=false,raf=0;
+let demo=false,autopilot=false,watchBefore=null,watchPath=[],watchTarget=null;
 let x=180,y=230,vx=0,vy=0,elapsed=0,last=0,pulse=0;
 let score=0,combo=0,comboMax=0,clean=0,hits=0,lanterns=0;
-let target={x:520,y:210,kind:'spark'};
+let target={x:520,y:230,kind:'spark'};
 const trail=[],crumbs=[],ghostPath=[];
 let ghost=[];
 try{ghost=JSON.parse(localStorage.getItem(GHOST_KEY)||'[]');}catch{ghost=[];}
@@ -80,6 +81,7 @@ function tick(now){
   const dt=Math.min(step,.05);last=now;pulse+=dt*6;
   if(running&&!paused){
     elapsed+=step;
+    if(autopilot) steerWatch();
     let ax=0,ay=0;
     if(keys.has('ArrowLeft')||keys.has('a'))ax--;
     if(keys.has('ArrowRight')||keys.has('d'))ax++;
@@ -88,7 +90,8 @@ function tick(now){
     if(pointer){const dx=pointer.x-x,dy=pointer.y-y,len=Math.hypot(dx,dy)||1;ax+=dx/len;ay+=dy/len;}
     const boost=keys.has(' ')?2.05:1;
     const length=Math.hypot(ax,ay)||1;
-    if(ax||ay||pointer){vx+=(ax/length)*400*boost*dt;vy+(ay/length)*400*boost*dt;vx+=(ax/length)*400*boost*dt;vy+=(ay/length)*400*boost*dt;}
+    if(ax||ay||pointer){vx+=(ax/length)*400*boost*dt;vy+=(ay/length)*400*boost*dt;}
+    if(autopilot){vx*=Math.pow(.015,dt);vy*=Math.pow(.015,dt);}
     const drag=Math.pow(keys.has('Shift')?.16:.42,dt);
     vx*=drag;vy*=drag;x+=vx*dt;y+=vy*dt;
     if(x<30||x>690){vx*=-.65;x=Math.max(30,Math.min(690,x));bounce();}
@@ -117,14 +120,15 @@ function tick(now){
 }
 function reset(){
   x=180;y=230;vx=0;vy=0;elapsed=0;last=0;score=0;combo=0;comboMax=0;clean=0;hits=0;lanterns=0;
-  trail.length=0;crumbs.length=0;ghostPath.length=0;target={x:520,y:210,kind:'spark'};
+  trail.length=0;crumbs.length=0;ghostPath.length=0;target={x:520,y:230,kind:'spark'};
   $('line').textContent='Collect gold signals. Keep a clean line through the ruins. Drag to steer.';
   $('start').textContent='Start 45-second run \u2197';
   $('status').textContent='';
   hud();
 }
 function start(){
-  reset();running=true;paused=false;last=performance.now();canvas.focus();
+  if(window.__saeJourney?.getMode()!=='idle')window.__saeJourney?.takeOver();
+  demo=false;autopilot=false;reset();running=true;paused=false;last=performance.now();canvas.focus();
   $('start').style.display='none';
 }
 async function finish(){
@@ -132,6 +136,7 @@ async function finish(){
   $('start').style.display='inline-block';
   $('start').textContent='Run it back \u2197';
   $('line').textContent=score+' signals \u00b7 clean '+clean+' \u00b7 combo '+comboMax+' \u00b7 lanterns '+lanterns+'. Local report only.';
+  if(demo){$('status').textContent='Watch/practice finished. Your saved ghost and field log are unchanged.';return;}
   try{if(ghostPath.length>8)localStorage.setItem(GHOST_KEY,JSON.stringify(ghostPath.slice(-80)));}catch{}
   ghost=ghostPath.slice(-80);
   await keepLog();
@@ -190,22 +195,67 @@ function toLocal(e){
   return {x:(e.clientX-box.left)*(W/box.width),y:(e.clientY-box.top)*(H/box.height)};
 }
 document.addEventListener('keydown',e=>{
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d',' ','Shift'].includes(e.key)){e.preventDefault();keys.add(e.key);}
+  if(e.target.closest?.('#sae-way, #sae-world-dialog, input, textarea, select'))return;
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d',' ','Shift'].includes(e.key)){e.preventDefault();if(autopilot)window.__saeJourney?.takeOver();keys.add(e.key);}
 });
 document.addEventListener('keyup',e=>keys.delete(e.key));
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden&&running){paused=true;$('line').textContent='Paused while this tab is hidden.';}
-  else if(running){paused=false;last=performance.now();$('line').textContent='Collect gold signals. Keep a clean line through the ruins.';}
+  else if(running&&!autopilot){paused=false;last=performance.now();$('line').textContent='Collect gold signals. Keep a clean line through the ruins.';}
 });
-canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pointer=toLocal(e);});
+canvas.addEventListener('pointerdown',e=>{if(autopilot)window.__saeJourney?.takeOver();canvas.setPointerCapture(e.pointerId);pointer=toLocal(e);});
 canvas.addEventListener('pointermove',e=>{if(pointer)pointer=toLocal(e);});
 canvas.addEventListener('pointerup',()=>{pointer=null;});
 canvas.addEventListener('pointercancel',()=>{pointer=null;});
 document.querySelectorAll('.touch-controls button').forEach(btn=>{
   const key=btn.getAttribute('data-key');
-  btn.addEventListener('pointerdown',e=>{e.preventDefault();btn.setPointerCapture(e.pointerId);keys.add(key);});
+  btn.addEventListener('pointerdown',e=>{e.preventDefault();if(autopilot)window.__saeJourney?.takeOver();btn.setPointerCapture(e.pointerId);keys.add(key);});
   btn.addEventListener('pointerup',()=>keys.delete(key));
   btn.addEventListener('pointercancel',()=>keys.delete(key));
 });
 $('start').addEventListener('click',start);
 hud();draw();raf=requestAnimationFrame(tick);
+
+// Autoplay uses the same acceleration, collisions, target collection and finish path.
+function planWatch(){
+  const cols=24,rows=14,cell=30;
+  const point=id=>({x:(id%cols)*cell+15,y:Math.floor(id/cols)*cell+15});
+  const valid=id=>{const p=point(id);return p.x>=30&&p.x<=690&&p.y>=30&&p.y<=390&&!hitRuin(p.x,p.y);};
+  const nearest=(px,py)=>Array.from({length:cols*rows},(_,id)=>id).filter(valid).sort((a,b)=>Math.hypot(point(a).x-px,point(a).y-py)-Math.hypot(point(b).x-px,point(b).y-py))[0];
+  const start=nearest(x,y),end=nearest(target.x,target.y),queue=[start],prev=new Map([[start,null]]);
+  for(let q=0;q<queue.length;q++){
+    const n=queue[q];if(n===end)break;
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const nx=n%cols+dx,ny=Math.floor(n/cols)+dy,next=ny*cols+nx;
+      if(nx<0||nx>=cols||ny<0||ny>=rows||!valid(next)||prev.has(next))continue;
+      prev.set(next,n);queue.push(next);
+    }
+  }
+  const route=[];if(prev.has(end))for(let n=end;n!==null;n=prev.get(n))route.unshift(point(n));
+  route.push({x:target.x,y:target.y});return route;
+}
+function steerWatch(){
+  const identity=target.x+':'+target.y;
+  if(identity!==watchTarget){watchTarget=identity;watchPath=planWatch();}
+  while(watchPath.length>1&&Math.hypot(watchPath[0].x-x,watchPath[0].y-y)<18)watchPath.shift();
+  pointer=watchPath[0]||target;
+}
+function snapshot(){return structuredClone({x,y,vx,vy,elapsed,pulse,score,combo,comboMax,clean,hits,lanterns,target,trail,crumbs,ghostPath,ghost,running,paused,pointer,demo,line:$('line').textContent,status:$('status').textContent,startText:$('start').textContent,startDisplay:$('start').style.display});}
+function restoreWatch(){
+  if(!watchBefore)return;
+  const s=watchBefore;({x,y,vx,vy,elapsed,pulse,score,combo,comboMax,clean,hits,lanterns,target,ghost,running,paused,pointer,demo}=s);
+  trail.splice(0,trail.length,...s.trail);crumbs.splice(0,crumbs.length,...s.crumbs);ghostPath.splice(0,ghostPath.length,...s.ghostPath);
+  $('line').textContent=s.line;$('status').textContent=s.status;$('start').textContent=s.startText;$('start').style.display=s.startDisplay;
+  watchBefore=null;autopilot=false;keys.clear();last=performance.now();hud();draw();
+}
+function registerJourney(){
+  window.__SIGNAL_RUN__={getState:()=>({x,y,elapsed,score,running,paused,demo,autopilot})};
+  window.__saeJourney?.register({
+    watch(){watchBefore=snapshot();reset();demo=true;autopilot=true;watchPath=[];watchTarget=null;running=true;paused=false;keys.clear();last=performance.now();$('start').style.display='none';$('line').textContent='Watching a route through the ruins. Take over whenever you like.';},
+    stop:restoreWatch,
+    takeOver(){autopilot=false;watchBefore=null;pointer=null;paused=false;last=performance.now();$('line').textContent='Your turn. This practice run leaves your saved ghost and field log unchanged.';},
+    pause(value){paused=value;last=performance.now();},
+    ended:()=>!running
+  });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',registerJourney,{once:true});else registerJourney();

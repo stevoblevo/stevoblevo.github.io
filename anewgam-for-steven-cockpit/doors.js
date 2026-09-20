@@ -1,11 +1,12 @@
 /* Live-door map. Private polylite is named, not hosted. */
 window.__anewDoors = [
   { id: "talk", hash: ["talk"], title: "Talk to Sae ↗", href: "https://anewgam-steven-cockpit.stevoblevo.chatgpt.site/talk?source=cockpit-talk-door", live: false, external: true, line: "Opens your private Talk site in a new tab with ChatGPT sign-in. Local drafts are not sent. Talk requires a network connection." },
+  { id: "nougat", hash: ["nougat"], title: "Nougat Thread", href: "/anewgam-for-steven-cockpit/chapters/nougat/preview.html", live: true, line: "Play / watch · Princess discovers, Knight inherits" },
   { id: "peachfall", hash: ["peachfall", "$peachfall"], title: "$peachfall", href: "/peachfall/", live: true, line: "Watch / play the dream" },
   { id: "goober", hash: ["goober", "crossing", "anewgam"], title: "Crossing", href: "/goober/", live: true, line: "Aiden door · find your line" },
   { id: "run", hash: ["run", "signal"], title: "Signal Run", href: "/goober/run/", live: true, line: "Ruins · lanterns · no wager" },
   { id: "with-him", hash: ["with-him", "withhim"], title: "With him", href: "/goober/with-him/", live: true, line: "Same world. Further together." },
-  { id: "cheese", hash: ["cheese", "cheese-royale"], title: "Cheese Royale", href: "/cheese-royale/", live: true, line: "Tester table" },
+  { id: "cheese", hash: ["cheese", "cheese-royale"], title: "Cheese Royale", href: null, live: false, line: "Source route missing · recovery pending" },
   { id: "everFallen", hash: ["everfallen", "everFallen", "everdelve"], title: "$everFallen", href: null, live: false, line: "Plates in this library · no public play yet" },
   { id: "polylite", hash: ["polylite", "$polylite", "polylight"], title: "$polylite", href: null, live: false, line: "Private sibling · play local / loopback" },
   { id: "sc1", hash: ["sc1.lov", "sc1", "lov"], title: "sc1.lov", href: null, live: false, line: "KkNight comes · day is now night" },

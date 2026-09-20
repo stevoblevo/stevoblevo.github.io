@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src https://simple-jev-demo-api.featherless.ai; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="/shared/ways.css">
+<script defer src="/shared/worlds.js"></script>
+<script defer src="/shared/ways.js"></script>
+<script defer src="./journey.js"></script>
+<title>Anewgam — The Nougat Thread · candidate preview</title>
+<style>html{background:#0b111b}body{margin:0;padding:28px;min-height:100vh;background:radial-gradient(ellipse at 20% 0%,#322b3a,#0b111b 70%)}@media(max-width:800px){body{padding:8px}}</style>
+<div id="scene"></div>
+<script src="nougat.js"></script>
+<script>
+// Uses art already present in this repository. No newly supplied image is published.
+// The optional remote button performs no request until deliberately clicked.
+window.game = AnewgamNougat.mount(document.getElementById('scene'), {
+  art: '../../gen2-dark.webp',
+  allowRemote: true
+});
+</script>
+</html>

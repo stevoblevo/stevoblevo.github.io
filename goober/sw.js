@@ -1,8 +1,9 @@
-const CACHE = 'goober-pages-shell-v4b-family';
+const CACHE = 'goober-pages-shell-v5-interwoven';
 const BASE = '/goober/';
 const PRECACHE = [
   '',
   'app.js',
+  'run/', 'run/index.html', 'run/run.js', 'run/field.js',
   'style.css',
   'family.css',
   'family.js',
@@ -27,7 +28,7 @@ const PRECACHE = [
   'project$/saedow-store.js',
   'gallery/catalog.json',
   'source/anewgam-world-thread.v1.json'
-].map(path => BASE + path);
+].map(path => BASE + path).concat(['/shared/worlds.js','/shared/ways.js','/shared/ways.css']);
 const PRECACHE_PATHS = new Set(PRECACHE.map(url => new URL(url, self.location.origin).pathname));
 
 self.addEventListener('install', event => {
@@ -52,7 +53,7 @@ self.addEventListener('fetch', event => {
   if (
     event.request.method !== 'GET' ||
     url.origin !== self.location.origin ||
-    !url.pathname.startsWith(BASE) ||
+    (!url.pathname.startsWith(BASE) && !PRECACHE_PATHS.has(url.pathname)) ||
     url.pathname.startsWith(BASE + 'saedow/') ||
     event.request.cache === 'no-store'
   ) return;

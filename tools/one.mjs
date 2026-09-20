@@ -2,6 +2,7 @@
 import {readFile, writeFile, mkdir, readdir, stat, lstat, realpath, copyFile, rm} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {createHash} from 'node:crypto';
+import {prepareWorlds} from './worlds.mjs';
 import {privateEngine} from './peachfall-source.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -30,8 +31,9 @@ async function filesUnder(root, relative = '') {
   return files.sort();
 }
 export async function prepare(root = ROOT) {
+  await prepareWorlds(root);
   const files = (await filesUnder(path.join(root,'peachfall'))).filter(f => !['sw.js','offline-files.js'].includes(f) && publicPath(`peachfall/${f}`));
-  const paths = ['./', ...files.map(f => './'+f), '../shared/ingress.js', '../anewgam-for-steven-cockpit/colour-language.css', '../anewgam-for-steven-cockpit/icon-192.png', '../anewgam-for-steven-cockpit/icon-512.png'];
+  const paths = ['./', ...files.map(f => './'+f), '../shared/ingress.js', '../shared/worlds.js', '../shared/ways.js', '../shared/ways.css', '../anewgam-for-steven-cockpit/colour-language.css', '../anewgam-for-steven-cockpit/icon-192.png', '../anewgam-for-steven-cockpit/icon-512.png'];
   const hash = createHash('sha256');
   let totalBytes = 0;
   for (const rel of paths.filter(x => x !== './')) {
