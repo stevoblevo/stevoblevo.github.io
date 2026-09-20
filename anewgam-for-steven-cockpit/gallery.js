@@ -87,6 +87,7 @@
     document.getElementById('ya-close').focus();
     document.body.classList.add("ya-open");
     resetView();
+    window.dispatchEvent(new CustomEvent('sae:art-open', {detail: {id: x.id}}));
     if (pushHash) {
       const h = "view=" + encodeURIComponent(x.id);
       if (location.hash.replace(/^#/, "") !== h) history.replaceState(null, "", "#" + h);
@@ -176,7 +177,7 @@
   window.addEventListener("keydown", (ev) => {
     if (ev.target.closest('input, textarea, select, [contenteditable="true"], dialog')) return;
     if (!stage.hidden && ev.key === 'Tab') {
-      const buttons = [...stage.querySelectorAll('button:not([disabled])')];
+      const buttons = [...stage.querySelectorAll('button:not([disabled]), a[href]')];
       const first = buttons[0], last = buttons[buttons.length - 1];
       if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
       else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
@@ -212,4 +213,10 @@
   }
   window.addEventListener("hashchange", fromHash);
   fromHash();
+  // Enrich this same gallery after its ordinary shell has loaded.
+  import('./art-arrival.js').then(() => import('./art-links.js')).then(() => {
+    window.__setLibraryFilter?.();
+    fromHash();
+    window.__saeArtReady = true;
+  }).catch(() => window.__anewgam?.toast('Art routes are unavailable; the ordinary gallery remains available.'));
 })();
