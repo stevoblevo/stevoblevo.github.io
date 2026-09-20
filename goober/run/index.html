@@ -32,6 +32,9 @@ canvas{display:block;width:100%;max-width:920px;aspect-ratio:720/420;height:auto
 .status{min-height:1.2em;font:12px/1.5 ui-monospace,monospace;color:var(--violet)}
 @media(max-width:640px){h1{font-size:22px}.boost-under{display:block}.primary{margin-top:12px}}
 </style>
+<link rel="stylesheet" href="/shared/ways.css">
+<script defer src="/shared/worlds.js"></script>
+<script defer src="/shared/ways.js"></script>
 </head>
 <body>
 <header>
@@ -52,9 +55,9 @@ canvas{display:block;width:100%;max-width:920px;aspect-ratio:720/420;height:auto
     <em id="hud-combo">FIND YOUR LINE</em>
     <span id="hud-time">45s</span>
   </div>
-  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run. Arrow keys or WASD. Left and right turn. Up goes."></canvas>
+  <canvas id="field" width="720" height="420" tabindex="0" aria-label="Signal Run. Arrow keys or WASD. Arrow keys move."></canvas>
   <div class="boost-under">
-    <p id="line">Collect gold signals. Arrows or WASD. Left and right turn. Up goes.</p>
+    <p id="line">Collect gold signals. Arrows or WASD. Arrow keys move.</p>
     <button class="primary" id="start">Start 45-second run <span>↗</span></button>
   </div>
   <div class="touch-controls">
@@ -66,8 +69,8 @@ canvas{display:block;width:100%;max-width:920px;aspect-ratio:720/420;height:auto
     <button type="button" data-key="Shift">Brake</button>
   </div>
   <p class="status" id="status"></p>
-  <p class="small">Arrows or WASD. Left/right turn. Up goes. Space boost. Shift brake. Drag to aim. Local skill toy — not a leaderboard, not a wager.</p>
+  <p class="small">Arrows or WASD. Arrow keys move. Space boost. Shift brake. Drag to aim. Local skill toy — not a leaderboard, not a wager.</p>
 </section>
-<script src="./run.v2.js?v=2"></script>
+<script src="./run.js"></script>
 </body>
 </html>

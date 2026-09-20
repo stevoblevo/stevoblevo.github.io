@@ -1,7 +1,7 @@
 name: Saelion one-home acceptance
 on:
   push:
-    branches: [master, sae/one-development-home-20260917]
+    branches: [master, sae/one-development-home-20260917, sae/everfallen-interwoven-20260920]
   pull_request:
     branches: [master]
 permissions:
@@ -44,6 +44,7 @@ jobs:
           python tests/browser.py
           python tests/browser_talk_door.py
           python tests/browser_skein_restore.py
+          python tests/browser_worlds.py
       - name: Package output without changing existing symbolic route names
         if: always()
         run: |

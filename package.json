@@ -9,10 +9,11 @@
   "scripts": {
     "dev": "node tools/one.mjs dev",
     "build": "node tools/one.mjs build",
-    "test": "node --test tests/*.test.cjs anewgam-for-steven-cockpit/regression.test.cjs",
+    "test": "node --test tests/*.test.cjs anewgam-for-steven-cockpit/regression.test.cjs anewgam-for-steven-cockpit/chapters/nougat/test-nougat.cjs",
     "check": "npm test && npm run build",
     "peachfall:source": "node tools/one.mjs source",
     "peachfall:build": "node tools/one.mjs engine",
-    "doctor": "node tools/one.mjs doctor"
+    "doctor": "node tools/one.mjs doctor",
+    "runthrough": "python tests/browser_worlds.py"
   }
 }

@@ -1,0 +1,15 @@
+#sae-way{position:relative;z-index:30;display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;padding:.45rem .7rem;background:#111523;color:#fff0d7;font:1rem/1.4 system-ui,sans-serif;border-bottom:1px solid #786044}
+#sae-way a,#sae-way button,#sae-world-dialog button,#sae-world-dialog a{display:inline-flex;align-items:center;min-height:44px;padding:.45rem .7rem;border:1px solid #7b6e88;border-radius:.5rem;background:#24283b;color:#fff0d7;font:inherit;text-decoration:none;cursor:pointer}
+#sae-way [hidden]{display:none!important}
+#sae-way output{flex:1 1 220px;font-size:.875rem;color:#eedbc1}
+#sae-way a:focus-visible,#sae-way button:focus-visible,#sae-world-dialog a:focus-visible,#sae-world-dialog button:focus-visible{outline:3px solid #f7c871;outline-offset:3px}
+#sae-world-dialog{box-sizing:border-box;width:min(640px,calc(100% - 24px));max-height:85dvh;padding:1.2rem;background:#131827;color:#fff0d7;border:1px solid #af895e;border-radius:1rem;font:1rem/1.5 system-ui,sans-serif;overflow:auto}
+#sae-world-dialog::backdrop{background:#070913c9}
+#sae-world-dialog header{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+#sae-world-dialog h2{margin:0;font-size:1.35rem;color:inherit}
+#sae-world-dialog ul{padding:0;list-style:none}
+#sae-world-dialog li{padding:1rem 0;border-top:1px solid #4c4359}
+#sae-world-dialog p{margin:.4rem 0 .75rem;color:#e0d4de;font-size:1rem}
+#sae-world-dialog .sae-world-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+#sae-world-dialog small{font-size:.875rem;color:#e0d4de}
+@media(max-width:480px){#sae-way{gap:.25rem;padding:.35rem}#sae-way a,#sae-way button{padding:.4rem .5rem}#sae-way output{flex-basis:100%}}

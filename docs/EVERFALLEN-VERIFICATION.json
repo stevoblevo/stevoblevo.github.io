@@ -1,0 +1,101 @@
+{
+  "schema": "anewgam-world-runthrough-evidence-v1",
+  "baseCommit": "a9737616bc28e9cd8fde7f94f8d0a490395be0a2",
+  "status": "tested-candidate-not-deployed",
+  "unitTests": {
+    "passed": 124,
+    "failed": 0
+  },
+  "gooberContracts": {
+    "passed": 111,
+    "failed": 0
+  },
+  "retainedBrowserChecks": {
+    "playIngressOffline": 13,
+    "skeinRestore": 9,
+    "privateTalkNavigationFixture": 5
+  },
+  "newBrowser": {
+    "results": [
+      {
+        "test": "Same-world Watch keeps unsaved choices; Pause freezes; Stop restores the prior scene",
+        "passed": true
+      },
+      {
+        "test": "Take over retains the current moment and accepts the next player choice",
+        "passed": true
+      },
+      {
+        "test": "Nougat completes its actual ending, leaves the kept save alone and returns to cockpit",
+        "passed": true
+      },
+      {
+        "test": "Peachfall Watch drives the preserved engine and Take over keeps its current scene",
+        "passed": true
+      },
+      {
+        "test": "Native sound controls save only the earlier player scene while Watch continues",
+        "passed": true
+      },
+      {
+        "test": "Peachfall rendered Watch reaches the ending with all gifts and leaves the stored save unchanged",
+        "passed": true
+      },
+      {
+        "test": "Peachfall keyboard navigation works; its existing root route is retained as the return path",
+        "passed": true
+      },
+      {
+        "test": "Signal Run follows the real physics to a scored finish; pause/restore work; demo does not write player results",
+        "passed": true
+      },
+      {
+        "test": "Real player input interrupts Signal Run autoplay",
+        "passed": true
+      },
+      {
+        "test": "Cockpit and all three game entrances keep the shared paths usable at phone width",
+        "passed": true
+      },
+      {
+        "test": "No uncaught page errors during the exercised journeys",
+        "passed": true
+      }
+    ],
+    "pageErrors": [],
+    "scope": "Candidate Chromium execution; real game mechanics with accelerated browser clock. Not production, physical device, private/external-game adapter coverage, or Skein acceptance."
+  },
+  "independentReview": {
+    "result": "no_remaining_blocking_findings",
+    "checks": 8,
+    "clock": "normal browser clock",
+    "fixed": [
+      "sound controls saved demo progress",
+      "keyboard activation consumed by engine",
+      "route aliases lost return paths",
+      "same-world Watch reloaded unsaved scene"
+    ],
+    "reviewedFiles": {
+      "peachfall/journey.js": "23805ca6a0dec242476a9b73fa116ff7eba10bce471f139669c8f0c3275b3449",
+      "shared/ways.js": "6caeeace532343cbaede3baa87c4c31c69e05abd813d223ef637a0ad81bf37f2",
+      "shared/worlds.js": "11d37ca490069ff3d954166d2172a0a87f09516956888911b096c7f5d5f5056b",
+      "saelion.workspace.json": "fac51f4e4c1331b3533fc44dbf9b0bc4a831f2a19410b48ae90261e4b3ce502d"
+    }
+  },
+  "browser": "Chromium 143.0.0 from @sparticuz/chromium 143.0.4; Python Playwright 1.57.0. Final new suite uses accelerated browser clock installed before application code. Earlier 153.0.0 suite and normal-clock review also passed; Chromium 143 first-visit failure was reproduced and repaired.",
+  "notProved": [
+    "production deployment",
+    "all private/external game adapters",
+    "cross-device/origin save synchronization",
+    "physical phone",
+    "existing-install service-worker upgrade",
+    "Skein acceptance"
+  ],
+  "ciRepair": {
+    "initialCommit": "0751dbaa739ccc0586e88f1d4449b5c37006cf5e",
+    "failedRun": "https://github.com/stevoblevo/stevoblevo.github.io/actions/runs/35527869063",
+    "cause": "Preserved engine requests three /source/images/anchors/ image paths absent from site root. A broken drawImage stops the animation loop in Chromium 143.",
+    "repair": "Byte-identical aliases of existing published images at exactly the requested URLs; exact allowlist and offline manifest entries. Engine unchanged.",
+    "localProof": "All 11 new browser milestones passed in Chromium 143, 124 unit tests passed, static build and PWA verifier passed."
+  }
+}

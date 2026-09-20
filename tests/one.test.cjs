@@ -43,6 +43,17 @@ test('Peachfall manifest has correct identity, scope and valid existing PNG dime
  const manifest=JSON.parse(fs.readFileSync(path.join(root,'peachfall/manifest.webmanifest')));const base='https://example.test/peachfall/';assert.equal(new URL(manifest.id,base).href,base);assert.equal(new URL(manifest.scope,base).href,base);
  for(const icon of manifest.icons){const data=fs.readFileSync(path.resolve(root,'peachfall',icon.src));const [w,h]=icon.sizes.split('x').map(Number);assert.equal(data.readUInt32BE(16),w);assert.equal(data.readUInt32BE(20),h);}
 });
+test('preserved engine image URLs serve identical published art without exposing other source files',async()=>{
+ const {serve,publicPath}=await tool();
+ const engine=fs.readFileSync(path.join(root,'peachfall/assets/main-BPeuWIE_.js'),'utf8');
+ const routes=[...new Set([...engine.matchAll(/"(\/source\/[^\"]+)"/g)].map(m=>m[1]))];
+ assert.equal(routes.length,3);
+ const server=await serve(root,0);const base=`http://127.0.0.1:${server.address().port}`;
+ try {
+  for(const route of routes){const response=await fetch(base+route);assert.equal(response.status,200,route);assert.equal(response.headers.get('content-type'),'image/png');assert.deepEqual(Buffer.from(await response.arrayBuffer()),fs.readFileSync(path.join(root,'peachfall',route)));}
+  for(const route of ['source/private.js','source/images/anchors/unknown.png']){assert.equal(publicPath(route),false);assert.equal((await fetch(base+'/'+route)).status,404);}
+ }finally{await new Promise(r=>server.close(r));}
+});
 function worker(){
  const handlers={},deleted=[];const context={URL,Response,fetch,self:{location:{href:'https://example.test/peachfall/sw.js'},__PEACHFALL_OFFLINE__:{version:'test',files:['./','./index.html','../shared/ingress.js']},addEventListener:(k,v)=>handlers[k]=v,clients:{claim:async()=>{}}},importScripts:()=>{},caches:{keys:async()=>['saelion-peachfall-old','steven-anewgam-v7','goober-pages-shell-v3','private-data'],delete:async k=>deleted.push(k)}};
  vm.createContext(context);vm.runInContext(fs.readFileSync(path.join(root,'peachfall/sw.js'),'utf8'),context);return {handlers,deleted,context};
