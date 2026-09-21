@@ -1,0 +1,9 @@
+{
+  "name": "Topi·Berry · Anewgam",
+  "short_name": "Topi·Berry",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#160f0d",
+  "theme_color": "#efb59f",
+  "icons": []
+}
