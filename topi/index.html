@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#efb59f"><title>Topi·Berry · Peachfall</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#1b1110;color:white;font-family:Georgia,serif}
+.world{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 40%,#f4b09b,#5a2925 70%,#1b1110)}
+.art{position:absolute;inset:-5%;width:110%;height:110%;border:0;pointer-events:none;filter:saturate(1.04) contrast(1.02)}
+.veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,8,7,.02),transparent 58%,rgba(18,8,7,.42));pointer-events:none}
+.brand{position:absolute;top:max(18px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);text-align:center;text-shadow:0 3px 24px #492016;z-index:2}.brand b{display:block;font-size:clamp(34px,6vw,76px);font-weight:400;font-style:italic;white-space:nowrap}.brand small{font:10px system-ui;letter-spacing:.3em;text-transform:uppercase}
+.door{position:absolute;right:clamp(5%,9vw,13%);top:31%;z-index:3;border:1px solid rgba(255,255,255,.8);background:rgba(255,237,224,.16);color:white;backdrop-filter:blur(9px);padding:17px 22px;border-radius:999px;letter-spacing:.2em;text-transform:uppercase}
+.flow{position:absolute;z-index:3;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:clamp(8px,2.4vw,30px)}
+.s{width:clamp(54px,7vw,82px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.62);background:rgba(255,239,226,.15);color:white;font-size:clamp(21px,3vw,31px);backdrop-filter:blur(8px)}
+.whisper{position:absolute;z-index:3;left:50%;bottom:calc(max(22px,env(safe-area-inset-bottom)) + 94px);transform:translateX(-50%);font:10px system-ui;letter-spacing:.28em;text-transform:uppercase;text-shadow:0 2px 10px #000;white-space:nowrap}
+.panel{position:absolute;z-index:5;inset:auto 0 0;min-height:38%;padding:42px max(24px,8vw) calc(max(18px,env(safe-area-inset-bottom)) + 24px);text-align:center;background:linear-gradient(180deg,rgba(35,17,13,.05),rgba(35,17,13,.95) 22%);backdrop-filter:blur(16px);transform:translateY(105%);transition:.55s cubic-bezier(.2,.8,.2,1)}.panel.open{transform:none}.panel h2{font-size:clamp(36px,6vw,68px);font-weight:400;font-style:italic;margin:0 0 12px}.panel p{max-width:650px;margin:auto;line-height:1.55}.x{position:absolute;right:22px;top:20px;background:none;border:0;color:white;font-size:26px}
+@media(max-aspect-ratio:4/5){.art{inset:-20% -65%;width:230%;height:140%}.brand{top:7vh}.door{top:48%;right:5%}.flow{width:100%;justify-content:center}.whisper{bottom:calc(max(18px,env(safe-area-inset-bottom)) + 82px)}}
+@media(min-aspect-ratio:1/1) and (max-aspect-ratio:4/3){.art{inset:-10% -25%;width:150%;height:120%}}
+</style></head><body><main class="world">
+<iframe class="art" src="https://www.canva.com/design/DAHVzDskHrY/view?embed" title="Topi Berry living world" allowfullscreen></iframe><div class="veil"></div>
+<div class="brand"><b>🍑 Topi·Berry</b><small>a sweeter tomorrow together</small></div>
+<button class="door" onclick="show('Peachfall','Step through. The Peach Ball is the first gathering in this living season.')">Peachfall · step in →</button>
+<div class="whisper" id="w">real people · magical days</div><nav class="flow" aria-label="Semiotic flow">
+<button class="s" aria-label="Explore" onclick="say('explore · follow wonder')">☾</button><button class="s" aria-label="Create" onclick="say('create · leave beauty behind')">◌</button><button class="s" aria-label="Gather" onclick="show('Gather','People, art, food and play meet here. Arrive as you are—or as someone more.')">🍑</button><button class="s" aria-label="Play" onclick="say('play · the world answers back')">✧</button><button class="s" aria-label="Belong" onclick="show('Belong','Beauty is not being judged. It is how you choose to arrive.')">♡</button></nav>
+<section class="panel" id="p"><button class="x" onclick="p.classList.remove('open')">×</button><h2 id="t"></h2><p id="c"></p></section></main>
+<script>function say(x){w.textContent=x;setTimeout(()=>w.textContent='real people · magical days',2400)}function show(a,b){t.textContent=a;c.textContent=b;p.classList.add('open')}</script></body></html>
