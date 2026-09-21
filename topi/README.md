@@ -1,10 +1,10 @@
-# Topi·Berry — Marcy Anewgam
+# Topi·Berry / Marcy Anewgam
+Self-contained semiotic-fluid PWA + image-comms pic.gam.
 
-Semiotic-fluid public doorway for Peachfall / The Peach Ball.
+## Run
+docker compose up -d --build
+Open http://localhost:8788
 
-- Public path: https://stevoblevo.github.io/topi/
-- Canonical target: https://saelion.co/topi
-- Responsive: portrait phones, 4:3, 16:10, 16:9, ultrawide
-- Tower deployment intentionally parked.
-
-The immersive art is the GUI; HTML adds responsive composition, touch/state, accessibility and fluid reveals.
+Public lineage: /topi on stevoblevo.github.io
+Canonical future route: saelion.co/topi
+Tower deployment parked until host execution is available.

@@ -1,27 +1,41 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#efb59f"><title>Topi·Berry · Peachfall</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#1b1110;color:white;font-family:Georgia,serif}
-.world{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 40%,#f4b09b,#5a2925 70%,#1b1110)}
-.art{position:absolute;inset:-5%;width:110%;height:110%;border:0;pointer-events:none;filter:saturate(1.04) contrast(1.02)}
-.veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,8,7,.02),transparent 58%,rgba(18,8,7,.42));pointer-events:none}
-.brand{position:absolute;top:max(18px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);text-align:center;text-shadow:0 3px 24px #492016;z-index:2}.brand b{display:block;font-size:clamp(34px,6vw,76px);font-weight:400;font-style:italic;white-space:nowrap}.brand small{font:10px system-ui;letter-spacing:.3em;text-transform:uppercase}
-.door{position:absolute;right:clamp(5%,9vw,13%);top:31%;z-index:3;border:1px solid rgba(255,255,255,.8);background:rgba(255,237,224,.16);color:white;backdrop-filter:blur(9px);padding:17px 22px;border-radius:999px;letter-spacing:.2em;text-transform:uppercase}
-.flow{position:absolute;z-index:3;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:clamp(8px,2.4vw,30px)}
-.s{width:clamp(54px,7vw,82px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.62);background:rgba(255,239,226,.15);color:white;font-size:clamp(21px,3vw,31px);backdrop-filter:blur(8px)}
-.whisper{position:absolute;z-index:3;left:50%;bottom:calc(max(22px,env(safe-area-inset-bottom)) + 94px);transform:translateX(-50%);font:10px system-ui;letter-spacing:.28em;text-transform:uppercase;text-shadow:0 2px 10px #000;white-space:nowrap}
-.panel{position:absolute;z-index:5;inset:auto 0 0;min-height:38%;padding:42px max(24px,8vw) calc(max(18px,env(safe-area-inset-bottom)) + 24px);text-align:center;background:linear-gradient(180deg,rgba(35,17,13,.05),rgba(35,17,13,.95) 22%);backdrop-filter:blur(16px);transform:translateY(105%);transition:.55s cubic-bezier(.2,.8,.2,1)}.panel.open{transform:none}.panel h2{font-size:clamp(36px,6vw,68px);font-weight:400;font-style:italic;margin:0 0 12px}.panel p{max-width:650px;margin:auto;line-height:1.55}.x{position:absolute;right:22px;top:20px;background:none;border:0;color:white;font-size:26px}
-@media(max-aspect-ratio:4/5){.art{inset:-20% -65%;width:230%;height:140%}.brand{top:7vh}.door{top:48%;right:5%}.flow{width:100%;justify-content:center}.whisper{bottom:calc(max(18px,env(safe-area-inset-bottom)) + 82px)}}
-@media(min-aspect-ratio:1/1) and (max-aspect-ratio:4/3){.art{inset:-10% -25%;width:150%;height:120%}}
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#efb59f"><link rel="manifest" href="manifest.webmanifest">
+<title>Topi·Berry · Semiotic GUI</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160f0d;color:#fff;font-family:Georgia,serif}
+:root{--safeT:max(16px,env(safe-area-inset-top));--safeB:max(16px,env(safe-area-inset-bottom));--safeL:max(16px,env(safe-area-inset-left));--safeR:max(16px,env(safe-area-inset-right))}
+.world{position:fixed;inset:0;background-image:linear-gradient(180deg,rgba(15,8,5,.02),rgba(15,8,5,.08) 60%,rgba(15,8,5,.32)),url(world-4k.png);background-size:cover;background-position:center;overflow:hidden}
+.brand{position:absolute;top:var(--safeT);left:50%;transform:translateX(-50%);text-align:center;text-shadow:0 3px 24px #492016}.brand b{display:block;font-size:clamp(34px,6vw,76px);font-weight:400;font-style:italic;white-space:nowrap}.brand small{font:10px system-ui;letter-spacing:.32em;text-transform:uppercase}
+.door{position:absolute;right:clamp(5%,9vw,13%);top:31%;border:1px solid rgba(255,255,255,.72);background:rgba(255,237,224,.12);color:#fff;backdrop-filter:blur(9px);padding:17px 22px;border-radius:999px;letter-spacing:.2em;text-transform:uppercase}
+.flow{position:absolute;left:50%;bottom:calc(var(--safeB) + 16px);transform:translateX(-50%);display:flex;gap:clamp(8px,2.4vw,30px);align-items:center}
+.s{width:clamp(54px,7vw,82px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.58);background:rgba(255,239,226,.12);color:#fff;font-size:clamp(21px,3vw,31px);backdrop-filter:blur(8px);transition:.3s}
+.s:active,.s:hover{transform:translateY(-6px) scale(1.04);background:rgba(255,226,208,.2)}
+.whisper{position:absolute;left:50%;bottom:calc(var(--safeB) + 104px);transform:translateX(-50%);font:10px system-ui;letter-spacing:.28em;text-transform:uppercase;text-shadow:0 2px 10px #000;white-space:nowrap}
+.panel{position:absolute;inset:auto 0 0;min-height:38%;padding:42px max(24px,8vw) calc(var(--safeB) + 24px);text-align:center;background:linear-gradient(180deg,rgba(35,17,13,.05),rgba(35,17,13,.94) 22%);backdrop-filter:blur(16px);transform:translateY(105%);transition:.55s cubic-bezier(.2,.8,.2,1)}.panel.open{transform:none}.panel h2{font-size:clamp(36px,6vw,68px);font-weight:400;font-style:italic;margin:0 0 12px}.panel p{max-width:650px;margin:auto;line-height:1.55}.x{position:absolute;right:22px;top:20px;background:none;border:0;color:white;font-size:26px}
+@media (max-aspect-ratio: 4/5){.world{background-position:58% center}.brand{top:calc(var(--safeT) + 5vh)}.door{top:45%;right:6%}.flow{width:100%;justify-content:center}.whisper{bottom:calc(var(--safeB) + 90px)}}
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 4/3){.world{background-position:53% center}.brand{top:calc(var(--safeT) + 1vh)}}
+@media (min-aspect-ratio: 1.5/1) and (max-aspect-ratio: 1.72/1){.world{background-position:center 48%}}
+@media (min-aspect-ratio: 1.72/1){.world{background-position:center}.flow{bottom:calc(var(--safeB) + 10px)}}
+@media (min-aspect-ratio: 2/1){.brand b{font-size:54px}.door{right:15%;top:34%}}
 </style></head><body><main class="world">
-<iframe class="art" src="https://www.canva.com/design/DAHVzDskHrY/view?embed" title="Topi Berry living world" allowfullscreen></iframe><div class="veil"></div>
 <div class="brand"><b>🍑 Topi·Berry</b><small>a sweeter tomorrow together</small></div>
 <button class="door" onclick="show('Peachfall','Step through. The Peach Ball is the first gathering in this living season.')">Peachfall · step in →</button>
-<div class="whisper" id="w">real people · magical days</div><nav class="flow" aria-label="Semiotic flow">
-<button class="s" aria-label="Explore" onclick="say('explore · follow wonder')">☾</button><button class="s" aria-label="Create" onclick="say('create · leave beauty behind')">◌</button><button class="s" aria-label="Gather" onclick="show('Gather','People, art, food and play meet here. Arrive as you are—or as someone more.')">🍑</button><button class="s" aria-label="Play" onclick="say('play · the world answers back')">✧</button><button class="s" aria-label="Belong" onclick="show('Belong','Beauty is not being judged. It is how you choose to arrive.')">♡</button></nav>
-<section class="panel" id="p"><button class="x" onclick="p.classList.remove('open')">×</button><h2 id="t"></h2><p id="c"></p></section><button aria-label="Open pic gam" onclick="gallery.classList.add('open')" style="position:fixed;right:18px;top:50%;z-index:7;width:48px;height:48px;border-radius:50%;border:1px solid #fff8;background:#321b1688;color:white;font-size:20px;backdrop-filter:blur(8px)">✿</button>
-<section id="gallery" style="position:fixed;inset:0;z-index:20;background:#170d0bf2;display:none;place-items:center">
+<div class="whisper" id="w">real people · magical days</div>
+<nav class="flow" aria-label="Semiotic flow">
+<button class="s" aria-label="Explore" onclick="say('explore · follow wonder')">☾</button>
+<button class="s" aria-label="Create" onclick="say('create · leave beauty behind')">◌</button>
+<button class="s" aria-label="Gather" onclick="show('Gather','People, art, food and play meet here. Arrive as you are—or as someone more.')">🍑</button>
+<button class="s" aria-label="Play" onclick="say('play · the world answers back')">✧</button>
+<button class="s" aria-label="Belong" onclick="show('Belong','Beauty is not being judged. It is how you choose to arrive.')">♡</button>
+</nav>
+<section class="panel" id="p"><button class="x" onclick="p.classList.remove('open')">×</button><h2 id="t"></h2><p id="c"></p></section>
+<button id="nougat" aria-label="Open pic gam" onclick="document.getElementById('gallery').classList.add('open')" style="position:fixed;right:max(18px,env(safe-area-inset-right));top:50%;z-index:6;border:1px solid #fff8;background:#321b1688;color:white;border-radius:50%;width:48px;height:48px;font-size:20px;backdrop-filter:blur(8px)">✿</button>
+<section id="gallery" style="position:fixed;inset:0;z-index:20;background:#170d0beF;display:none;place-items:center;padding:20px">
 <button onclick="gallery.classList.remove('open')" style="position:absolute;right:22px;top:22px;background:none;border:0;color:white;font-size:32px">×</button>
-<iframe src="https://www.canva.com/design/DAHVzM-AF4Q/view?embed" title="Topi Berry Sae pic gam" style="width:min(96vw,1500px);height:min(90vh,1000px);border:0;border-radius:18px"></iframe>
-</section><style>#gallery.open{display:grid!important}</style></main>
-<script>function say(x){w.textContent=x;setTimeout(()=>w.textContent='real people · magical days',2400)}function show(a,b){t.textContent=a;c.textContent=b;p.classList.add('open')}</script></body></html>
+<img src="nougat-01.png" alt="Topi Berry Sae pic gam image-comms collage" style="max-width:96vw;max-height:92vh;object-fit:contain;border-radius:18px;box-shadow:0 25px 90px #0008">
+</section><style>#gallery.open{display:grid!important}</style>
+</main><script>
+function say(x){w.textContent=x;setTimeout(()=>w.textContent='real people · magical days',2400)}
+function show(a,b){t.textContent=a;c.textContent=b;p.classList.add('open')}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>
