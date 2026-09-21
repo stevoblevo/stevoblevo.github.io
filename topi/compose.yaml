@@ -1,0 +1,7 @@
+services:
+  topi-berry:
+    build: .
+    container_name: topi-berry
+    restart: unless-stopped
+    ports:
+      - "8788:80"
