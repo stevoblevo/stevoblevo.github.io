@@ -1,0 +1,21 @@
+{
+  "seedId": "TOPEY-BERRY-SEED-20260920-01",
+  "loadedArtwork": [{
+    "title": "Sae Dream Guide",
+    "usage": "Existing shared original used by the live preview; not a portrait of Marcy or a product photograph",
+    "sourcePath": "peachfall/source/images/continuity/04_sae_dream_guide_portrait.png",
+    "sourceGitBlob": "0787dfe8228aa129f7ec13ec5df9e46fb4bf5c15",
+    "sha256": "82e85c61cf92a255e3c67f506afbe3b20754119f60b92f06e1687d48ee3075d3",
+    "bytes": 2583799,
+    "width": 1254,
+    "height": 1254,
+    "lineageManifest": "peachfall/source/manifest.json",
+    "originalPreserved": true,
+    "upscaled": false
+  }],
+  "libraryArtRecoveredForFurtherCuration": [
+    {"title": "Peachfall: A Softer World.png", "sha256": "e640e0a6c9c123fb7ed4bacca15e4fadada32d0e1e42991b932c576865c2589a", "status": "original recovered; not added to this live preview"},
+    {"title": "Anewgam Atlas: Worlds of Wonder(2).png", "sha256": "264e1c782805a45ed80197c18d190ecce1fb9452ebd2ba76ce43dd449552ee8a", "status": "original recovered; not added to this live preview"}
+  ],
+  "privacy": "No private correspondence, real-person likeness, employer details or personal contact data are included."
+}
