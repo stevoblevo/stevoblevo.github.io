@@ -19,5 +19,9 @@
 <button class="door" onclick="show('Peachfall','Step through. The Peach Ball is the first gathering in this living season.')">Peachfall · step in →</button>
 <div class="whisper" id="w">real people · magical days</div><nav class="flow" aria-label="Semiotic flow">
 <button class="s" aria-label="Explore" onclick="say('explore · follow wonder')">☾</button><button class="s" aria-label="Create" onclick="say('create · leave beauty behind')">◌</button><button class="s" aria-label="Gather" onclick="show('Gather','People, art, food and play meet here. Arrive as you are—or as someone more.')">🍑</button><button class="s" aria-label="Play" onclick="say('play · the world answers back')">✧</button><button class="s" aria-label="Belong" onclick="show('Belong','Beauty is not being judged. It is how you choose to arrive.')">♡</button></nav>
-<section class="panel" id="p"><button class="x" onclick="p.classList.remove('open')">×</button><h2 id="t"></h2><p id="c"></p></section></main>
+<section class="panel" id="p"><button class="x" onclick="p.classList.remove('open')">×</button><h2 id="t"></h2><p id="c"></p></section><button aria-label="Open pic gam" onclick="gallery.classList.add('open')" style="position:fixed;right:18px;top:50%;z-index:7;width:48px;height:48px;border-radius:50%;border:1px solid #fff8;background:#321b1688;color:white;font-size:20px;backdrop-filter:blur(8px)">✿</button>
+<section id="gallery" style="position:fixed;inset:0;z-index:20;background:#170d0bf2;display:none;place-items:center">
+<button onclick="gallery.classList.remove('open')" style="position:absolute;right:22px;top:22px;background:none;border:0;color:white;font-size:32px">×</button>
+<iframe src="https://www.canva.com/design/DAHVzM-AF4Q/view?embed" title="Topi Berry Sae pic gam" style="width:min(96vw,1500px);height:min(90vh,1000px);border:0;border-radius:18px"></iframe>
+</section><style>#gallery.open{display:grid!important}</style></main>
 <script>function say(x){w.textContent=x;setTimeout(()=>w.textContent='real people · magical days',2400)}function show(a,b){t.textContent=a;c.textContent=b;p.classList.add('open')}</script></body></html>
