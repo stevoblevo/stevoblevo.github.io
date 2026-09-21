@@ -1,41 +1,136 @@
-<!doctype html><html><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#efb59f"><link rel="manifest" href="manifest.webmanifest">
-<title>Topi·Berry · Semiotic GUI</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160f0d;color:#fff;font-family:Georgia,serif}
-:root{--safeT:max(16px,env(safe-area-inset-top));--safeB:max(16px,env(safe-area-inset-bottom));--safeL:max(16px,env(safe-area-inset-left));--safeR:max(16px,env(safe-area-inset-right))}
-.world{position:fixed;inset:0;background-image:linear-gradient(180deg,rgba(15,8,5,.02),rgba(15,8,5,.08) 60%,rgba(15,8,5,.32)),url(world-4k.png);background-size:cover;background-position:center;overflow:hidden}
-.brand{position:absolute;top:var(--safeT);left:50%;transform:translateX(-50%);text-align:center;text-shadow:0 3px 24px #492016}.brand b{display:block;font-size:clamp(34px,6vw,76px);font-weight:400;font-style:italic;white-space:nowrap}.brand small{font:10px system-ui;letter-spacing:.32em;text-transform:uppercase}
-.door{position:absolute;right:clamp(5%,9vw,13%);top:31%;border:1px solid rgba(255,255,255,.72);background:rgba(255,237,224,.12);color:#fff;backdrop-filter:blur(9px);padding:17px 22px;border-radius:999px;letter-spacing:.2em;text-transform:uppercase}
-.flow{position:absolute;left:50%;bottom:calc(var(--safeB) + 16px);transform:translateX(-50%);display:flex;gap:clamp(8px,2.4vw,30px);align-items:center}
-.s{width:clamp(54px,7vw,82px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.58);background:rgba(255,239,226,.12);color:#fff;font-size:clamp(21px,3vw,31px);backdrop-filter:blur(8px);transition:.3s}
-.s:active,.s:hover{transform:translateY(-6px) scale(1.04);background:rgba(255,226,208,.2)}
-.whisper{position:absolute;left:50%;bottom:calc(var(--safeB) + 104px);transform:translateX(-50%);font:10px system-ui;letter-spacing:.28em;text-transform:uppercase;text-shadow:0 2px 10px #000;white-space:nowrap}
-.panel{position:absolute;inset:auto 0 0;min-height:38%;padding:42px max(24px,8vw) calc(var(--safeB) + 24px);text-align:center;background:linear-gradient(180deg,rgba(35,17,13,.05),rgba(35,17,13,.94) 22%);backdrop-filter:blur(16px);transform:translateY(105%);transition:.55s cubic-bezier(.2,.8,.2,1)}.panel.open{transform:none}.panel h2{font-size:clamp(36px,6vw,68px);font-weight:400;font-style:italic;margin:0 0 12px}.panel p{max-width:650px;margin:auto;line-height:1.55}.x{position:absolute;right:22px;top:20px;background:none;border:0;color:white;font-size:26px}
-@media (max-aspect-ratio: 4/5){.world{background-position:58% center}.brand{top:calc(var(--safeT) + 5vh)}.door{top:45%;right:6%}.flow{width:100%;justify-content:center}.whisper{bottom:calc(var(--safeB) + 90px)}}
-@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 4/3){.world{background-position:53% center}.brand{top:calc(var(--safeT) + 1vh)}}
-@media (min-aspect-ratio: 1.5/1) and (max-aspect-ratio: 1.72/1){.world{background-position:center 48%}}
-@media (min-aspect-ratio: 1.72/1){.world{background-position:center}.flow{bottom:calc(var(--safeB) + 10px)}}
-@media (min-aspect-ratio: 2/1){.brand b{font-size:54px}.door{right:15%;top:34%}}
-</style></head><body><main class="world">
+<meta name="theme-color" content="#efb59f">
+<title>Topi·Berry · immers_on</title>
+<style>
+:root{
+  --safeT:max(14px,env(safe-area-inset-top));
+  --safeB:max(14px,env(safe-area-inset-bottom));
+  --safeL:max(14px,env(safe-area-inset-left));
+  --safeR:max(14px,env(safe-area-inset-right));
+  --glass:rgba(38,18,15,.22);
+  --line:rgba(255,249,243,.64);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#170f0d;color:#fff;font-family:Georgia,serif}
+button{font:inherit}
+#stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 35%,#edae99 0,#5b2a23 62%,#170f0d 100%);isolation:isolate}
+.scene{position:absolute;border:0;pointer-events:none;opacity:0;transition:opacity .9s ease,transform 1.15s cubic-bezier(.2,.8,.2,1);z-index:0}
+.scene.active{opacity:1}
+.veil{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(10,5,4,.03),transparent 53%,rgba(10,5,4,.34))}
+.topline{position:absolute;z-index:6;left:var(--safeL);right:var(--safeR);top:var(--safeT);display:flex;justify-content:space-between;align-items:center;font:600 10px/1.2 system-ui;letter-spacing:.25em;text-transform:uppercase;text-shadow:0 2px 13px #0009}
+.brand{position:absolute;z-index:5;left:50%;top:calc(var(--safeT) + 4vh);transform:translateX(-50%);text-align:center;text-shadow:0 3px 24px #3e171488;pointer-events:none}
+.brand b{display:block;font-size:clamp(34px,6vw,72px);font-weight:400;font-style:italic;white-space:nowrap}
+.brand small{font:600 9px/1.3 system-ui;letter-spacing:.3em;text-transform:uppercase}
+.door{position:absolute;z-index:7;right:max(var(--safeR),5vw);top:34%;border:1px solid var(--line);background:rgba(255,240,229,.15);color:#fff;padding:14px 18px;border-radius:999px;backdrop-filter:blur(9px);letter-spacing:.16em;text-transform:uppercase;font:600 11px system-ui;cursor:pointer;box-shadow:0 12px 40px #2a100d33}
+.door:hover{background:rgba(255,232,217,.25)}
+.whisper{position:absolute;z-index:6;left:50%;bottom:calc(var(--safeB) + 102px);transform:translateX(-50%);font:600 9px system-ui;letter-spacing:.24em;text-transform:uppercase;text-shadow:0 2px 12px #000;white-space:nowrap}
+.navwrap{position:absolute;z-index:9;left:50%;bottom:calc(var(--safeB) + 10px);transform:translateX(-50%);width:min(92vw,760px);padding:6px 8px 0}
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(5px,1vw,12px);align-items:end}
+.sigil{min-width:0;height:clamp(54px,6.8vw,74px);border-radius:999px;border:1px solid var(--line);background:rgba(255,239,226,.12);backdrop-filter:blur(8px);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:.25s ease;box-shadow:0 0 0 0 rgba(255,214,197,0)}
+.sigil .ico{font-size:clamp(20px,2.6vw,28px);line-height:1}
+.sigil .lab{font:600 9px system-ui;letter-spacing:.1em;text-transform:uppercase}
+.sigil:hover{transform:translateY(-4px);background:rgba(255,229,213,.2)}
+.sigil[aria-current="page"]{background:rgba(255,225,208,.24);box-shadow:0 0 0 7px rgba(255,217,200,.07),0 0 30px rgba(255,185,160,.28)}
+.ripple{position:absolute;z-index:4;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,245,235,.85);pointer-events:none;opacity:0}
+.ripple.go{animation:rip .9s ease-out}
+@keyframes rip{0%{opacity:.9;transform:translate(-50%,-50%) scale(.1)}100%{opacity:0;transform:translate(-50%,-50%) scale(38)}}
+.status{position:absolute;z-index:6;right:var(--safeR);top:calc(var(--safeT) + 34px);font:600 9px system-ui;letter-spacing:.2em;text-transform:uppercase;text-shadow:0 2px 10px #000;text-align:right}
+#debug{display:none;position:absolute;z-index:10;left:var(--safeL);bottom:calc(var(--safeB) + 104px);padding:5px 8px;border-radius:999px;background:#180d0b99;font:10px system-ui}
+body.debug #debug{display:block}
+
+/* Viewport framing: driven by stage ratio, never a device name. */
+#stage[data-bucket="portrait"] .scene{width:178vh;height:100vh;left:50%;top:0;transform:translateX(-50%) scale(1.03)}
+#stage[data-bucket="tall"] .scene{width:145vh;height:100vh;left:50%;top:0;transform:translateX(-50%) scale(1.02)}
+#stage[data-bucket="tablet"] .scene{width:122vw;height:91.5vw;left:50%;top:50%;transform:translate(-50%,-50%)}
+#stage[data-bucket="laptop"] .scene{width:108vw;height:67.5vw;left:50%;top:50%;transform:translate(-50%,-50%)}
+#stage[data-bucket="desktop"] .scene{width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;left:50%;top:50%;transform:translate(-50%,-50%)}
+#stage[data-bucket="ultrawide"] .scene{width:100vw;height:56.25vw;left:50%;top:50%;transform:translate(-50%,-50%) scale(1.02)}
+
+@media(max-width:700px){
+  .brand{top:calc(var(--safeT) + 6vh)}
+  .brand b{font-size:38px}
+  .brand small{font-size:7px}
+  .door{right:var(--safeR);top:47%;padding:12px 14px;font-size:9px}
+  .navwrap{width:calc(100vw - var(--safeL) - var(--safeR));bottom:calc(var(--safeB) + 4px);padding-inline:2px}
+  .flow{gap:5px}
+  .sigil{height:54px}
+  .sigil .lab{display:none}
+  .whisper{bottom:calc(var(--safeB) + 72px);font-size:7px}
+  .status{top:auto;bottom:calc(var(--safeB) + 96px)}
+}
+@media(max-height:550px){
+  .brand{top:calc(var(--safeT) + 1vh)}
+  .brand b{font-size:32px}
+  .brand small{display:none}
+  .door{top:28%}
+  .sigil{height:48px}
+  .whisper{display:none}
+}
+@media(prefers-reduced-motion:reduce){.scene{transition:none}.ripple{display:none}}
+</style></head>
+<body><main id="stage" data-bucket="desktop" tabindex="0" aria-label="Topi Berry immersive scene">
+<iframe id="sceneA" class="scene active" title="Topi Berry scene"></iframe>
+<iframe id="sceneB" class="scene" title="Topi Berry next scene"></iframe>
+<div class="veil"></div>
+<div class="topline"><span>good things gather here</span><span>♡</span></div>
 <div class="brand"><b>🍑 Topi·Berry</b><small>a sweeter tomorrow together</small></div>
-<button class="door" onclick="show('Peachfall','Step through. The Peach Ball is the first gathering in this living season.')">Peachfall · step in →</button>
-<div class="whisper" id="w">real people · magical days</div>
-<nav class="flow" aria-label="Semiotic flow">
-<button class="s" aria-label="Explore" onclick="say('explore · follow wonder')">☾</button>
-<button class="s" aria-label="Create" onclick="say('create · leave beauty behind')">◌</button>
-<button class="s" aria-label="Gather" onclick="show('Gather','People, art, food and play meet here. Arrive as you are—or as someone more.')">🍑</button>
-<button class="s" aria-label="Play" onclick="say('play · the world answers back')">✧</button>
-<button class="s" aria-label="Belong" onclick="show('Belong','Beauty is not being judged. It is how you choose to arrive.')">♡</button>
-</nav>
-<section class="panel" id="p"><button class="x" onclick="p.classList.remove('open')">×</button><h2 id="t"></h2><p id="c"></p></section>
-<button id="nougat" aria-label="Open pic gam" onclick="document.getElementById('gallery').classList.add('open')" style="position:fixed;right:max(18px,env(safe-area-inset-right));top:50%;z-index:6;border:1px solid #fff8;background:#321b1688;color:white;border-radius:50%;width:48px;height:48px;font-size:20px;backdrop-filter:blur(8px)">✿</button>
-<section id="gallery" style="position:fixed;inset:0;z-index:20;background:#170d0beF;display:none;place-items:center;padding:20px">
-<button onclick="gallery.classList.remove('open')" style="position:absolute;right:22px;top:22px;background:none;border:0;color:white;font-size:32px">×</button>
-<img src="nougat-01.png" alt="Topi Berry Sae pic gam image-comms collage" style="max-width:96vw;max-height:92vh;object-fit:contain;border-radius:18px;box-shadow:0 25px 90px #0008">
-</section><style>#gallery.open{display:grid!important}</style>
-</main><script>
-function say(x){w.textContent=x;setTimeout(()=>w.textContent='real people · magical days',2400)}
-function show(a,b){t.textContent=a;c.textContent=b;p.classList.add('open')}
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+<button class="door" id="door">Peachfall · step in →</button>
+<div class="status" id="status">ENTRY · DESKTOP</div>
+<div class="whisper" id="whisper">scroll · touch · play forward</div>
+<div class="ripple" id="ripple"></div>
+<nav class="navwrap" aria-label="World states"><div class="flow">
+<button class="sigil" data-state="explore" aria-label="Explore"><span class="ico">☾</span><span class="lab">Explore</span></button>
+<button class="sigil" data-state="create" aria-label="Create"><span class="ico">◌</span><span class="lab">Create</span></button>
+<button class="sigil" data-state="gather" aria-label="Gather"><span class="ico">🍑</span><span class="lab">Gather</span></button>
+<button class="sigil" data-state="play" aria-label="Play"><span class="ico">✧</span><span class="lab">Play</span></button>
+<button class="sigil" data-state="belong" aria-label="Belong"><span class="ico">♡</span><span class="lab">Belong</span></button>
+</div></nav>
+<div id="debug"></div>
+</main>
+<script>
+const DESIGNS={
+ entry:{default:'DAHVzDskHrY',portrait:'DAHVzqjpYGI'},
+ explore:{default:'DAHVzsr2_pA',portrait:'DAHVzqxyp6M'},
+ create:{default:'DAHVzp2bA4U'},
+ gather:{default:'DAHVzuGpHjc'},
+ play:{default:'DAHVzlRnRxE'},
+ belong:{default:'DAHVzhEN1-I'}
+};
+const ORDER=['entry','explore','create','gather','play','belong'];
+const stage=document.getElementById('stage'),A=document.getElementById('sceneA'),B=document.getElementById('sceneB');
+const statusEl=document.getElementById('status'),whisper=document.getElementById('whisper'),debug=document.getElementById('debug'),ripple=document.getElementById('ripple');
+let state=(location.hash||'#entry').slice(1); if(!ORDER.includes(state))state='entry';
+let bucket='',front='A',wheelLock=false,currentDesign='';
+if(new URLSearchParams(location.search).has('debug'))document.body.classList.add('debug');
+
+function bucketFor(w,h){const r=w/h;if(r<.68)return'portrait';if(r<.90)return'tall';if(r<1.46)return'tablet';if(r<1.72)return'laptop';if(r<2.10)return'desktop';return'ultrawide'}
+function designFor(s,b){const d=DESIGNS[s];return d[(b==='portrait')?'portrait':'default']||d.default}
+function embed(id){return 'https://www.canva.com/design/'+id+'/view?embed'}
+function active(){return front==='A'?A:B}
+function back(){return front==='A'?B:A}
+function pulse(x,y){ripple.style.left=x+'px';ripple.style.top=y+'px';ripple.classList.remove('go');void ripple.offsetWidth;ripple.classList.add('go')}
+function syncNav(){document.querySelectorAll('.sigil').forEach(b=>b.dataset.state===state?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'))}
+function textFor(s){return ({entry:'scroll · touch · play forward',explore:'follow wonder',create:'leave something beautiful',gather:'good things gather here',play:'become someone more',belong:'you belong here'})[s]}
+function render(nextState=state,origin=null){
+  const r=stage.getBoundingClientRect();const nextBucket=bucketFor(r.width,r.height);const id=designFor(nextState,nextBucket);
+  stage.dataset.bucket=nextBucket;
+  statusEl.textContent=nextState.toUpperCase()+' · '+nextBucket.toUpperCase();
+  debug.textContent=Math.round(r.width)+'×'+Math.round(r.height)+' · '+nextBucket+' · '+id;
+  state=nextState;bucket=nextBucket;syncNav();whisper.textContent=textFor(state);
+  if(currentDesign===id)return;
+  const nxt=back(),cur=active(); nxt.classList.remove('active');nxt.src=embed(id);
+  nxt.onload=()=>{if(origin)pulse(origin.x,origin.y);else pulse(r.width/2,r.height*.66);requestAnimationFrame(()=>{nxt.classList.add('active');cur.classList.remove('active');front=front==='A'?'B':'A';currentDesign=id})};
+}
+function move(delta,origin){const i=ORDER.indexOf(state),ni=Math.max(0,Math.min(ORDER.length-1,i+delta));if(ni!==i){location.hash=ORDER[ni];render(ORDER[ni],origin)}}
+document.querySelectorAll('.sigil').forEach(btn=>btn.addEventListener('click',e=>{const rr=btn.getBoundingClientRect();location.hash=btn.dataset.state;render(btn.dataset.state,{x:rr.left+rr.width/2,y:rr.top+rr.height/2})}));
+document.getElementById('door').addEventListener('click',e=>{const rr=e.currentTarget.getBoundingClientRect();location.hash='explore';render('explore',{x:rr.left+rr.width/2,y:rr.top+rr.height/2})});
+stage.addEventListener('wheel',e=>{e.preventDefault();if(wheelLock)return;wheelLock=true;move(e.deltaY>0?1:-1,{x:e.clientX,y:e.clientY});setTimeout(()=>wheelLock=false,650)},{passive:false});
+stage.addEventListener('keydown',e=>{if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();move(1)}if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();move(-1)}});
+let ty=null;stage.addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});stage.addEventListener('touchend',e=>{if(ty==null)return;const dy=e.changedTouches[0].clientY-ty;if(Math.abs(dy)>45)move(dy<0?1:-1);ty=null},{passive:true});
+addEventListener('hashchange',()=>{const s=location.hash.slice(1);if(ORDER.includes(s)&&s!==state)render(s)});
+new ResizeObserver(()=>render(state)).observe(stage);
+render(state);
 </script></body></html>
