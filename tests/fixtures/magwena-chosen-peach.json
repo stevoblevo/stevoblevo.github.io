@@ -1,0 +1,7 @@
+{
+  "schema": "magwena.peachfall.postcard.v1",
+  "place": "meadow-gate",
+  "showPeach": true,
+  "showReturnGreeting": false,
+  "permission": "view-only"
+}
