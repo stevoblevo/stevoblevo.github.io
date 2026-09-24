@@ -2,57 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#140e10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="porch fight" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <title>porch fight</title>
   <style>
     html, body { margin: 0; height: 100%; background: #140e10; color: #fff8f2; font-family: Georgia, serif; }
     body { position: relative; overflow: hidden; }
-    img.world { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .face { position: absolute; left: 50%; top: 42%; width: min(34vh, 280px); height: min(34vh, 280px); transform: translate(-50%, -50%); border-radius: 50%; object-fit: cover; object-position: center 18%; }
-    .pulse { position: absolute; left: 50%; top: 42%; width: min(34vh, 280px); height: min(34vh, 280px); border: 2px solid #fff8f2; border-radius: 50%; pointer-events: none; animation: meet 1.6s linear; }
-    .line { position: absolute; left: 8%; right: 8%; bottom: 8%; margin: 0; font-size: 26px; line-height: 1.3; text-shadow: 0 2px 14px rgb(0 0 0 / 0.7); }
-    .top { position: absolute; top: 14px; left: 18px; z-index: 3; letter-spacing: 0.08em; font-size: 14px; }
-    @keyframes meet { from { transform: translate(-50%, -50%) scale(1.9); opacity: 0.25; } to { transform: translate(-50%, -50%) scale(0.9); opacity: 1; } }
+    canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+    .line { position: absolute; left: 8%; right: 8%; bottom: 8%; margin: 0; font-size: 26px; line-height: 1.3; text-shadow: 0 2px 14px rgb(0 0 0 / 0.7); pointer-events: none; }
+    .top { position: absolute; top: 14px; left: 18px; z-index: 2; letter-spacing: 0.08em; font-size: 14px; pointer-events: none; }
   </style>
 </head>
 <body id="porchfight">
-  <img class="world" id="world" alt="" src="ring.png" />
-  <img class="face" id="face" alt="" src="stare.png" />
-  <span class="pulse" id="pulse"></span>
+  <canvas></canvas>
   <p class="top">saelion · 4newgam · porch fight</p>
-  <p class="line" id="line">Hold the stare. Tap when the ring meets her. 0 / 3</p>
-  <script>
-    var hits = 0, start = performance.now(), done = false;
-    function restart() {
-      start = performance.now();
-      var pulse = document.getElementById("pulse");
-      pulse.style.animation = "none";
-      void pulse.offsetWidth;
-      pulse.style.animation = "";
-    }
-    document.body.addEventListener("pointerdown", function () {
-      if (done) return;
-      var t = (performance.now() - start) / 1600;
-      var met = t >= 0.62 && t <= 0.84;
-      var line = document.getElementById("line");
-      if (!met) {
-        line.textContent = (t < 0.62 ? "Too soon. She holds." : "Too late. She holds.") + "  " + hits + " / 3";
-        restart();
-        return;
-      }
-      hits += 1;
-      if (hits >= 3) {
-        done = true;
-        document.getElementById("world").src = "well-cry.jpg";
-        document.getElementById("face").style.display = "none";
-        document.getElementById("pulse").style.display = "none";
-        line.textContent = "She isn't angry at the well. The fight stayed on the porch.";
-        location.hash = "porchfight";
-        return;
-      }
-      line.textContent = "She holds.  " + hits + " / 3";
-      restart();
-    });
-  </script>
+  <p class="line" id="line">Hold her eyes.</p>
+  <script src="fight.js"></script>
 </body>
 </html>
