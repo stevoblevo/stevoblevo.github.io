@@ -41,9 +41,22 @@
     let done = false;
     let raf = 0;
     let alive = true;
-    const faceAt = () => {
-      const r = Math.min(view.h * 0.17, 140);
-      return { x: view.w * 0.5, y: view.h * 0.42, r };
+    const placed = () => {
+      const size = done && wellTex ? wellSize : ringSize;
+      const ir = size.w / Math.max(1, size.h);
+      const vr = view.w / Math.max(1, view.h);
+      let x = 0;
+      let y = 0;
+      let w = view.w;
+      let h = view.h;
+      if (ir > vr) {
+        w = view.h * ir;
+        x = (view.w - w) / 2;
+      } else {
+        h = view.w / ir;
+        y = (view.h - h) / 2;
+      }
+      return { x: x + w * 0.5, y: y + h * 0.38, r: Math.min(w, h) * 0.09 };
     };
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -53,7 +66,7 @@
       gl.viewport(0, 0, canvas2.width, canvas2.height);
     };
     const inside = (x, y) => {
-      const f = faceAt();
+      const f = placed();
       const dx = x - f.x;
       const dy = y - f.y;
       return dx * dx + dy * dy <= f.r * f.r;
@@ -117,18 +130,13 @@
       gl.bindTexture(gl.TEXTURE_2D, bg);
       gl.uniform1f(uMode, 0);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      if (!done && faceTex) {
-        const f = faceAt();
-        const blink = 0.72 + 0.28 * Math.abs(Math.sin(now * 17e-4));
-        gl.uniform1f(uMode, 1);
-        gl.uniform1f(uBlink, blink);
-        gl.uniform2f(uCenter, f.x * view.dpr, (view.h - f.y) * view.dpr);
-        gl.uniform1f(uRadius, f.r * view.dpr);
-        gl.bindTexture(gl.TEXTURE_2D, faceTex);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      if (!done && ringTex) {
+        const f = placed();
         const t = holding ? Math.min(1, (now - holdStart) / HOLD) : 0;
         gl.uniform1f(uMode, 2);
-        gl.uniform1f(uRing, 1.85 - t * 0.85);
+        gl.uniform2f(uCenter, f.x * view.dpr, (view.h - f.y) * view.dpr);
+        gl.uniform1f(uRadius, f.r * view.dpr);
+        gl.uniform1f(uRing, 1.7 - t * 0.7);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
       }
     };
@@ -172,6 +180,7 @@
     const tex = gl.createTexture();
     if (!tex) throw new Error("tex");
     gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -180,11 +189,11 @@
     return tex;
   }
   function link(gl) {
-    const vert = compile(gl, gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;v.y=1.0-v.y;gl_Position=vec4(a,0.0,1.0);}");
+    const vert = compile(gl, gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;gl_Position=vec4(a,0.0,1.0);}");
     const frag = compile(
       gl,
       gl.FRAGMENT_SHADER,
-      "precision mediump float;varying vec2 v;uniform sampler2D u;uniform vec2 uCover;uniform float uMode;uniform vec2 uCenter;uniform float uRadius;uniform float uRing;uniform float uBlink;void main(){if(uMode<0.5){vec2 uv=(v-0.5)/uCover+0.5;gl_FragColor=texture2D(u,uv);return;}float d=distance(gl_FragCoord.xy,uCenter);if(uMode<1.5){if(d>uRadius) discard;vec2 p=(gl_FragCoord.xy-uCenter)/uRadius;vec2 fuv=vec2(p.x*0.32+0.5,0.22-p.y*0.22);vec4 c=texture2D(u,fuv);float edge=smoothstep(uRadius,uRadius-2.0,d);gl_FragColor=vec4(c.rgb*uBlink,edge);return;}float band=1.0-smoothstep(1.2,3.2,abs(d-uRadius*uRing));gl_FragColor=vec4(1.0,0.96,0.93,band*0.85);}"
+      "precision mediump float;varying vec2 v;uniform sampler2D u;uniform vec2 uCover;uniform float uMode;uniform vec2 uCenter;uniform float uRadius;uniform float uRing;void main(){if(uMode<0.5){vec2 uv=(v-0.5)*uCover+0.5;gl_FragColor=texture2D(u,uv);return;}float d=distance(gl_FragCoord.xy,uCenter);float band=1.0-smoothstep(1.5,4.0,abs(d-uRadius*uRing));if(band<0.02) discard;gl_FragColor=vec4(1.0,0.97,0.94,band);}"
     );
     const program = gl.createProgram();
     if (!program) throw new Error("program");
@@ -208,7 +217,7 @@
   var line = document.querySelector("#line");
   if (canvas && line) {
     mountStare(canvas, {
-      ring: "ring.png",
+      ring: "stare.png",
       face: "stare.png",
       well: "well-cry.jpg",
       onLine: (text) => {

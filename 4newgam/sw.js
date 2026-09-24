@@ -1,19 +1,6 @@
-const CACHE = "porch-fight-3";
-const PICTURES = ["./ring.png", "./stare.png", "./well-cry.jpg", "./icon-192.png", "./icon-512.png"];
+const CACHE = "porch-fight-4";
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) =>
-      Promise.all(
-        PICTURES.map(async (url) => {
-          const res = await fetch(url);
-          if (res.ok && (res.headers.get("content-type") || "").startsWith("image/")) {
-            await cache.put(url, res);
-          }
-        }),
-      ),
-    ),
-  );
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
@@ -31,34 +18,18 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-
-  if (req.mode === "navigate" || /\.(html|js|webmanifest)$/i.test(url.pathname)) {
-    event.respondWith(fromNetwork(req));
-    return;
-  }
-
-  if (/\.(png|jpe?g|webp|gif|svg)$/i.test(url.pathname)) {
-    event.respondWith(fromCache(req));
-  }
+  event.respondWith(cacheFirst(req));
 });
 
-async function fromNetwork(req) {
-  try {
-    const fresh = await fetch(req);
-    if (!fresh.ok) return fresh;
-    return fresh;
-  } catch {
-    const hit = await caches.match(req);
-    return hit || new Response("offline", { status: 503, headers: { "content-type": "text/plain" } });
-  }
-}
-
-async function fromCache(req) {
+async function cacheFirst(req) {
   const cache = await caches.open(CACHE);
   const hit = await cache.match(req);
+  const refresh = fetch(req)
+    .then((res) => {
+      if (res.ok) cache.put(req, res.clone());
+      return res;
+    })
+    .catch(() => null);
   if (hit) return hit;
-  const fresh = await fetch(req);
-  const type = fresh.headers.get("content-type") || "";
-  if (fresh.ok && type.startsWith("image/")) cache.put(req, fresh.clone());
-  return fresh;
+  return (await refresh) || new Response("offline", { status: 503, headers: { "content-type": "text/plain" } });
 }
