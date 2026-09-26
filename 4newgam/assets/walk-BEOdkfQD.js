@@ -1,0 +1,1 @@
+import{t as e}from"./player-Dr6oAbtZ.js";import{c as t}from"./index-BElo7TEW.js";var n=t(),r=()=>(0,n.jsx)(e,{},`porch`);export{r as component};
