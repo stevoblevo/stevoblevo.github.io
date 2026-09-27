@@ -5,12 +5,15 @@ window.__anewDoors = [
   { id: "run", hash: ["run", "signal"], title: "Signal Run", href: "/goober/run/", live: true, line: "Ruins · lanterns · no wager" },
   { id: "with-him", hash: ["with-him", "withhim"], title: "With him", href: "/goober/with-him/", live: true, line: "Same world. Further together." },
   { id: "cheese", hash: ["cheese", "cheese-royale"], title: "Cheese Royale", href: "/cheese-royale/", live: true, line: "Tester table" },
+  { id: "atlas", hash: ["atlas"], title: "Atlas", href: "/goober/gallery/", live: true, line: "Goober recovered wall" },
+  { id: "kk", hash: ["kk", "on", "kknight"], title: "sae://on#kk", href: null, live: false, line: "KkNight on · 4.2 clock" },
+  { id: "thea", hash: ["thea", "reign", "redreign"], title: "Thea", href: null, live: false, line: "Under the well · red reign" },
+  { id: "dora", hash: ["dora", "dia"], title: "Dora", href: null, live: false, line: "Look back this session" },
   { id: "everFallen", hash: ["everfallen", "everFallen", "everdelve"], title: "$everFallen", href: null, live: false, line: "Plates in this library · no public play yet" },
   { id: "polylite", hash: ["polylite", "$polylite", "polylight"], title: "$polylite", href: null, live: false, line: "Private sibling · play local / loopback" },
   { id: "sc1", hash: ["sc1.lov", "sc1", "lov"], title: "sc1.lov", href: null, live: false, line: "KkNight comes · day is now night" },
   { id: "kids", hash: ["kids", "kidsmod"], title: "Kids Mod", href: null, live: false, line: "Family plate · G-rated · not live" },
-  { id: "hires", hash: ["hires", "hi-res"], title: "Hi-res", href: null, live: false, line: "Recovered originals on this wall" },
-  { id: "atlas", hash: ["atlas"], title: "Atlas", href: "/goober/gallery/", live: true, line: "Goober recovered wall" }
+  { id: "hires", hash: ["hires", "hi-res"], title: "Hi-res", href: null, live: false, line: "Recovered originals on this wall" }
 ];
 
 (function () {
@@ -42,7 +45,7 @@ window.__anewDoors = [
         el.textContent = d.title + (d.live ? "" : " · plates");
         el.addEventListener("click", () => {
           location.hash = d.hash[0];
-          document.getElementById('library')?.scrollIntoView();
+          document.getElementById("library")?.scrollIntoView();
         });
       }
       el.title = d.line;
@@ -55,7 +58,7 @@ window.__anewDoors = [
         : "Steven · .anewgam — hash a door or stay with the stills.";
     }
     if (active && window.__setLibraryFilter) {
-      const map = { peachfall: "peachfall", goober: "all", run: "all", "with-him": "all", cheese: "all", everFallen: "gen23", polylite: "polylite", sc1: "night", kids: "polylite", hires: "hires", atlas: "hires" };
+      const map = { peachfall: "peachfall", goober: "all", run: "all", "with-him": "all", cheese: "all", atlas: "hires", kk: "night", thea: "night", dora: "all", everFallen: "gen23", polylite: "polylite", sc1: "night", kids: "polylite", hires: "hires" };
       window.__setLibraryFilter(map[active.id] || "all");
     }
   }

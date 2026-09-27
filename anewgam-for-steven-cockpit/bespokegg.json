@@ -1,0 +1,25 @@
+{
+  "v": "bespokegg/0.1",
+  "place": "provo",
+  "protocol": "bespokegg-provo",
+  "authorityEffect": "none",
+  "clock": "4gg.tim",
+  "tempo": { "still": 4.2, "side": 4.2, "rise": 4.2, "group": 4.2, "pass": 4.2 },
+  "on": "sae://on",
+  "fragment": "kk",
+  "find": ["hash", "paste", "BroadcastChannel(bespokegg)"],
+  "rooms": [
+    { "id": "loom", "verb": "map", "plate": "loom" },
+    { "id": "kirby", "verb": "gen", "plate": "kirby" },
+    { "id": "peach", "verb": "grow", "plate": "peachfall" },
+    { "id": "reign", "verb": "gather", "plate": "depth-thea" },
+    { "id": "well", "verb": "dream", "plate": "remember" },
+    { "id": "white", "verb": "sync", "plate": "corridor" },
+    { "id": "polylite", "verb": "all", "live": false }
+  ],
+  "dora": "look-back-same-session",
+  "thea": "under-the-well",
+  "kk": "kknight-on",
+  "mint": "handshake-not-ca",
+  "companion": "small"
+}
