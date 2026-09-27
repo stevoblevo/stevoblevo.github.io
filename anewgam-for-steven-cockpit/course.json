@@ -1,0 +1,23 @@
+{
+  "v": "bespokegg/0.1",
+  "site": "skein-doll",
+  "clock": 4.2,
+  "authorityEffect": "none",
+  "companion": "small",
+  "thesis": "puzzle-driven development; go where the heart yearns. leave behind a yarn.",
+  "semiotic": [
+    { "mark": "●", "beat": "still", "room": "peach", "line": "peach light. picture fills.", "href": "/peachfall/" },
+    { "mark": "↔", "beat": "side", "room": "kirby", "line": "walk the ways. leave on top.", "href": "https://anewgam-liqc.vercel.app" },
+    { "mark": "↑", "beat": "rise", "room": "well", "line": "finding everything at the well again and again.", "href": "#thea" },
+    { "mark": "◎", "beat": "group", "room": "saelion", "line": "saelion.co · Co stays the small one.", "href": "https://saelion.co" },
+    { "mark": "✧", "beat": "pass", "room": "fallen", "line": "choose every fallen play. not live yet.", "href": "#everfallen", "live": false },
+    { "mark": "◉", "beat": "hold", "room": "polylite", "line": "peach-moon night HUD. loopback only.", "href": "#polylite", "live": false }
+  ],
+  "pretty": [
+    { "id": "2103547136545546278", "line": "puzzle-driven development; go where the heart yearns. leave behind a yarn." },
+    { "id": "2103955067225116907", "line": "peachfall is a tale about time and friendship. finding everything at the well again and again." },
+    { "id": "2101586645493399994", "line": "peachfall leads to red reign" },
+    { "id": "2103192301367394622", "line": "polylite? red raeign : bespoke.Gig" }
+  ],
+  "sieve": ["family", "relic-eater", "people-search", "pages-polylite", "ca"]
+}
