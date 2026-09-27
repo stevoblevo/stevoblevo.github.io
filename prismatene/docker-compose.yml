@@ -1,0 +1,16 @@
+# GitHub-backed local show. Not live DNS. Not Immich.
+# docker compose up --build
+# open http://127.0.0.1:4177/
+name: prismatene
+services:
+  door:
+    build: .
+    image: prismatene-candidate:local
+    ports:
+      - "4177:80"
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    restart: "no"
