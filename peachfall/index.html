@@ -70,5 +70,10 @@
         <p id="hint" class="hint"></p>
       </div>
     </div>
+    <script type="module" src="./sae-wink/sae-wink.js"></script>
+    <script type="module">
+      import { mountSaeWink } from "./sae-wink/mount.js";
+      mountSaeWink({ world: "peachfall", saveKey: "peachfall-playable-v1", bottom: "96px" });
+    </script>
 </body>
 </html>

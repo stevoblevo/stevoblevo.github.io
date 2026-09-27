@@ -79,5 +79,10 @@
   <script src="app.js"></script>
   <script src="doors.js"></script><script src="gallery.js"></script><script src="advanced.js"></script>
   <script src="family.js"></script>
+  <script type="module" src="./sae-wink/sae-wink.js"></script>
+  <script type="module">
+    import { mountSaeWink } from "./sae-wink/mount.js";
+    mountSaeWink({ world: "steven", bottom: "96px", composer: "#dropInput" });
+  </script>
 </body>
 </html>
