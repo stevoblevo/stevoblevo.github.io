@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prismatene · candidate</title>
+  <meta name="description" content="Prismatene ingress. Candidate. authorityEffect none." />
+  <style>
+    :root { --gold:#F0C75E; --cyan:#00E5FF; --pearl:#F5F0E8; --deep:#061018; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--pearl);
+      font: 16px/1.45 Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(240,199,94,.18), transparent 55%),
+        linear-gradient(180deg, #061018, #0a1628 55%, #141821);
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 2.2rem 1.2rem 4rem; }
+    .sub { letter-spacing: .18em; text-transform: uppercase; font-size: .72rem; color: var(--cyan); }
+    h1 { font-weight: 500; letter-spacing: .04em; margin: .35rem 0 1rem; }
+    p { color: rgba(245,240,232,.86); }
+    .birds { display: flex; flex-wrap: wrap; gap: 12px; margin: 1.4rem 0; }
+    a.sign {
+      flex: 1 1 140px; text-decoration: none; color: var(--pearl);
+      border: 1px solid rgba(240,199,94,.35); border-radius: 14px;
+      padding: 1rem .9rem; background: rgba(6,16,24,.45);
+    }
+    a.sign strong { display: block; color: var(--gold); font-weight: 500; }
+    a.sign span { display: block; font-size: .85rem; opacity: .8; margin-top: .25rem; }
+    .doors { display: grid; gap: 8px; margin-top: 1.4rem; }
+    .doors a { color: var(--cyan); }
+    footer { margin-top: 2rem; font-size: .8rem; opacity: .7; }
+    #comms {
+      position: fixed; left: 50%; top: 18%; transform: translateX(-50%);
+      color: var(--gold); letter-spacing: .08em; opacity: 0; transition: opacity 1.2s ease;
+      pointer-events: none; text-shadow: 0 0 18px rgba(240,199,94,.45);
+    }
+    #comms.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div id="comms" aria-live="polite"></div>
+  <main>
+    <div class="sub">github.io · new path · not the play slice</div>
+    <h1>Prismatene</h1>
+    <p>CANDIDATE. authorityEffect: none. Same dream. New view.</p>
+    <p>home → play → continue. Color invites. Color never unlocks.</p>
+    <div class="birds">
+      <a class="sign" data-comms="still here." href="https://stevoblevo.github.io/peachfall/">
+        <strong>home</strong><span>Peachfall · still here.</span>
+      </a>
+      <a class="sign" data-comms="left on the rail. still warm." href="https://stevoblevo.github.io/peachfall/play.html">
+        <strong>play</strong><span>the dream · peach on the rail</span>
+      </a>
+      <a class="sign" data-comms="together, further." href="https://sae-anewgam.vercel.app/">
+        <strong>continue</strong><span>Gen22 / Gen4 · further</span>
+      </a>
+    </div>
+    <div class="doors">
+      <a href="https://stevoblevo.github.io/">Ways list on github.io</a>
+      <a href="https://stevoblevo.github.io/anewgam-for-steven-cockpit/">cockpit</a>
+      <a href="https://github.com/stevoblevo/stevoblevo.github.io/tree/prismatene-candidate/prismatene">this folder on the branch</a>
+    </div>
+    <footer>Seats stay ABSTAIN. Any seat can say no. Steven merges if this door should stay lit.</footer>
+  </main>
+  <script>
+    const el = document.getElementById("comms");
+    function pulse(t) {
+      el.textContent = t;
+      el.classList.add("show");
+      clearTimeout(pulse._t);
+      pulse._t = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+    pulse("you came.");
+    document.querySelectorAll("a.sign").forEach(a => {
+      a.addEventListener("click", () => pulse("you came.  ·  " + a.dataset.comms));
+    });
+  </script>
+</body>
+</html>
