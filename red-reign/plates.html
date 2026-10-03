@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241416">
+<title>Connected plates · Sae</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,520&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --cream:#f7efe6; --ink:#5b3a3a; --muted:#8a6a62; --wine:#8a3d44; --well:#241416; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100dvh; background: var(--cream); color: var(--ink); font-family: Outfit, sans-serif; }
+  header, .cap { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; }
+  a { color: var(--wine); }
+  h1 { font-family: Fraunces, Palatino, serif; font-style: italic; font-weight: 500; font-size: 28px; margin: 0; }
+  .frame { margin: 0 18px; background: var(--well); border-radius: 18px; min-height: 62dvh; display: grid; place-items: center; position: relative; }
+  img.plate { max-width: 100%; max-height: 68dvh; object-fit: contain; }
+  button { font: inherit; cursor: pointer; }
+  .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border: 0; border-radius: 999px; background: color-mix(in oklab, var(--cream) 90%, white); }
+  .prev { left: 8px; } .next { right: 8px; }
+  .line { color: var(--muted); margin: 4px 0 0; }
+  .door { background: var(--wine); color: var(--cream); text-decoration: none; border-radius: 999px; padding: 10px 16px; }
+  .strip { display: flex; gap: 8px; overflow-x: auto; padding: 0 18px 20px; }
+  .strip button { width: 64px; height: 64px; padding: 0; border-radius: 8px; border: 2px solid transparent; overflow: hidden; background: none; }
+  .strip button.on { border-color: var(--wine); }
+  .strip img { width: 100%; height: 100%; object-fit: cover; }
+</style>
+</head>
+<body>
+<header>
+  <a href="./">the well</a>
+  <span>Connected plates</span>
+  <span id="count"></span>
+</header>
+<div class="frame">
+  <img class="plate" id="plate" alt="">
+  <button class="nav prev" type="button" id="prev" aria-label="Previous plate">←</button>
+  <button class="nav next" type="button" id="next" aria-label="Next plate">→</button>
+</div>
+<div class="cap">
+  <div>
+    <h1 id="name"></h1>
+    <p class="line" id="line"></p>
+  </div>
+  <a class="door" id="door" hidden target="_blank" rel="noreferrer">Open the door</a>
+</div>
+<div class="strip" id="strip"></div>
+<script>
+const PAGES = "https://stevoblevo.github.io";
+const PLATES = [
+  ["GEN22 · page 1","Peachfalls into EverDelve. Same world, deeper truths.","plates/gen22.jpg"],
+  ["is.liv","a softer brighter you.","plates/isliv.jpg", PAGES+"/isliv/"],
+  ["Far citadel","the hound stays beside.","plates/citadel.png"],
+  ["Monday hold","you, as you are.","plates/hold.png"],
+  ["Blackberry Raspberry Girl","sweeter worlds together.","plates/berry.png", PAGES+"/topi/"],
+  ["Strawberry · Raspberry","two berries. one garden.","plates/berries.png", PAGES+"/raspberry/"],
+  ["Bespoke.gig","not a marketplace. a door to what’s possible.","plates/bespoke-door.jpg"],
+  ["Strange work","what strange thing shall we make today?","plates/bespoke-board.jpg"],
+  ["Dominic Paradyne","curious problems are my favorite.","plates/dominic.png"],
+  ["Same sky","more worlds. together.","plates/sky.jpg"],
+  ["Peachfall passport","you belong here.","plates/passport.png", PAGES+"/peachfall/"],
+  ["Save Anna","boot. drift. wake. launch.","plates/anna.png"],
+  ["The offered peach","a little farther, across the counter.","plates/bookshop.png", PAGES+"/peachfall/"]
+];
+let i = 0;
+function paint() {
+  const p = PLATES[i];
+  document.getElementById("plate").src = p[2];
+  document.getElementById("plate").alt = p[0];
+  document.getElementById("name").textContent = p[0];
+  document.getElementById("line").textContent = p[1];
+  document.getElementById("count").textContent = (i+1)+" / "+PLATES.length;
+  const door = document.getElementById("door");
+  if (p[3]) { door.hidden = false; door.href = p[3]; } else door.hidden = true;
+  document.getElementById("strip").innerHTML = PLATES.map((item, n) =>
+    `<button type="button" class="${n===i?"on":""}" data-n="${n}" aria-label="${item[0]}"><img alt="" src="${item[2]}"></button>`
+  ).join("");
+  document.querySelectorAll("#strip button").forEach(btn => btn.onclick = () => { i = +btn.dataset.n; paint(); });
+}
+document.getElementById("prev").onclick = () => { i = (i + PLATES.length - 1) % PLATES.length; paint(); };
+document.getElementById("next").onclick = () => { i = (i + 1) % PLATES.length; paint(); };
+addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") document.getElementById("next").click();
+  if (e.key === "ArrowLeft") document.getElementById("prev").click();
+});
+paint();
+</script>
+</body>
+</html>
