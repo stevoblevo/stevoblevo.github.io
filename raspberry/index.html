@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#140c10"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="icon" href="icon.svg"/>
+<link rel="stylesheet" href="style.css"/>
+<title>Raspberry · kk</title>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div class="pip" title="the small one"></div>
+<div class="rail" id="rail"></div>
+<div class="pill">red rain</div>
+<div id="hud">
+  <p class="prompt" id="prompt">wasd · look · e</p>
+  <p class="line" id="line">the water remembers.</p>
+  <p class="read" id="read">Walk the well. Tare first.</p>
+  <div class="meta" id="meta">sae://on#kk</div>
+</div>
+<div id="veil">
+  <p class="kicker">raspberry · kk</p>
+  <h1>a watch, not a wall</h1>
+  <p>Walk the well. Weigh. Do not take the crown.</p>
+  <button id="enter" type="button">enter</button>
+</div>
+<div class="stick" id="stick"></div>
+<button class="act" id="act" type="button">near</button>
+<script src="walk.js"></script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+</body>
+</html>
