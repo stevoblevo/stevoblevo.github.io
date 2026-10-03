@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#140c10"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>kk · phone</title>
+<style>html,body{margin:0;height:100%;background:#140c10;color:#f3e6d4;font-family:Georgia,serif;overflow:hidden;touch-action:none}canvas{position:fixed;inset:0;width:100%;height:100%}#veil{position:fixed;inset:0;display:grid;place-content:center;text-align:center;background:rgba(12,4,8,.82);padding:24px}h1{font-weight:400;font-size:clamp(32px,6vw,56px);margin:8px 0}button,#act{border:1px solid #3ecfcf;background:transparent;color:#f3e6d4;padding:12px 22px;border-radius:999px}#hud{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));pointer-events:none}.line{font-size:clamp(22px,5vw,40px);margin:0}.stick{position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:96px;height:96px;border-radius:50%;border:1px solid #e4c27a88}#act{position:fixed;right:18px;bottom:calc(28px + env(safe-area-inset-bottom));width:76px;height:76px;border-radius:50%}.meta{letter-spacing:.14em;text-transform:uppercase;font:11px system-ui,sans-serif;color:#e4c27a}</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div id="veil"><p class="meta">kk · phone</p><h1>a watch, not a wall</h1><p>Walk the well. Weigh. Do not take the crown.</p><button id="enter" type="button">enter</button></div>
+<div id="hud"><p class="line" id="line">the water remembers.</p><p id="read">Walk the well. Tare first.</p></div>
+<div class="stick" id="stick"></div>
+<button id="act" type="button">near</button>
+<script>
+const LINES=['the water remembers.','a trace, not a trophy.','she notices.','beside, not ahead.','a living crown.','a little farther.'];
+const READS=['Two vessels. One dusk.','Tare first. 398 is a receipt.','Gaze, no claim.','But not today. Sword down.','Crown stays in the box.','The way home stays open.'];
+const c=document.getElementById('stage'),g=c.getContext('2d'); let w,h,beat=0,grams=0,tare=false,playing=false; const me={x:160,y:360},keys={},joy={x:0,y:0,on:false};
+function fit(){w=c.width=innerWidth;h=c.height=innerHeight} fit(); addEventListener('resize',fit);
+function words(){document.getElementById('line').textContent=LINES[beat]; document.getElementById('read').textContent=READS[beat]+(grams?'  '+grams+' tare':'')}
+function act(){if(!playing)return; if(Math.hypot(me.x-w*0.62,me.y-h*0.5)>90)return; if(!tare){tare=true;words();return} grams=398; beat=Math.min(5,beat+1); words(); try{localStorage.setItem('raspberry-kk',JSON.stringify({beat,grams,tare,crownTaken:false}))}catch(e){}}
+document.getElementById('enter').onclick=()=>{document.getElementById('veil').style.display='none'; playing=true};
+document.getElementById('act').onclick=act;
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true; if(e.key==='e'||e.code==='Space')act()});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+const stick=document.getElementById('stick');
+function joyAt(t){const r=stick.getBoundingClientRect(); const x=t.clientX-r.left-48,y=t.clientY-r.top-48; const m=Math.hypot(x,y)||1; joy.x=x/m; joy.y=y/m; joy.on=true}
+stick.addEventListener('pointerdown',e=>{stick.setPointerCapture(e.pointerId); joyAt(e)});
+stick.addEventListener('pointermove',e=>{if(joy.on)joyAt(e)});
+stick.addEventListener('pointerup',()=>{joy.on=false; joy.x=joy.y=0});
+function loop(){if(playing){const dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x; const dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y; me.x=Math.max(20,Math.min(w-20,me.x+dx*3.2)); me.y=Math.max(70,Math.min(h-110,me.y+dy*3.2))} g.fillStyle='#140c10'; g.fillRect(0,0,w,h); g.fillStyle='rgba(231,160,106,.22)'; g.fillRect(0,0,w*0.46,h); g.fillStyle='rgba(141,29,58,.4)'; g.fillRect(w*0.46,0,w,h); const wx=w*0.62,wy=h*0.48; g.strokeStyle='#8d8794'; g.lineWidth=8; g.beginPath(); g.arc(wx,wy,68,0,6.28); g.stroke(); g.fillStyle='#100c14'; g.beginPath(); g.arc(wx,wy,50,0,6.28); g.fill(); g.fillStyle='#9e6a48'; g.beginPath(); g.arc(w*0.78,h*0.32,12,0,6.28); g.fill(); g.fillStyle='#3ecfcf'; g.beginPath(); g.arc(w*0.28,h*0.6,8,0,6.28); g.fill(); g.fillStyle='#e4c27a'; g.beginPath(); g.arc(me.x+16,me.y+4,6,0,6.28); g.fill(); g.fillStyle='#d7c2a4'; g.beginPath(); g.arc(me.x,me.y,14,0,6.28); g.fill(); requestAnimationFrame(loop)} words(); loop();
+</script>
+</body>
+</html>
