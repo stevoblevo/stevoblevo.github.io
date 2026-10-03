@@ -1,0 +1,95 @@
+{
+  "id": "sae-on-red-reign-24s",
+  "protocol": "sae://on",
+  "title": "Sae · .anewgam",
+  "field": "garden central · red rain / red reign",
+  "tagline": "the way home stays open",
+  "duration": 24,
+  "authorityEffect": "none",
+  "live": false,
+  "companion": "the small one",
+  "knight": "kk",
+  "newHeroId": false,
+  "holdDoor": "$everFallen",
+  "holdHashes": ["everfallen", "everFallen", "everdelve"],
+  "weathers": ["delve", "fallen"],
+  "defaultWeather": "fallen",
+  "beats": [
+    {
+      "n": 1,
+      "t": "00-04",
+      "line": "the water remembers.",
+      "delve": "THE WELL IS AWAKE. Peach · Memory · Meaning.",
+      "fallen": "Red rain on the same well. Memory without the festival."
+    },
+    {
+      "n": 2,
+      "t": "04-08",
+      "line": "a trace, not a trophy.",
+      "delve": "Peachfalls rise. Assume is not collect.",
+      "fallen": "Two marks in the ripple. What stayed after the fall."
+    },
+    {
+      "n": 3,
+      "t": "08-12",
+      "line": "she notices.",
+      "delve": "Steven? A little farther?",
+      "fallen": "Gaze before greeting. Notice without claiming."
+    },
+    {
+      "n": 4,
+      "t": "12-16",
+      "line": "beside, not ahead.",
+      "delve": "Together. Always. Helpers gather. The small one speaks.",
+      "fallen": "Knight beside, not leading."
+    },
+    {
+      "n": 5,
+      "t": "16-20",
+      "line": "a living crown.",
+      "delve": "Living garden and banners. No deer mascot invented for Delve.",
+      "fallen": "Dear deer in the arch. Antlers grow. Not a trophy."
+    },
+    {
+      "n": 6,
+      "t": "20-24",
+      "line": "a little farther.",
+      "delve": "Into it. EverDelven #alittlefar.",
+      "fallen": "Path through the ripple. Home stays open."
+    }
+  ],
+  "rail": {
+    "name": "skein rail",
+    "side": "left",
+    "slots": 6,
+    "shape": "ripple-ring",
+    "fill": "remember",
+    "currency": false,
+    "companion": "the small one",
+    "phone": "collapse-to-dots",
+    "widePx": [72, 88],
+    "chooseBeats": [3, 5],
+    "chooseLanguage": ["notice", "care", "choose"],
+    "sourceStudy": "Graalitoo Relic Eater HUD pattern only"
+  },
+  "player": {
+    "header": "Sae · .anewgam",
+    "sub": "local play",
+    "transport": ["next", "play", "home", "mute"],
+    "footerDelve": "garden central · red reign",
+    "footerFallen": "garden central · red rain",
+    "skins": ["delve.css", "fallen.css"],
+    "localStub": "player/index.html"
+  },
+  "missing": ["GEN22 page 2"],
+  "doNot": [
+    "pages",
+    "vercel-ship",
+    "cockpit-start-url-flip",
+    "overwrite-greenhouse-gen22",
+    "kids-mod-fuse",
+    "polylite-ingest",
+    "mint-ca",
+    "second-sae"
+  ]
+}

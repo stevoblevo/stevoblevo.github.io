@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7efe6">
+<meta name="description" content="Sae · .anewgam — the way home stays open. Garden central, red rain and red reign.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sae">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sae · .anewgam</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,520&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7efe6;
+    --ink: #5b3a3a;
+    --muted: #8a6a62;
+    --wine: #8a3d44;
+    --gold: #c4a07a;
+    --well: #241416;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--cream); color: var(--ink); font-family: Outfit, ui-sans-serif, system-ui, sans-serif; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:active { scale: 0.96; }
+  :focus-visible { outline: 2px solid var(--wine); outline-offset: 3px; }
+  .display { font-family: Fraunces, Palatino, serif; }
+  .launch, .garden { min-height: 100dvh; position: relative; overflow: hidden; }
+  .still, .veil, .rain { position: absolute; inset: 0; }
+  .still { width: 100%; height: 100%; object-fit: cover; }
+  .veil { background: color-mix(in oklab, var(--well) 55%, transparent); }
+  .rain { pointer-events: none; }
+  .center { position: relative; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; color: var(--cream); }
+  .kicker { letter-spacing: .22em; text-transform: uppercase; font-size: 12px; opacity: .8; margin: 0; }
+  h1.mark { font-weight: 500; font-style: italic; font-size: clamp(56px, 12vw, 104px); margin: 8px 0 0; line-height: .9; }
+  .line { font-size: clamp(26px, 4vw, 42px); margin: 28px 0 0; max-width: 18ch; }
+  .rings { display: flex; gap: 12px; list-style: none; padding: 0; margin: 28px 0 0; }
+  .rings i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--gold); display: block; }
+  .rings i.on { background: var(--wine); }
+  .enter { margin-top: 36px; border: 0; background: var(--cream); color: var(--ink); border-radius: 999px; padding: 12px 28px; }
+  .tag { margin-top: 14px; font-size: 12px; letter-spacing: .08em; opacity: .75; }
+  .shell { position: relative; z-index: 1; min-height: 100dvh; display: flex; flex-direction: column; max-width: 1100px; margin: 0 auto; padding: 16px 18px 12px; }
+  header, footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 12px; color: var(--muted); }
+  header .brand, footer .mid { text-align: center; color: var(--ink); }
+  header .right, footer .right { text-align: right; }
+  .stage { flex: 1; display: grid; grid-template-columns: 96px 1fr; gap: 18px; align-items: center; }
+  .rail { align-self: stretch; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); background: color-mix(in oklab, var(--cream) 72%, transparent); border-radius: 28px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .weather, .ghost { border: 0; background: color-mix(in oklab, var(--wine) 12%, transparent); color: var(--wine); border-radius: 999px; padding: 8px 10px; width: 100%; }
+  .slot { border: 0; background: none; padding: 2px 0; width: 100%; }
+  .slot b { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--gold); display: block; margin: 0 auto 2px; }
+  .slot.on b { background: var(--wine); border-color: var(--wine); }
+  .slot.seen b { background: color-mix(in oklab, var(--gold) 70%, white); }
+  .slot small { color: var(--muted); font-size: 11px; }
+  .buddy { margin-top: auto; text-align: center; color: var(--muted); font-size: 11px; }
+  .copy { max-width: 46%; }
+  .copy h2 { font-size: clamp(36px, 5vw, 64px); line-height: 1.05; margin: 0; font-weight: 500; }
+  .copy p { color: var(--muted); }
+  .eyebrow { letter-spacing: .16em; text-transform: uppercase; color: var(--wine); font-size: 12px; }
+  .lens { width: min(34vw, 340px); aspect-ratio: 1; border-radius: 50%; object-fit: cover; position: absolute; right: 4vw; top: 50%; transform: translateY(-50%); box-shadow: 0 0 0 2px color-mix(in oklab, var(--gold) 65%, transparent); }
+  .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .scrim { position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, var(--cream) 0%, color-mix(in oklab, var(--cream) 90%, transparent) 46%, color-mix(in oklab, var(--cream) 15%, transparent) 100%); }
+  .dock { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .dots { display: none; gap: 4px; }
+  .dots button { width: 44px; height: 44px; border: 0; background: none; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: color-mix(in oklab, var(--gold) 45%, white); display: block; margin: 0 auto; }
+  .dots .on i { background: var(--wine); }
+  .bar { display: flex; gap: 4px; align-items: center; background: color-mix(in oklab, var(--cream) 82%, transparent); border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 999px; padding: 4px 8px; }
+  .bar button { width: 44px; height: 44px; border: 0; background: none; font-size: 18px; }
+  .meter { width: 160px; height: 1px; background: color-mix(in oklab, var(--ink) 12%, transparent); overflow: hidden; }
+  .meter span { display: block; height: 100%; background: var(--wine); transform-origin: left; }
+  .meter span.run { animation: fill 4s linear forwards; }
+  @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  footer button { border: 0; background: none; color: var(--wine); padding: 8px; }
+  .choose { position: fixed; inset: 0; background: color-mix(in oklab, var(--cream) 86%, transparent); display: none; place-items: center; padding: 20px; z-index: 5; }
+  .choose.show { display: grid; }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: 12px; width: min(760px, 100%); }
+  .cards button { background: var(--cream); border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 16px; padding: 18px 14px; text-align: left; }
+  .cards b { display: block; font-family: Fraunces, Palatino, serif; font-size: 22px; font-weight: 500; }
+  .cards span { color: var(--muted); font-size: 14px; }
+  .doors { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 8px 18px 40px; }
+  .doors h2 { font-style: italic; font-size: 40px; margin: 4px 0 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
+  .row button, .back { border-radius: 999px; padding: 10px 16px; min-height: 44px; }
+  .solid { background: var(--wine); color: var(--cream); border: 0; }
+  .back, .plain { background: transparent; border: 1px solid color-mix(in oklab, var(--ink) 16%, transparent); }
+  .group { margin-top: 22px; }
+  .group h3 { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+  .grid a { display: block; text-decoration: none; color: inherit; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); background: color-mix(in oklab, var(--cream) 80%, white); border-radius: 16px; padding: 14px 16px; }
+  .grid strong { display: block; font-family: Fraunces, Palatino, serif; font-size: 20px; font-weight: 500; }
+  .grid span { color: var(--muted); font-size: 14px; }
+  .here { color: var(--wine); font-size: 12px; }
+  #doors, #garden { display: none; }
+  #doors.on, #garden.on, #launch.on { display: block; }
+  @media (max-width: 800px) {
+    .stage { grid-template-columns: 1fr; }
+    .rail, .bg, .scrim, .lens { display: none; }
+    .phone-still { width: 208px; height: 208px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 16px; box-shadow: 0 0 0 2px color-mix(in oklab, var(--gold) 65%, transparent); }
+    .copy { max-width: none; }
+    .dots { display: flex; }
+    .cards, .grid { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 801px) { .phone-still { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .meter span.run { animation: none; } }
+</style>
+</head>
+<body>
+<section id="launch" class="launch on">
+  <img class="still" id="launch-still" alt="" src="beat01.jpg">
+  <div class="veil"></div>
+  <canvas class="rain" id="launch-rain" aria-hidden="true"></canvas>
+  <div class="center">
+    <p class="kicker">Sae</p>
+    <h1 class="mark display">.anewgam</h1>
+    <p class="line display" id="launch-line">the water remembers.</p>
+    <ol class="rings" id="launch-rings"></ol>
+    <button class="enter" id="enter" type="button">Enter the garden</button>
+    <p class="tag">the way home stays open</p>
+  </div>
+</section>
+<section id="garden" class="garden">
+  <img class="bg" id="bg" alt="" src="beat01.jpg">
+  <div class="scrim"></div>
+  <canvas class="rain" id="garden-rain" aria-hidden="true"></canvas>
+  <div class="shell">
+    <header>
+      <span></span>
+      <span class="brand display">Sae · .anewgam</span>
+      <span class="right" id="head-weather">red rain</span>
+    </header>
+    <div class="stage">
+      <aside class="rail" id="rail"></aside>
+      <div>
+        <img class="phone-still" id="phone-still" alt="" src="beat01.jpg">
+        <img class="lens" id="lens" alt="" src="beat01.jpg">
+        <div class="copy">
+          <h2 class="display" id="line"></h2>
+          <p id="sub"></p>
+          <p class="eyebrow">the way home stays open</p>
+          <p id="trace"></p>
+        </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="dots" id="dots"></div>
+      <div class="meter"><span id="meter"></span></div>
+      <div class="bar">
+        <button type="button" id="next" aria-label="Next beat">→</button>
+        <button type="button" id="play" aria-label="Play">▶</button>
+        <button type="button" id="home" aria-label="Home">⌂</button>
+        <button type="button" id="mute" aria-label="Mute rain">🔇</button>
+      </div>
+    </div>
+    <footer>
+      <span id="field">garden central · red rain</span>
+      <button type="button" id="open-doors">other doors</button>
+      <span class="right">the small one</span>
+    </footer>
+  </div>
+</section>
+<section id="doors">
+  <div class="doors">
+    <p class="kicker" style="color:var(--muted)">Collaboration</p>
+    <h2 class="display">Every door already open</h2>
+    <p style="color:var(--muted);max-width:62ch">Hand someone the Pages door, or publish the Grok preview so they walk the same launch. No score. Beside, not ahead.</p>
+    <div class="row">
+      <button class="solid" type="button" id="copy-door">Copy the door</button>
+      <button class="plain" type="button" id="copy-note">Copy a note</button>
+      <button class="back" type="button" id="back">Back to the well</button>
+    </div>
+    <div id="door-groups"></div>
+  </div>
+</section>
+<div class="choose" id="choose"><div><p class="display" id="choose-title" style="text-align:center;font-size:28px;font-style:italic"></p><div class="cards" id="cards"></div></div></div>
+<script>
+const BEATS = [
+  { key:"remember", line:"the water remembers.", delve:"the well is awake.", fallen:"red rain on the same well.", img:"beat01.jpg" },
+  { key:"trace", line:"a trace, not a trophy.", delve:"peaches rise. not scored.", fallen:"two marks in the ripple.", img:"beat02.jpg" },
+  { key:"notice", line:"she notices.", delve:"Steven? a little farther?", fallen:"gaze before greeting.", img:"beat03.jpg", choose:true },
+  { key:"beside", line:"beside, not ahead.", delve:"together. always.", fallen:"knight beside, not leading.", img:"beat04.jpg" },
+  { key:"crown", line:"a living crown.", delve:"living garden. no deer mascot.", fallen:"dear deer in the arch.", img:"beat05.jpg", choose:true },
+  { key:"farther", line:"a little farther.", delve:"into it. #alittlefar", fallen:"home stays open.", img:"beat06.jpg" }
+];
+const CARDS = {
+  notice: [["notice","she sees. nothing is demanded."],["care","stay at the well a breath longer."],["choose","a little farther?"]],
+  crown: [["notice","the arch is occupied."],["care","a crown that grows. not taken."],["choose","walk the path through."]]
+};
+const DOORS = [
+  ["This garden","Red Reign","https://stevoblevo.github.io/red-reign/","the launch. six beats. two weathers.", true],
+  ["Living","Steven · .anewgam","https://stevoblevo.github.io/anewgam-for-steven-cockpit/","the living cockpit."],
+  ["Living","The Crossing","https://stevoblevo.github.io/goober/","find your line. make it yours."],
+  ["Living","Signal Run","https://stevoblevo.github.io/goober/run/","a run, kept on the crossing."],
+  ["Living","The Peachfall","https://stevoblevo.github.io/peachfall/","she falls. the world answers with mercy."],
+  ["Knight","Raspberry · kk","https://stevoblevo.github.io/raspberry/","weigh at the well."],
+  ["Knight","kk · phone","https://stevoblevo.github.io/kk/","beside, not ahead."],
+  ["Knight","Skyknight Raven","https://stevoblevo.github.io/skyknight-raven/","meet the pieces. do not collect them."],
+  ["Earlier","Prismatene","https://stevoblevo.github.io/prismatene/","ingress. candidate."],
+  ["Earlier","is.liv","https://stevoblevo.github.io/isliv/","a softer brighter you."],
+  ["Earlier","Porch fight","https://stevoblevo.github.io/anewgam/","the porch."],
+  ["Earlier","Topi · Berry","https://stevoblevo.github.io/topi/","a small room."],
+  ["Earlier","Earlier ring","https://stevoblevo.github.io/4newgam/","the way home stays open."]
+];
+const STORE = "sae-garden-v1";
+let i = 0, weather = "fallen", playing = false, timer = null, muted = true, traces = [];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function rain(canvas, on) {
+  if (!canvas) return;
+  if (!on || reduce) { const c = canvas.getContext("2d"); if (c) c.clearRect(0,0,canvas.width,canvas.height); canvas._stop = true; return; }
+  canvas._stop = false;
+  const ctx = canvas.getContext("2d");
+  const drops = Array.from({length: 48}, () => ({x:Math.random(), y:Math.random(), v:0.004+Math.random()*0.008, len:0.04+Math.random()*0.05}));
+  const resize = () => { const dpr = Math.min(devicePixelRatio||1, 2); canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr; };
+  resize();
+  (function tick() {
+    if (canvas._stop) return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = "rgba(247,239,230,.38)";
+    drops.forEach(d => { d.y += d.v; if (d.y > 1) d.y = -d.len; ctx.beginPath(); ctx.moveTo(d.x*canvas.width, d.y*canvas.height); ctx.lineTo(d.x*canvas.width+6, (d.y+d.len)*canvas.height); ctx.stroke(); });
+    requestAnimationFrame(tick);
+  })();
+}
+function show(id) {
+  ["launch","garden","doors"].forEach(name => document.getElementById(name).classList.toggle("on", name === id));
+}
+function paintLaunch(step) {
+  const b = BEATS[step];
+  document.getElementById("launch-still").src = b.img;
+  document.getElementById("launch-line").textContent = b.line;
+  document.getElementById("launch-rings").innerHTML = BEATS.map((_, n) => `<li><i class="${n<=step?"on":""}"></i></li>`).join("");
+}
+function field() { return weather === "fallen" ? "garden central · red rain" : "garden central · red reign"; }
+function paint() {
+  const b = BEATS[i];
+  document.getElementById("line").textContent = b.line;
+  document.getElementById("sub").textContent = weather === "fallen" ? b.fallen : b.delve;
+  document.getElementById("bg").src = b.img;
+  document.getElementById("lens").src = b.img;
+  document.getElementById("lens").alt = b.line;
+  document.getElementById("phone-still").src = b.img;
+  document.getElementById("head-weather").textContent = weather === "fallen" ? "red rain" : "red reign";
+  document.getElementById("field").textContent = field();
+  document.getElementById("rail").innerHTML =
+    `<button class="weather" id="weather" type="button">${weather === "fallen" ? "red rain" : "peach"}</button>` +
+    BEATS.map((beat, n) => `<button class="slot ${n===i?"on":n<i?"seen":""}" data-n="${n}" type="button"><b></b><small>${beat.key}</small></button>`).join("") +
+    `<div class="buddy">the small one</div>`;
+  document.getElementById("dots").innerHTML = BEATS.map((beat, n) => `<button type="button" data-n="${n}" class="${n===i?"on":""}" aria-label="${beat.key}"><i></i></button>`).join("");
+  document.getElementById("trace").textContent = traces[0] ? `your trace · ${traces[0].choice} · ${BEATS[traces[0].beat].line}` : "";
+  document.getElementById("weather").onclick = () => { weather = weather === "fallen" ? "delve" : "fallen"; save(); paint(); rain(document.getElementById("garden-rain"), weather === "fallen"); };
+  document.querySelectorAll("#rail .slot, #dots button").forEach(el => el.onclick = () => { stop(); i = +el.dataset.n; save(); paint(); maybeChoose(); });
+  const meter = document.getElementById("meter");
+  meter.classList.remove("run");
+  if (playing) requestAnimationFrame(() => meter.classList.add("run"));
+}
+function save() {
+  localStorage.setItem(STORE, JSON.stringify({ weather, index: i, muted, traces: traces.slice(0, 12) }));
+}
+function stop() { playing = false; clearInterval(timer); document.getElementById("play").textContent = "▶"; document.getElementById("meter").classList.remove("run"); }
+function step() { i = (i + 1) % BEATS.length; save(); paint(); maybeChoose(); }
+function maybeChoose() {
+  const b = BEATS[i];
+  if (!b.choose) { document.getElementById("choose").classList.remove("show"); return; }
+  const was = playing;
+  stop();
+  const pack = CARDS[b.key];
+  document.getElementById("choose-title").textContent = b.line;
+  document.getElementById("cards").innerHTML = pack.map(([t,s]) => `<button type="button" data-c="${t}"><b>${t}</b><span>${s}</span></button>`).join("");
+  document.querySelectorAll("#cards button").forEach(btn => btn.onclick = () => {
+    traces.unshift({ beat: i, choice: btn.dataset.c, at: Date.now() });
+    save();
+    document.getElementById("choose").classList.remove("show");
+    paint();
+    if (was) document.getElementById("play").click();
+  });
+  document.getElementById("choose").classList.add("show");
+}
+function enterGarden() {
+  show("garden");
+  sessionStorage.setItem("sae-entered", "1");
+  paint();
+  rain(document.getElementById("garden-rain"), weather === "fallen");
+}
+document.getElementById("enter").onclick = enterGarden;
+document.getElementById("next").onclick = () => { stop(); step(); };
+document.getElementById("home").onclick = () => { stop(); i = 0; save(); paint(); document.getElementById("choose").classList.remove("show"); };
+document.getElementById("play").onclick = () => {
+  playing = !playing;
+  document.getElementById("play").textContent = playing ? "❚❚" : "▶";
+  clearInterval(timer);
+  paint();
+  if (playing) timer = setInterval(step, 4000);
+};
+document.getElementById("mute").onclick = () => {
+  muted = !muted;
+  document.getElementById("mute").textContent = muted ? "🔇" : "🔊";
+  document.getElementById("mute").setAttribute("aria-label", muted ? "Unmute rain" : "Mute rain");
+  save();
+  setRainAudio(!muted);
+};
+document.getElementById("open-doors").onclick = () => { stop(); renderDoors(); show("doors"); };
+document.getElementById("back").onclick = () => { show("garden"); paint(); };
+document.getElementById("choose").onclick = (e) => { if (e.target.id === "choose") document.getElementById("choose").classList.remove("show"); };
+async function copy(text, btn, done) {
+  try { await navigator.clipboard.writeText(text); btn.textContent = done; setTimeout(() => { btn.textContent = btn.dataset.label; }, 1400); } catch {}
+}
+function renderDoors() {
+  const groups = [...new Set(DOORS.map(d => d[0]))];
+  document.getElementById("door-groups").innerHTML = groups.map(group => `
+    <section class="group"><h3>${group}</h3><div class="grid">
+      ${DOORS.filter(d => d[0]===group).map(d => `<a href="${d[2]}" target="_blank" rel="noreferrer"><strong>${d[1]}</strong><span>${d[3]}</span>${d[4] ? `<div class="here">this launch on Pages</div>` : ""}</a>`).join("")}
+    </div></section>`).join("");
+}
+const DOOR = "https://stevoblevo.github.io/red-reign/";
+const NOTE = `Walk the garden with me.\nSae · .anewgam — the way home stays open.\n${DOOR}\nSame launch, two weathers, six beats. Companion is the small one.`;
+document.getElementById("copy-door").dataset.label = "Copy the door";
+document.getElementById("copy-note").dataset.label = "Copy a note";
+document.getElementById("copy-door").onclick = (e) => copy(DOOR, e.currentTarget, "Copied");
+document.getElementById("copy-note").onclick = (e) => copy(NOTE, e.currentTarget, "Copied");
+
+let audioCtx, audioGain;
+function setRainAudio(on) {
+  if (!on) { if (audioCtx && audioGain) audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08); return; }
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  if (!audioCtx) {
+    audioCtx = new AC();
+    const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let n = 0; n < data.length; n++) data[n] = Math.random() * 2 - 1;
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer; src.loop = true;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "lowpass"; filter.frequency.value = 720;
+    audioGain = audioCtx.createGain(); audioGain.gain.value = 0;
+    src.connect(filter); filter.connect(audioGain); audioGain.connect(audioCtx.destination); src.start();
+  }
+  audioCtx.resume();
+  audioGain.gain.setTargetAtTime(0.018, audioCtx.currentTime, 0.25);
+}
+
+try {
+  const saved = JSON.parse(localStorage.getItem(STORE) || "null");
+  if (saved) {
+    if (saved.weather === "delve" || saved.weather === "fallen") weather = saved.weather;
+    if (Number.isInteger(saved.index) && saved.index >= 0 && saved.index < BEATS.length) i = saved.index;
+    if (typeof saved.muted === "boolean") muted = saved.muted;
+    if (Array.isArray(saved.traces)) traces = saved.traces.slice(0, 12);
+  }
+} catch {}
+paintLaunch(0);
+rain(document.getElementById("launch-rain"), true);
+if (!reduce && sessionStorage.getItem("sae-entered") !== "1") {
+  let stepN = 0;
+  const boot = setInterval(() => {
+    stepN += 1;
+    if (stepN >= BEATS.length - 1) {
+      clearInterval(boot);
+      paintLaunch(BEATS.length - 1);
+      setTimeout(() => { if (document.getElementById("launch").classList.contains("on")) enterGarden(); }, 1200);
+      return;
+    }
+    paintLaunch(stepN);
+  }, 900);
+} else if (sessionStorage.getItem("sae-entered") === "1" || reduce) {
+  enterGarden();
+}
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
