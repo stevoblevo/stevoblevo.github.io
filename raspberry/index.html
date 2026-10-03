@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#140c10"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Raspberry · kk</title>
+<style>
+:root{--ink:#140c10;--paper:#f3e6d4;--cyan:#3ecfcf;--gold:#e4c27a}*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--ink);color:var(--paper);font-family:Palatino,Georgia,serif}body{overflow:hidden;touch-action:none}#stage{position:fixed;inset:0;width:100%;height:100%}#hud{position:fixed;left:0;right:0;bottom:0;padding:16px 18px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(10,6,8,.9));pointer-events:none}.line{font-size:clamp(26px,5vw,46px);margin:0}.read{color:#d7b8ae}.prompt,.meta{font:12px/1.4 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}.prompt{color:var(--cyan)}.meta{color:var(--gold)}.pip{position:fixed;top:16px;right:16px;width:14px;height:14px;border-radius:50%;background:var(--cyan)}#veil{position:fixed;inset:0;display:grid;place-content:center;text-align:center;background:rgba(12,4,8,.8)}#veil h1{font-weight:400;margin:8px 0;font-size:clamp(32px,6vw,56px)}button{border:1px solid var(--cyan);background:transparent;color:var(--paper);padding:12px 20px;border-radius:999px;letter-spacing:.14em;text-transform:uppercase}.stick,.act{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));display:none}.stick{left:16px;width:92px;height:92px;border-radius:50%;border:1px solid #e4c27a66}.act{right:16px}@media (pointer:coarse){.stick,.act{display:block}}
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div class="pip" title="the small one"></div>
+<div id="hud"><p class="prompt" id="prompt">stick · drag look · near</p><p class="line" id="line">the water remembers.</p><p class="read" id="read">Dora looks back. Thea is under the well.</p><p class="meta" id="meta">sae://on#kk</p></div>
+<div id="veil"><p class="prompt">raspberry · kk</p><h1>a watch, not a wall</h1><p>Phone: stick walks, drag looks, near weighs. Crown stays.</p><button id="enter" type="button">enter</button></div>
+<div class="stick" id="stick"></div>
+<button class="act" id="act" type="button">near</button>
+<script>
+const BEAT=4200,canvas=document.getElementById('stage'),ctx=canvas.getContext('2d');
+const lineEl=document.getElementById('line'),readEl=document.getElementById('read'),metaEl=document.getElementById('meta');
+const cam={x:0,z:6,yaw:Math.PI},keys={};
+const beats=[{line:'the water remembers.',read:'Two vessels. Peach tipping into red.'},{line:'a trace, not a trophy.',read:'Tare first. 398 is a receipt.'},{line:'she notices.',read:'Dora looks back. No claim.'},{line:'beside, not ahead.',read:'Sword down. But not today.'},{line:'a living crown.',read:'Thea is under the well. Not served.'},{line:'a little farther.',read:'Home stays open.'}];
+let idx=0,held=0,tared=false,grams=0,playing=false;
+function resize(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}addEventListener('resize',resize);resize();
+function show(n){idx=(n+6)%6;lineEl.textContent=beats[idx].line;readEl.textContent=beats[idx].read;metaEl.textContent='sae://on#kk · '+(idx+1)+'/6 · '+(tared?grams+'g':'tare')+' · the small one';held=performance.now();}
+function act(){const d=Math.hypot(-1.4-cam.x,1.2-cam.z);if(d<1.8){if(!tared){tared=true;grams=0;}else grams=398;show(1);}else show(idx+1);}
+function draw(){const g=ctx.createLinearGradient(0,0,0,innerHeight);g.addColorStop(0,'#4a1424');g.addColorStop(.5,'#c4552a');g.addColorStop(1,'#1a100c');ctx.fillStyle=g;ctx.fillRect(0,0,innerWidth,innerHeight);ctx.fillStyle='#3a342c';ctx.fillRect(innerWidth/2-20,innerHeight*0.58,40,28);ctx.fillStyle='#3ecfcf';ctx.beginPath();ctx.arc(innerWidth-30,innerHeight*0.5,5,0,6.28);ctx.fill();ctx.strokeStyle='rgba(232,120,140,.4)';for(let i=0;i<30;i++){const x=(i*83)%innerWidth,y=(performance.now()*.3+i*30)%innerHeight;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+2,y+12);ctx.stroke();}ctx.fillStyle='#f6ece4';ctx.fillText('+',innerWidth/2-4,innerHeight/2);}
+function frame(now){const c=Math.cos(cam.yaw),s=Math.sin(cam.yaw);let mx=0,mz=0;if(keys.w){mx-=s;mz-=c;}if(keys.s){mx+=s;mz+=c;}if(keys.a){mx-=c;mz+=s;}if(keys.d){mx+=c;mz-=s;}const len=Math.hypot(mx,mz)||1;if(keys.w||keys.a||keys.s||keys.d){cam.x=Math.max(-5,Math.min(5,cam.x+mx/len*.04));cam.z=Math.max(-5,Math.min(6,cam.z+mz/len*.04));}if(playing&&now-held>BEAT)show(idx+1);draw();requestAnimationFrame(frame);}
+document.getElementById('enter').onclick=()=>{document.getElementById('veil').hidden=true;playing=true;};
+document.getElementById('act').onclick=act;
+const stick=document.getElementById('stick');let sx=0,sy=0;
+stick.addEventListener('pointerdown',(e)=>{stick.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;});
+stick.addEventListener('pointermove',(e)=>{if(!stick.hasPointerCapture(e.pointerId))return;const dx=e.clientX-sx,dy=e.clientY-sy;keys.w=dy<-10;keys.s=dy>10;keys.a=dx<-10;keys.d=dx>10;});
+stick.addEventListener('pointerup',()=>{keys.w=keys.a=keys.s=keys.d=false;});
+let drag=null,lx=0;
+canvas.addEventListener('pointerdown',(e)=>{drag=e.pointerId;lx=e.clientX;});
+canvas.addEventListener('pointermove',(e)=>{if(e.pointerId!==drag)return;cam.yaw+=(e.clientX-lx)*.006;lx=e.clientX;});
+canvas.addEventListener('pointerup',()=>{drag=null;});
+addEventListener('keydown',(e)=>{keys[e.key.toLowerCase()]=true;if(e.key==='e')act();});
+addEventListener('keyup',(e)=>{keys[e.key.toLowerCase()]=false;});
+show(0);requestAnimationFrame(frame);
+</script>
+</body>
+</html>
