@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241416">
+<title>Tell · Sae</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,520&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --cream:#f7efe6; --ink:#5b3a3a; --muted:#8a6a62; --wine:#8a3d44; --gold:#c4a07a; --well:#241416; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100dvh; background: var(--cream); color: var(--ink); font-family: Outfit, sans-serif; }
+  header, .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; }
+  a { color: var(--wine); }
+  h1, h2 { font-family: Fraunces, Palatino, serif; font-weight: 500; margin: 0; }
+  h1 { font-style: italic; font-size: 32px; }
+  .kicker { letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+  .grid { display: grid; gap: 12px; padding: 0 18px 24px; }
+  @media (min-width: 700px) { .grid.stories { grid-template-columns: 1fr 1fr; } .grid.games { grid-template-columns: 1fr 1fr 1fr; } }
+  button.card { font: inherit; text-align: left; color: inherit; background: color-mix(in oklab, var(--cream) 75%, white); border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 16px; padding: 0; overflow: hidden; cursor: pointer; width: 100%; }
+  button.card span { display: block; padding: 12px 14px 14px; }
+  .thumb { height: 92px; background: var(--well) center/cover no-repeat; }
+  .frame { margin: 0 18px; height: 58dvh; border-radius: 18px; background: var(--well) center/cover no-repeat; }
+  .line { font-family: Fraunces, Palatino, serif; font-style: italic; font-size: 28px; margin: 0; }
+  .nav { width: 44px; height: 44px; border: 0; border-radius: 999px; background: var(--wine); color: var(--cream); font: inherit; cursor: pointer; }
+  .nav.ghost { background: transparent; color: var(--ink); border: 1px solid color-mix(in oklab, var(--ink) 16%, transparent); }
+  .stage { position: relative; height: 68dvh; margin: 0 18px 18px; border-radius: 18px; overflow: hidden; background: var(--well); touch-action: none; }
+  .stage img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cap { position: absolute; left: 16px; bottom: 16px; color: var(--cream); text-shadow: 0 1px 8px #241416; }
+  .peach { position: absolute; width: 48px; height: 48px; border: 0; border-radius: 999px; transform: translate(-50%, -50%); background: radial-gradient(circle at 35% 30%, #f6d3b4, #e08a72 55%, #a84a52); cursor: grab; }
+  .target { position: absolute; width: 64px; height: 64px; border: 1px solid color-mix(in oklab, var(--cream) 80%, transparent); border-radius: 999px; transform: translate(-50%, -50%); left: 64%; top: 46%; pointer-events: none; }
+  .track { position: absolute; left: 16px; right: 16px; bottom: 28px; height: 72px; }
+  .mark { position: absolute; top: 8px; bottom: 8px; width: 1px; background: var(--gold); right: 18%; }
+  .flower { position: absolute; top: 50%; width: 48px; height: 48px; border: 0; border-radius: 999px; transform: translateY(-50%); background: var(--cream); color: var(--wine); cursor: grab; }
+  .ripple { position: absolute; width: 96px; height: 96px; border: 2px solid var(--cream); border-radius: 999px; transform: translate(-50%, -50%) scale(0.2); animation: rip 1.4s ease-out forwards; pointer-events: none; }
+  @keyframes rip { to { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+  .muted { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="home">
+  <header>
+    <a href="./">the well</a>
+    <span>Seed sets</span>
+    <span class="muted">no score</span>
+  </header>
+  <div class="row"><div><p class="kicker">Tell</p><h1>One line at a time</h1></div></div>
+  <div class="grid stories" id="stories"></div>
+  <div class="row"><div><p class="kicker">Play</p><h2>Not a tally</h2></div></div>
+  <div class="grid games" id="games"></div>
+</div>
+<div id="reader" hidden>
+  <header>
+    <button class="nav ghost" type="button" id="back-stories">stories</button>
+    <span id="story-name"></span>
+    <span id="story-count"></span>
+  </header>
+  <div class="frame" id="frame"></div>
+  <div class="row">
+    <p class="line" id="story-line"></p>
+    <span>
+      <button class="nav ghost" type="button" id="prev" aria-label="Previous line">←</button>
+      <button class="nav" type="button" id="next" aria-label="Next line">→</button>
+    </span>
+  </div>
+</div>
+<div id="play" hidden>
+  <header>
+    <button class="nav ghost" type="button" id="back-games">plays</button>
+    <span id="game-name"></span>
+    <span class="muted">no score</span>
+  </header>
+  <div class="stage" id="stage"></div>
+</div>
+<script>
+function panel(col, row) {
+  const x0 = 0.02, y0 = 0.082, gap = 0.012;
+  const w = (0.96 - gap * 3) / 4;
+  const h = (0.84 - gap * 2) / 3;
+  return { x: x0 + col * (w + gap), y: y0 + row * (h + gap), w, h };
+}
+function band(i) {
+  const gap = 0.012, h = (0.97 - gap * 3) / 4;
+  return { x: 0.015, y: 0.012 + i * (h + gap), w: 0.97, h };
+}
+const STORIES = [
+  ["gen22","Peachfalls into EverDelve","plates/gen22.jpg","GEN22 · page 1.",[
+    ["Garden Central. Play creates the world.", panel(0,0)],
+    ["Princess Sae-do.", panel(1,0)],
+    ["Steven? A little farther?", panel(2,0)],
+    ["To the well.", panel(3,0)],
+    ["Little helpers gather.", panel(0,1)],
+    ["People, ideas, stories. Play here.", panel(1,1)],
+    ["The well is awake.", panel(2,1)],
+    ["Do you hear it?", panel(3,1)],
+    ["Together. Always.", panel(0,2)],
+    ["Peachfalls rise.", panel(1,2)],
+    ["Into it.", panel(2,2)],
+    ["EverDelven. #alittlefar.", panel(3,2)]
+  ]],
+  ["anna","Save Anna","plates/anna.png","Boot. Drift. Wake. Launch.",[
+    ["Boot loop. Same dream again?", band(0)],
+    ["Americana drift. Fields, skies, people, beyond.", band(1)],
+    ["Tower wake. Real now?", band(2)],
+    ["Launch. Sisters keep the dawn.", band(3)]
+  ]],
+  ["isliv","A softer brighter you","plates/isliv.jpg","Nothing is demanded.",[
+    ["A softer brighter you."],
+    ["The flower stays where she leaned."],
+    ["She notices. Nothing is demanded."]
+  ]],
+  ["peach","The offered peach","plates/bookshop.png","It crosses the wet stones.",[
+    ["The peach leaves her hand."],
+    ["It crosses the wet stones."],
+    ["A little farther."]
+  ]],
+  ["passport","You belong here","plates/passport.png","A feeling worth returning to.",[
+    ["Peachfall. You belong here."],
+    ["Not just a game. A feeling worth returning to."],
+    ["A kinder next step."]
+  ]],
+  ["hold","Monday hold","plates/hold.png","You, as you are.",[
+    ["Monday hold."],
+    ["Builder rest. The shelf grew overnight."],
+    ["You, as you are."]
+  ]],
+  ["door","A door, not a marketplace","plates/bespoke-door.jpg","No counter.",[
+    ["Not a marketplace."],
+    ["A door to what’s possible."],
+    ["Curious problems stay curious."]
+  ]]
+];
+const GAMES = [
+  ["well","The well","Touch the water. It keeps the ring.","beat01.jpg"],
+  ["offer","The offer","Carry the peach to her hand.","plates/bookshop.png"],
+  ["beside","Beside","Set the small one beside the mark.","beat04.jpg"]
+];
+let story = null, si = 0;
+function show(id) {
+  document.getElementById("home").hidden = id !== "home";
+  document.getElementById("reader").hidden = id !== "reader";
+  document.getElementById("play").hidden = id !== "play";
+}
+function paintStory() {
+  const beat = story[4][si];
+  const crop = beat[1];
+  const frame = document.getElementById("frame");
+  frame.style.backgroundImage = `url(${story[2]})`;
+  if (crop) {
+    frame.style.backgroundSize = `${100/crop.w}% ${100/crop.h}%`;
+    frame.style.backgroundPosition = `${(crop.x/(1-crop.w))*100}% ${(crop.y/(1-crop.h))*100}%`;
+  } else {
+    frame.style.backgroundSize = "cover";
+    frame.style.backgroundPosition = "center";
+  }
+  document.getElementById("story-line").textContent = beat[0];
+  document.getElementById("story-name").textContent = story[1];
+  document.getElementById("story-count").textContent = `${si+1} / ${story[4].length}`;
+}
+function openStory(id) {
+  story = STORIES.find(s => s[0] === id);
+  si = 0;
+  paintStory();
+  show("reader");
+}
+function openGame(id) {
+  const game = GAMES.find(g => g[0] === id);
+  document.getElementById("game-name").textContent = game[1];
+  const stage = document.getElementById("stage");
+  stage.innerHTML = "";
+  const img = document.createElement("img");
+  img.src = game[3];
+  img.alt = "";
+  stage.appendChild(img);
+  const cap = document.createElement("p");
+  cap.className = "line cap";
+  stage.appendChild(cap);
+  if (id === "well") {
+    cap.textContent = "the water remembers.";
+    stage.onpointerdown = (e) => {
+      const r = stage.getBoundingClientRect();
+      const dot = document.createElement("span");
+      dot.className = "ripple";
+      dot.style.left = `${((e.clientX-r.left)/r.width)*100}%`;
+      dot.style.top = `${((e.clientY-r.top)/r.height)*100}%`;
+      stage.appendChild(dot);
+      setTimeout(() => dot.remove(), 1400);
+    };
+  }
+  if (id === "offer") {
+    cap.textContent = "carry it to her hand.";
+    const ring = document.createElement("span");
+    ring.className = "target";
+    stage.appendChild(ring);
+    const peach = document.createElement("button");
+    peach.className = "peach";
+    peach.setAttribute("aria-label","The peach");
+    peach.style.left = "22%";
+    peach.style.top = "68%";
+    stage.appendChild(peach);
+    let drag = false, landed = false;
+    peach.onpointerdown = (e) => { if (landed) return; drag = true; peach.setPointerCapture(e.pointerId); };
+    peach.onpointermove = (e) => {
+      if (!drag) return;
+      const r = stage.getBoundingClientRect();
+      peach.style.left = `${Math.min(92, Math.max(8, ((e.clientX-r.left)/r.width)*100))}%`;
+      peach.style.top = `${Math.min(88, Math.max(12, ((e.clientY-r.top)/r.height)*100))}%`;
+    };
+    peach.onpointerup = () => {
+      drag = false;
+      const x = parseFloat(peach.style.left), y = parseFloat(peach.style.top);
+      if (x > 58 && x < 78 && y > 36 && y < 62) {
+        landed = true;
+        peach.style.left = "66%";
+        peach.style.top = "48%";
+        cap.textContent = "into it.";
+      } else {
+        peach.style.left = "22%";
+        peach.style.top = "68%";
+      }
+    };
+  }
+  if (id === "beside") {
+    cap.textContent = "set the small one beside the mark.";
+    const track = document.createElement("div");
+    track.className = "track";
+    track.innerHTML = '<div class="mark"></div><button class="flower" aria-label="The small one" style="left:12%"></button>';
+    stage.appendChild(track);
+    const flower = track.querySelector("button");
+    let drag = false;
+    flower.onpointerdown = (e) => { drag = true; flower.setPointerCapture(e.pointerId); };
+    flower.onpointermove = (e) => {
+      if (!drag) return;
+      const r = track.getBoundingClientRect();
+      const next = Math.min(88, Math.max(6, ((e.clientX-r.left)/r.width)*100));
+      if (next > 70) { flower.style.left = "54%"; cap.textContent = "not ahead. beside."; drag = false; return; }
+      if (next > 42 && next < 66) { flower.style.left = "54%"; cap.textContent = "beside, not ahead."; return; }
+      flower.style.left = `${next}%`;
+    };
+    flower.onpointerup = () => { drag = false; };
+  }
+  show("play");
+}
+document.getElementById("stories").innerHTML = STORIES.map(s =>
+  `<button class="card" type="button" data-s="${s[0]}"><div class="thumb" style="background-image:url(${s[2]})"></div><span><strong>${s[1]}</strong><br><span class="muted">${s[3]}</span></span></button>`
+).join("");
+document.getElementById("games").innerHTML = GAMES.map(g =>
+  `<button class="card" type="button" data-g="${g[0]}"><div class="thumb" style="background-image:url(${g[3]})"></div><span><strong>${g[1]}</strong><br><span class="muted">${g[2]}</span></span></button>`
+).join("");
+document.getElementById("stories").onclick = (e) => {
+  const b = e.target.closest("[data-s]");
+  if (b) openStory(b.dataset.s);
+};
+document.getElementById("games").onclick = (e) => {
+  const b = e.target.closest("[data-g]");
+  if (b) openGame(b.dataset.g);
+};
+document.getElementById("back-stories").onclick = () => show("home");
+document.getElementById("back-games").onclick = () => show("home");
+document.getElementById("prev").onclick = () => { if (si > 0) { si--; paintStory(); } };
+document.getElementById("next").onclick = () => { if (si < story[4].length - 1) { si++; paintStory(); } };
+</script>
+</body>
+</html>

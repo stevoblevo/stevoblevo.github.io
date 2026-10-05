@@ -1,0 +1,17 @@
+{
+  "id": "sae-seed-sets",
+  "authorityEffect": "none",
+  "score": false,
+  "companion": "the small one",
+  "stories": [
+    "Peachfalls into EverDelve",
+    "Save Anna",
+    "A softer brighter you",
+    "The offered peach",
+    "You belong here",
+    "Monday hold",
+    "A door, not a marketplace"
+  ],
+  "games": ["The well", "The offer", "Beside"],
+  "missing": ["GEN22 page 2"]
+}

@@ -1,4 +1,4 @@
-const CACHE = "sae-red-reign-2";
+const CACHE = "sae-red-reign-3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const ASSETS = [
   "./beat05.jpg",
   "./beat06.jpg",
   "./plates.html",
+  "./seeds.html",
 ];
 
 self.addEventListener("install", (event) => {
