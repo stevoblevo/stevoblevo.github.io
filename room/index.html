@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Room listen · tower local</title>
+<meta name="description" content="Push-button room listen. Mic must be in the room. Not a phone call. Local model stays on Tower."/>
+<style>
+body{margin:0;background:#10140f;color:#f3efe4;font:16px/1.45 Georgia,serif}
+main{max-width:720px;margin:0 auto;padding:2rem 1.2rem 4rem}
+button{font:inherit;background:#e4b15a;color:#1a140c;border:0;border-radius:999px;padding:.7rem 1.2rem;cursor:pointer}
+a{color:#9fd7c8}
+.k{letter-spacing:.14em;text-transform:uppercase;font-size:.72rem;color:#9fd7c8}
+</style>
+</head>
+<body>
+<main>
+<div class="k">room · not a phone call · v0.1</div>
+<h1>Room listen</h1>
+<p>A button can start recording without a phone call. It cannot hear a room the microphone is not in. Put this page on a tablet, laptop, or Tower browser that is physically in the room. Grant the mic. Push once to start, again to stop. Audio stays in the browser unless Tower answers.</p>
+<p><button id="rec" type="button">Start room listen</button></p>
+<p id="status">Idle. Nothing sent.</p>
+<audio id="play" controls></audio>
+<h2>Local model</h2>
+<p>Best for our use: this page posts the clip only to <code>http://tower.local:8771/transcribe</code> if that container is up. Whisper stays on Tower. A small local model can summarize after. Off-LAN the post fails closed. Grok in the cloud is a different path and is not the local model.</p>
+<p>Compose to run on Tower (not started from this page): <a href="docker-compose.yml">room/docker-compose.yml</a></p>
+<h2>Doors</h2>
+<ul>
+<li><a href="../everfallen/index.html">Everfallen verbal</a></li>
+<li><a href="../verbal/index.html">Verbal board</a></li>
+<li><a href="../prismatene/">Prismatene</a></li>
+<li><a href="https://saelion.co/">saelion.co</a></li>
+<li><a href="https://relay.saelion.co/">relay.saelion.co</a></li>
+<li><a href="../">Door list</a></li>
+</ul>
+</main>
+<script>
+const btn = document.getElementById('rec');
+const status = document.getElementById('status');
+const player = document.getElementById('play');
+let rec, chunks = [], stream;
+btn.onclick = async () => {
+  if (rec && rec.state === 'recording') {
+    rec.stop();
+    btn.textContent = 'Start room listen';
+    return;
+  }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  } catch (e) {
+    status.textContent = 'Mic blocked or no microphone on this device. Put a device with a mic in the room.';
+    return;
+  }
+  chunks = [];
+  rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    const blob = new Blob(chunks, {type: rec.mimeType || 'audio/webm'});
+    player.src = URL.createObjectURL(blob);
+    status.textContent = 'Clip kept in this browser. Trying Tower...';
+    try {
+      const res = await fetch('http://tower.local:8771/transcribe', {method:'POST', body: blob});
+      status.textContent = res.ok ? 'Tower accepted the clip.' : 'Tower did not accept (' + res.status + '). Clip stays local.';
+    } catch (e) {
+      status.textContent = 'Tower not reachable. Clip stays in this browser. Container is not running from here.';
+    }
+  };
+  rec.start();
+  btn.textContent = 'Stop';
+  status.textContent = 'Listening on this device mic. People in the room should know.';
+};
+</script>
+</body>
+</html>

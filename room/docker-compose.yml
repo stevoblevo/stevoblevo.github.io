@@ -1,0 +1,21 @@
+# Room listen on Tower. Not started by the website.
+# Mic must be attached to Tower or the browser device in the room.
+# Audio and transcript stay on Tower. No phone call required.
+services:
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    ports:
+      - "8771:9000"
+    environment:
+      ASR_MODEL: tiny
+      ASR_ENGINE: faster_whisper
+    restart: unless-stopped
+  notes:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    restart: unless-stopped
+volumes:
+  ollama:
