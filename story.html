@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Story mode · the room hears</title>
+<meta name="description" content="Story mode and sim. Phone records the room. Tower recipe is the hearth. Not a claim the container is up."/>
+<style>
+:root{--gold:#F0C75E;--cyan:#7fd0c8;--ink:#f4efe6;--bg:#12100e}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 480px at 50% -10%, rgba(240,199,94,.16), transparent 55%), linear-gradient(180deg,#16120e,#12100e 60%);color:var(--ink);font:17px/1.5 Georgia,serif}
+main{max-width:680px;margin:0 auto;padding:1.6rem 1.1rem 4rem}
+.k{letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--cyan)}
+h1{font-weight:500;margin:.2rem 0 .6rem}
+.scene{border:1px solid rgba(240,199,94,.35);border-radius:16px;padding:1rem 1rem 1.1rem;background:rgba(0,0,0,.25);min-height:9rem}
+button,a.btn{font:inherit;background:var(--gold);color:#1a140c;border:0;border-radius:999px;padding:.55rem 1rem;cursor:pointer;text-decoration:none;display:inline-block;margin:.25rem .35rem .25rem 0}
+button.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(127,208,200,.4)}
+a{color:var(--gold)}
+ul{padding-left:1.1rem}
+#log{font-size:.92rem;opacity:.85}
+</style>
+</head>
+<body>
+<main>
+<div class="k">story mode · sim · v0.1 · not an accept</div>
+<h1 id="title">The room hears</h1>
+<div class="scene" id="scene"></div>
+<p>
+  <button id="next" type="button">Continue</button>
+  <button id="sim" class="ghost" type="button">Run the sim</button>
+  <button id="rec" class="ghost" type="button">Phone ear — real mic</button>
+</p>
+<p id="log">Sim is labeled. Real mic stays on this phone until you stop it.</p>
+<audio id="play" controls></audio>
+<h2>The real doors</h2>
+<ul>
+<li><a href="everfallen/index.html">Everfallen verbal</a> — the conversation already published</li>
+<li><a href="room/index.html">Room button</a> — same ear, plainer page</li>
+<li><a href="room/docker-compose.yml">Tower recipe</a> — whisper :8771, ollama :11434. You start it on the box.</li>
+<li><a href="verbal/index.html">Verbal board</a> — hooks, including sae:// names</li>
+<li><a href="prismatene/">Prismatene</a> · <a href="peachfall/">Peachfall</a> · <a href="goober/">Goober</a></li>
+<li><a href="https://saelion.co/">saelion.co</a> · <a href="https://relay.saelion.co/">relay.saelion.co</a></li>
+<li><a href="https://zinsilverbluhaz-el.grok.me/">Everfallen card host</a></li>
+</ul>
+<p>Phone in the room is enough to record. Tower is the hearth if the recipe is up. Nothing here starts the container. Polylite stays local.</p>
+</main>
+<script>
+const scenes = [
+  {t:'The room hears', b:'You are in the room. The phone is on the table, not in a call. It is just an ear. People here know.'},
+  {t:'Push', b:'One button. The phone starts listening. No second device required. If the phone is in your pocket in another room, it hears the pocket.'},
+  {t:'The hearth', b:'Tower is the other door. On the box: docker compose up, from the recipe. Whisper on tower.local:8771. A small local model can write the note after. If Tower is quiet, the clip stays on the phone.'},
+  {t:'The doors', b:'Everfallen already has a verbal page. Prismatene is the candidate view. Peachfall and Goober are the play doors. saelion.co is the skin. relay.saelion.co is Ways. sae:// names are hooks, not resolvers.'},
+  {t:'Sim', b:'The sim walks this without a mic. The real button uses this phone. Either way, the story is the same: ear here, hearth there, doors linked.'}
+];
+let i = 0;
+const scene = document.getElementById('scene');
+const title = document.getElementById('title');
+const log = document.getElementById('log');
+function show(n){
+  i = n % scenes.length;
+  title.textContent = scenes[i].t;
+  scene.innerHTML = '<p>' + scenes[i].b + '</p>';
+}
+show(0);
+document.getElementById('next').onclick = () => show(i+1);
+document.getElementById('sim').onclick = () => {
+  log.textContent = 'Sim — not a recording. Phone on the table. Button down. Clip stays local. Tower recipe named, not started. Doors linked.';
+  show(4);
+};
+const recBtn = document.getElementById('rec');
+const player = document.getElementById('play');
+let rec, chunks=[], stream;
+recBtn.onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); recBtn.textContent = 'Phone ear — real mic'; return; }
+  try { stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch (e) { log.textContent = 'Mic blocked. The story can still run as sim.'; return; }
+  chunks = [];
+  rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    const blob = new Blob(chunks, {type: rec.mimeType || 'audio/webm'});
+    player.src = URL.createObjectURL(blob);
+    log.textContent = 'Real clip on this phone. Asking Tower...';
+    try {
+      const res = await fetch('http://tower.local:8771/transcribe', {method:'POST', body: blob});
+      log.textContent = res.ok ? 'Tower accepted the clip.' : 'Tower did not accept. Clip stays on the phone.';
+    } catch (e) {
+      log.textContent = 'Tower quiet. Clip stays on the phone. Recipe is not running from this page.';
+    }
+  };
+  rec.start();
+  recBtn.textContent = 'Stop the ear';
+  log.textContent = 'Listening. This is the phone in the room, not a call.';
+};
+</script>
+</body>
+</html>
