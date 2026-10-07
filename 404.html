@@ -2,6 +2,17 @@
 <meta charset="utf-8">
 <title>Sae · .anewgam</title>
 <script>
-if (location.pathname.indexOf("/4newgam") === 0) location.replace("/4newgam/" + location.search + location.hash);
+(function () {
+  var p = location.pathname;
+  if (p.indexOf("/4newgam") === 0) {
+    location.replace("/4newgam/" + location.search + location.hash);
+    return;
+  }
+  // Bare directory paths 404 on this site; point them at index.html.
+  // Only rewrite when the path ends with a slash and is not the site root.
+  if (p.length > 1 && p.charAt(p.length - 1) === "/") {
+    location.replace(p + "index.html" + location.search + location.hash);
+  }
+})();
 </script>
 <p>Not found. <a href="/4newgam/">Sae · .anewgam</a></p>
