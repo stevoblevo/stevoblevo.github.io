@@ -56,7 +56,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 </head>
 <body>
 <main>
-<div class="k">story mode · sim · v0.3.1 · not an accept</div>
+<div class="k">story mode · sim · v0.3.2 · not an accept</div>
 <h1 id="title">The room hears</h1>
 <div class="scene" id="scene" title="Double-click or double-tap to go immersive full-screen">
   <span class="hint">double-click or double-tap the scene → immersive full-screen · Esc or exit to leave</span>
@@ -72,7 +72,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 <p id="fsnote" class="hint" role="status"></p>
 
 <!-- cobalt scene: skippable, silent, optional color controls -->
-<div class="cobalt-scene" id="cobaltScene" hidden role="button" tabindex="0" aria-label="Cycle Cobalt layers" title="The cobalt scene — skippable">
+<div class="cobalt-scene" id="cobaltScene" hidden role="button" aria-label="Cycle Cobalt layers" title="The cobalt scene — skippable">
   <div class="layer sheer" id="cobaltSheer"></div>
   <div class="layer corn" id="cobaltCorn"></div>
   <p>The cobalt scene. Smoky cobalt-gray base. Sheer luminous layer. Cornflower only at the edges — highlights, never the field.</p>
@@ -86,7 +86,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 
 <section class="phone-ear" aria-labelledby="phone-title">
 <h2 id="phone-title">Phone ear · real microphone</h2>
-<p>This is real recording, separate from the story simulation. Start asks for microphone permission. Stop keeps one clip in this tab’s memory; nothing uploads automatically.</p>
+<p>This is real recording, separate from the story simulation. Start asks for microphone permission. Stop keeps one clip in this tab's memory; nothing uploads automatically.</p>
 <p><strong>Send destination:</strong> <code>http://tower.local:8771/transcribe</code>. Send or Retry makes an explicit POST to that Tower address. This page does not start Tower. HTTPS, local-network or browser restrictions may block it.</p>
 <button id="rec" class="ghost" type="button">Start real microphone</button>
 <p id="micStatus" role="status" data-state="off">Microphone off. No recording or upload has started.</p>
@@ -95,7 +95,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 <button id="sendClip" type="button">Send to Tower</button>
 <button id="deleteClip" class="ghost" type="button">Delete local clip</button>
 </div>
-<p class="hint">Memory only: reloading or leaving this page clears its clip. Delete cancels a send here and deletes this tab’s copy; it does not delete anything Tower already received. There is no background queue or automatic retry.</p>
+<p class="hint">Memory only: reloading or leaving this page clears its clip. Delete cancels a send here and deletes this tab's copy; it does not delete anything Tower already received. There is no background queue or automatic retry.</p>
 </section>
 
 <h2>The real doors</h2>
@@ -103,8 +103,8 @@ button:disabled{opacity:.55;cursor:not-allowed}
 <li><a href="everfallen/index.html">Everfallen verbal</a> — the conversation already published</li>
 <li><a href="room/index.html">Room button</a> — same ear, plainer page</li>
 <li><a href="room/docker-compose.yml">Tower recipe</a> — whisper :8771, ollama :11434. You start it on the box.</li>
-<li><a href="verbal/index.html">Verbal board</a> — hooks, including sae:// names</li>
-<li><a href="cobalt/index.html">Cobalt</a> · <a href="prismatene/">Prismatene</a> · <a href="peachfall/">Peachfall</a> · <a href="goober/">Goober</a></li>
+<li><a href="verbal/index.html">Verbal board</a> — the hooks, including sae:// names</li>
+<li><a href="cobalt/index.html">Cobalt</a> · <a href="prismatene/index.html">Prismatene</a> · <a href="peachfall/index.html">Peachfall</a> · <a href="goober/index.html">Goober</a></li>
 <li><a href="https://saelion.co/cobalt">saelion.co/cobalt</a> — the color study live</li>
 <li><a href="https://saelion.co/">saelion.co</a> · <a href="https://relay.saelion.co/">relay.saelion.co</a></li>
 <li><a href="https://zinsilverbluhaz-el.grok.me/">Everfallen card host</a></li>
@@ -121,10 +121,10 @@ const scenes = [
   {t:'Sim', b:'The sim walks this without a mic. The real button uses this phone. Either way, the story is the same: ear here, hearth there, doors linked.'}
 ];
 let i = 0;
-const scene = document.getElementById('scene');
-const title = document.getElementById('title');
-const log = document.getElementById('log');
-const fsnote = document.getElementById('fsnote');
+const scene = document.getElementById('scene);
+const title = document.getElementById('title);
+const log = document.getElementById('log);
+const fsnote = document.getElementById('fsnote);
 function show(n, save = false){
   i = n % scenes.length;
   title.textContent = scenes[i].t;
@@ -136,7 +136,7 @@ function show(n, save = false){
   document.querySelector('.cobalt-controls').hidden = !cobaltOn;
 }
 try {
-  const stored = localStorage.getItem('storyPos');
+  const stored = localStorage.getItem('storyPos);
   const saved = stored === null || stored.trim() === '' ? NaN : Number(stored);
   if (Number.isInteger(saved) && saved >= 0 && saved < scenes.length) i = saved;
 } catch (e) { /* ignore */ }
@@ -145,16 +145,16 @@ document.getElementById('next').onclick = () => show(i+1, true);
 document.getElementById('sim').onclick = () => {
   log.textContent = 'Simulation only — no listening or transcription. This story does not start the microphone or Tower.';
   show(5, true);
-};
+);
 /* Phone ear: real capture; one explicit-send clip in this tab's memory only. */
 (() => {
   const destination = 'http://tower.local:8771/transcribe';
-  const recBtn = document.getElementById('rec');
-  const status = document.getElementById('micStatus');
-  const tray = document.getElementById('clipTray');
-  const clipStatus = document.getElementById('clipStatus');
-  const sendBtn = document.getElementById('sendClip');
-  const deleteBtn = document.getElementById('deleteClip');
+  const recBtn = document.getElementById('rec);
+  const status = document.getElementById('micStatus);
+  const tray = document.getElementById('clipTray);
+  const clipStatus = document.getElementById('clipStatus);
+  const sendBtn = document.getElementById('sendClip);
+  const deleteBtn = document.getElementById('deleteClip);
   let session = null, captureGeneration = 0, clip = null;
   let upload = null, uploadGeneration = 0;
   const unavailable = !navigator.mediaDevices?.getUserMedia || typeof MediaRecorder !== 'function';
@@ -181,7 +181,7 @@ document.getElementById('sim').onclick = () => {
     current.stopTimer = null;
     for (const off of current.recorderOff.splice(0)) off();
     detachTracks(current);
-    try { if (current.recorder && current.recorder.state !== 'inactive') current.recorder.stop(); } catch (_) {}
+    try { if (current.recorder && current.recorder.state !== 'inactive') current.recorder.stop(); } catch (_) {} }
     stopTracks(current.stream);
     current.stream = null;
     current.recorder = null;
@@ -211,7 +211,7 @@ document.getElementById('sim').onclick = () => {
   }
   async function startCapture() {
     if (session || clip || unavailable) return;
-    const current = {generation:++captureGeneration,phase:'pending',stream:null,recorder:null,chunks:[],recorderOff:[],trackOff:[],stopTimer:null};
+    const current = {generation:++captureGeneration,phase:'pending',stream:null,recorder:null,chunks:[],recorderOff:[],trackOff:[],stopTimer:null);
     session = current;
     status.textContent = 'Requesting real microphone permission. Cancel stops this request here; a late grant will be released immediately.';
     render();
@@ -220,7 +220,7 @@ document.getElementById('sim').onclick = () => {
       if (!active(current)) { stopTracks(stream); return; }
       current.stream = stream;
       const tracks = stream.getTracks();
-      if (!tracks.length || tracks.every(track => track.readyState === 'ended')) throw new Error('No active input');
+      if (!tracks.length || tracks.every(track => track.readyState === 'ended')) throw new Error('No active input);
       const recorder = new MediaRecorder(stream);
       current.recorder = recorder;
       listen(recorder, 'dataavailable', event => { if (active(current) && event.data?.size > 0) current.chunks.push(event.data); }, current.recorderOff);
@@ -230,7 +230,7 @@ document.getElementById('sim').onclick = () => {
         if (current.phase !== 'stopping') { finish(current, 'Recording ended unexpectedly. Microphone off; nothing sent. Try Start again or Run simulated story.'); return; }
         const blob = new Blob(current.chunks, {type:recorder.mimeType || 'audio/webm'});
         if (!blob.size) { finish(current, 'No audio was captured. Microphone off; nothing sent. Try Start again or Run simulated story.'); return; }
-        clip = {blob,attempted:false,accepted:false,message:'Not sent. Send is optional.'};
+        clip = {blob,attempted:false,accepted:false,message:'Not sent. Send is optional.');
         finish(current, 'Microphone off. One local clip is ready. Nothing has been sent. Delete it before recording another.');
       }, current.recorderOff);
       for (const track of tracks) listen(track, 'ended', () => finish(current, 'Microphone disconnected. Recording stopped; nothing sent. Try Start again or Run simulated story.'), current.trackOff);
@@ -264,14 +264,14 @@ document.getElementById('sim').onclick = () => {
     const pending = upload;
     upload = null;
     uploadGeneration++;
-    if (pending) { clearTimeout(pending.timer); if (abort) pending.controller.abort(); }
+    if (pending) { clearTimeout(pending.timer); if (abort) pending.controller.absort(); }
   }
   sendBtn.addEventListener('click', async () => {
     if (!clip?.blob.size || upload || clip.accepted) return;
     const item = clip;
     item.attempted = true;
     item.message = `Sending to ${destination}. Delete cancels the request here; it cannot remove a copy already received by Tower.`;
-    const pending = {generation:++uploadGeneration,controller:new AbortController(),timer:null};
+    const pending = {generation:++uploadGeneration,controller:new AbortController(),timer:null);
     upload = pending;
     const current = () => upload === pending && uploadGeneration === pending.generation && clip === item;
     pending.timer = setTimeout(() => {
@@ -286,104 +286,91 @@ document.getElementById('sim').onclick = () => {
       if (!current()) return;
       cancelUpload(false);
       item.accepted = response.ok;
-      item.message = response.ok ? 'Tower accepted the clip. No transcript is shown or claimed here. Delete removes only this tab’s copy.' : `Tower returned HTTP ${response.status}. The clip remains in tab memory. No transcript is confirmed. Retry is your choice.`;
+      item.message = response.ok ? 'Tower accepted the clip. No transcript is shown or claimed here. Delete removes only this tab's copy.' : `Tower returned HTTP ${response.status}. The clip remains in tab memory. No transcript is confirmed. Retry is your choice.`;
       render();
-    } catch (_) {
+    } catch (error) {
       if (!current()) return;
-      cancelUpload();
-      item.message = 'Tower is unavailable or the browser blocked the request. The clip remains in tab memory. No transcript is confirmed. Retry is your choice and may send a duplicate if Tower already received it.';
+      if (error && error.name === 'AbortError') return;
+      cancelUpload(false);
+      item.accepted = false;
+      item.message = 'Send failed before Tower answered. The clip is still in tab memory. No transcript is confirmed. Retry is your choice.';
       render();
     }
   });
   deleteBtn.addEventListener('click', () => {
-    cancelUpload();
+    cancelUpload(true);
     clip = null;
-    status.textContent = 'Deleted from this tab only. Any copy already received by Tower is not deleted. Microphone off.';
     render();
   });
-  window.addEventListener('pagehide', () => {
-    cancelCapture('Microphone off. Leaving this page discards unfinished audio.');
-    cancelUpload();
-    clip = null;
-    status.textContent = 'Microphone off. Local clip cleared on leaving this page.';
-    render();
+
+  /* Cobalt scene: optional silent controls, only while scene 4 is showing. */
+  const cobaltScene = document.getElementById('cobaltScene);
+  const cobaltControls = document.querySelector('.cobalt-controls);
+  const cobaltSheerBtn = document.getElementById('cobaltSheerBtn);
+  const cobaltCornBtn = document.getElementById('cobaltCornBtn);
+  const cobaltResetBtn = document.getElementById('cobaltResetBtn);
+  function setCobalt(on) {
+    cobaltScene.hidden = !on;
+    cobaltControls.hidden = !on;
+  }
+  cobaltScene.addEventListener('click', () => {
+    cobaltSheerBtn.classList.toggle('on);
+    cobaltScene.classList.toggle('on', cobaltSheerBtn.classList.contains('on') || cobaltCornBtn.classList.contains('on'));
+    cobaltSheerBtn.setAttribute('aria-pressed', cobaltSheerBtn.classList.contains('on'));
   });
-  if (unavailable) status.textContent = 'Microphone recording is unavailable in this browser. Run simulated story works without capture.';
-  render();
+  cobaltCornBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    cobaltCornBtn.classList.toggle('on);
+    cobaltScene.classList.toggle('on', cobaltSheerBtn.classList.contains('on') || cobaltCornBtn.classList.contains('on'));
+    cobaltCornBtn.setAttribute('aria-pressed', cobaltCornBtn.classList.contains('on'));
+  });
+  cobaltResetBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    cobaltSheerBtn.classList.remove('on);
+    cobaltCornBtn.classList.remove('on);
+    cobaltScene.classList.remove('on);
+    cobaltSheerBtn.setAttribute('aria-pressed', 'false);
+    cobaltCornBtn.setAttribute('aria-pressed', 'false);
+  });
+
+  /* Full-screen: button, double-click/double-tap on the scene, Esc to leave. */
+  const enterBtn = document.getElementById('enter);
+  const exitBtn = document.getElementById('exit);
+  enterBtn.addEventListener('click', () => {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  });
+  exitBtn.addEventListener('click', () => {
+    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    exitBtn.style.display = on ? 'inline-block' : 'none';
+    fsnote.textContent = on ? 'Immersive full-screen is on. Esc or the exit button leaves it.' : '';
+  });
+  scene.addEventListener('dblclick', () => enterBtn.click());
+  scene.addEventListener('touchend', (e) => {
+    if (e.touches.length > 0) return;
+    if (e.target.closest('button, a')) return;
+    const now = Date.now();
+    if (scene._lastTap && now - scene._lastTap < 400) { e.preventDefault(); enterBtn.click(); }
+    scene._lastTap = now;
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && !cobaltScene.hidden && document.activeElement === cobaltScene) {
+      e.preventDefault();
+      cobaltScene.click();
+    }
+  });
 })();
-
-
-/* immersive: double-click or double-tap the OPEN SCENE only */
-let fullscreenTrigger = null;
-function enterFS(){
-  const el = document.documentElement;
-  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
-  if (!req) { fsnote.textContent = 'This browser does not support full-screen API — chrome cannot be hidden here.'; return; }
-  fullscreenTrigger = document.activeElement;
-  let request;
-  try { request = req.call(el); } catch (e) { fsnote.textContent = 'Full-screen was blocked. You can keep reading here.'; return; }
-  Promise.resolve(request).then(() => {
-    document.getElementById('exit').focus();
-    fsnote.textContent = 'Immersive. Esc or the exit button leaves full-screen.';
-  }).catch(() => {
-    fsnote.textContent = 'Full-screen was blocked. Tap once more, or allow it in the browser prompt.';
-  });
-}
-function exitFS(){
-  const doc = document;
-  const ex = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
-  if (ex) Promise.resolve(ex.call(doc)).catch(()=>{});
-}
-document.addEventListener('dblclick', e => {
-  if (e.target.closest('button, a, input, select, textarea, audio, video')) return;
-  if (!e.target.closest('.scene, .cobalt-scene')) return;
-  enterFS();
-});
-let lastTap = 0;
-document.addEventListener('touchend', e => {
-  if (e.target.closest('button, a, input, select, textarea, audio, video')) return;
-  if (!e.target.closest('.scene, .cobalt-scene')) return;
-  const now = Date.now();
-  if (now - lastTap < 400) { e.preventDefault(); enterFS(); lastTap = 0; }
-  else lastTap = now;
-}, {passive:false});
-document.getElementById('enter').onclick = enterFS;
-document.getElementById('exit').onclick = exitFS;
-document.addEventListener('keydown', e => { if (e.key === 'Escape') exitFS(); });
-document.addEventListener('fullscreenchange', () => {
-  fsnote.textContent = document.fullscreenElement ? 'Immersive. Esc or exit leaves.' : '';
-  if (!document.fullscreenElement && fullscreenTrigger?.isConnected) fullscreenTrigger.focus();
-});
-
-/* cobalt scene: optional silent color controls */
-const cobaltScene = document.getElementById('cobaltScene');
-const cobaltSheerBtn = document.getElementById('cobaltSheerBtn');
-const cobaltCornBtn = document.getElementById('cobaltCornBtn');
-const cobaltResetBtn = document.getElementById('cobaltResetBtn');
-let cobaltSheer = false, cobaltCorn = false;
-function cobaltPaint(){
-  cobaltScene.classList.toggle('on', cobaltSheer || cobaltCorn);
-  document.getElementById('cobaltSheer').style.opacity = cobaltSheer ? '' : '0';
-  document.getElementById('cobaltCorn').style.opacity = cobaltCorn ? '' : '0';
-  cobaltSheerBtn.classList.toggle('on', cobaltSheer);
-  cobaltCornBtn.classList.toggle('on', cobaltCorn);
-  cobaltSheerBtn.setAttribute('aria-pressed', String(cobaltSheer));
-  cobaltCornBtn.setAttribute('aria-pressed', String(cobaltCorn));
-}
-cobaltScene.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cobaltScene.click(); }
-});
-cobaltScene.addEventListener('click', e => {
-  if (e.target.closest('button')) return;
-  if (!cobaltSheer && !cobaltCorn) { cobaltSheer = true; }
-  else if (cobaltSheer && !cobaltCorn) { cobaltCorn = true; }
-  else { cobaltSheer = false; cobaltCorn = false; }
-  cobaltPaint();
-});
-cobaltSheerBtn.addEventListener('click', () => { cobaltSheer = !cobaltSheer; cobaltPaint(); });
-cobaltCornBtn.addEventListener('click', () => { cobaltCorn = !cobaltCorn; cobaltPaint(); });
-cobaltResetBtn.addEventListener('click', () => { cobaltSheer = false; cobaltCorn = false; cobaltPaint(); });
-cobaltPaint();
 </script>
 </body>
 </html>
