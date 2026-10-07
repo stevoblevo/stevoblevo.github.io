@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#1c2838"/>
+<meta name="color-scheme" content="dark"/>
+<title>Anewgam · the well</title>
+<meta name="description" content="One immersive room. Cobalt-gray dusk, red rain, peach light, and the doors of the world."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,520&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cobalt:#2a3a52; --cobalt-deep:#1c2838; --cobalt-light:#3d4f6b;
+  --sheer:rgba(170,200,230,.32);
+  --cornflower:#8fb4e8; --cornflower-soft:rgba(143,180,232,.45);
+  --gold:#F0C75E; --cyan:#7fd0c8; --ink:#f4efe6;
+  --wine:#8a3d44; --cream:#f7efe6; --muted:#8a6a62;
+  --mint:#7ff4bd; --rose:#ff9dbf; --violet:#b59aff;
+  --deep:#04100c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(1100px 560px at 50% -12%, rgba(143,180,232,.12), transparent 58%),
+             linear-gradient(180deg,var(--cobalt-deep),var(--cobalt) 62%,#141821);
+  color:var(--ink);font:17px/1.5 Georgia,serif;
+  overflow-x:hidden;
+}
+.display{font-family:Fraunces,Palatino,serif;font-weight:500}
+.sans{font-family:Outfit,ui-sans-serif,system-ui,sans-serif}
+main{max-width:920px;margin:0 auto;padding:1.4rem 1.1rem 5rem}
+
+/* sky */
+.sky{position:relative;border-radius:24px;overflow:hidden;min-height:58vh;
+  border:1px solid rgba(240,199,94,.22);
+  background:linear-gradient(165deg,var(--cobalt-deep),var(--cobalt) 48%,var(--cobalt-light));
+  cursor:pointer;touch-action:manipulation;}
+.sky .veil{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(8,10,14,.55));pointer-events:none}
+.sky .rain{position:absolute;inset:0;pointer-events:none}
+.sky .moon{position:absolute;right:12%;top:14%;width:34px;height:34px;border-radius:50%;
+  background:#fff0be;box-shadow:0 0 28px rgba(255,240,190,.55);opacity:.85}
+.sky .hill{position:absolute;left:-12%;right:-18%;bottom:-38%;height:62%;border-radius:50%;
+  background:linear-gradient(#123c27,#0b2a1c)}
+.sky .tree{position:absolute;right:9%;bottom:22%;width:118px;height:150px}
+.sky .trunk{position:absolute;left:52px;bottom:0;width:20px;height:88px;border-radius:50% 20% 10% 30%;background:#70503a}
+.sky .crown{position:absolute;inset:0 0 44px;border-radius:48%;
+  background:radial-gradient(circle at 35% 30%,#4a8c5f,#16482f 68%,#0b2a1c)}
+.sky .fruit{position:absolute;width:16px;height:16px;border-radius:50%;padding:0;z-index:2}
+.sky .peach{left:26px;top:46px;background:var(--rose);box-shadow:0 0 12px var(--rose)}
+.sky .pear{right:20px;top:66px;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.sky .plum{right:50px;top:24px;background:var(--violet);box-shadow:0 0 12px var(--violet)}
+.sky .bun{position:absolute;left:24%;bottom:26%;width:44px;height:32px;border-radius:50%;
+  background:#e2e9e4;color:#264338;display:grid;place-items:center;font-weight:800;font-size:13px}
+.sky .bun:before,.sky .bun:after{content:"";position:absolute;top:-21px;width:12px;height:28px;border-radius:70% 70% 30% 30%;background:#e2e9e4}
+.sky .bun:before{left:7px;transform:rotate(-8deg)}.sky .bun:after{right:7px;transform:rotate(9deg)}
+.sky .hint{position:absolute;left:1rem;bottom:1rem;right:1rem;font-size:.78rem;color:var(--cyan);opacity:.7;z-index:2}
+.sky .line{position:absolute;left:1rem;top:1rem;right:1rem;z-index:2;text-align:center;
+  font-style:italic;font-size:clamp(1.3rem,4.2vw,2.2rem);color:var(--cream);text-shadow:0 2px 18px rgba(0,0,0,.45)}
+
+/* weather rail */
+.rail{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 .4rem;align-items:center}
+button{font:inherit;border:0;border-radius:999px;padding:.5rem 1rem;cursor:pointer;min-height:44px}
+button.gold{background:var(--gold);color:#1a140c}
+button.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(127,208,200,.4)}
+button.wine{background:var(--wine);color:var(--cream)}
+button.on{background:var(--cornflower);color:#0d1520;border-color:var(--cornflower)}
+.k{letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--cyan)}
+h1{font-weight:500;margin:.15rem 0 .5rem}
+.sub{opacity:.75;margin-bottom:1.2rem}
+
+/* doors */
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin:1.2rem 0}
+a.door{text-decoration:none;color:var(--ink);border:1px solid rgba(240,199,94,.28);border-radius:16px;
+  padding:1rem .8rem;background:rgba(0,0,0,.28);transition:border-color .3s,transform .3s}
+a.door:hover{border-color:rgba(240,199,94,.6);transform:translateY(-2px)}
+a.door strong{display:block;color:var(--gold);font-weight:500}
+a.door span{display:block;font-size:.82rem;opacity:.78;margin-top:.25rem}
+.note{font-size:.85rem;opacity:.65;margin-top:1.4rem}
+#log{font-size:.9rem;opacity:.8;margin-top:.6rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="k">anewgam · the well · v0.1</div>
+<h1 class="display">the way home stays open</h1>
+<p class="sub">Cobalt dusk. Red rain. Peach light. One room, every door.</p>
+
+<div class="sky" id="sky" title="Tap to change the weather">
+  <div class="veil"></div>
+  <canvas class="rain" id="rain" aria-hidden="true"></canvas>
+  <div class="moon"></div>
+  <div class="hill"></div>
+  <div class="tree"><div class="trunk"></div><div class="crown"></div>
+    <button class="fruit peach" data-fruit="rose-gold peach" aria-label="rose-gold peach"></button>
+    <button class="fruit pear" data-fruit="cyan pear" aria-label="cyan pear"></button>
+    <button class="fruit plum" data-fruit="violet plum" aria-label="violet plum"></button>
+  </div>
+  <div class="bun">·ᴗ·</div>
+  <p class="line display" id="line">the water remembers.</p>
+  <span class="hint">tap the sky · rain, peach, or quiet · the fruit answers</span>
+</div>
+
+<div class="rail">
+  <button class="wine on" id="w-rain" type="button">red rain</button>
+  <button class="ghost" id="w-peach" type="button">peach</button>
+  <button class="ghost" id="w-quiet" type="button">quiet</button>
+</div>
+<p id="log">Red rain on the cobalt well. The fruit is still.</p>
+
+<div class="doors">
+  <a class="door" href="/peachfall/index.html"><strong>The Peachfall</strong><span>she falls · the world answers with mercy</span></a>
+  <a class="door" href="/goober/index.html"><strong>The Crossing</strong><span>find your line · make it yours</span></a>
+  <a class="door" href="/red-reign/index.html"><strong>Red Reign</strong><span>the garden · six beats</span></a>
+  <a class="door" href="/anewgam-for-steven-cockpit/index.html"><strong>The Cockpit</strong><span>Steven's living room</span></a>
+  <a class="door" href="/cobalt/index.html"><strong>Cobalt</strong><span>the color study</span></a>
+  <a class="door" href="/prismatene/index.html"><strong>Prismatene</strong><span>candidate · same dream</span></a>
+  <a class="door" href="/everfallen/index.html"><strong>Everfallen</strong><span>the verbal door</span></a>
+  <a class="door" href="/story.html"><strong>Story mode</strong><span>the room hears</span></a>
+  <a class="door" href="https://saelion.co/cobalt"><strong>saelion.co</strong><span>the skin</span></a>
+  <a class="door" href="https://relay.saelion.co/"><strong>relay</strong><span>Ways</span></a>
+</div>
+
+<p class="note">Everything here is local. No audio, no mic, no upload. The fruit is a choice, not a score. · <a href="/">ways list</a></p>
+</main>
+<script>
+const sky = document.getElementById('sky);
+const line = document.getElementById('line);
+const log = document.getElementById('log);
+const rainCv = document.getElementById('rain);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BEATS = [
+  {w:'rain', line:'the water remembers.', log:'Red rain on the cobalt well. The fruit is still.'},
+  {w:'peach', line:'peaches rise. not scored.', log:'Peach light on the hill. The fruit glows.'},
+  {w:'quiet', line:'beside, not ahead.', log:'Quiet cobalt. The moon holds.'},
+  {w:'rain', line:'a living crown.', log:'Red rain again. The crown grows, not taken.'}
+];
+let i = 0, weather = 'rain';
+
+function paint(){
+  const b = BEATS[i];
+  weather = b.w;
+  line.textContent = b.line;
+  log.textContent = b.log;
+  ['w-rain','w-peach','w-quiet'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById('w-'+weather).classList.add('on);
+  rain(weather === 'rain);
+  try { localStorage.setItem('wellPos', String(i)); } catch(e){} }
+function rain(on){
+  if(!rainCv) return;
+  const ctx = rainCv.getContext('2d);
+  if(!on || reduce){ ctx.clearRect(0,0,rainCv.width,rainCv.height); rainCv._stop = true; return; }
+  rainCv._stop = false;
+  const drops = Array.from({length:40}, () => ({x:Math.random(), y:Math.random(), v:0.004+Math.random()*0.008, len:0.04+Math.random()*0.05}));
+  const resize = () => { const dpr = Math.min(devicePixelRatio||1, 2); rainCv.width = rainCv.clientWidth*dpr; rainCv.height = rainCv.clientHeight*dpr; };
+  resize();
+  (function tick(){
+    if(rainCv._stop) return;
+    ctx.clearRect(0,0,rainCv.width,rainCv.height);
+    ctx.strokeStyle = 'rgba(247,239,230,.34)';
+    drops.forEach(d => { d.y += d.v; if(d.y > 1) d.y = -d.len; ctx.beginPath(); ctx.moveTo(d.x*rainCv.width, d.y*rainCv.height); ctx.lineTo(d.x*rainCv.width+5, (d.y+d.len)*rainCv.height); ctx.stroke(); });
+    requestAnimationFrame(tick);
+  })(); }
+sky.addEventListener('click', () => { i = (i+1) % BEATS.length; paint(); });
+['w-rain','w-peach','w-quiet'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () => {
+    const w = id.slice(2);
+    i = BEATS.findIndex(b => b.w === w);
+    if(i < 0) i = 0;
+    paint(); }); });
+document.querySelectorAll('.fruit').forEach(f => f.addEventListener('click', e => {
+  e.stopPropagation();
+  log.textContent = 'you chose the ' + f.dataset.fruit + '. the world grows a little.';
+  f.classList.add('on);
+  setTimeout(() => f.classList.remove('on'), 1600); }));
+try {
+  const s = localStorage.getItem('wellPos);
+  const n = s === null || s.trim() === '' ? NaN : Number(s);
+  if(Number.isInteger(n) && n >= 0 && n < BEATS.length) i = n;
+} catch(e){} 
+paint(); 
+</script>
+</body>
+</html>
