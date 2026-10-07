@@ -29,11 +29,23 @@ ul{padding-left:1.1rem}
 :fullscreen .exit,:-webkit-full-screen .exit{position:fixed;top:1rem;right:1rem;z-index:5}
 .exit{display:none}
 :fullscreen .exit,:-webkit-full-screen .exit{display:inline-block}
+/* cobalt scene — smoky cobalt-gray field, sheer layer, cornflower edges only */
+.cobalt-scene{border:1px solid rgba(143,180,232,.35);border-radius:16px;padding:1rem 1rem 1.1rem;background:linear-gradient(160deg,#1c2838,#2a3a52 45%,#3d4f6b);min-height:9rem;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden}
+.cobalt-scene:hover{border-color:rgba(143,180,232,.6)}
+.cobalt-scene .hint{font-size:.78rem;color:var(--cyan);opacity:.7;margin-top:.6rem}
+.cobalt-scene .layer{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 1.2s ease}
+.cobalt-scene .layer.sheer{background:radial-gradient(ellipse at 50% 40%,rgba(170,200,230,.32),transparent 70%)}
+.cobalt-scene .layer.corn{background:radial-gradient(ellipse at 88% 12%,rgba(143,180,232,.45),transparent 35%),radial-gradient(ellipse at 12% 88%,rgba(143,180,232,.45),transparent 35%)}
+.cobalt-scene.on .layer{opacity:1}
+.cobalt-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.cobalt-controls button{font:inherit;background:transparent;color:var(--cyan);border:1px solid rgba(127,208,200,.4);border-radius:999px;padding:.4rem .8rem;cursor:pointer}
+.cobalt-controls button.on{background:#8fb4e8;color:#0d1520;border-color:#8fb4e8}
+.cobalt-controls button.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(127,208,200,.4)}
 </style>
 </head>
 <body>
 <main>
-<div class="k">story mode · sim · v0.2 · not an accept</div>
+<div class="k">story mode · sim · v0.3 · not an accept</div>
 <h1 id="title">The room hears</h1>
 <div class="scene" id="scene" title="Double-click or double-tap to go immersive full-screen">
   <span class="hint">double-click or double-tap the scene → immersive full-screen · Esc or exit to leave</span>
@@ -47,13 +59,28 @@ ul{padding-left:1.1rem}
 <p id="log">Sim is labeled. Real mic stays on this phone until you stop it.</p>
 <p class="hint">Buttons and strawberry driving stay separate from the scene — they never trigger full-screen.</p>
 <p id="fsnote" class="hint"></p>
+
+<!-- cobalt scene: skippable, silent, optional color controls -->
+<div class="cobalt-scene" id="cobaltScene" title="The cobalt scene — skippable">
+  <div class="layer sheer" id="cobaltSheer"></div>
+  <div class="layer corn" id="cobaltCorn"></div>
+  <p>The cobalt scene. Smoky cobalt-gray base. Sheer luminous layer. Cornflower only at the edges — highlights, never the field.</p>
+  <span class="hint">skip with Continue · optional silent controls below · tap the scene for full-screen</span>
+</div>
+<div class="cobalt-controls">
+  <button id="cobaltSheerBtn" type="button">Sheer layer</button>
+  <button id="cobaltCornBtn" type="button">Cornflower edges</button>
+  <button id="cobaltResetBtn" class="ghost" type="button">Reset</button>
+</div>
+
 <h2>The real doors</h2>
 <ul>
 <li><a href="everfallen/index.html">Everfallen verbal</a> — the conversation already published</li>
 <li><a href="room/index.html">Room button</a> — same ear, plainer page</li>
 <li><a href="room/docker-compose.yml">Tower recipe</a> — whisper :8771, ollama :11434. You start it on the box.</li>
 <li><a href="verbal/index.html">Verbal board</a> — hooks, including sae:// names</li>
-<li><a href="prismatene/">Prismatene</a> · <a href="peachfall/">Peachfall</a> · <a href="goober/">Goober</a></li>
+<li><a href="cobalt/index.html">Cobalt</a> · <a href="prismatene/">Prismatene</a> · <a href="peachfall/">Peachfall</a> · <a href="goober/">Goober</a></li>
+<li><a href="https://saelion.co/cobalt">saelion.co/cobalt</a> — the color study live</li>
 <li><a href="https://saelion.co/">saelion.co</a> · <a href="https://relay.saelion.co/">relay.saelion.co</a></li>
 <li><a href="https://zinsilverbluhaz-el.grok.me/">Everfallen card host</a></li>
 </ul>
@@ -65,24 +92,34 @@ const scenes = [
   {t:'Push', b:'One button. The phone starts listening. No second device required. If the phone is in your pocket in another room, it hears the pocket.'},
   {t:'The hearth', b:'Tower is the other door. On the box: docker compose up, from the recipe. Whisper on tower.local:8771. A small local model can write the note after. If Tower is quiet, the clip stays on the phone.'},
   {t:'The doors', b:'Everfallen already has a verbal page. Prismatene is the candidate view. Peachfall and Goober are the play doors. saelion.co is the skin. relay.saelion.co is Ways. sae:// names are hooks, not resolvers.'},
+  {t:'Cobalt', b:'The cobalt scene. Smoky cobalt-gray base. Sheer luminous layer. Cornflower only at the edges. Skippable — Continue moves on. The color controls are optional and silent.'},
   {t:'Sim', b:'The sim walks this without a mic. The real button uses this phone. Either way, the story is the same: ear here, hearth there, doors linked.'}
 ];
 let i = 0;
 const scene = document.getElementById('scene);
 const title = document.getElementById('title);
 const log = document.getElementById('log);
-const fsnote = document.getElementById('fsnote);
+const fsnote = document.getElementById('fsnote');
 function show(n){
   i = n % scenes.length;
   title.textContent = scenes[i].t;
   scene.innerHTML = '<p>' + scenes[i].b + '</p><span class="hint">double-click or double-tap the scene → immersive full-screen · Esc or exit to leave</span>';
+  try { localStorage.setItem('storyPos', String(i)); } catch (e) { /* private mode — position not saved */ }
+  // cobalt scene: show optional silent controls
+  const cobaltOn = (i === 4);
+  document.getElementById('cobaltScene').style.display = cobaltOn ? '' : 'none';
+  document.querySelector('.cobalt-controls').style.display = cobaltOn ? '' : 'none';
 }
-show(0);
+try {
+  const saved = parseInt(localStorage.getItem('storyPos'), 10);
+  if (!isNaN(saved) && saved >= 0 && saved < scenes.length) i = saved;
+} catch (e) { /* ignore */ }
+show(i);
 document.getElementById('next').onclick = () => show(i+1);
 document.getElementById('sim').onclick = () => {
   log.textContent = 'Sim — not a recording. Phone on the table. Button down. Clip stays local. Tower recipe named, not started. Doors linked.';
-  show(4);
-};
+  show(5);
+);
 const recBtn = document.getElementById('rec);
 const player = document.getElementById('play'); // may be absent
 let rec, chunks=[], stream;
@@ -109,7 +146,7 @@ recBtn.onclick = async () => {
   rec.start();
   recBtn.textContent = 'Stop the ear';
   log.textContent = 'Listening. This is the phone in the room, not a call.';
-};
+);
 
 /* immersive: double-click or double-tap the OPEN SCENE only */
 function enterFS(){
@@ -129,13 +166,13 @@ function exitFS(){
 }
 document.addEventListener('dblclick', e => {
   if (e.target.closest('button, a, input, select, textarea, audio, video')) return;
-  if (!e.target.closest('.scene')) return;
+  if (!e.target.closest('.scene, .cobalt-scene')) return;
   enterFS();
 });
 let lastTap = 0;
 document.addEventListener('touchend', e => {
   if (e.target.closest('button, a, input, select, textarea, audio, video')) return;
-  if (!e.target.closest('.scene')) return;
+  if (!e.target.closest('.scene, .cobalt-scene')) return;
   const now = Date.now();
   if (now - lastTap < 400) { e.preventDefault(); enterFS(); lastTap = 0; }
   else lastTap = now;
@@ -145,6 +182,31 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') exitFS(); })
 document.addEventListener('fullscreenchange', () => {
   fsnote.textContent = document.fullscreenElement ? 'Immersive. Esc or exit leaves.' : '';
 });
+
+/* cobalt scene: optional silent color controls */
+const cobaltScene = document.getElementById('cobaltScene);
+const cobaltSheerBtn = document.getElementById('cobaltSheerBtn);
+const cobaltCornBtn = document.getElementById('cobaltCornBtn);
+const cobaltResetBtn = document.getElementById('cobaltResetBtn);
+let cobaltSheer = false, cobaltCorn = false;
+function cobaltPaint(){
+  cobaltScene.classList.toggle('on', cobaltSheer || cobaltCorn);
+  document.getElementById('cobaltSheer').style.opacity = cobaltSheer ? '' : '0';
+  document.getElementById('cobaltCorn').style.opacity = cobaltCorn ? '' : '0';
+  cobaltSheerBtn.classList.toggle('on', cobaltSheer);
+  cobaltCornBtn.classList.toggle('on', cobaltCorn);
+}
+cobaltScene.addEventListener('click', e => {
+  if (e.target.closest('button')) return;
+  if (!cobaltSheer && !cobaltCorn) { cobaltSheer = true; }
+  else if (cobaltSheer && !cobaltCorn) { cobaltCorn = true; }
+  else { cobaltSheer = false; cobaltCorn = false; }
+  cobaltPaint();
+});
+cobaltSheerBtn.addEventListener('click', () => { cobaltSheer = !cobaltSheer; cobaltPaint(); });
+cobaltCornBtn.addEventListener('click', () => { cobaltCorn = !cobaltCorn; cobaltPaint(); });
+cobaltResetBtn.addEventListener('click', () => { cobaltSheer = false; cobaltCorn = false; cobaltPaint(); });
+cobaltPaint();
 </script>
 </body>
 </html>
