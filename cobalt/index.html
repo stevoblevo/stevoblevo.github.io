@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cobalt Gray · color study</title>
+<meta name="description" content="Silent interactive color study. Smoky cobalt-gray base, sheer luminous layers, cornflower only at the edges."/>
+<style>
+:root{
+  --cobalt:#2a3a52;      /* smoky cobalt gray base */
+  --cobalt-deep:#1c2838; /* deeper, drabber undertone */
+  --cobalt-light:#3d4f6b;/* lifted, still gray-blue */
+  --sheer:rgba(160,190,220,.18); /* sheer luminous layer */
+  --sheer-strong:rgba(170,200,230,.32);
+  --cornflower:#8fb4e8;  /* highlights only, never the field */
+  --cornflower-soft:rgba(143,180,232,.45);
+  --gold:#F0C75E;
+  --cyan:#7fd0c8;
+  --ink:#f4efe6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(900px 480px at 50% -10%, rgba(143,180,232,.10), transparent 55%),
+             linear-gradient(180deg,var(--cobalt-deep),var(--cobalt) 60%);
+  color:var(--ink);font:17px/1.5 Georgia,serif;
+  overflow-x:hidden;
+}
+main{max-width:720px;margin:0 auto;padding:1.6rem 1.1rem 4rem}
+.k{letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--cyan)}
+h1{font-weight:500;margin:.2rem 0 .6rem}
+.sub{opacity:.75;font-size:.95rem;margin-bottom:1.4rem}
+
+/* the field — the whole study lives here */
+.field{
+  position:relative;border-radius:20px;overflow:hidden;
+  min-height:52vh;cursor:pointer;touch-action:manipulation;
+  border:1px solid rgba(240,199,94,.25);
+  background:linear-gradient(160deg,var(--cobalt-deep),var(--cobalt) 45%,var(--cobalt-light));
+  transition:transform .4s ease, box-shadow .4s ease;
+}
+.field:hover{transform:scale(1.01);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.layer{
+  position:absolute;inset:0;opacity:0;pointer-events:none;
+  transition:opacity 1.2s ease;
+}
+.layer.sheer{background:radial-gradient(ellipse at 50% 40%,var(--sheer-strong),transparent 70%);}
+.layer.cornflower{
+  background:
+    radial-gradient(ellipse at 88% 12%,var(--cornflower-soft),transparent 35%),
+    radial-gradient(ellipse at 12% 88%,var(--cornflower-soft),transparent 35%);
+}
+.field.on .layer{opacity:1}
+.field .hint{
+  position:absolute;left:1rem;bottom:1rem;right:1rem;
+  font-size:.78rem;color:var(--cyan);opacity:.7;
+}
+
+/* controls — separate from the field, never trigger it */
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+button{
+  font:inherit;background:var(--gold);color:#1a140c;border:0;border-radius:999px;
+  padding:.5rem 1rem;cursor:pointer;
+}
+button.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(127,208,200,.4)}
+button.on{background:var(--cornflower);color:#0d1520}
+
+/* swatches */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.7rem;margin:1.2rem 0}
+.swatch{border-radius:12px;padding:1rem .6rem;text-align:center;font-size:.78rem;letter-spacing:.04em}
+.swatch .dot{width:42px;height:42px;border-radius:50%;margin:0 auto .5rem;border:1px solid rgba(255,255,255,.15)}
+.swatch.base .dot{background:var(--cobalt)}
+.swatch.sheer .dot{background:var(--sheer-strong)}
+.swatch.edge .dot{background:var(--cornflower)}
+
+#log{font-size:.9rem;opacity:.8;margin-top:.8rem}
+.note{font-size:.85rem;opacity:.65;margin-top:1.4rem}
+a{color:var(--gold)}
+</style>
+</head>
+<body>
+<main>
+<div class="k">color study · v0.1 · silent</div>
+<h1>Cobalt Gray</h1>
+<p class="sub">Smoky cobalt-gray base. Sheer luminous layers. Cornflower only at the edges.</p>
+
+<div class="field" id="field" title="Tap or click the field to toggle the layers">
+  <div class="layer sheer" id="sheer"></div>
+  <div class="layer cornflower" id="cornflower"></div>
+  <span class="hint">tap the field · sheer and cornflower layers breathe in and out</span>
+</div>
+
+<div class="controls">
+  <button id="toggleSheer" type="button">Sheer layer</button>
+  <button id="toggleCorn" type="button">Cornflower edges</button>
+  <button id="reset" class="ghost" type="button">Reset</button>
+</div>
+
+<div class="swatches">
+  <div class="swatch base"><div class="dot"></div>cobalt gray<br>the field</div>
+  <div class="swatch sheer"><div class="dot"></div>sheer<br>luminous</div>
+  <div class="swatch edge"><div class="dot"></div>cornflower<br>edges only</div>
+</div>
+
+<p id="log">Quiet. The field is the base — everything else is a layer on top.</p>
+<p class="note">This is a study, not a claim. No audio, no mic, no container. Just color and light. · <a href="../story.html">story mode</a> · <a href="../everfallen/index.html">everfallen</a></p>
+</main>
+<script>
+const field = document.getElementById('field');
+const sheerBtn = document.getElementById('toggleSheer');
+const cornBtn = document.getElementById('toggleCorn);
+const log = document.getElementById('log');
+let sheerOn = false, cornOn = false;
+
+function paint(){
+  field.classList.toggle('on', sheerOn || cornOn);
+  document.getElementById('sheer').style.opacity = sheerOn ? '' : '0';
+  document.getElementById('cornflower').style.opacity = cornOn ? '' : '0';
+  sheerBtn.classList.toggle('on', sheerOn);
+  cornBtn.classList.toggle('on', cornOn);
+  const parts = [];
+  if (sheerOn) parts.push('sheer luminous layer glowing through the gray-drab base.');
+  if (cornOn) parts.push('cornflower flaring only at the rim — highlights, never the field.');
+  log.textContent = parts.length ? parts.join(' ') : 'Quiet. The field is the base — everything else is a layer on top.';
+}
+
+field.addEventListener('click', () => {
+  // cycle: off → sheer → sheer+cornflower → off
+  if (!sheerOn && !cornOn) { sheerOn = true; }
+  else if (sheerOn && !cornOn) { cornOn = true; }
+  else { sheerOn = false; cornOn = false; }
+  paint();
+});
+sheerBtn.addEventListener('click', () => { sheerOn = !sheerOn; paint(); });
+cornBtn.addEventListener('click', () => { cornOn = !cornOn; paint(); });
+document.getElementById('reset').addEventListener('click', () => { sheerOn = false; cornOn = false; paint(); });
+paint();
+</script>
+</body>
+</html>
