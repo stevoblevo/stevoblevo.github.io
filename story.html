@@ -4,34 +4,49 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Story mode · the room hears</title>
-<meta name="description" content="Story mode and sim. Phone records the room. Tower recipe is the hearth. Not a claim the container is up."/>
+<meta name="description" content="Story mode and sim. Phone records the room. Tower recipe is the hearth. Double-click or double-tap the open scene for immersive full-screen. Not a claim the container is up."/>
 <style>
 :root{--gold:#F0C75E;--cyan:#7fd0c8;--ink:#f4efe6;--bg:#12100e}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(900px 480px at 50% -10%, rgba(240,199,94,.16), transparent 55%), linear-gradient(180deg,#16120e,#12100e 60%);color:var(--ink);font:17px/1.5 Georgia,serif}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(900px 480px at 50% -10%, rgba(240,199,94,.16), transparent 55%), linear-gradient(180deg,#16120e,#12100e 60%);color:var(--ink);font:17px/1.5 Georgia,serif}
 main{max-width:680px;margin:0 auto;padding:1.6rem 1.1rem 4rem}
 .k{letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--cyan)}
 h1{font-weight:500;margin:.2rem 0 .6rem}
-.scene{border:1px solid rgba(240,199,94,.35);border-radius:16px;padding:1rem 1rem 1.1rem;background:rgba(0,0,0,.25);min-height:9rem}
+.scene{border:1px solid rgba(240,199,94,.35);border-radius:16px;padding:1rem 1rem 1.1rem;background:rgba(0,0,0,.25);min-height:9rem;cursor:pointer;touch-action:manipulation}
+.scene:hover{border-color:rgba(240,199,94,.6)}
+.scene .hint{font-size:.78rem;color:var(--cyan);opacity:.7;margin-top:.6rem}
 button,a.btn{font:inherit;background:var(--gold);color:#1a140c;border:0;border-radius:999px;padding:.55rem 1rem;cursor:pointer;text-decoration:none;display:inline-block;margin:.25rem .35rem .25rem 0}
 button.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(127,208,200,.4)}
 a{color:var(--gold)}
 ul{padding-left:1.1rem}
 #log{font-size:.92rem;opacity:.85}
+/* immersive full-screen — hides every bit of chrome the browser allows */
+:fullscreen,:-webkit-full-screen{background:radial-gradient(900px 480px at 50% -10%, rgba(240,199,94,.16), transparent 55%), linear-gradient(180deg,#16120e,#12100e 60%);color:var(--ink)}
+:fullscreen main,:-webkit-full-screen main{max-width:none;width:100vw;height:100vh;margin:0;padding:2rem 1.5rem 3rem;display:flex;flex-direction:column;justify-content:center}
+:fullscreen .scene,:-webkit-full-screen .scene{min-height:40vh;font-size:1.35rem;border-radius:20px}
+:fullscreen h1,:-webkit-full-screen h1{font-size:2.2rem}
+:fullscreen .exit,:-webkit-full-screen .exit{position:fixed;top:1rem;right:1rem;z-index:5}
+.exit{display:none}
+:fullscreen .exit,:-webkit-full-screen .exit{display:inline-block}
 </style>
 </head>
 <body>
 <main>
-<div class="k">story mode · sim · v0.1 · not an accept</div>
+<div class="k">story mode · sim · v0.2 · not an accept</div>
 <h1 id="title">The room hears</h1>
-<div class="scene" id="scene"></div>
+<div class="scene" id="scene" title="Double-click or double-tap to go immersive full-screen">
+  <span class="hint">double-click or double-tap the scene → immersive full-screen · Esc or exit to leave</span>
+</div>
 <p>
   <button id="next" type="button">Continue</button>
   <button id="sim" class="ghost" type="button">Run the sim</button>
   <button id="rec" class="ghost" type="button">Phone ear — real mic</button>
+  <button id="exit" class="exit ghost" type="button">Exit full-screen</button>
 </p>
 <p id="log">Sim is labeled. Real mic stays on this phone until you stop it.</p>
-<audio id="play" controls></audio>
+<p class="hint">Buttons and strawberry driving stay separate from the scene — they never trigger full-screen.</p>
+<p id="fsnote" class="hint"></p>
 <h2>The real doors</h2>
 <ul>
 <li><a href="everfallen/index.html">Everfallen verbal</a> — the conversation already published</li>
@@ -53,13 +68,14 @@ const scenes = [
   {t:'Sim', b:'The sim walks this without a mic. The real button uses this phone. Either way, the story is the same: ear here, hearth there, doors linked.'}
 ];
 let i = 0;
-const scene = document.getElementById('scene');
-const title = document.getElementById('title');
-const log = document.getElementById('log');
+const scene = document.getElementById('scene);
+const title = document.getElementById('title);
+const log = document.getElementById('log);
+const fsnote = document.getElementById('fsnote);
 function show(n){
   i = n % scenes.length;
   title.textContent = scenes[i].t;
-  scene.innerHTML = '<p>' + scenes[i].b + '</p>';
+  scene.innerHTML = '<p>' + scenes[i].b + '</p><span class="hint">double-click or double-tap the scene → immersive full-screen · Esc or exit to leave</span>';
 }
 show(0);
 document.getElementById('next').onclick = () => show(i+1);
@@ -67,8 +83,8 @@ document.getElementById('sim').onclick = () => {
   log.textContent = 'Sim — not a recording. Phone on the table. Button down. Clip stays local. Tower recipe named, not started. Doors linked.';
   show(4);
 };
-const recBtn = document.getElementById('rec');
-const player = document.getElementById('play');
+const recBtn = document.getElementById('rec);
+const player = document.getElementById('play'); // may be absent
 let rec, chunks=[], stream;
 recBtn.onclick = async () => {
   if (rec && rec.state === 'recording') { rec.stop(); recBtn.textContent = 'Phone ear — real mic'; return; }
@@ -79,11 +95,12 @@ recBtn.onclick = async () => {
   rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   rec.onstop = async () => {
     stream.getTracks().forEach(t => t.stop());
-    const blob = new Blob(chunks, {type: rec.mimeType || 'audio/webm'});
-    player.src = URL.createObjectURL(blob);
+    if (player) {
+      player.src = URL.createObjectURL(new Blob(chunks, {type: rec.mimeType || 'audio/webm'}));
+    }
     log.textContent = 'Real clip on this phone. Asking Tower...';
     try {
-      const res = await fetch('http://tower.local:8771/transcribe', {method:'POST', body: blob});
+      const res = await fetch('http://tower.local:8771/transcribe', {method:'POST', body: new Blob(chunks)});
       log.textContent = res.ok ? 'Tower accepted the clip.' : 'Tower did not accept. Clip stays on the phone.';
     } catch (e) {
       log.textContent = 'Tower quiet. Clip stays on the phone. Recipe is not running from this page.';
@@ -93,6 +110,41 @@ recBtn.onclick = async () => {
   recBtn.textContent = 'Stop the ear';
   log.textContent = 'Listening. This is the phone in the room, not a call.';
 };
+
+/* immersive: double-click or double-tap the OPEN SCENE only */
+function enterFS(){
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+  if (!req) { fsnote.textContent = 'This browser does not support full-screen API — chrome cannot be hidden here.'; return; }
+  Promise.resolve(req.call(el)).then(() => {
+    fsnote.textContent = 'Immersive. Esc or the exit button leaves full-screen.';
+  }).catch(() => {
+    fsnote.textContent = 'Full-screen was blocked. Tap once more, or allow it in the browser prompt.';
+  });
+}
+function exitFS(){
+  const doc = document;
+  const ex = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
+  if (ex) Promise.resolve(ex.call(doc)).catch(()=>{});
+}
+document.addEventListener('dblclick', e => {
+  if (e.target.closest('button, a, input, select, textarea, audio, video')) return;
+  if (!e.target.closest('.scene')) return;
+  enterFS();
+});
+let lastTap = 0;
+document.addEventListener('touchend', e => {
+  if (e.target.closest('button, a, input, select, textarea, audio, video')) return;
+  if (!e.target.closest('.scene')) return;
+  const now = Date.now();
+  if (now - lastTap < 400) { e.preventDefault(); enterFS(); lastTap = 0; }
+  else lastTap = now;
+}, {passive:false});
+document.getElementById('exit').onclick = exitFS;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') exitFS(); });
+document.addEventListener('fullscreenchange', () => {
+  fsnote.textContent = document.fullscreenElement ? 'Immersive. Esc or exit leaves.' : '';
+});
 </script>
 </body>
 </html>
