@@ -4,35 +4,28 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <meta name="theme-color" content="#1c2838"/>
-<meta name="color-scheme" content="dark"/>
-<title>Saelion · astral matrix</title>
-<meta name="description" content="Immersive 77-node astral field on smoky cobalt dusk. Real doors. Silent. Local."/>
+<title>Saelion · astral matrix v0.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,520&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Outfit:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --cobalt:#2a3a52; --cobalt-deep:#1c2838; --sheer:rgba(170,200,230,.32);
-  --cornflower:#8fb4e8; --gold:#F0C75E; --cyan:#7fd0c8; --ink:#f4efe6;
-  --wine:#8a3d44; --violet:#b59aff;
-}
+:root{--cobalt:#2a3a52;--deep:#1c2838;--corn:#8fb4e8;--cyan:#7fd0c8;--gold:#F0C75E;--ink:#f4efe6;--wine:#8a3d44}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#0e1210;color:var(--ink);font:16px/1.45 Outfit,system-ui,sans-serif;overflow:hidden}
-canvas{position:fixed;inset:0;z-index:0;display:block}
+canvas{position:fixed;inset:0;z-index:0}
 .ui{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;pointer-events:none}
-.top{padding:1.2rem 1.4rem;display:flex;justify-content:space-between;align-items:flex-start}
+.top{padding:1.2rem 1.4rem;display:flex;justify-content:space-between}
 .k{letter-spacing:.16em;text-transform:uppercase;font-size:.7rem;color:var(--cyan)}
-h1{font-family:Fraunces,serif;font-weight:500;font-size:clamp(1.6rem,4vw,2.4rem);margin:.1rem 0}
+h1{font-family:Fraunces,serif;font-weight:500;font-size:clamp(1.6rem,4vw,2.4rem)}
 .sub{opacity:.7;font-size:.9rem}
-.rail{pointer-events:auto;display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}
+.rail{pointer-events:auto;display:flex;gap:.5rem;flex-wrap:wrap}
 button{font:inherit;background:rgba(28,40,56,.7);color:var(--cyan);border:1px solid rgba(143,180,232,.4);border-radius:999px;padding:.45rem .9rem;cursor:pointer;backdrop-filter:blur(8px)}
-button:hover{border-color:var(--cornflower);color:var(--ink)}
-.doors{pointer-events:auto;margin-top:auto;padding:1rem 1.4rem 1.6rem;display:flex;flex-wrap:wrap;gap:.6rem;max-width:100%}
-a.door{text-decoration:none;color:var(--ink);background:rgba(14,18,16,.65);border:1px solid rgba(240,199,94,.3);border-radius:12px;padding:.6rem .8rem;backdrop-filter:blur(6px);font-size:.85rem;transition:border-color .25s,transform .25s}
+button:hover,button.on{border-color:var(--corn);color:var(--ink)}
+.doors{pointer-events:auto;margin-top:auto;padding:1rem 1.4rem 1.6rem;display:flex;flex-wrap:wrap;gap:.6rem}
+a.door{text-decoration:none;color:var(--ink);background:rgba(14,18,16,.65);border:1px solid rgba(240,199,94,.3);border-radius:12px;padding:.6rem .8rem;backdrop-filter:blur(6px);font-size:.85rem}
 a.door:hover{border-color:var(--gold);transform:translateY(-2px)}
-a.door strong{display:block;color:var(--gold);font-weight:500}
-.hint{position:absolute;left:50%;bottom:5.5rem;transform:translateX(-50%);font-size:.78rem;color:var(--cyan);opacity:.6;text-align:center;pointer-events:none}
-@media (prefers-reduced-motion:reduce){canvas{display:none}}
+a.door strong{display:block;color:var(--gold)}
+.hint{position:absolute;left:50%;bottom:5.5rem;transform:translateX(-50%);font-size:.78rem;color:var(--cyan);opacity:.6;text-align:center}
+.score{position:absolute;top:5rem;right:1.4rem;font-size:.8rem;color:var(--gold);opacity:.8}
 </style>
 </head>
 <body>
@@ -40,87 +33,81 @@ a.door strong{display:block;color:var(--gold);font-weight:500}
 <div class="ui">
   <div class="top">
     <div>
-      <div class="k">saelion · astral matrix · v0.1</div>
+      <div class="k">saelion · astral matrix · v0.2</div>
       <h1>the field remembers</h1>
-      <p class="sub">77 nodes on cobalt dusk. Real doors. Silent.</p>
+      <p class="sub">77 nodes · mouse pulls · red rain optional · real games</p>
     </div>
     <div class="rail">
-      <button id="fs" type="button">full screen</button>
-      <button id="quiet" type="button">quiet</button>
+      <button id="fs">full</button>
+      <button id="quiet">quiet</button>
+      <button id="rain">red rain</button>
+      <button id="attract">attract</button>
     </div>
   </div>
-  <p class="hint">double-click or tap the field to enter immersive · Esc to leave</p>
+  <div class="score" id="score">nodes touched: 0</div>
+  <p class="hint">double-click immersive · click nodes to collect · doors open real games</p>
   <div class="doors">
-    <a class="door" href="/well/index.html"><strong>The Well</strong>cobalt dusk garden</a>
-    <a class="door" href="/cobalt/index.html"><strong>Cobalt</strong>color study</a>
-    <a class="door" href="/story.html"><strong>Story</strong>room hears</a>
-    <a class="door" href="/everfallen/index.html"><strong>Everfallen</strong>verbal</a>
-    <a class="door" href="/peachfall/index.html"><strong>Peachfall</strong></a>
-    <a class="door" href="/goober/index.html"><strong>Crossing</strong></a>
+    <a class="door" href="/well/index.html"><strong>Well</strong>garden</a>
+    <a class="door" href="/cobalt/index.html"><strong>Cobalt</strong>study</a>
+    <a class="door" href="/story.html"><strong>Story</strong></a>
+    <a class="door" href="/peachfall/index.html"><strong>Peachfall</strong>dream</a>
+    <a class="door" href="/buy-a-bunny/index.html"><strong>Bunny</strong></a>
     <a class="door" href="/red-reign/index.html"><strong>Red Reign</strong></a>
-    <a class="door" href="https://saelion.co/"><strong>saelion.co</strong>skin</a>
-    <a class="door" href="https://relay.saelion.co/"><strong>relay</strong>Ways</a>
-    <a class="door" href="/"><strong>doors</strong>root list</a>
+    <a class="door" href="/goober/index.html"><strong>Crossing</strong></a>
+    <a class="door" href="https://saelion.co/"><strong>saelion.co</strong></a>
   </div>
 </div>
 <script>
-const c = document.getElementById('c');
-const ctx = c.getContext('2d');
-let nodes = [], running = true;
-function resize(){ c.width = innerWidth; c.height = innerHeight; }
-resize(); addEventListener('resize', resize);
-function seed(){
-  nodes = Array.from({length:77}, () => ({
-    x: Math.random()*c.width, y: Math.random()*c.height,
-    r: 0.6 + Math.random()*1.8,
-    vx: (Math.random()-0.5)*0.35, vy: (Math.random()-0.5)*0.35,
-    phase: Math.random()*Math.PI*2, freq: 0.008 + Math.random()*0.02
-  }));
-}
+const c=document.getElementById('c'), ctx=c.getContext('2d');
+let nodes=[], running=true, rain=false, attract=false, mouse={x:-999,y:-999}, touched=0;
+function resize(){c.width=innerWidth;c.height=innerHeight} resize(); addEventListener('resize',resize);
+function seed(){ nodes=Array.from({length:77},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:0.6+Math.random()*1.8,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,phase:Math.random()*6.28,freq:.008+Math.random()*.02,collected:false})) }
 seed();
 function tick(){
   if(!running) return;
-  ctx.fillStyle = 'rgba(14,18,16,0.18)';
-  ctx.fillRect(0,0,c.width,c.height);
-  // constellations
-  for(let i=0;i<nodes.length;i++){
-    for(let j=i+1;j<nodes.length;j++){
-      const dx = nodes[i].x-nodes[j].x, dy = nodes[i].y-nodes[j].y;
-      const d = Math.hypot(dx,dy);
-      if(d < 140){
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(143,180,232,${(1-d/140)*0.22})`;
-        ctx.lineWidth = 0.6;
-        ctx.moveTo(nodes[i].x, nodes[i].y);
-        ctx.lineTo(nodes[j].x, nodes[j].y);
-        ctx.stroke();
-      }
+  ctx.fillStyle='rgba(14,18,16,.16)'; ctx.fillRect(0,0,c.width,c.height);
+  if(rain){
+    ctx.fillStyle='rgba(138,61,68,.08)';
+    for(let i=0;i<40;i++){
+      const x=Math.random()*c.width, y=Math.random()*c.height;
+      ctx.fillRect(x,y,1,8);
     }
   }
-  nodes.forEach(n => {
+  for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+    const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y, d=Math.hypot(dx,dy);
+    if(d<140){ ctx.beginPath(); ctx.strokeStyle=`rgba(143,180,232,${(1-d/140)*.2})`; ctx.lineWidth=.5; ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke(); }
+  }
+  nodes.forEach(n=>{
+    if(attract && mouse.x>0){
+      const dx=mouse.x-n.x, dy=mouse.y-n.y, d=Math.hypot(dx,dy)||1;
+      n.vx += dx/d * 0.015; n.vy += dy/d * 0.015;
+      n.vx *= .98; n.vy *= .98;
+    }
     n.phase += n.freq;
-    const a = 0.4 + Math.abs(Math.sin(n.phase))*0.6;
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(143,180,232,${a})`;
-    ctx.shadowBlur = n.r*6;
-    ctx.shadowColor = '#8fb4e8';
-    ctx.fill();
+    const a = n.collected ? .2 : .4 + Math.abs(Math.sin(n.phase))*.6;
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,6.28);
+    ctx.fillStyle = n.collected ? 'rgba(240,199,94,.4)' : `rgba(143,180,232,${a})`;
+    ctx.shadowBlur = n.r*5; ctx.shadowColor = n.collected ? '#F0C75E' : '#8fb4e8'; ctx.fill(); ctx.shadowBlur=0;
     n.x += n.vx; n.y += n.vy;
-    if(n.x<0||n.x>c.width) n.vx *= -1;
-    if(n.y<0||n.y>c.height) n.vy *= -1;
+    if(n.x<0||n.x>c.width) n.vx*=-1; if(n.y<0||n.y>c.height) n.vy*=-1;
   });
   requestAnimationFrame(tick);
 }
 tick();
-document.getElementById('quiet').onclick = () => { running = !running; if(running) tick(); };
-const fs = document.getElementById('fs');
-fs.onclick = () => {
-  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-  else document.exitFullscreen();
+addEventListener('mousemove', e=>{ mouse.x=e.clientX; mouse.y=e.clientY; });
+addEventListener('touchmove', e=>{ if(e.touches[0]){ mouse.x=e.touches[0].clientX; mouse.y=e.touches[0].clientY; } }, {passive:true});
+c.onclick = e=>{
+  const rect=c.getBoundingClientRect();
+  const x=e.clientX-rect.left, y=e.clientY-rect.top;
+  nodes.forEach(n=>{
+    if(!n.collected && Math.hypot(n.x-x,n.y-y)<n.r+8){ n.collected=true; touched++; document.getElementById('score').textContent='nodes touched: '+touched; }
+  });
 };
-c.ondblclick = () => fs.click();
-addEventListener('keydown', e => { if(e.key==='Escape' && document.fullscreenElement) document.exitFullscreen(); });
+document.getElementById('quiet').onclick=()=>{ running=!running; if(running) tick(); };
+document.getElementById('rain').onclick=function(){ rain=!rain; this.classList.toggle('on',rain); };
+document.getElementById('attract').onclick=function(){ attract=!attract; this.classList.toggle('on',attract); };
+document.getElementById('fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
+c.ondblclick=()=>document.getElementById('fs').click();
 </script>
 </body>
 </html>
