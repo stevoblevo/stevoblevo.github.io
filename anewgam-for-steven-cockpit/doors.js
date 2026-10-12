@@ -1,5 +1,6 @@
 /* Live-door map. Private polylite is named, not hosted. */
 window.__anewDoors = [
+  { id: "andso", hash: ["andso", "and-so", "hum"], title: "AND SO", href: "/and-so/index.html", live: true, line: "Hum, and the music follows · consonance first" },
   { id: "peachfall", hash: ["peachfall", "$peachfall"], title: "$peachfall", href: "/peachfall/", live: true, line: "Watch / play the dream" },
   { id: "goober", hash: ["goober", "crossing", "anewgam"], title: "Crossing", href: "/goober/", live: true, line: "Aiden door · find your line" },
   { id: "run", hash: ["run", "signal"], title: "Signal Run", href: "/goober/run/", live: true, line: "Ruins · lanterns · no wager" },
