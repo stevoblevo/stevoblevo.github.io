@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#1c2838"/>
+<title>Play · guided field</title>
+<meta name="description" content="Guided procedural play. Cobalt dusk, red rain option, dual-touch, 5D-named elements, real game doors. Silent. Local. Just works."/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500&family=Outfit:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--cobalt:#2a3a52;--deep:#1c2838;--sheer:rgba(170,200,230,.3);--corn:#8fb4e8;--gold:#F0C75E;--cyan:#7fd0c8;--ink:#f4efe6;--wine:#8a3d44;--peach:#ff9dbf}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--deep);color:var(--ink);font:16px Outfit,system-ui,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.ui{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;pointer-events:none}
+.top{padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:flex-start}
+h1{font-family:Fraunces,serif;font-size:clamp(1.5rem,4vw,2.2rem);margin:.1rem 0}
+.k{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+.rail{pointer-events:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+button{font:inherit;background:rgba(28,40,56,.75);color:var(--cyan);border:1px solid rgba(143,180,232,.4);border-radius:999px;padding:.4rem .8rem;cursor:pointer;backdrop-filter:blur(6px)}
+button.on{background:var(--corn);color:#0d1520}
+.doors{pointer-events:auto;margin-top:auto;padding:1rem;display:flex;flex-wrap:wrap;gap:.5rem}
+a.door{text-decoration:none;color:var(--ink);background:rgba(0,0,0,.45);border:1px solid rgba(240,199,94,.3);border-radius:10px;padding:.5rem .7rem;font-size:.8rem;backdrop-filter:blur(4px)}
+a.door:hover{border-color:var(--gold)}
+#log{text-align:center;font-size:.8rem;opacity:.7;padding:.3rem}
+@media(prefers-reduced-motion:reduce){canvas{display:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui">
+<div class="top">
+<div><div class="k">play · guided field · v0.1 · just works</div>
+<h1>touch the field</h1>
+<p style="opacity:.7;font-size:.9rem">5D elements: time · location · one · zero · touch · guided unlocks</p></div>
+<div class="rail">
+<button id="rain" type="button">red rain</button>
+<button id="fs" type="button">immersive</button>
+<button id="reset" type="button">reset progress</button>
+</div>
+</div>
+<div style="flex:1"></div>
+<div class="doors">
+<a class="door" href="/peachfall/index.html">Peachfall</a>
+<a class="door" href="/buy-a-bunny/index.html">Buy a Bunny</a>
+<a class="door" href="/goober/index.html">Crossing</a>
+<a class="door" href="/red-reign/index.html">Red Reign</a>
+<a class="door" href="/well/index.html">The Well</a>
+<a class="door" href="/cobalt/index.html">Cobalt</a>
+<a class="door" href="/astral/index.html">Astral</a>
+<a class="door" href="/story.html">Story</a>
+<a class="door" href="/everfallen/index.html">Everfallen</a>
+<a class="door" href="https://saelion.co/">saelion.co</a>
+<a class="door" href="/">all doors</a>
+</div>
+<p id="log">progress: start · touch or click to unlock layers</p>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+let nodes=[], rainOn=false, drops=[], progress=0, running=true;
+const MAX_PROG=5;
+function resize(){c.width=innerWidth;c.height=innerHeight;}
+resize();addEventListener('resize',resize);
+function seed(){
+  nodes=Array.from({length:48},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:1+Math.random()*2,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,phase:Math.random()*6.28}));
+  drops=Array.from({length:30},()=>({x:Math.random(),y:Math.random(),v:.004+Math.random()*.006,len:.03+Math.random()*.04}));
+}
+seed();
+function save(){try{localStorage.setItem('playProg',progress);}catch(e){}}
+function load(){try{const s=localStorage.getItem('playProg'); if(s) progress=Math.min(MAX_PROG,+s||0);}catch(e){}}
+load();
+function updateLog(){document.getElementById('log').textContent=`progress: ${progress}/${MAX_PROG} · 5D: time·location·one·zero·touch · guided`;}
+updateLog();
+function tick(){
+  if(!running) return;
+  ctx.fillStyle='rgba(28,40,56,.22)'; ctx.fillRect(0,0,c.width,c.height);
+  // sheer layer based on progress
+  const g=ctx.createRadialGradient(c.width*.5,c.height*.5,20,c.width*.5,c.height*.5,Math.max(c.width,c.height)*.5);
+  g.addColorStop(0,`rgba(170,200,230,${.05+progress*.02})`); g.addColorStop(1,'transparent');
+  ctx.fillStyle=g; ctx.fillRect(0,0,c.width,c.height);
+  if(rainOn){
+    ctx.strokeStyle='rgba(247,239,230,.4)';
+    drops.forEach(d=>{d.y+=d.v; if(d.y>1)d.y=-d.len; ctx.beginPath(); ctx.moveTo(d.x*c.width,d.y*c.height); ctx.lineTo(d.x*c.width+4,(d.y+d.len)*c.height); ctx.stroke();});
+  }
+  nodes.forEach((n,i)=>{
+    n.phase+=.015+progress*.005;
+    const a=.3+Math.abs(Math.sin(n.phase))*.7;
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r*(1+progress*.1),0,6.28);
+    ctx.fillStyle=`rgba(143,180,232,${a})`; ctx.fill();
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0||n.x>c.width)n.vx*=-1; if(n.y<0||n.y>c.height)n.vy*=-1;
+  });
+  requestAnimationFrame(tick);
+}
+tick();
+function interact(e){
+  const x=e.clientX|| (e.touches&&e.touches[0].clientX);
+  const y=e.clientY|| (e.touches&&e.touches[0].clientY);
+  if(!x) return;
+  nodes.forEach(n=>{const dx=x-n.x,dy=y-n.y,d=Math.hypot(dx,dy); if(d<120){n.vx+=dx*.0005; n.vy+=dy*.0005;}});
+  if(progress<MAX_PROG && Math.random()>.7){progress++; save(); updateLog();}
+}
+c.addEventListener('pointermove',interact);
+c.addEventListener('pointerdown',interact);
+c.addEventListener('touchmove',e=>{e.preventDefault();interact(e);},{passive:false});
+document.getElementById('rain').onclick=()=>{rainOn=!rainOn; document.getElementById('rain').classList.toggle('on',rainOn);};
+document.getElementById('fs').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen();};
+document.getElementById('reset').onclick=()=>{progress=0;save();updateLog();};
+c.ondblclick=()=>document.getElementById('fs').click();
+</script>
+</body>
+</html>
