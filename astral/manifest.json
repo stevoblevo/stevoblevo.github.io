@@ -1,0 +1,9 @@
+{
+  "name": "Saelion Astral Matrix",
+  "short_name": "Astral",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1c2838",
+  "theme_color": "#2a3a52",
+  "icons": []
+}
