@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081511">
+<meta name="description" content="Saelion Mobility: a one-Cybercab business concept, financial simulator, and permission gates. No commercial operation is authorized.">
+<title>Saelion Mobility · The Golden Mile</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<style>
+:root{color-scheme:dark;--bg:#07120e;--panel:#0d211b;--edge:#284338;--ink:#eaf8ee;--muted:#a1bbad;--mint:#80edbd;--gold:#ffd18a;--rose:#f3a39c;--red:#ff9b9b;--deep:#05100d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 79% 0%,#49311c77,transparent 31rem),radial-gradient(circle at 15% 40%,#124a3d77,transparent 35rem),linear-gradient(#081511,#030806);color:var(--ink);font:15px/1.56 system-ui,-apple-system,Segoe UI,sans-serif}a{color:var(--mint)}a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--mint);outline-offset:3px}button{font:inherit;cursor:pointer}button:disabled{opacity:.6;cursor:not-allowed}.wrap{max-width:1160px;margin:auto;padding:22px clamp(16px,3vw,32px) 68px}.eyebrow{color:var(--mint);font:.72rem/1.4 ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase}.subtle{color:var(--muted)}.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.brand{font:1.55rem/1.1 Georgia,serif;letter-spacing:-.02em;color:var(--ink);text-decoration:none}.top small{margin-left:auto;color:var(--gold);font:.69rem ui-monospace,monospace;border:1px solid #8c6a3f;border-radius:99px;padding:8px 11px}.back{color:var(--muted);font-size:.85rem;text-decoration:none}.back:hover{color:var(--mint)}.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,1.08fr);align-items:center;gap:12px;min-height:420px;margin:21px 0 13px;border:1px solid #82654477;border-radius:28px;background:radial-gradient(circle at 79% 45%,#9f653c3d,transparent 28rem),linear-gradient(145deg,#12251d,#0d1511 54%,#281b19);box-shadow:0 24px 70px #0007}.hero-copy{position:relative;z-index:2;padding:clamp(24px,4vw,51px)}.hero h1{font:400 clamp(2.5rem,6vw,5.3rem)/.96 Georgia,serif;letter-spacing:-.045em;margin:14px 0 17px}.hero h1 span{color:var(--gold)}.hero p{color:#c4d9c9;max-width:35rem;font-size:1.02rem}.hero-art{min-width:0;align-self:stretch;display:flex;align-items:center;justify-content:center}.hero-art svg{width:100%;min-height:330px;display:block}.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid #9c7a45;border-radius:99px;color:var(--gold);background:#2d2415d9;padding:7px 11px;font:.71rem ui-monospace,monospace}.chip i,.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold)}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}.action{border:1px solid #476957;background:#122a21;border-radius:99px;color:var(--ink);padding:10px 15px;text-decoration:none}.action.primary{color:#062116;background:var(--mint);border-color:var(--mint);font-weight:800}.action:hover{filter:brightness(1.11)}.micro{color:#8ba799;font-size:.75rem}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:13px 0 20px}.metric{padding:18px;border:1px solid var(--edge);border-radius:18px;background:#0b1d16e8}.metric small{display:block;color:#a6c1b1;font:.7rem ui-monospace,monospace;letter-spacing:.07em}.metric strong{display:block;margin:5px 0;color:var(--gold);font:400 clamp(1.75rem,3vw,2.45rem)/1.2 Georgia,serif}.metric em{color:#85a797;font-size:.75rem;font-style:normal}.tabs{display:flex;gap:7px;overflow:auto;padding:10px 0;position:sticky;top:0;z-index:4;background:linear-gradient(#07120ef2,#07120ee8);backdrop-filter:blur(12px)}.tabs button{white-space:nowrap;background:#0b1a15;color:var(--muted);border:1px solid var(--edge);border-radius:99px;padding:10px 16px}.tabs button[aria-selected="true"]{border-color:#83d7aa;background:#153627;color:var(--mint)}.layer{margin-top:13px}.layer[hidden]{display:none}.layer-head{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap;margin:19px 0 15px}.layer h2{font:400 clamp(1.85rem,4vw,2.75rem)/1.1 Georgia,serif;margin:.15rem 0}.layer-intro{max-width:45rem;color:var(--muted);margin:0}.columns{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.panel{background:linear-gradient(155deg,#10261d,#081711);border:1px solid var(--edge);border-radius:20px;padding:clamp(18px,3vw,27px)}.panel h3{font:400 1.55rem/1.2 Georgia,serif;margin:5px 0 14px}.panel p{color:var(--muted)}.truth-panel{background:linear-gradient(155deg,#2b2015,#101a15);border-color:#796039}.truth-panel strong{color:var(--gold)}.journey{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.journey .panel small{color:var(--gold);letter-spacing:.13em}.journey .panel b{display:block;font:1.1rem Georgia,serif;margin:9px 0}.journey .panel p{font-size:.87rem}.tag{font:.68rem ui-monospace,monospace;color:var(--gold);border:1px solid #725c39;border-radius:5px;padding:4px 7px}.status{color:#ffc0a2}.status::before{content:"● ";color:#ffad8f}.numbers{display:grid;grid-template-columns:.94fr 1.06fr;gap:14px}.presets{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 15px}.presets button{background:#0b2219;border:1px solid #345641;color:var(--ink);border-radius:9px;padding:8px 13px;font-size:.79rem}.presets button[aria-pressed="true"]{border-color:var(--mint);background:#173d2b;color:var(--mint)}.control{display:grid;grid-template-columns:1fr auto;gap:0 8px;margin:13px 0 21px}.control label{color:#d7e8d9;font-size:.83rem}.control output{color:var(--gold);font:700 .9rem ui-monospace,monospace}.control input{grid-column:1 / -1;width:100%;accent-color:#8de4b8;margin:10px 0 0}.outcome{border:1px solid #54725a;background:radial-gradient(circle at 100% 0,#2a664055,transparent 20rem),#0a1b14;border-radius:18px;padding:21px}.outcome small{display:block;color:#9db5a5;font:.7rem ui-monospace,monospace}.outcome strong{display:block;font:400 clamp(2.6rem,5vw,4.3rem)/1.2 Georgia,serif;letter-spacing:-.03em;margin:8px 0}.outcome strong.negative{color:var(--red)}.outcome strong.positive{color:var(--mint)}.outcome p{margin:5px 0;color:var(--muted)}.break-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.mini{border:1px solid var(--edge);border-radius:14px;padding:14px;background:#08170f}.mini small{display:block;color:#96b3a4;font-size:.74rem}.mini b{display:block;color:var(--gold);font:400 1.65rem Georgia,serif;margin:4px 0}.chart{border:1px solid var(--edge);padding:11px;border-radius:15px;background:#07140f}.chart svg{width:100%;height:auto;overflow:visible}.legend{display:flex;justify-content:space-between;color:#94b6a4;font-size:.7rem;margin-top:4px}.waterfall{display:grid;gap:9px;margin-top:14px}.water-row{display:grid;grid-template-columns:120px 1fr 65px;align-items:center;gap:9px;font-size:.74rem}.water-row b{font-weight:600;text-align:right}.track{height:10px;background:#122c20;border-radius:99px;overflow:hidden}.fill{height:100%;border-radius:99px;background:var(--gold);width:0}.fill.cut{background:#bc7e61}.fill.cost{background:#a58c79}.fill.net{background:var(--mint)}.gate-list{list-style:none;padding:0;margin:0;display:grid;gap:9px}.gate-list li{display:grid;grid-template-columns:26px 1fr;gap:11px;padding:13px;border:1px solid var(--edge);border-radius:13px;background:#081a13}.gate-list i{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;border:1px solid #b68c5d;color:#ecc38a;font:700 .73rem ui-monospace,monospace;font-style:normal}.gate-list b{display:block;color:#e7f3e7;font-size:.85rem}.gate-list span{color:var(--muted);font-size:.75rem}.gate-list em{color:#d7aa75;font-style:normal;font-size:.66rem}.caution{padding:13px 15px;border:1px solid #76513b;border-radius:13px;color:#e3b79e;background:#291c174f;font-size:.83rem}.source-list{padding-left:21px;color:var(--muted);font-size:.83rem}.source-list li{margin:7px 0}.line-road{display:flex;align-items:center;gap:12px;margin:26px 0}.city{min-width:92px}.city b{display:block;color:var(--gold);font:1.35rem Georgia,serif}.city small{color:#90a99d}.highway{flex:1;border-top:2px dashed #d5af73;position:relative;min-width:30px}.highway:after{content:"≈430mi · illustration, not service";position:absolute;top:-28px;left:0;right:0;text-align:center;color:#c99b66;font-size:.65rem}.roadnote{font:.7rem ui-monospace,monospace;color:#94ac9f}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.steps .panel{min-height:175px}.steps b{display:block;color:var(--gold);font:1.4rem Georgia,serif}.steps p{font-size:.84rem}.download-row{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}.foot{margin:28px 0;border-top:1px solid var(--edge);padding-top:22px;color:#88a295;font-size:.79rem}.foot b{color:#c0e3cf}details summary{cursor:pointer;color:var(--mint);padding:5px 0}details p{font-size:.84rem}.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.hero-art svg{min-height:auto;max-height:300px}.hero-copy{padding-bottom:0}.metrics{grid-template-columns:1fr 1fr}.columns,.numbers{grid-template-columns:1fr}.journey,.steps{grid-template-columns:1fr 1fr}}@media(max-width:520px){.wrap{padding:14px 13px 48px}.top small{margin-left:0}.hero{border-radius:20px}.hero h1{font-size:3rem}.hero-art svg{min-height:235px}.metrics{grid-template-columns:1fr 1fr;gap:7px}.metric{padding:12px}.metric strong{font-size:1.65rem}.journey,.steps,.break-grid{grid-template-columns:1fr}.water-row{grid-template-columns:88px 1fr 65px}.line-road{gap:5px}.city{min-width:65px}.city b{font-size:1.05rem}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+<a class="brand" href="./index.html#cockpit">æ · .anewgam</a>
+<a class="back" href="./index.html#cockpit">← Back to the living cockpit</a>
+<small>PUBLIC RESEARCH VIEW · NOT A LIVE FLEET</small>
+</header>
+<section class="hero">
+<div class="hero-copy">
+<span class="chip"><i></i> sae://mobility · concept / no purchase</span>
+<p class="eyebrow" style="margin-top:23px">SAELION MOBILITY / THE GOLDEN MILE</p>
+<h1>One little car.<br><span>A lovely little bet.</span></h1>
+<p>Imagine a golden Cybercab serving El Paso while Saelion minds the little business around it. The dream is warm. The permission, charging and revenue numbers still have to become real.</p>
+<div class="actions"><button class="action primary" data-open="economics">Play with the economics ↗</button><button class="action" data-open="gates">See what must be true</button></div>
+<p class="micro">Vision only. Tesla driving authority does not transfer to Saelion. No rides or bookings offered here.</p>
+</div>
+<div class="hero-art" aria-label="Illustration of a fictional golden autonomous taxi at a desert sunrise" role="img">
+<svg viewBox="0 0 680 435" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#563429"/><stop offset=".57" stop-color="#3a4536"/><stop offset="1" stop-color="#152c27"/></linearGradient><linearGradient id="goldcab" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ffe4a0"/><stop offset=".4" stop-color="#d9a155"/><stop offset="1" stop-color="#9a6237"/></linearGradient><radialGradient id="sun"><stop stop-color="#ffe3a5" stop-opacity=".77"/><stop offset="1" stop-color="#ffcc77" stop-opacity="0"/></radialGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#214840"/><stop offset=".65" stop-color="#0b211e"/><stop offset="1" stop-color="#4d4238"/></linearGradient></defs>
+<rect width="680" height="435" fill="url(#sky)"/><circle cx="508" cy="109" r="172" fill="url(#sun)"/><circle cx="508" cy="109" r="34" fill="#f2c783"/><path d="M0 275 65 238 119 260 189 216 254 244 300 229 382 265 439 237 515 267 585 231 680 264V435H0Z" fill="#21403a"/><path d="M0 304 113 273 202 291 276 263 349 291 455 263 535 294 680 273V435H0Z" fill="#152c25"/><path d="M0 349Q360 297 680 337V435H0Z" fill="#1a261e"/><path d="M0 435 190 326 503 326 680 435Z" fill="#34372f"/><path d="M242 435 327 327M450 435 395 326" stroke="#e4b071" stroke-opacity=".5" stroke-width="2" stroke-dasharray="12 17"/>
+<ellipse cx="355" cy="354" rx="240" ry="34" fill="#030c09" opacity=".85"/>
+<g transform="translate(72 121)"><path d="M83 188Q104 156 162 141L220 76Q236 53 294 52H394Q435 51 459 73L512 131Q551 138 571 165L585 193Q586 215 565 229L111 229Q72 226 73 206Z" fill="url(#goldcab)" stroke="#ffdb95" stroke-width="4"/><path d="M201 142 245 89Q257 74 297 73L385 72Q408 75 426 90L461 143Z" fill="url(#glass)" stroke="#b58d5b" stroke-width="3"/><path d="M333 74 337 142" stroke="#5f6651" stroke-width="3"/><path d="M97 176Q239 186 467 179L569 169" fill="none" stroke="#fff0b9" stroke-opacity=".44" stroke-width="3"/><path d="M94 198 142 195" stroke="#fffad8" stroke-width="7" stroke-linecap="round"/><path d="M536 185 569 183" stroke="#f6d3a0" stroke-width="5" stroke-linecap="round"/><path d="M106 225Q150 249 225 230L489 230Q532 239 562 226" fill="none" stroke="#8d6a44" stroke-width="7"/><circle cx="198" cy="222" r="38" fill="#09120e" stroke="#3c3d2c" stroke-width="8"/><circle cx="198" cy="222" r="17" fill="#596254" stroke="#bba87a" stroke-width="4"/><circle cx="480" cy="222" r="38" fill="#09120e" stroke="#3c3d2c" stroke-width="8"/><circle cx="480" cy="222" r="17" fill="#596254" stroke="#bba87a" stroke-width="4"/><path d="M160 150 131 163M462 150 520 164" stroke="#ffdd9e" stroke-opacity=".7" stroke-width="4"/></g>
+<g fill="#ffe3ba" opacity=".9"><circle cx="100" cy="93" r="2"/><circle cx="166" cy="58" r="2"/><circle cx="330" cy="89" r="2"/></g>
+<text x="26" y="412" fill="#ffe2b0" opacity=".65" font-family="monospace" font-size="12">S A E · D E S E R T  /  M O B I L I T Y  S T U D Y</text>
+</svg>
+</div></section>
+<section class="metrics" aria-label="Base-case overview">
+<div class="metric"><small>ILLUSTRATIVE STARTUP CASH</small><strong>$40,094</strong><em>Includes $6,000 held as reserve</em></div>
+<div class="metric"><small>BASE PROFIT / MONTH</small><strong>$340</strong><em>After modeled replacement reserve</em></div>
+<div class="metric"><small>BREAK-EVEN RIDES / DAY</small><strong>10.3</strong><em>At hypothetical base assumptions</em></div>
+<div class="metric"><small>DECISION TODAY</small><strong style="color:var(--rose)">NO BUY</strong><em>Research is allowed; no taxi ordered</em></div>
+</section>
+<div class="tabs" role="tablist" aria-label="Mobility layers">
+<button role="tab" aria-controls="vision" id="tab-vision" aria-selected="true" data-tab="vision">01 · The dream</button>
+<button role="tab" aria-controls="economics" id="tab-economics" aria-selected="false" data-tab="economics">02 · The numbers</button>
+<button role="tab" aria-controls="gates" id="tab-gates" aria-selected="false" data-tab="gates">03 · The gates</button>
+<button role="tab" aria-controls="phoenix" id="tab-phoenix" aria-selected="false" data-tab="phoenix">04 · Phoenix / next</button>
+</div>
+<main>
+<section id="vision" class="layer" role="tabpanel" aria-labelledby="tab-vision">
+<div class="layer-head"><div><p class="eyebrow">LAYER 01 · IMAGINE, WITHOUT PRETENDING</p><h2>From lovely idea to quiet little enterprise.</h2><p class="layer-intro">One asset, one local market, one network partner. Saelion learns the business of caring for a vehicle—never the authority to drive it.</p></div><span class="tag">RESEARCH · 12 OCT 2026</span></div>
+<div class="journey">
+<article class="panel"><small>THE OBJECT</small><b>A two-seat golden Cybercab</b><p>Under-$30k is an announced target, not a quote. Commercial purchase interest is not a sales order.</p></article>
+<article class="panel"><small>THE SERVICE</small><b>El Paso, when authorized</b><p>Short paid trips via an authorized rider network. We do not invent a ride-hailing marketplace.</p></article>
+<article class="panel"><small>THE INTELLIGENCE</small><b>Saelion backstage</b><p>Track charging, cleaning, maintenance, utilization and cash. No vehicle commands, no safety-critical controls.</p></article>
+</div>
+<div class="columns" style="margin-top:14px">
+<article class="panel truth-panel"><p class="eyebrow" style="color:var(--gold)">WHAT WE ARE BUYING, REALLY</p><h3>Not a robot. A contract, a territory and a unit-economics engine.</h3><p>Without written terms for booking, insurance, charging and operator authorization, the vehicle is a beautiful sculpture—not a rentable asset.</p></article>
+<article class="panel"><p class="eyebrow">THE CHEAPER EARLY BUSINESS</p><h3>Fleet-turnaround services</h3><p>If a licensed local fleet wants charging coordination, cleaning or reporting, that can become a small service business before we own a vehicle. Only after a signed customer agreement and proper coverage.</p></article>
+</div></section>
+<section id="economics" class="layer" role="tabpanel" aria-labelledby="tab-economics" hidden>
+<div class="layer-head"><div><p class="eyebrow">LAYER 02 · INTERACTIVE, NOT FORECAST</p><h2>Change the assumptions. See the truth move.</h2><p class="layer-intro">These inputs come from our October 12 model. Tesla has not offered these fares, network rates, costs or El Paso rider volumes.</p></div><button class="action" id="exportScenario">Export scenario ↓</button></div>
+<div class="numbers">
+<section class="panel" aria-label="Simulation controls">
+<p class="eyebrow">PRESET A LITTLE WORLD</p>
+<div class="presets"><button data-preset="down" aria-pressed="false">Downside</button><button data-preset="base" aria-pressed="true">Base</button><button data-preset="up" aria-pressed="false">Upside</button></div>
+<div class="control"><label for="rides">Paid rides per operating day</label><output id="ridesOut" for="rides">12</output><input type="range" id="rides" min="0" max="30" step="1" value="12"></div>
+<div class="control"><label for="days">Operating days / month</label><output id="daysOut" for="days">26</output><input type="range" id="days" min="10" max="31" step="1" value="26"></div>
+<div class="control"><label for="fare">Average collected fare</label><output id="fareOut" for="fare">$15.00</output><input type="range" id="fare" min="6" max="35" step=".5" value="15"></div>
+<div class="control"><label for="cut">Assumed Tesla network share</label><output id="cutOut" for="cut">30%</output><input type="range" id="cut" min="0" max="65" step="1" value="30"></div>
+<div class="control"><label for="variable">Variable cost / paid ride</label><output id="variableOut" for="variable">$3.00</output><input type="range" id="variable" min="0" max="12" step=".25" value="3"></div>
+<div class="control" style="margin-bottom:2px"><label for="fixed">Monthly fixed costs + replacement reserve</label><output id="fixedOut" for="fixed">$2,000</output><input type="range" id="fixed" min="500" max="6000" step="100" value="2000"></div>
+<p class="micro">Changing these controls runs math only; no information is sent anywhere. No quote or operational authorization results.</p>
+</section>
+<section class="panel" aria-label="Simulation results">
+<p class="eyebrow">AFTER PLATFORM, TRIPS, AND RESERVES</p><div class="outcome" aria-live="polite"><small>MODELED MONTHLY SURPLUS / DEFICIT · PRE-TAX</small><strong id="profit" class="positive">$340</strong><p id="profitText">At 312 paid trips each month.</p></div>
+<div class="break-grid"><div class="mini"><small>Break-even paid rides/day</small><b id="breakEven">10.3</b></div><div class="mini"><small>Rides/day for $1k+ surplus</small><b id="targetRides">16</b></div></div>
+<div class="chart"><div class="eyebrow" style="margin-bottom:8px">SENSITIVITY: MONTHLY RESULT BY RIDES/DAY</div><svg id="curve" viewBox="0 0 640 190" role="img" aria-label="Projected monthly surplus or deficit as daily ride count changes"><line x1="43" y1="12" x2="43" y2="168" stroke="#385648"/><line x1="43" y1="168" x2="624" y2="168" stroke="#385648"/><line id="zero" x1="43" x2="624" y1="95" y2="95" stroke="#a48a5e" stroke-dasharray="5 5"/><path id="curvePath" d="" fill="none" stroke="#80edbd" stroke-width="3" stroke-linecap="round"/><circle id="curvePoint" cx="43" cy="95" r="5" fill="#ffd18a"/><text x="43" y="185" fill="#a5baa9" font-size="11">0</text><text x="616" y="185" text-anchor="end" fill="#a5baa9" font-size="11">30 rides/day</text><text id="zeroLabel" x="47" y="88" fill="#c5ac7c" font-size="11">$0</text></svg><div class="legend"><span>Below zero = losing money</span><span id="scenarioLabel">BASE SCENARIO</span></div></div>
+<div class="waterfall"><div class="water-row"><span>Gross fares</span><div class="track"><div class="fill" id="grossBar"></div></div><b id="grossValue"></b></div><div class="water-row"><span>Platform share</span><div class="track"><div class="fill cut" id="cutBar"></div></div><b id="cutValue"></b></div><div class="water-row"><span>Trip costs</span><div class="track"><div class="fill cost" id="variableBar"></div></div><b id="variableValue"></b></div><div class="water-row"><span>Fixed + reserve</span><div class="track"><div class="fill cost" id="fixedBar"></div></div><b id="fixedValue"></b></div></div>
+</section>
+</div>
+<p class="caution" style="margin-top:13px"><b>Important:</b> Pre-tax scenario only. Commercial insurance, idle miles, emergency recovery, licensing obligations and owner time could make outcomes substantially worse. No realistic El Paso ridership evidence exists yet.</p>
+</section>
+<section id="gates" class="layer" role="tabpanel" aria-labelledby="tab-gates" hidden>
+<div class="layer-head"><div><p class="eyebrow">LAYER 03 · SKEIN TRUTH / NO CLAIMED AUTHORITY</p><h2>The golden key is permission.</h2><p class="layer-intro">Every gate below is unverified. This read-only display cannot authorize a purchase, a passenger ride or use of Tesla driving controls.</p></div><span class="tag" style="color:#ffb3a0;border-color:#a96a49">0 OF 8 VERIFIED</span></div>
+<div class="columns">
+<ol class="gate-list">
+<li><i>1</i><div><b>Signed vehicle quote & delivery schedule</b><span>No customer Cybercab price or delivery promise confirmed.</span><em>UNVERIFIED</em></div></li>
+<li><i>2</i><div><b>Third-party network contract</b><span>Take rate, refunds, service suspension, data export and exit terms.</span><em>UNVERIFIED</em></div></li>
+<li><i>3</i><div><b>El Paso operating territory & licensed operator</b><span>Specify Texas AV authorization and TNC responsibilities.</span><em>UNVERIFIED</em></div></li>
+<li><i>4</i><div><b>Commercial insurance binder</b><span>Paid autonomous passenger use, deductibles and collision liability.</span><em>UNVERIFIED</em></div></li>
+</ol>
+<ol class="gate-list" start="5">
+<li><i>5</i><div><b>Cybercab-compatible charging & recovery</b><span>Inductive charging, parking, cleaning, towing and response priced.</span><em>UNVERIFIED</em></div></li>
+<li><i>6</i><div><b>Measured 90-day authorized local pilot</b><span>Paid ride counts, uptime and deadhead supported by evidence.</span><em>UNVERIFIED</em></div></li>
+<li><i>7</i><div><b>Surplus clears opportunity cost</b><span>Conservative case targets at least $1,000/month after reserves.</span><em>UNVERIFIED</em></div></li>
+<li><i>8</i><div><b>Accessibility & passenger obligations</b><span>Two-seat limits, service animals and applicable accommodation duties.</span><em>UNVERIFIED</em></div></li>
+</ol></div>
+<div class="columns" style="margin-top:14px">
+<article class="panel truth-panel"><p class="eyebrow" style="color:var(--gold)">DECISION / OWNER ATTENTION</p><h3>No-go on buying. Go on free diligence.</h3><p>A $10,500 Texas TNC application would be a major separate cost if we had to operate our own network. Our preferred plan depends on legitimate participation in an existing authorized one.</p><p class="micro">This page is a presentation, not a Skein-issued authority receipt.</p></article>
+<article class="panel"><p class="eyebrow">COPY A USEFUL QUESTION PACK</p><h3>Ask Tesla before spending.</h3><p>One car in El Paso? Actual delivered price? Network split? Who holds permits and insurance? Where can it charge? Can it travel privately to Phoenix?</p><button class="action" id="copyQuestions">Copy questions ↗</button><p id="copyStatus" class="micro" role="status"></p></article>
+</div></section>
+<section id="phoenix" class="layer" role="tabpanel" aria-labelledby="tab-phoenix" hidden>
+<div class="layer-head"><div><p class="eyebrow">LAYER 04 · AN ASPIRATION, NOT A BOOKABLE ROUTE</p><h2>Phoenix is the little faraway star.</h2><p class="layer-intro">The intercity fantasy is delightful. It requires cross-state commercial permissions, proven highway autonomy, a charging path, support and a way to avoid losing money driving back empty.</p></div><span class="tag">NOT OPERATIONAL</span></div>
+<div class="panel"><div class="line-road"><div class="city"><b>El Paso</b><small>Texas · home</small></div><div class="highway"></div><div class="city" style="text-align:right"><b>Phoenix</b><small>Arizona · future</small></div></div><p class="roadnote">PHOENIX REVENUE IN CURRENT MODEL: $0. No driverless cross-state capability is assumed.</p></div>
+<div class="layer-head"><div><p class="eyebrow">THIRTY-DAY INVESTIGATION, ZERO CAR PURCHASE</p><h2>The smallest honest next moves.</h2></div></div>
+<div class="steps">
+<article class="panel"><p class="eyebrow">DAYS 01–07</p><b>Ask the operator</b><p>Use Tesla's single-vehicle commercial-interest intake. Ask for El Paso, network terms, permits, insurance and compatible charging. No speculative deposit.</p></article>
+<article class="panel"><p class="eyebrow">DAYS 08–21</p><b>Ask the market</b><p>Talk to permitted fleets and local demand sources. Measure turnaround, fare realities and repeat demand without offering unlicensed rides.</p></article>
+<article class="panel"><p class="eyebrow">DAYS 22–30</p><b>Underwrite or park</b><p>Replace guessed cells with signed facts. Compare owning one vehicle, servicing an authorized fleet, or keeping the money for creative micro-products.</p></article></div>
+<div class="download-row"><a class="action primary" target="_blank" rel="noopener noreferrer" href="https://www.tesla.com/robotaxi/interest">Tesla fleet interest ↗</a><button class="action" data-open="economics">Revisit the model</button><button class="action" data-open="gates">Review the gates</button></div></section>
+</main>
+<footer class="foot"><b>SAELION · MOBILITY RESEARCH / 12 OCT 2026</b><p>This is a public, local-only scenario tool. It cannot book rides, collect fares, contact Tesla, see private accounts, or establish driverless operating authority. The Cybercab art above is a stylized concept illustration, not an official vehicle image. Figures are assumed unless explicitly identified otherwise.</p>
+<details><summary>Evidence and source links</summary><ul class="source-list">
+<li><a href="https://www.tesla.com/support/robotaxi/cybercab" target="_blank" rel="noopener noreferrer">Tesla Cybercab information</a> — individual commercial interest, not a firm MSRP.</li>
+<li><a href="https://www.tesla.com/robotaxi/interest" target="_blank" rel="noopener noreferrer">Tesla fleet/mobility hub interest form</a>.</li>
+<li><a href="https://www.tesla.com/support/robotaxi" target="_blank" rel="noopener noreferrer">Tesla Robotaxi operating-area information</a>.</li>
+<li><a href="https://www.txdmv.gov/AVprogram" target="_blank" rel="noopener noreferrer">Texas autonomous vehicle program</a>.</li>
+<li><a href="https://www.tdlr.texas.gov/tnc/apply.htm" target="_blank" rel="noopener noreferrer">Texas TNC application and fee</a>.</li>
+<li><a href="https://comptroller.texas.gov/taxes/motor-vehicle/sales-use.php" target="_blank" rel="noopener noreferrer">Texas motor-vehicle sales tax</a>.</li>
+<li><a href="https://azdot.gov/autonomous-vehicles-testing-and-operating-without-driver" target="_blank" rel="noopener noreferrer">Arizona autonomous operations</a>.</li>
+</ul></details><p>One doorway · Presentation is not permission · <a href="./index.html#cockpit">Return to .anewgam ↖</a></p></footer>
+</div>
+<script>
+(function(){
+"use strict";
+var defaults={
+ down:{rides:6,days:22,fare:12,cut:35,variable:3.5,fixed:2000},
+ base:{rides:12,days:26,fare:15,cut:30,variable:3,fixed:2000},
+ up:{rides:18,days:28,fare:18,cut:25,variable:2.75,fixed:2000}
+};
+var keys=["rides","days","fare","cut","variable","fixed"], active="base";
+function $(id){return document.getElementById(id)}
+function dollars(n,digits){return (n<0?"−":"")+"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:digits||0,maximumFractionDigits:digits||0})}
+function number(id){return Number($(id).value)}
+function state(){var p={};keys.forEach(function(k){p[k]=number(k)});return p}
+function compute(p){
+ var trips=p.rides*p.days, gross=trips*p.fare, fee=gross*p.cut/100, tripCost=trips*p.variable;
+ var profit=gross-fee-tripCost-p.fixed, contribution=p.fare*(1-p.cut/100)-p.variable;
+ var daily=contribution>0?p.fixed/(p.days*contribution):Infinity;
+ return {trips:trips,gross:gross,fee:fee,tripCost:tripCost,fixed:p.fixed,profit:profit,breakEven:daily,target:contribution>0?Math.ceil((p.fixed+1000)/(p.days*contribution)):Infinity};
+}
+function tab(id){
+ document.querySelectorAll("[data-tab]").forEach(function(b){b.setAttribute("aria-selected",String(b.dataset.tab===id))});
+ document.querySelectorAll(".layer").forEach(function(p){p.hidden=p.id!==id});
+ if(history.replaceState)history.replaceState(null,"","#"+id);
+}
+document.querySelectorAll("[data-tab]").forEach(function(b){b.addEventListener("click",function(){tab(b.dataset.tab)})});
+document.querySelectorAll("[data-open]").forEach(function(b){b.addEventListener("click",function(){tab(b.dataset.open);document.querySelector(".tabs").scrollIntoView({behavior:"smooth",block:"start"})})});
+function refresh(){
+ var p=state(),r=compute(p);
+ keys.forEach(function(k){$(k+"Out").textContent=k==="fare"||k==="variable"?dollars(p[k],2):k==="cut"?p[k]+"%":k==="fixed"?dollars(p[k]):String(p[k])});
+ var n=$("profit");n.textContent=dollars(Math.round(r.profit));n.className=r.profit<0?"negative":"positive";
+ $("profitText").textContent="At "+r.trips.toLocaleString()+" modeled paid trips a month, before tax.";
+ $("breakEven").textContent=Number.isFinite(r.breakEven)?r.breakEven.toFixed(1):"N/A";
+ $("targetRides").textContent=Number.isFinite(r.target)?String(r.target):"N/A";
+ $("scenarioLabel").textContent=active==="custom"?"CUSTOM ASSUMPTIONS":active.toUpperCase()+" SCENARIO";
+ document.querySelectorAll("[data-preset]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.preset===active))});
+ [["gross",r.gross],["cut",r.fee],["variable",r.tripCost],["fixed",r.fixed]].forEach(function(x){var max=Math.max(r.gross,r.fee,r.tripCost,r.fixed,1);$(x[0]+"Bar").style.width=(100*x[1]/max).toFixed(1)+"%";$(x[0]+"Value").textContent=dollars(Math.round(x[1]))});
+ var samples=[];for(var i=0;i<=30;i++){var q=Object.assign({},p,{rides:i});samples.push(compute(q).profit)}
+ var lo=Math.min(-100,samples[0],r.profit),hi=Math.max(100,samples[30],r.profit),range=hi-lo;
+ function yy(v){return 168-(v-lo)/range*153}
+ var d=samples.map(function(v,i){return (i?"L":"M")+(43+i*581/30).toFixed(1)+" "+yy(v).toFixed(1)}).join(" ");
+ $("curvePath").setAttribute("d",d);$("curvePoint").setAttribute("cx",String(43+p.rides*581/30));$("curvePoint").setAttribute("cy",String(yy(r.profit)));$("zero").setAttribute("y1",String(yy(0)));$("zero").setAttribute("y2",String(yy(0)));$("zeroLabel").setAttribute("y",String(yy(0)-7));
+}
+function apply(name){active=name;var p=defaults[name];keys.forEach(function(k){$(k).value=p[k]});refresh()}
+document.querySelectorAll("[data-preset]").forEach(function(b){b.addEventListener("click",function(){apply(b.dataset.preset)})});
+keys.forEach(function(k){$(k).addEventListener("input",function(){active="custom";refresh()})});
+$("exportScenario").addEventListener("click",function(){
+ var payload={schema:"saelion.mobility.assumption.v1",date:"2026-10-12",notAuthorization:true,source:"Public what-if cockpit",assumptions:state(),result:compute(state())};
+ var blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="saelion-mobility-scenario.json";a.click();setTimeout(function(){URL.revokeObjectURL(url)},1500);
+});
+$("copyQuestions").addEventListener("click",async function(){
+ var q="Tesla Cybercab single-vehicle inquiry — El Paso, TX\n1. Can I buy one Cybercab? Price and delivery?\n2. May a third-party owner operate it on Tesla's rider network in El Paso?\n3. Network revenue split, data exports and refunds?\n4. Who holds Texas AV and TNC authorizations?\n5. Commercial insurance and collision liability?\n6. Compatible inductive charging, hub fees, recovery and cleaning?\n7. Private use and intercity highway travel to Phoenix?\n8. Network exit/suspension terms?";
+ try{await navigator.clipboard.writeText(q);$("copyStatus").textContent="Questions copied. Nothing sent."}catch(e){$("copyStatus").textContent="Clipboard unavailable. Select the questions shown above."}
+});
+var initial=(location.hash||"").replace("#","");tab(["vision","economics","gates","phoenix"].includes(initial)?initial:"vision");apply("base");
+})();
+</script>
+</body></html>
