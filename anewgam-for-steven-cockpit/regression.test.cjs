@@ -30,3 +30,21 @@ test('service worker only removes its own obsolete caches', async () => {
 test('the recording companion has exactly 22 shots', () => {
   const story = JSON.parse(fs.readFileSync(path.join(dir,'gen22-record.json')));assert.equal(story.shots.length,22);assert.equal(story.authorityEffect,'none');
 });
+
+
+test('mobility numbers stay labeled as hypothetical and navigation points to one page', () => {
+  const page = fs.readFileSync(path.join(dir,'mobility.html'),'utf8');
+  const home = fs.readFileSync(path.join(dir,'index.html'),'utf8');
+  const ids = [...page.matchAll(/id="([^"]+)"/g)].map(x=>x[1]);
+  assert.equal(ids.length,new Set(ids).size);
+  assert.match(home,/href="mobility\.html"/);
+  assert.match(page,/Not a robot\. A contract, a territory/);
+  assert.match(page,/0 OF 8 VERIFIED/);
+  assert.match(page,/No-go on buying/);
+  assert.match(page,/Tesla has not offered these fares/);
+  const inline = page.match(/<script>([\s\S]*?)<\/script>/);
+  assert.ok(inline);
+  new vm.Script(inline[1]);
+  const sw = fs.readFileSync(path.join(dir,'sw.js'),'utf8');
+  assert.match(sw,/\.\/mobility\.html/);
+});
