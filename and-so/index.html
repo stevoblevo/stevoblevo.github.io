@@ -3439,7 +3439,7 @@ function phraseEnd() {
   if (LS.src === 'demo' && LS.phrases >= 1) discover('x-hum');
   if (LS.src === 'mic') emit('phrase');
   const line = adlib(ph);
-  addLine(line);
+  addLine(line); LS.lastAction = '';
   if (LS.phrases >= 3) discover('x-adlib');
   if (LS.phrases % 3 === 0) adlibClaude(describe(ph));
 }
