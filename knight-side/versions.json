@@ -1,0 +1,69 @@
+{
+ "game": "Anewgam: Knight Side",
+ "latest": "/knight-side/v9/",
+ "versions": [
+  {
+   "version": "v1",
+   "door": "I",
+   "name": "Origin",
+   "path": "/knight-side/v1/",
+   "sha256": "df24bf087108a3dd4b200ee5c05898d7596cf14f4ce509d69b3ad2508d750f45"
+  },
+  {
+   "version": "v2",
+   "door": "II",
+   "name": "Cave",
+   "path": "/knight-side/v2/",
+   "sha256": "e47c449b6f1affb363ba3b07747d4e8ef24d65d49f248a2e2c522ef47894bc2c"
+  },
+  {
+   "version": "v3",
+   "door": "III",
+   "name": "Night",
+   "path": "/knight-side/v3/",
+   "sha256": "0649de8771adae6414b0899792c3f17a88ba485fdababbc662d090400d386962"
+  },
+  {
+   "version": "v4",
+   "door": "IV",
+   "name": "Controller",
+   "path": "/knight-side/v4/",
+   "sha256": "ac1a21ca2419e6624ceb971251e6697cc96043d0f4dff7981cb4e8bb7c72a860"
+  },
+  {
+   "version": "v5",
+   "door": "V",
+   "name": "Desk",
+   "path": "/knight-side/v5/",
+   "sha256": "202a8d642e99d10382898c4de21715016d7ea73430f051ed7354be9b5b1e9f67"
+  },
+  {
+   "version": "v6",
+   "door": "VI",
+   "name": "Any hand",
+   "path": "/knight-side/v6/",
+   "sha256": "6bbc6ee39ece35cd1faa1285aba60f3b0a61ba3689e205f605b52580a7d3e374"
+  },
+  {
+   "version": "v7",
+   "door": "VII",
+   "name": "Follow",
+   "path": "/knight-side/v7/",
+   "sha256": "67bcff48b484cc79e026ce87e2c28520a7b1eef1327399f05dbc034ed23a3c11"
+  },
+  {
+   "version": "v8",
+   "door": "VIII",
+   "name": "Astral",
+   "path": "/knight-side/v8/",
+   "sha256": "a65a6e7a2183293aafc72c566ef405518404ff851731a5c051bb1c8c65596239"
+  },
+  {
+   "version": "v9",
+   "door": "IX",
+   "name": "Thresholds",
+   "path": "/knight-side/v9/",
+   "sha256": "5f13082c98be453090a4ef59ca8133e326bfd7a522fc9353322043f066e9b79c"
+  }
+ ]
+}
