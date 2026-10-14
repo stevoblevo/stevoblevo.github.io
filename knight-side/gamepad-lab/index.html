@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gamepad lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&display=swap">
+<style>
+:root{--bg:#f1eafb;--panel:rgba(255,255,255,.8);--ink:#231836;--dim:#6d5f86;--edge:rgba(90,60,150,.22);--mint:#1f9c80;--violet:#7a4fd0;--off:rgba(40,20,70,.12);
+  --caps:"Cinzel",Georgia,serif;--serif:"Cormorant Garamond",Garamond,Georgia,serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0b0816;--panel:rgba(22,15,42,.85);--ink:#efe7ff;--dim:#a898c8;--edge:rgba(170,130,255,.3);--mint:#8ff0d2;--violet:#b98cff;--off:rgba(255,255,255,.08)}}
+:root[data-theme="dark"]{--bg:#0b0816;--panel:rgba(22,15,42,.85);--ink:#efe7ff;--dim:#a898c8;--edge:rgba(170,130,255,.3);--mint:#8ff0d2;--violet:#b98cff;--off:rgba(255,255,255,.08)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:19px/1.45 var(--serif)}
+main{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+h1{font:700 clamp(30px,6vw,44px)/1.05 var(--caps);margin:0 0 6px;letter-spacing:.03em}
+.lede{color:var(--dim);margin:0 0 22px;max-width:62ch}
+.panel{background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:18px}
+h2{font:700 15px var(--caps);letter-spacing:.12em;color:var(--violet);margin:0 0 12px}
+#status{font-size:21px;margin-bottom:18px}
+#status b{font-family:var(--caps);font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px}
+.sticks{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.stick{text-align:center;color:var(--dim);font-size:16px}
+.stick svg{width:150px;height:150px;display:block}
+.btns{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.b{border:1px solid var(--edge);border-radius:10px;padding:8px 4px;text-align:center;font:700 13px var(--caps);position:relative;overflow:hidden;background:var(--off)}
+.b i{position:absolute;left:0;right:0;bottom:0;background:var(--mint);opacity:.35;height:0}
+.b.on{border-color:var(--mint);box-shadow:0 0 12px color-mix(in srgb,var(--mint) 60%,transparent)}
+.b span{position:relative}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{font:700 14px var(--caps);letter-spacing:.06em;color:var(--ink);background:var(--off);border:1px solid var(--edge);border-radius:999px;padding:9px 16px;cursor:pointer}
+button:hover{border-color:var(--violet)}
+button:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+button:disabled{opacity:.4;cursor:not-allowed}
+table{width:100%;border-collapse:collapse;font-size:17px}
+td{padding:5px 4px;border-bottom:1px solid var(--edge);vertical-align:top}
+td:first-child{color:var(--dim);width:44%}
+.yes{color:var(--mint);font-weight:700}.no{opacity:.7}
+.note{color:var(--dim);font-size:17px;font-style:italic;margin:10px 0 0}
+</style>
+</head>
+<body>
+<main>
+  <h1>Gamepad lab</h1>
+  <p class="lede">Plug in a controller and press any button. This shows what your browser actually exposes: sticks with the game's deadzones, every button and trigger, and which rumble effects it can play.</p>
+  <p id="status">No controller seen yet. Press a button; browsers hide controllers until then.</p>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>Sticks</h2>
+      <div class="sticks">
+        <div class="stick"><svg viewBox="-1.15 -1.15 2.3 2.3" id="sl" aria-label="Left stick"></svg>left, deadzone 0.18</div>
+        <div class="stick"><svg viewBox="-1.15 -1.15 2.3 2.3" id="sr" aria-label="Right stick"></svg>right, deadzone 0.25</div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Rumble</h2>
+      <div class="row">
+        <button id="r1" disabled>Light buzz</button>
+        <button id="r2" disabled>Heavy thud</button>
+        <button id="r3" disabled>Boss kill</button>
+      </div>
+      <div class="row">
+        <button id="t1" disabled>Left trigger</button>
+        <button id="t2" disabled>Right trigger</button>
+      </div>
+      <p class="note" id="rnote">Trigger rumble needs an Xbox One or Series controller in Chrome or Edge on Windows or macOS.</p>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-bottom:16px">
+    <h2>Buttons</h2>
+    <div class="btns" id="btns"></div>
+  </section>
+
+  <section class="panel">
+    <h2>What this browser supports</h2>
+    <table><tbody id="caps"></tbody></table>
+  </section>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const NAMES=['A','B','X','Y','LB','RB','LT','RT','View','Menu','L3','R3','Up','Down','Left','Right','Home'];
+const btns=$('btns');
+NAMES.forEach((n,i)=>{const d=document.createElement('div');d.className='b';d.id='b'+i;d.innerHTML=`<i></i><span>${n}</span>`;btns.appendChild(d)});
+function stickSVG(el,dz){el.innerHTML=`<circle r="1" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width=".02"/>
+  <circle r="${dz}" fill="currentColor" fill-opacity=".08"/>
+  <line x1="-1" x2="1" stroke="currentColor" stroke-opacity=".15" stroke-width=".01"/><line y1="-1" y2="1" stroke="currentColor" stroke-opacity=".15" stroke-width=".01"/>
+  <circle class="raw" r=".06" fill="currentColor" fill-opacity=".35"/><circle class="out" r=".1" fill="var(--mint)"/>`}
+stickSVG($('sl'),.18);stickSVG($('sr'),.25);
+function radial(x,y,dz){const m=Math.hypot(x,y);if(m<dz)return[0,0];const k=Math.min(1,(m-dz)/(1-dz));return[x/m*k,y/m*k]}
+function setStick(el,x,y,dz){const o=radial(x,y,dz);el.querySelector('.raw').setAttribute('cx',x);el.querySelector('.raw').setAttribute('cy',y);
+  el.querySelector('.out').setAttribute('cx',o[0]);el.querySelector('.out').setAttribute('cy',o[1])}
+
+let idx=-1,shown=false;
+function pad(){if(!navigator.getGamepads)return null;let gs;try{gs=navigator.getGamepads()}catch(e){return null}
+  if(idx>=0&&gs[idx]&&gs[idx].connected)return gs[idx];for(const g of gs)if(g&&g.connected){idx=g.index;return g}return null}
+
+const policyOK=(()=>{try{return !document.featurePolicy||document.featurePolicy.allowsFeature('gamepad')}catch(e){return true}})();
+function caps(gp){
+  const va=gp&&gp.vibrationActuator,fx=(va&&va.effects)||[];
+  const rows=[
+    ['Gamepad API',!!navigator.getGamepads],
+    ['Allowed on this page',policyOK],
+    ['Standard mapping',gp?gp.mapping==='standard':null],
+    ['Rumble (dual-rumble)',gp?(!!va&&(fx.includes('dual-rumble')||(!va.effects&&!!va.playEffect))):null],
+    ['Trigger rumble',gp?fx.includes('trigger-rumble'):null],
+    ['Secure context',window.isSecureContext],
+  ];
+  $('caps').innerHTML=rows.map(([k,v])=>`<tr><td>${k}</td><td class="${v?'yes':'no'}">${v===null?'connect a controller':v?'yes':'no'}</td></tr>`).join('');
+  const canR=rows[3][1],canT=rows[4][1];
+  ['r1','r2','r3'].forEach(id=>$(id).disabled=!canR);['t1','t2'].forEach(id=>$(id).disabled=!canT);
+}
+caps(null);
+if(!policyOK)$('status').textContent='This page is embedded somewhere that blocks controllers. Open it in its own tab.';
+
+function play(type,params){const gp=pad();if(!gp||!gp.vibrationActuator)return;
+  gp.vibrationActuator.playEffect(type,Object.assign({startDelay:0},params)).catch(()=>{})}
+$('r1').onclick=()=>play('dual-rumble',{duration:120,weakMagnitude:.35,strongMagnitude:0});
+$('r2').onclick=()=>play('dual-rumble',{duration:220,weakMagnitude:.7,strongMagnitude:.5});
+$('r3').onclick=()=>play('dual-rumble',{duration:700,weakMagnitude:.25,strongMagnitude:1});
+$('t1').onclick=()=>play('trigger-rumble',{duration:250,leftTrigger:.8,rightTrigger:0,weakMagnitude:0,strongMagnitude:0});
+$('t2').onclick=()=>play('trigger-rumble',{duration:250,leftTrigger:0,rightTrigger:.8,weakMagnitude:0,strongMagnitude:0});
+
+addEventListener('gamepadconnected',e=>{idx=e.gamepad.index});
+addEventListener('gamepaddisconnected',e=>{if(e.gamepad.index===idx){idx=-1;shown=false;$('status').textContent='Controller disconnected.';caps(null)}});
+
+function tick(){
+  const gp=pad();
+  if(gp){
+    if(!shown){shown=true;$('status').innerHTML=`<b>${gp.id.replace(/</g,'&lt;')}</b>, ${gp.buttons.length} buttons, ${gp.axes.length} axes.`;caps(gp)}
+    setStick($('sl'),gp.axes[0]||0,gp.axes[1]||0,.18);setStick($('sr'),gp.axes[2]||0,gp.axes[3]||0,.25);
+    NAMES.forEach((n,i)=>{const b=gp.buttons[i],el=$('b'+i);if(!el)return;const v=b?b.value:0,p=b?b.pressed:false;
+      el.classList.toggle('on',p);el.firstChild.style.height=(v*100)+'%';el.style.opacity=b?1:.35});
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

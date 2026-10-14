@@ -1,6 +1,6 @@
 {
  "game": "Anewgam: Knight Side",
- "latest": "/knight-side/v9/",
+ "latest": "/knight-side/v10/",
  "versions": [
   {
    "version": "v1",
@@ -64,6 +64,13 @@
    "name": "Thresholds",
    "path": "/knight-side/v9/",
    "sha256": "5f13082c98be453090a4ef59ca8133e326bfd7a522fc9353322043f066e9b79c"
+  },
+  {
+   "version": "v10",
+   "door": "X",
+   "name": "Gravity",
+   "path": "/knight-side/v10/",
+   "sha256": "72263ff3b21b2753da5cba26d68bee3240a5b34b464a65e4aa8dcf435f31dab7"
   }
  ]
 }
