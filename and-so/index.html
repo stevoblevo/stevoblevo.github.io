@@ -186,6 +186,14 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: none; b
 #zc button:hover { background: rgba(246, 195, 95, .14) }
 #zLab { font-family: var(--f-mono); font-size: 11px; color: rgba(234, 220, 198, .72); min-width: 40px; text-align: center }
 
+/* the sound box view chip */
+#viewChip { position: fixed; z-index: 6; display: none; align-items: center; gap: 6px; min-height: 30px; padding: 4px 11px 4px 9px; border-radius: 999px; background: rgba(22, 16, 26, .62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 1px solid rgba(246, 195, 95, .3); color: rgba(240, 228, 210, .9); font-size: 11.5px; letter-spacing: .05em; cursor: pointer; white-space: nowrap; transition: border-color .2s, background .2s }
+#viewChip.on { display: inline-flex }
+#viewChip:hover { border-color: rgba(246, 195, 95, .6); background: rgba(246, 195, 95, .1) }
+#viewChip i { font-style: normal; font-size: 13px; color: var(--gold) }
+#viewChip small { font-size: 10px; color: var(--ink-faint) }
+@media (pointer: coarse) { #viewChip { min-height: 38px; padding: 6px 13px 6px 11px } }
+
 /* hypermetapunk extras */
 #tabs { position: fixed; z-index: 6; display: flex; gap: 4px }
 .tab { background: none; border: 1px solid transparent; border-radius: 8px; color: rgba(234, 220, 198, .62); font-family: var(--f-serif); font-size: 14px; padding: 5px 14px; cursor: pointer; min-height: 32px }
@@ -216,8 +224,26 @@ body[data-skin="story"] #c { filter: invert(1) hue-rotate(180deg) sepia(.32) sat
 body[data-skin="story"] #c3 { mix-blend-mode: multiply }
 body[data-skin="eink"] #c { filter: invert(1) grayscale(1) contrast(1.3) brightness(1.04) }
 body[data-skin="eink"] #c2 { filter: grayscale(1) contrast(1.2) }
-body:is([data-skin="daybreak"], [data-skin="story"]) :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result) { filter: invert(1) hue-rotate(180deg) }
-body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result) { filter: invert(1) grayscale(1) }
+body:is([data-skin="daybreak"], [data-skin="story"]) :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip) { filter: invert(1) hue-rotate(180deg) }
+body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip) { filter: invert(1) grayscale(1) }
+
+/* bw2: one bit per pixel. the canvas is dithered in script at 1× and inverted to black ink on white */
+body[data-skin="bw2"] { --ground: #f7f6f1 }
+body[data-skin="bw2"] #c { filter: invert(1); image-rendering: pixelated }
+body[data-skin="bw2"] #c2 { filter: invert(1) grayscale(1) contrast(2.4) }
+body[data-skin="bw2"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip) { filter: invert(1) grayscale(1) contrast(1.8) }
+body[data-skin="bw2"] :is(#gw, #toast, #quests, #round, #result, #top, #viewChip, #zc) { -webkit-backdrop-filter: none; backdrop-filter: none }
+
+/* fieldstone: warm stone, mint florals, a chartreuse accent, a carved rosette */
+body[data-skin="fieldstone"] { --ground: #241c17; --gold: #d9ec6c; --mint: #8fe3c9; --glass: rgba(38, 30, 24, .88); --glass-line: rgba(217, 236, 108, .26) }
+body[data-skin="fieldstone"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(217, 236, 108, .72); background: rgba(217, 236, 108, .12); color: #f2f8cc }
+body[data-skin="fieldstone"] :is(.pill:hover, .mode:hover, .ctl:hover) { border-color: rgba(217, 236, 108, .45) }
+body[data-skin="fieldstone"] :is(.sec, .tk, .qh) { color: rgba(217, 236, 108, .85) }
+body[data-skin="fieldstone"] .sw:checked { background: rgba(110, 205, 178, .88) }
+body[data-skin="fieldstone"] input[type=range]::-webkit-slider-thumb { background: #e8f4a4; box-shadow: 0 0 8px rgba(217, 236, 108, .5) }
+body[data-skin="fieldstone"] :is(#toast, #round, #result, #viewChip, #zc) { border-color: rgba(217, 236, 108, .4) }
+body[data-skin="fieldstone"] :is(.chip, #quests, #viewChip, #zc) { background: rgba(38, 30, 24, .74) }
+body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
 
 @media (prefers-reduced-motion: reduce) { * { transition-duration: .01s !important; animation: none !important } }
 </style>
@@ -313,6 +339,17 @@ body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #
     <div class="note" id="lNote">the demo hums first, so you can hear what listening does. the microphone stays off until you press it; pitch is worked out on this page and nothing is recorded or sent. headphones help it hear only you.</div>
     <div class="note jl" id="lLines"></div>
 
+    <div class="sec">sound box</div>
+    <div class="btns" id="viewBtns"><button class="pill on" data-view="mandala">mandala</button><button class="pill" data-view="cymatics">cymatics</button><button class="pill" data-view="cube">cube 3D</button><button class="pill hidden" data-view="d5">5D</button></div>
+    <div id="cymOpts">
+      <div class="btns" id="cymShape"><button class="pill on" data-shape="square">square plate</button><button class="pill" data-shape="circle">round plate</button></div>
+      <label class="row"><span>glow the still lines</span><input type="checkbox" class="sw" id="sCymLines" checked></label>
+      <label class="row"><span>fine powder (goes the other way)</span><input type="checkbox" class="sw" id="sCymPowder"></label>
+      <div class="btns"><button class="pill" id="cymSprinkle">fresh sand</button></div>
+      <div class="note">a Chladni plate, worked out from the physics: the chord shakes a metal plate from a stud at its centre, the sand is kicked off wherever the plate moves and comes to rest on the lines that stay still. higher notes, finer figures. tap the plate to sprinkle more; scroll over it to drive it harder.</div>
+    </div>
+    <div class="note" id="viewNote">tap the chip above the sound box, or press X, to change what it shows.</div>
+
     <div class="sec">rounds</div>
     <div class="btns"><button class="pill on" id="gRound">▶ play a round</button></div>
     <div class="note" id="gStats">cover every target peg with a voice at rest. under 12 seconds earns three stars. every third round is by ear.</div>
@@ -388,7 +425,7 @@ body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #
     </div>
 
     <div class="sec">vibe</div>
-    <div class="btns" id="themeBtns"><button class="pill on" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daybreak</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook</button><button class="pill" data-th="eink">e-ink</button></div>
+    <div class="btns" id="themeBtns"><button class="pill on" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button></div>
 
     <div class="sec">record</div>
     <div class="btns"><button class="pill" id="rRec">● record</button><button class="pill" id="rRep">↺ replay last 10s</button></div>
@@ -406,12 +443,22 @@ body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #
     <div class="btns"><button class="pill" id="pLoad">load</button><button class="pill" id="pDel">delete</button></div>
     <div class="btns"><input class="txt" id="pName" placeholder="name this vibe" maxlength="28" aria-label="preset name"><button class="pill" id="pSave">save</button></div>
 
+    <div class="sec">experiments</div>
+    <label class="row"><span>5D lattice · 3, 5, 7, 11, 13</span><input type="checkbox" class="sw" id="sX5d"></label>
+    <div id="x5dOpts">
+      <label class="row"><span>5D turning speed</span><input type="range" id="sX5dSpeed" min="0" max="100" value="40"></label>
+      <label class="row"><span>5D depth</span><input type="range" id="sX5dDepth" min="0" max="100" value="50"></label>
+    </div>
+    <label class="row"><span>detective mode</span><input type="checkbox" class="sw" id="sDetect"></label>
+    <div class="note">off until you switch it on. the 5D view is a penteract: 32 ratios, one prime per axis, projected 5D → 4D → 3D → your screen. drag to turn it, shift-drag to twist the hidden dimensions. detective mode names every node and lights the trail from the root to each voice, one prime step at a time. in any view, tap a node to hear it and read its factors, cents and Tenney height.</div>
+
     <div class="sec">start over</div>
     <div class="btns"><button class="pill" id="bRestart">restart the music</button></div>
     <div class="foot">gamut: from <i>gamma ut</i>, the bottom note of Guido's hexachords. later, the whole range.</div>
   </div>
 </div>
 
+<button id="viewChip" aria-label="change what the sound box shows"><i>◈</i><span id="viewChipName">mandala</span><small>▸</small></button>
 <div id="zc"><button id="zOut" aria-label="zoom out">−</button><span id="zLab">1.0×</span><button id="zIn" aria-label="zoom in">+</button><button id="zReset" aria-label="reset zoom">⟲</button></div>
 <div id="tabs" class="hidden"><button class="tab on" data-tab="resonance">Resonance</button><button class="tab" data-tab="waveform">Waveform</button><button class="tab" data-tab="spectrum">Spectrum</button></div>
 <div id="pbar" class="hidden"><button id="pbPlay" class="pbp" aria-label="pause">❚❚</button><select id="pbScene" class="sel pbs" aria-label="scene"></select><span id="pbTime">0:00</span><span class="pbv"><span>Master volume</span><input type="range" id="pbVol" min="0" max="100" value="70" aria-label="master volume"><b id="pbVolP">70%</b></span><button id="pbRec" class="pill">● rec</button><button id="pbRep" class="pill">↺ 10s</button><button id="pbStop" class="pbstop">■ Stop</button></div>
@@ -617,6 +664,14 @@ const CAT = [
   ['x-echo', 'any', 'ev', '', 'sung back in tune', 'the echo voice followed you', 'it sings your note, nudged onto the nearest valley floor. just-intonation autotune, for once in a good way.', 'hold a note while listening'],
   ['x-room', 'any', 'ev', '', 'the room’s key', 'tuned to a steady hum', 'a fridge, a fan, a tuning fork: anything steady for a few seconds becomes the root.', 'let a steady tone sound for a few seconds while listening'],
   ['x-adlib', 'any', 'ev', '', 'ad lib', 'Saelion wrote you into the story', 'every phrase you sing gets a line in the storybook, made up on the spot.', 'sing three phrases while listening'],
+  ['x-cymatics', 'any', 'ev', '', 'cymatics', 'sand on a singing plate', 'Chladni sprinkled sand on a bowed metal plate in 1787. the sand runs off whatever moves and settles on the lines that stay still.', 'switch the sound box to cymatics'],
+  ['x-figure', 'any', 'ev', '', 'a Chladni figure', 'the sand settled', "a plate's modes go up as n² + m², not 1, 2, 3. plates are inharmonic, which is why gongs and bells sound like gongs and bells.", 'let a chord ring on the plate until the sand settles'],
+  ['x-powder', 'any', 'ev', '', 'the inverse pattern', 'fine powder at the antinodes', 'very fine powder rides the air currents over the plate and gathers where it moves most: the opposite of sand.', 'turn on the fine powder'],
+  ['x-cube', 'any', 'ev', '', 'the lattice cube', 'fifths, thirds, sevenths', 'every just ratio is a point: three steps of 3/2 one way, 5/4 another, 7/4 the third. a major triad is a triangle; its minor is the same triangle flipped.', 'switch the sound box to the cube'],
+  ['x-5d', 'any', 'ev', '', 'five dimensions', 'primes 3 to 13', 'thirty-two ratios on a penteract: every corner a product of 3, 5, 7, 11 and 13, every edge one prime. an experiment.', 'switch on the 5D experiment'],
+  ['x-detective', 'any', 'ev', '', 'lattice detective', 'inspected a ratio', 'every node knows its prime factors and its Tenney height: log₂ of numerator times denominator. lower is simpler.', 'tap a node in the cube'],
+  ['x-bw2', 'any', 'ev', '', 'two colors', 'black and white e-paper', 'one bit per pixel. the grays are an ordered dither, the same trick e-paper badges and early Macs used.', 'try the bw2 look'],
+  ['x-fieldstone', 'any', 'ev', '', 'fieldstone', 'a sundress and a stone wall', 'mint florals, warm river stone, a carved wooden rosette. summer, mostly.', 'try the fieldstone look'],
   ['x-ask', 'any', 'ev', '', 'conversation', 'asked Saelion something', 'it answered. mostly vibes, but well-read vibes.', 'ask Saelion a question'],
   ['x-newstory', 'any', 'ev', '', 'a new chapter', 'the storybook wrote one', 'written from what you found this session.', 'ask the storybook for a new story']
 ].map(a => ({ id: a[0], mode: a[1], kind: a[2], key: a[3], name: a[4], line: a[5], fact: a[6], hint: a[7] }));
@@ -624,7 +679,8 @@ const CATI = new Map(CAT.map(c => [c.id, c]));
 
 // ---------- settings and shared state ----------
 const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pace: 0.4, warm: 0.62, vol: 0.7, chimes: true, bird: true, haptics: true,
-  flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony' };
+  flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
+  view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false };
 const LIGHT = () => !!SET.light && !SET.frolic;
 let W = 0, H = 0, S = 1, wide = true, latticeOn = false, LT = 0, LB = 0, SH = 34, PX0 = 0, PW = 1, MX = 0, MY = 0, MR = 100, BR = 8, NS = 0, DPR = 1, qScale = 1;
 let SAT = 0, SAB = 0, TOPH = 0, PEEK = 0, phone = false;
@@ -1060,7 +1116,7 @@ function Dv(v, x) {
 const targetMode = () => !!((M.easy || era) && !round);
 function stepVoice(v, h) {
   if (v.wT === 0 || v.locked) return;
-  if (v.dragging) { v.glide = null; v.echo = null; return; }
+  if (v.dragging) { v.glide = null; v.echo = null; if (v.dragX != null) v.x += (v.dragX - v.x) * (1 - Math.exp(-h * 45)); return; }
   if (v.echo != null) { v.glide = null; v.x += (v.echo - v.x) * (1 - Math.exp(-h * 16)); v.v = 0; v.n = 0; v.temp = 0; return; }
   if (v.glide) {
     const g = v.glide, k = clamp((t - g.t0) / g.dur, 0, 1), e = k * k * (3 - 2 * k);
@@ -1524,13 +1580,13 @@ function recomputeXS() {
   syncZoomUI();
 }
 function setView(x0, w) { w = clamp(w, XMAX / 12, XMAX); x0 = clamp(x0, 0, XMAX - w); if (Math.abs(x0 - VIEW.x0) < 1e-6 && Math.abs(x0 + w - VIEW.x1) < 1e-6) return; VIEW.x0 = x0; VIEW.x1 = x0 + w; recomputeXS(); const z = XMAX / w; emit('zoom', { v: z }); if (z >= 6) discover('x-zoom'); }
-function setZoom(z, cx) { z = clamp(z, 1, 12); const w = XMAX / z; setView(cx - w / 2, w); }
-function zoomAt(z, px) { z = clamp(z, 1, 12); const w = XMAX / z, cx = xFromS(px), frac = clamp((px - PX0) / PW, 0, 1); setView(cx - frac * w, w); }
+function setZoom(z, cx) { z = clamp(z, 1, 12); const w = XMAX / z; VIEW.tgt = null; setView(cx - w / 2, w); }
+function zoomAt(z, px) { z = clamp(z, 1, 12); const w = XMAX / z, cx = xFromS(px), frac = clamp((px - PX0) / PW, 0, 1); VIEW.tgt = null; setView(cx - frac * w, w); }
 function zoomBy(f) { setZoom(zoomLevel() * f, (VIEW.x0 + VIEW.x1) / 2); }
 
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
 const SAVE_KEY = 'andso:v2';
-const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow'];
+const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
@@ -1965,11 +2021,13 @@ function applyPreset(p, name) {
 const TUPN = { 2: 'eighths', 3: 'triplets', 4: 'sixteenths', 5: 'quintuplets', 6: 'sextuplets', 7: 'septuplets', 8: 'thirty-seconds', 9: 'nonuplets' };
 const TUPC = { 2: 'eighths. plain.', 3: 'triplets. it swings now.', 4: 'sixteenths. home.', 5: 'quintuplets. silly, as requested.', 6: 'sextuplets.', 7: 'septuplets. good luck dancing.', 8: 'thirty-seconds. busy.', 9: 'nonuplets. this is a cry for help.' };
 function setTuplet(n, quiet) { n = clamp(n, 2, 9); if (n === tuplet) return; tuplet = n; rhy.base = null; syncUI(); if (!quiet) { caption(TUPC[n], 2200); haptic(6); } if (n === 5 || n === 7 || n === 9) discover('x-tuplet'); emit('tuplet', { v: n }); }
-const SKINS = ['obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink'];
+const SKINS = ['obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone'];
 function setSkin(s) {
   if (!SKINS.includes(s)) s = 'obsidian';
-  skin = s; document.body.dataset.skin = s;
+  const was = skin; skin = s; document.body.dataset.skin = s;
   if (s === 'story' && entered) $('story').classList.add('on');
+  else if (was === 'story' && s !== 'story') $('story').classList.remove('on');
+  if (entered && s !== was && (s === 'bw2' || s === 'fieldstone')) discover('x-' + s);
   resize(); syncUI(); persistSoon(); if (entered) jlog(`skin: ${s}`);
 }
 
@@ -2238,11 +2296,25 @@ function syncUI() {
   document.querySelectorAll('#formBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.f === SET.petForm));
   $('mLight').classList.toggle('on', md === 'light'); $('mLean').classList.toggle('on', md === 'lean'); $('mFrol').classList.toggle('on', md === 'frolic'); $('mNorm').classList.toggle('on', !!SET.normie);
   listenUI();
+  const vw = viewOn();
+  document.querySelectorAll('#viewBtns .pill').forEach(b => { b.classList.toggle('on', b.dataset.view === vw); if (b.dataset.view === 'd5') b.classList.toggle('hidden', !SET.x5d); });
+  $('cymOpts').classList.toggle('hidden', vw !== 'cymatics');
+  document.querySelectorAll('#cymShape .pill').forEach(b => b.classList.toggle('on', b.dataset.shape === (SET.cymShape === 'circle' ? 'circle' : 'square')));
+  $('sCymLines').checked = !!SET.cymLines; $('sCymPowder').checked = !!SET.cymPowder;
+  $('sX5d').checked = !!SET.x5d; $('x5dOpts').classList.toggle('hidden', !SET.x5d); $('sDetect').checked = !!SET.detect;
+  $('sX5dSpeed').value = Math.round(SET.x5dSpeed * 100); $('sX5dDepth').value = Math.round(SET.x5dDepth * 100);
+  $('viewNote').textContent = {
+    mandala: 'mandala: each voice traces a Lissajous figure against the root. a still figure is a pure interval; a turning one is beating. tap the chip above the sound box, or press X, to change the view.',
+    cymatics: 'tap the chip above the sound box, or press X, to change the view.',
+    cube: 'cube 3D: fifths run left to right, major thirds go up, harmonic sevenths go back. lit nodes are voices, the gold one is the root. drag to turn it, pinch or scroll to come closer, tap a node to hear and inspect it.',
+    d5: '5D: the penteract of 3, 5, 7, 11 and 13. drag to turn, shift-drag to twist the hidden dimensions, tap a node to inspect it.'
+  }[vw];
   $('tupNote').textContent = `pinch or scroll the mandala to change the subdivision. now ${tuplet}: ${TUPN[tuplet]}.`;
   const recOn = capture.recording();
   $('rRec').textContent = recOn ? '■ stop & save' : '● record'; $('pbRec').textContent = recOn ? '■ save' : '● rec';
   $('pbVol').value = Math.round(SET.vol * 100); $('pbVolP').textContent = Math.round(SET.vol * 100) + '%';
   $('pbPlay').textContent = paused ? '▶' : '❚❚';
+  $('viewChipName').textContent = VIEW_NAME[vw]; placeChrome();
   const hmpDesk = skin === 'hmp' && entered && !phone;
   $('pbar').classList.toggle('hidden', !hmpDesk); $('tabs').classList.toggle('hidden', !hmpDesk);
   document.querySelectorAll('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
@@ -2260,7 +2332,7 @@ function placeGw(x, y) { const r = gw.getBoundingClientRect(); gw.style.left = c
 function resize() {
   readSafe();
   W = window.innerWidth; H = window.innerHeight;
-  DPR = Math.min(window.devicePixelRatio || 1, 2) * dprScale;
+  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, 2) * dprScale;
   [cvs, cvs2, cvs3].forEach(c => { c.width = Math.max(1, Math.round(W * DPR)); c.height = Math.max(1, Math.round(H * DPR)); });
   [ctx, ctx2, ctx3].forEach(g => g.setTransform(DPR, 0, 0, DPR, 0, 0));
   S = clamp(Math.min(W, H) / 760, 0.7, 2);
@@ -2300,7 +2372,7 @@ function resize() {
   $('top').classList.toggle('on', entered && phone); $('hud').classList.toggle('hidden', phone);
   gw.classList.toggle('sheet', phone);
   if (phone) { if (entered) gw.classList.add('on'); setSheet(sheet.name); gw.style.left = ''; gw.style.top = ''; }
-  else { gw.style.height = ''; gw.style.maxHeight = Math.max(260, LT - 64) + 'px'; if (gw.classList.contains('on')) placeGw(parseFloat(gw.style.left) || W - 302, parseFloat(gw.style.top) || 52); }
+  else { gw.style.height = ''; gw.style.maxHeight = Math.max(260, LT - 112) + 'px'; if (gw.classList.contains('on')) placeGw(parseFloat(gw.style.left) || W - 302, parseFloat(gw.style.top) || 52); }
   $('quests').classList.toggle('on', entered && !phone && !questsHidden);
   vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.78);
   vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.5)');
@@ -2314,6 +2386,9 @@ function placeChrome() {
   const rb = $('round'), on = !!(round && !round.done), root = document.documentElement.style;
   if (phone) { rb.style.left = '50%'; rb.style.transform = 'translateX(-50%)'; rb.style.top = TOPH + 4 + 'px'; root.setProperty('--capTop', TOPH + (on ? 56 : 4) + 'px'); }
   else { const qTop = Math.max(latticeOn ? 300 : 120, LT - 150); rb.style.left = '22px'; rb.style.transform = 'none'; rb.style.top = qTop - 54 + 'px'; root.setProperty('--capTop', (skin === 'hmp' ? 84 : 54) + 'px'); }
+  // the view chip rides just above the sound box's top-right corner, clear of the lattice nodes
+  const vc = $('viewChip'); vc.classList.toggle('on', !!entered);
+  if (entered) { const w = vc.offsetWidth || 104, hh = vc.offsetHeight || 30; vc.style.left = clamp(Math.min(W - 12, MX + MR * 1.03 + 40) - w, 12, Math.max(12, W - w - 12)) + 'px'; vc.style.top = Math.max(TOPH + 6, MY - MR * 1.03 - 14 - hh) + 'px'; }
 }
 
 // ---------- the pointer manager ----------
@@ -2322,13 +2397,14 @@ let pinch = null, three = null, lastScaleTap = 0, lastScaleTapX = -99, scaleMark
 function regionOf(px, py) {
   if (py >= LB - 2 && py <= LB + SH + 8) return 'scale';
   if (py >= LT - 30 && py < LB - 2) return 'terrain';
-  if (Math.hypot(px - MX, py - MY) < MR * 1.2) return 'mandala';
+  if (inSoundBox(px, py)) return 'mandala';
   return 'sky';
 }
 function handsCheck() { const n = voices.filter(v => v.dragging).length; if (n >= 2) discover('x-hands'); if (n >= 4) discover('x-four'); emit('hands', { v: n }); }
 function grabVoice(p, v) {
-  p.role = 'voice'; p.v = v; p.lx = v.x; p.vel = 0; p.wolf = 0; p.oct = 0; p.mph = 0; p.hit88 = false; p.lsx = p.x;
-  v.dragging = p.id; v.locked = false; v.pinUntil = 0; v.temp = 0; v.v = 0; v.dropping = false; v.target = null; v.dragY = p.y; act = v;
+  p.role = 'voice'; p.v = v; p.lx = v.x; p.vel = 0; p.wolf = 0; p.oct = 0; p.mph = 0; p.hit88 = false; p.lsx = p.x; p.fx = v.x; p.lxr = xFromS(p.x); p.det = null;
+  v.dragging = p.id; v.locked = false; v.pinUntil = 0; v.temp = 0; v.v = 0; v.dropping = false; v.target = null; v.dragY = p.y; v.dragX = v.x; act = v;
+  if (p.type === 'mouse') hitEl.style.cursor = 'grabbing';
   if (!draggedOnce) { draggedOnce = true; hideHint(); }
   if (M.struck) { audio.strikeVoice(v, 0.9, 1); v.flash = 1; }
   haptic(5); handsCheck();
@@ -2337,8 +2413,8 @@ function startPinch(kind, a, b) {
   if (a.role === 'voice' || b.role === 'voice') return false;
   a.role = b.role = 'pinch';
   const mx = (a.x + b.x) / 2;
-  pinch = { kind, a: a.id, b: b.id, d0: Math.max(20, Math.hypot(a.x - b.x, a.y - b.y)), z0: zoomLevel(), cx0: xFromS(mx), tup0: tuplet };
-  VIEW.vel = 0;
+  pinch = { kind, a: a.id, b: b.id, d0: Math.max(20, Math.hypot(a.x - b.x, a.y - b.y)), z0: zoomLevel(), cx0: xFromS(mx), tup0: tuplet, dv0: VW.dist };
+  VIEW.vel = 0; VIEW.tgt = null; VW.drag = false;
   return true;
 }
 function pinchMove() {
@@ -2348,10 +2424,20 @@ function pinchMove() {
     const z = clamp(pinch.z0 * ratio, 1, 12), w = XMAX / z, mx = (a.x + b.x) / 2, frac = clamp((mx - PX0) / PW, 0, 1);
     setView(pinch.cx0 - frac * w, w);
     if (Math.abs(ratio - 1) > 0.15) discover('x-pinch');
-  } else {
+  } else if (pinch.kind === 'view') VW.dist = clamp(pinch.dv0 / ratio, 3.2, 14);
+  else {
     const steps = Math.round(Math.log(ratio) / Math.log(1.22));
     setTuplet(clamp(pinch.tup0 + steps, 2, 9));
   }
+}
+// a gentle pull toward the nearest valley floor while dragging slowly: the voice clicks into place without being forced
+function detent(v, p, x) {
+  const sp = Math.abs(p.vel); if (sp > 650) { p.det = null; return x; }
+  const xm = refineMin(v, x, 11), d0 = Dv(v, xm);
+  if (!(d0 < Dv(v, xm - 2.5) && d0 < Dv(v, xm + 2.5)) || Math.abs(xm - x) > 10.5) { p.det = null; return x; }
+  const s = (1 - sp / 650) * 0.72 * (1 - Math.abs(xm - x) / 14);
+  if (s > 0.3 && (p.det == null || Math.abs(xm - p.det) > 3)) { p.det = xm; haptic(4); v.flash = Math.max(v.flash, 0.3); }
+  return x + (xm - x) * s;
 }
 hitEl.addEventListener('pointerdown', e => {
   if (!entered) return;
@@ -2367,6 +2453,8 @@ hitEl.addEventListener('pointerdown', e => {
   if (sc && (reg === 'scale' || reg === 'terrain') && startPinch('scale', sc, p)) return;
   const sp = others.find(q => q.role === 'spin');
   if (sp && reg === 'mandala' && startPinch('mandala', sp, p)) return;
+  const vq = others.find(q => q.role === 'view');
+  if (vq && reg === 'mandala' && viewOn() !== 'cymatics' && startPinch('view', vq, p)) return;
   if (UNL.pet && pet.hatch <= 0 && Math.hypot(px - pet.x, py - (pet.y - 10 * S)) < 36 * S) { p.role = 'pet'; p.dx = px - pet.hx; p.dy = py - pet.hy; return; }
   if (hole.on && Math.hypot(px - hole.x, py - hole.y) < holeRad() * 2.4) { p.role = 'hole'; p.dx = px - hole.x; p.dy = py - hole.y; return; }
   for (let i = 0; i < 5; i++) { const q = latPos(i); if (Math.hypot(px - q[0], py - q[1]) < (phone ? 26 : 18) * Math.max(S, 0.9)) { p.role = 'node'; p.i = i; return; } }
@@ -2378,25 +2466,31 @@ hitEl.addEventListener('pointerdown', e => {
     if (hit) hit.x = x;
   }
   if (hit) { grabVoice(p, hit); return; }
-  if (reg === 'scale') { p.role = 'scale'; p.axis = null; p.vx = 0; VIEW.vel = 0; return; }
+  if (reg === 'scale') { p.role = 'scale'; p.axis = null; p.vx = 0; VIEW.vel = 0; VIEW.tgt = null; return; }
   if (reg === 'terrain') { p.role = 'none'; return; }
-  if (reg === 'mandala') { p.role = 'spin'; p.a = Math.atan2(py - MY, px - MX); p.acc = 0; return; }
+  if (reg === 'mandala') {
+    if (viewOn() === 'mandala') { p.role = 'spin'; p.a = Math.atan2(py - MY, px - MX); p.acc = 0; p.av = 0; mrotVel = 0; return; }
+    p.role = 'view'; viewDown(p); return;
+  }
   p.role = 'harp'; p.h = { pool: harpPool(), idx: -1, lastT: 0 };
 });
 hitEl.addEventListener('pointermove', e => {
   const px = e.clientX, py = e.clientY; lastPX = px; lastPY = py;
   const p = PTR.get(e.pointerId);
-  if (!p) { if (entered && e.pointerType === 'mouse') { hoverCursor(px, py); updateHover(px, py); } return; }
+  if (!p) { if (entered && e.pointerType === 'mouse') { hoverCursor(px, py); updateHover(px, py); viewHover(px, py); } return; }
   const now = performance.now(), dtm = Math.max(8, now - p.lt), dx = px - p.x, dy = py - p.y;
   if (!p.moved && Math.hypot(px - p.x0, py - p.y0) > (p.type === 'mouse' ? 4 : 8)) p.moved = true;
   p.x = px; p.y = py; p.lt = now;
   switch (p.role) {
     case 'pinch': pinchMove(); break;
     case 'voice': {
-      const v = p.v, x = xFromS(px);
+      const v = p.v, xr = xFromS(px), fine = !!e.shiftKey;
+      p.fx = clamp(p.fx + (xr - p.lxr) * (fine ? 0.2 : 1), 0, XMAX); p.lxr = xr;
+      let x = p.fx;
       p.vel = p.vel * 0.6 + ((x - p.lx) / dtm) * 1000 * 0.4; p.mph = Math.abs(p.vel) / 50;
       if (p.mph >= 88 && !era && !round) { p.hit88 = true; fires.push({ x0: p.lsx, x1: px, life: 1.6 }); }
-      p.lx = x; p.lsx = px; v.x = x; v.dragY = py;
+      if (!e.altKey && !fine) x = detent(v, p, x);
+      p.lx = p.fx; p.lsx = px; v.dragX = x; v.dragY = py;
       v.dropping = py > LB + SH * 0.55 && voices.filter(o => o.wT > 0).length > 1;
       break;
     }
@@ -2410,11 +2504,12 @@ hitEl.addEventListener('pointermove', e => {
       break;
     case 'spin': {
       const a2 = Math.atan2(py - MY, px - MX); let d = a2 - p.a; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU;
-      p.a = a2; p.acc += d; mrot += d;
+      p.a = a2; p.acc += d; mrot += d; p.av = p.av * 0.5 + (d / (dtm / 1000)) * 0.5;
       const st = TAU / 5; while (p.acc > st) { p.acc -= st; spinStep(1); } while (p.acc < -st) { p.acc += st; spinStep(-1); }
       break;
     }
     case 'harp': if (p.moved) harpAt(p.h, px, py); break;
+    case 'view': viewMove(p, dx, dy, dtm, e); break;
     case 'node': { const L = LAT[p.i], a = (L.a * Math.PI) / 180, proj = (px - MX) * Math.cos(a) + (py - MY) * Math.sin(a); SET[L.k] = clamp((proj - MR * 1.3) / (MR * 0.6), 0, 1); if (t - (p.la || 0) > 0.1) { p.la = t; audio.applyMix(); } break; }
     case 'pet': pet.hx = clamp(px - p.dx, 20, W - 20); pet.hy = clamp(py - p.dy, TOPH + 30, H - 30); break;
     case 'hole': hole.x = clamp(px - p.dx, PX0, PX0 + PW); hole.y = clamp(py - p.dy, TOPH + 30, LT - 16); break;
@@ -2427,8 +2522,10 @@ function endPtr(e) {
   if (three) { if (!p.moved && now - three.t0 < 520) { if (PTR.size === 0) { lean(1); discover('x-three'); caption('everyone leans.', 1400); haptic([8, 20, 8]); three = null; } } else three = null; }
   switch (p.role) {
     case 'pinch': { const o = PTR.get(p.id === pinch.a ? pinch.b : pinch.a); if (o) o.role = 'none'; pinch = null; break; }
+    case 'view': viewUp(p, now); break;
     case 'voice': {
-      const v = p.v; v.dragging = false;
+      const v = p.v; v.dragging = false; v.dragX = null; if (p.type === 'mouse') hitEl.style.cursor = 'grab';
+      if (!p.moved && dur < 260) { if (now - (v.tapT || 0) < 340) { v.tapT = 0; if (lightGlide(v, v.x)) { caption('snapped to the nearest valley floor.', 1400); haptic(6); } } else v.tapT = now; }
       if (v.dropping) { v.dropping = false; dropVoice(v); haptic(10); }
       else {
         const stale = now - p.lt > 90;
@@ -2441,12 +2538,12 @@ function endPtr(e) {
     case 'scale':
       if (!p.moved && dur < 320) {
         const x = xFromS(p.x);
-        if (now - lastScaleTap < 330 && Math.abs(p.x - lastScaleTapX) < 34) zoomLevel() > 1.5 ? setZoom(1, XMAX / 2) : zoomAt(4, p.x);
+        if (now - lastScaleTap < 330 && Math.abs(p.x - lastScaleTapX) < 34) easeZoom(zoomLevel() > 1.5 ? 1 : 4, p.x);
         else { audio.pip(fOf(x), 0.05, 0, 1.0); scaleMark = { x, life: 1 }; discover('x-scaletap'); emit('scaletap'); haptic(4); }
         lastScaleTap = now; lastScaleTapX = p.x;
       } else if (p.axis === 'x' && zoomLevel() > 1.01 && now - p.lt < 80) { VIEW.vel = clamp(p.vx, -7000, 7000); if (Math.abs(VIEW.vel) > 900) discover('x-flingscale'); }
       break;
-    case 'spin': if (!p.moved) strum(); break;
+    case 'spin': if (!p.moved) strum(); else if (now - p.lt < 90) mrotVel = clamp(p.av, -8, 8); break;
     case 'harp': if (!p.moved) lean(0.8); else { discover('x-harp'); jlog('played the sky harp'); } break;
     case 'node': audio.applyMix(); syncUI(); persistSoon(); discover('x-lattice'); jlog('lattice adjusted'); break;
     case 'pet': if (!p.moved) { if (now - pet.lastTap < 350) petPose(); else petTalk(); pet.lastTap = now; } break;
@@ -2479,13 +2576,20 @@ hitEl.addEventListener('pointerleave', () => { hoverTip = null; });
 hitEl.addEventListener('wheel', e => {
   if (!entered) return;
   e.preventDefault();
-  const px = e.clientX, py = e.clientY;
-  if (Math.hypot(px - MX, py - MY) < MR * 1.45) { tupAcc += e.deltaY; if (Math.abs(tupAcc) > 60) { setTuplet(tuplet + (tupAcc < 0 ? 1 : -1)); tupAcc = 0; } return; }
-  if (py < LT - 44) return;
-  const w = VIEW.x1 - VIEW.x0;
-  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) { setView(VIEW.x0 + (e.deltaX || e.deltaY) * (w / PW), w); return; }
-  zoomAt(zoomLevel() * Math.exp(-e.deltaY * 0.0015), px);
+  const px = e.clientX, py = e.clientY, k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? H : 1, dx = e.deltaX * k, dy = e.deltaY * k;
+  lastUserT = t;
+  if (inSoundBox(px, py)) { if (viewWheel(dy)) return; tupAcc += dy; if (Math.abs(tupAcc) > 60) { setTuplet(tuplet + (tupAcc < 0 ? 1 : -1)); tupAcc = 0; } return; }
+  wheelView(dx, dy, px, e.shiftKey, e.ctrlKey);
 }, { passive: false });
+// wheel and buttons steer a target; the view eases toward it every frame, so a mouse notch glides instead of jumping
+function easeZoom(z, px) { z = clamp(z, 1, 12); const w = XMAX / z, frac = clamp((px - PX0) / PW, 0, 1), c = xFromS(px); VIEW.tgt = { x0: clamp(c - frac * w, 0, XMAX - w), w }; if (z >= 6) discover('x-zoom'); }
+function wheelView(dx, dy, px, shift, pinchZoom) {
+  const T = VIEW.tgt || (VIEW.tgt = { x0: VIEW.x0, w: VIEW.x1 - VIEW.x0 });
+  if (Math.abs(dx) > Math.abs(dy) || shift) { const d = Math.abs(dx) > Math.abs(dy) ? dx : dy; T.x0 = clamp(T.x0 + d * (T.w / PW), 0, XMAX - T.w); return; }
+  const z = clamp((XMAX / T.w) * Math.exp(-dy * (pinchZoom ? 0.01 : 0.0016)), 1, 12), w = XMAX / z, frac = clamp((px - PX0) / PW, 0, 1), c = T.x0 + frac * T.w;
+  T.w = w; T.x0 = clamp(c - frac * w, 0, XMAX - w);
+  if (z >= 6) discover('x-zoom');
+}
 
 // ---------- the sheet (phones) and the window (desktop) ----------
 function sheetDown(e) {
@@ -2554,11 +2658,12 @@ window.addEventListener('keydown', e => {
   else if (k === 'r') toggleRound();
   else if (k === 'y' && UNL.rail) rail ? stopRail(false) : startRail();
   else if (k === 'h' && UNL.hole) setHole(!hole.on);
-  else if (k === '+' || k === '=') zoomBy(1.5);
-  else if (k === '-') zoomBy(1 / 1.5);
+  else if (k === '+' || k === '=') wheelView(0, -254, PX0 + PW / 2);
+  else if (k === '-') wheelView(0, 254, PX0 + PW / 2);
   else if (k === 'o') setNormie(!SET.normie);
   else if (k === 'f') nextMood();
   else if (k === 'v') listenToggle();
+  else if (k === 'x') cycleView();
   else if (k === 't') doReplay();
   else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); $('story').classList.remove('on'); }
 });
@@ -2650,7 +2755,17 @@ on('pLoad', () => { const v = $('pSel').value; if (!v) return; const n = v.slice
 on('pSave', () => { const n = ($('pName').value || '').trim().slice(0, 28) || `vibe ${Object.keys(userP).length + 1}`; userP[n] = capturePreset(); persistSoon(); renderPresets(); $('pSel').value = 'u:' + n; $('pName').value = ''; caption(`saved: ${n}`, 2000); });
 on('pDel', () => { const v = $('pSel').value; if (!v || v[0] !== 'u') { caption("built-ins can't be deleted. they're load-bearing.", 2400); return; } delete userP[v.slice(2)]; persistSoon(); renderPresets(); });
 on('bRestart', restartAll);
-on('zIn', () => zoomBy(1.6)); on('zOut', () => zoomBy(1 / 1.6)); on('zReset', () => setZoom(1, XMAX / 2));
+on('zIn', () => wheelView(0, -294, PX0 + PW / 2)); on('zOut', () => wheelView(0, 294, PX0 + PW / 2)); on('zReset', () => { VIEW.tgt = { x0: 0, w: XMAX }; });
+on('viewChip', e => { cycleView(); e.currentTarget.blur(); });
+document.querySelectorAll('#viewBtns .pill').forEach(b => b.addEventListener('click', () => { if (tapOk()) setViewMode(b.dataset.view); }));
+document.querySelectorAll('#cymShape .pill').forEach(b => b.addEventListener('click', () => { if (!tapOk()) return; SET.cymShape = b.dataset.shape; cymReset(); persistSoon(); syncUI(); }));
+$('sCymLines').addEventListener('change', e => { SET.cymLines = e.target.checked; CY.glowKey = ''; persistSoon(); });
+$('sCymPowder').addEventListener('change', e => { SET.cymPowder = e.target.checked; persistSoon(); if (SET.cymPowder) caption('fine powder: it rides the air currents to the antinodes, the opposite of sand.', 3000); });
+on('cymSprinkle', () => { cymReset(); caption('fresh sand, evenly spread. watch it find the still lines.', 2400); });
+$('sX5d').addEventListener('change', e => setX5d(e.target.checked));
+$('sX5dSpeed').addEventListener('input', e => { SET.x5dSpeed = e.target.value / 100; }); $('sX5dSpeed').addEventListener('change', persistSoon);
+$('sX5dDepth').addEventListener('input', e => { SET.x5dDepth = e.target.value / 100; }); $('sX5dDepth').addEventListener('change', persistSoon);
+$('sDetect').addEventListener('change', e => { SET.detect = e.target.checked; persistSoon(); });
 document.querySelectorAll('#tabs .tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; syncUI(); }));
 on('pbPlay', () => { if (!A.ac) return; paused = !paused; if (paused) A.ac.suspend(); else A.ac.resume(); syncUI(); jlog(paused ? 'paused' : 'resumed'); });
 on('pbStop', () => { if (!A.ac) return; paused = true; A.ac.suspend(); if ('speechSynthesis' in window) speechSynthesis.cancel(); caption('stopped. press play to pick it back up.', 2600); syncUI(); jlog('stopped'); });
@@ -2671,6 +2786,12 @@ function drawBg() {
   if (skin === 'hmp') { const g = ctx.createRadialGradient(MX, MY, 0, MX, MY, Math.max(W, H) * 0.8); g.addColorStop(0, '#2b1630'); g.addColorStop(0.55, '#1a0e1d'); g.addColorStop(1, '#0b060c'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return; }
   if (skin === 'story') { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d150d'); g.addColorStop(1, '#0c0905'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return; }
   if (skin === 'eink') { ctx.fillStyle = '#0e0e0e'; ctx.fillRect(0, 0, W, H); return; }
+  if (skin === 'bw2') { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); return; }
+  if (skin === 'fieldstone') {
+    ctx.drawImage(buildFieldstone(), 0, 0, W, H);
+    const hg = ctx.createRadialGradient(W / 2, LT, 0, W / 2, LT, Math.max(W, H) * 0.55); hg.addColorStop(0, `rgba(255,200,130,${0.06 + 0.1 * peak + 0.06 * bloomFlash})`); hg.addColorStop(1, 'rgba(255,200,130,0)');
+    ctx.fillStyle = hg; ctx.fillRect(0, 0, W, H); return;
+  }
   if (skin === 'dawn') {
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#060a1c'); g.addColorStop(0.42, '#17122e'); g.addColorStop(clamp(LT / H, 0.5, 0.95), '#4a2236'); g.addColorStop(1, '#140a12'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
@@ -2683,6 +2804,141 @@ function drawBg() {
     if (LIGHT()) { const hg = ctx.createRadialGradient(W / 2, LT + 30, 0, W / 2, LT + 30, Math.max(W, H) * 0.6); hg.addColorStop(0, `rgba(255,170,120,${0.1 + 0.08 * peak})`); hg.addColorStop(0.5, 'rgba(255,140,130,0.03)'); hg.addColorStop(1, 'rgba(255,140,130,0)'); ctx.fillStyle = hg; ctx.fillRect(0, 0, W, H); }
   }
   if (era || flash55 > 0.02) { ctx.fillStyle = `rgba(120,80,30,${(era ? 0.18 : 0) + 0.35 * flash55})`; ctx.fillRect(0, 0, W, H); }
+}
+// ---------- fieldstone: a warm stone wall at golden hour, a mint floral runner under the terrain, a carved rosette ----------
+let fsBuf = null, fsKey = '', roBuf = null, roKey = '';
+function fsRand(seed) { let s = seed % 2147483647 || 1; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+function blobPts(cx, cy, rx, ry, rnd) { const n = 12, pts = []; for (let k = 0; k < n; k++) { const a = (k / n) * TAU + rnd() * 0.22, j = 0.84 + rnd() * 0.2; pts.push([cx + Math.cos(a) * rx * j, cy + Math.sin(a) * ry * j]); } return pts; }
+function tracePts(g, pts, dx, dy) {
+  const n = pts.length, mid = (a, b) => [(a[0] + b[0]) / 2 + dx, (a[1] + b[1]) / 2 + dy], s0 = mid(pts[n - 1], pts[0]);
+  g.beginPath(); g.moveTo(s0[0], s0[1]);
+  for (let k = 0; k < n; k++) { const p = pts[k], m = mid(p, pts[(k + 1) % n]); g.quadraticCurveTo(p[0] + dx, p[1] + dy, m[0], m[1]); }
+  g.closePath();
+}
+function hemY(x, fy0) { return fy0 + Math.sin(x * 0.045) * 2.2 + Math.sin(x * 0.013 + 1) * 3; }
+function buildFieldstone() {
+  const key = `${W}x${H}@${DPR}:${LT}:${LB}`;
+  if (fsBuf && fsKey === key) return fsBuf;
+  fsKey = key; fsBuf = fsBuf || document.createElement('canvas');
+  const c = fsBuf; c.width = Math.max(1, Math.round(W * DPR)); c.height = Math.max(1, Math.round(H * DPR));
+  const g = c.getContext('2d'), rnd = fsRand(20251022), k = clamp(Math.min(W, H) / 700, 0.75, 1.5);
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  g.fillStyle = '#2c241e'; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < (W * H) / 90; i++) { g.fillStyle = rnd() < 0.5 ? 'rgba(255,240,220,0.05)' : 'rgba(0,0,0,0.12)'; g.fillRect(rnd() * W, rnd() * H, 1, 1); }
+  // river stones in rough courses: no two alike, mortar between, a little shadow under each
+  const PAL = [[96, 84, 72], [108, 92, 76], [86, 80, 74], [120, 102, 82], [100, 88, 80], [128, 108, 86], [80, 70, 60], [112, 98, 88], [96, 88, 70], [134, 116, 96], [104, 96, 90]];
+  for (let y = -12 * k; y < H + 30;) {
+    const rh = (26 + rnd() * 26) * k;
+    for (let x = -24 * k - rnd() * 30 * k; x < W + 40;) {
+      const sw = (34 + rnd() * 66) * k, cx = x + sw / 2, cy = y + rh / 2 + (rnd() - 0.5) * 7 * k, rx = sw / 2 - 2.4 * k, ry = rh / 2 - 2 * k + (rnd() - 0.4) * 5 * k;
+      const col = PAL[(rnd() * PAL.length) | 0].map(v => v * (0.8 + rnd() * 0.32)), pts = blobPts(cx, cy, rx, Math.max(6 * k, ry), rnd);
+      tracePts(g, pts, 1.4 * k, 2.2 * k); g.fillStyle = 'rgba(10,6,4,0.5)'; g.fill();
+      tracePts(g, pts, 0, 0);
+      const gr = g.createLinearGradient(cx - rx, cy - ry, cx + rx * 0.5, cy + ry);
+      gr.addColorStop(0, rgba(mix(col, [255, 238, 206], 0.18), 1)); gr.addColorStop(0.55, rgba(col, 1)); gr.addColorStop(1, rgba(mix(col, [24, 16, 12], 0.45), 1));
+      g.fillStyle = gr; g.fill();
+      g.save(); g.clip();
+      const nd = ((sw * rh) / (55 * k * k)) | 0;
+      for (let i = 0; i < nd; i++) { g.fillStyle = rnd() < 0.5 ? 'rgba(255,240,215,0.08)' : 'rgba(20,12,8,0.14)'; g.fillRect(cx + (rnd() - 0.5) * sw, cy + (rnd() - 0.5) * rh, 1.3 * k, 1.3 * k); }
+      if (rnd() < 0.14) { g.fillStyle = 'rgba(205,220,120,0.09)'; g.beginPath(); g.ellipse(cx + (rnd() - 0.5) * rx, cy + (rnd() - 0.5) * ry, rx * 0.32, ry * 0.26, rnd() * 3, 0, TAU); g.fill(); }
+      g.restore();
+      x += sw + (0.8 + rnd() * 2.4) * k;
+    }
+    y += rh + (1.2 + rnd() * 2.2) * k;
+  }
+  // golden hour: the wall in shade, a low warm sun from the upper left
+  const dusk = g.createLinearGradient(0, 0, 0, H); dusk.addColorStop(0, 'rgba(18,11,8,0.6)'); dusk.addColorStop(0.5, 'rgba(22,14,10,0.4)'); dusk.addColorStop(1, 'rgba(10,8,6,0.62)');
+  g.fillStyle = dusk; g.fillRect(0, 0, W, H);
+  const sun = g.createRadialGradient(W * 0.06, H * 0.08, 0, W * 0.06, H * 0.08, Math.max(W, H) * 0.9); sun.addColorStop(0, 'rgba(255,196,120,0.2)'); sun.addColorStop(0.45, 'rgba(255,170,100,0.06)'); sun.addColorStop(1, 'rgba(255,170,100,0)');
+  g.globalCompositeOperation = 'lighter'; g.fillStyle = sun; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
+  // the runner: mint cotton with small white blossoms, laid under the terrain and the scale
+  const fy0 = LT - 38;
+  const sh = g.createLinearGradient(0, fy0 - 20, 0, fy0 + 4); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,0.5)'); g.fillStyle = sh; g.fillRect(0, fy0 - 20, W, 24);
+  g.save(); g.beginPath(); g.moveTo(0, H + 10); for (let x = 0; x <= W + 6; x += 6) g.lineTo(x, hemY(x, fy0)); g.lineTo(W + 6, H + 10); g.closePath(); g.clip();
+  const fb = g.createLinearGradient(0, fy0, 0, H); fb.addColorStop(0, '#2f5d53'); fb.addColorStop(0.5, '#264c44'); fb.addColorStop(1, '#1a3832'); g.fillStyle = fb; g.fillRect(0, fy0 - 10, W, H - fy0 + 20);
+  for (let x = 0; x < W; x += 2) { const f = Math.sin(x * 0.021 + Math.sin(x * 0.004) * 3); g.fillStyle = f > 0 ? `rgba(200,255,235,${0.04 * f})` : `rgba(0,10,8,${-0.1 * f})`; g.fillRect(x, fy0 - 10, 2, H - fy0 + 20); }
+  const cell = 34 * k;
+  for (let row = 0, yy = fy0 + 8; yy < H + cell; row++, yy += cell * 0.86) for (let xx = (row % 2 ? cell / 2 : 0) - cell; xx < W + cell; xx += cell) {
+    const fx = xx + (rnd() - 0.5) * 9 * k, fy = yy + (rnd() - 0.5) * 7 * k, r = (2.6 + rnd() * 1.8) * k, rot = rnd() * TAU;
+    // a sprig: two leaves and a stem, then a round five-petal blossom with a blush centre
+    g.strokeStyle = 'rgba(150,215,170,0.2)'; g.lineWidth = 0.9 * k; g.beginPath(); g.moveTo(fx, fy); g.quadraticCurveTo(fx + r * 1.2, fy + r * 2, fx + r * 0.4, fy + r * 3.4); g.stroke();
+    g.fillStyle = 'rgba(150,215,170,0.2)'; for (const s of [-1, 1]) { g.beginPath(); g.ellipse(fx + r * 0.7 + s * r * 0.9, fy + r * 2.3, r * 0.95, r * 0.4, s * 0.7, 0, TAU); g.fill(); }
+    g.fillStyle = 'rgba(240,251,245,0.36)'; for (let p = 0; p < 5; p++) { const a = rot + (p * TAU) / 5; g.beginPath(); g.arc(fx + Math.cos(a) * r * 0.82, fy + Math.sin(a) * r * 0.82, r * 0.62, 0, TAU); g.fill(); }
+    g.fillStyle = 'rgba(248,184,166,0.62)'; g.beginPath(); g.arc(fx, fy, r * 0.4, 0, TAU); g.fill();
+    if (rnd() < 0.55) { g.fillStyle = 'rgba(240,251,245,0.26)'; for (let q = 0; q < 3; q++) { g.beginPath(); g.arc(fx + cell * 0.48 + q * 2.4 * k, fy + cell * 0.3 - (q % 2) * 2 * k, 1.1 * k, 0, TAU); g.fill(); } }
+  }
+  g.fillStyle = 'rgba(8,16,14,0.4)'; g.fillRect(0, fy0 - 10, W, H - fy0 + 20);
+  g.restore();
+  g.strokeStyle = 'rgba(217,236,108,0.6)'; g.lineWidth = 1.4; g.beginPath(); for (let x = 0; x <= W + 6; x += 6) { const y = hemY(x, fy0); if (x) g.lineTo(x, y); else g.moveTo(x, y); } g.stroke();
+  return c;
+}
+function buildRosette() {
+  const R = Math.round(MR * 1.24), key = `${R}@${DPR}`;
+  if (roBuf && roKey === key) return roBuf;
+  roKey = key; roBuf = roBuf || document.createElement('canvas');
+  const sz = Math.ceil(R * 2 + 24), c = roBuf; c.width = Math.round(sz * DPR); c.height = Math.round(sz * DPR);
+  const g = c.getContext('2d'), o = sz / 2, rnd = fsRand(1787);
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  g.save(); g.shadowColor = 'rgba(0,0,0,0.6)'; g.shadowBlur = 14; g.shadowOffsetX = 3; g.shadowOffsetY = 6;
+  const wd = g.createRadialGradient(o - R * 0.3, o - R * 0.35, R * 0.1, o, o, R); wd.addColorStop(0, '#7c5636'); wd.addColorStop(0.6, '#5b3d24'); wd.addColorStop(1, '#3a2615');
+  g.fillStyle = wd; g.beginPath(); g.arc(o, o, R, 0, TAU); g.fill(); g.restore();
+  g.save(); g.beginPath(); g.arc(o, o, R, 0, TAU); g.clip(); g.lineWidth = 1;
+  for (let i = 0; i < 52; i++) {
+    const y = o - R + (i / 52) * 2 * R + (rnd() - 0.5) * 3, ph = rnd() * 6;
+    g.strokeStyle = rnd() < 0.55 ? `rgba(30,16,8,${0.07 + rnd() * 0.09})` : `rgba(170,120,76,${0.05 + rnd() * 0.07})`; g.beginPath();
+    for (let x = o - R; x <= o + R + 6; x += 6) { const yy = y + Math.sin(x * 0.03 + ph) * 2.5 + Math.sin(x * 0.011 + ph * 0.7) * 4; if (x === o - R) g.moveTo(x, yy); else g.lineTo(x, yy); }
+    g.stroke();
+  }
+  g.restore();
+  const groove = (r, w) => { g.lineWidth = w; g.strokeStyle = 'rgba(20,10,4,0.6)'; g.beginPath(); g.arc(o, o, r, 0, TAU); g.stroke(); g.strokeStyle = 'rgba(255,214,160,0.16)'; g.beginPath(); g.arc(o + 0.8, o + 1, r + w * 0.7, 0, TAU); g.stroke(); };
+  groove(R * 0.95, 2); groove(R * 0.81, 1.4);
+  for (let i = 0; i < 48; i++) {
+    const a = (i / 48) * TAU, x = o + Math.cos(a) * R * 0.88, y = o + Math.sin(a) * R * 0.88, br = Math.max(1.5, R * 0.024), bg = g.createRadialGradient(x - br * 0.4, y - br * 0.4, 0, x, y, br);
+    bg.addColorStop(0, 'rgba(222,172,120,0.6)'); bg.addColorStop(1, 'rgba(58,34,16,0.65)'); g.fillStyle = bg; g.beginPath(); g.arc(x, y, br, 0, TAU); g.fill();
+  }
+  const petal = (a, r0, r1, wid, lite) => {
+    g.save(); g.translate(o, o); g.rotate(a);
+    g.beginPath(); g.moveTo(r0, 0); g.bezierCurveTo(r0 + (r1 - r0) * 0.3, -wid, r0 + (r1 - r0) * 0.8, -wid * 0.9, r1, 0); g.bezierCurveTo(r0 + (r1 - r0) * 0.8, wid * 0.9, r0 + (r1 - r0) * 0.3, wid, r0, 0); g.closePath();
+    const pg = g.createLinearGradient(0, -wid, 0, wid); pg.addColorStop(0, `rgba(180,128,84,${lite})`); pg.addColorStop(0.5, `rgba(122,82,50,${lite})`); pg.addColorStop(1, `rgba(50,28,12,${lite})`);
+    g.fillStyle = pg; g.fill(); g.strokeStyle = 'rgba(24,12,4,0.6)'; g.lineWidth = 1.1; g.stroke();
+    g.strokeStyle = 'rgba(24,12,4,0.45)'; g.lineWidth = 1; g.beginPath(); g.moveTo(r0 + (r1 - r0) * 0.14, 0); g.lineTo(r1 - (r1 - r0) * 0.12, 0); g.stroke();
+    g.restore();
+  };
+  for (let i = 0; i < 8; i++) petal(((i + 0.5) * TAU) / 8, R * 0.22, R * 0.62, R * 0.11, 0.9);
+  for (let i = 0; i < 8; i++) petal((i * TAU) / 8, R * 0.2, R * 0.76, R * 0.16, 1);
+  const cb = g.createRadialGradient(o - R * 0.06, o - R * 0.07, 0, o, o, R * 0.2); cb.addColorStop(0, '#bb8c5e'); cb.addColorStop(0.6, '#7a5232'); cb.addColorStop(1, '#3c2412');
+  g.fillStyle = cb; g.beginPath(); g.arc(o, o, R * 0.2, 0, TAU); g.fill(); groove(R * 0.2, 1.2);
+  return c;
+}
+function drawRosette() {
+  const c = buildRosette(), sz = c.width / DPR;
+  ctx.save(); ctx.globalAlpha = 0.72; ctx.drawImage(c, MX - sz / 2, MY - sz / 2, sz, sz); ctx.globalAlpha = 1;
+  const sh = ctx.createRadialGradient(MX, MY, 0, MX, MY, MR * 1.05); sh.addColorStop(0, 'rgba(18,10,6,0.34)'); sh.addColorStop(1, 'rgba(18,10,6,0)');
+  ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(MX, MY, MR * 1.05, 0, TAU); ctx.fill();
+  ctx.restore();
+}
+function drawMotes() {
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const n = Math.round(48 * qScale);
+  for (let i = 0; i < n; i++) {
+    const s = stars[i], x = ((s.x * W + t * (3 + 9 * s.z)) % (W + 40)) - 20, y = s.y * (LT - 50) + Math.sin(t * 0.4 + s.tw) * 10 * s.z, r = (2 + 5 * s.z) * S;
+    ctx.globalAlpha = (0.05 + 0.11 * s.z) * (0.6 + 0.4 * Math.sin(t * (0.5 + s.c) + s.tw)); ctx.drawImage(BOKEH, x - r, y - r, r * 2, r * 2);
+  }
+  ctx.restore();
+}
+// ---------- bw2: one bit per pixel, an ordered (Bayer 4×4) dither, the way e-paper badges and early Macs drew greys ----------
+const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) * 16);
+const BWLUT = new Uint8ClampedArray(256).map((_, i) => (i < 9 ? 0 : Math.round(255 * Math.pow((i - 9) / 246, 0.8) * 1.08)));
+let bwC = null, bwG = null;
+function ditherBW() {
+  const w = cvs.width, h = cvs.height; if (!w || !h) return;
+  if (!bwC) { bwC = document.createElement('canvas'); bwG = bwC.getContext('2d', { willReadFrequently: true }); }
+  if (bwC.width !== w || bwC.height !== h) { bwC.width = w; bwC.height = h; }
+  let img;
+  try { bwG.drawImage(cvs, 0, 0); img = bwG.getImageData(0, 0, w, h); } catch (e) { return; }
+  const d = img.data;
+  for (let y = 0, o = 0; y < h; y++) { const r = (y & 3) << 2; for (let x = 0; x < w; x++, o += 4) { const v = BWLUT[(d[o] * 54 + d[o + 1] * 183 + d[o + 2] * 19) >> 8] > BAYER4[r | (x & 3)] ? 255 : 0; d[o] = d[o + 1] = d[o + 2] = v; d[o + 3] = 255; } }
+  ctx.putImageData(img, 0, 0);
 }
 function drawStars() {
   const bot = LT - 8, E2 = hole.on ? Math.pow(46 * S * hole.str, 2) : 0, hr = hole.on ? holeRad() * 1.1 : 0, n = Math.round(stars.length * qScale);
@@ -2910,13 +3166,13 @@ function drawReadout() {
     ctx.fillStyle = 'rgba(234,220,198,0.62)'; ctx.font = fnt(17 * S, 's', 'italic'); ctx.fillText(pinned ? 'suspended…' : LS.src && t - LS.lastVoicedT < 1 ? 'listening…' : LIGHT() ? 'gliding home…' : 'leaning…', MX, y0);
     const bw = 120 * S, bx = MX - bw / 2, by = y0 + 11 * S;
     ctx.fillStyle = 'rgba(234,220,198,0.1)'; ctx.fillRect(bx, by, bw, 3);
-    const gg = ctx.createLinearGradient(bx, 0, bx + bw, 0); gg.addColorStop(0, 'rgba(246,195,95,0.9)'); gg.addColorStop(1, 'rgba(225,95,205,0.9)');
+    const gg = ctx.createLinearGradient(bx, 0, bx + bw, 0), fs = skin === 'fieldstone'; gg.addColorStop(0, fs ? 'rgba(217,236,108,0.95)' : 'rgba(246,195,95,0.9)'); gg.addColorStop(1, fs ? 'rgba(126,224,195,0.9)' : 'rgba(225,95,205,0.9)');
     ctx.fillStyle = gg; ctx.fillRect(bx, by, bw * clamp(Rs, 0.02, 1), 3);
   }
   if (entered && !phone) {
     const m = dyn < 0.55 ? 'p' : dyn < 0.7 ? 'mp' : dyn < 0.86 ? 'mf' : 'f', tr = dynTrend > 0.015 ? ' · cresc.' : dynTrend < -0.015 ? ' · dim.' : '';
     ctx.fillStyle = 'rgba(234,220,198,0.5)'; ctx.font = fnt(12.5 * S, 's', 'italic');
-    ctx.fillText(m + tr + (rhyActive() ? ` · ${Math.round(rhy.bpm)} bpm · ${era ? 3 : tuplet} per beat` : ''), MX, y0 + 32);
+    ctx.fillText(m + tr + (rhyActive() ? ` · ${Math.round(rhy.bpm)} bpm · ${era ? 3 : tuplet} per beat` : ''), MX, y0 + (chordNow ? 36 * S : 32));
   }
   ctx.restore();
 }
@@ -3232,9 +3488,10 @@ function drawRail(g) {
 function draw() {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   const hmp = skin === 'hmp';
-  drawBg(); if (skin !== 'eink') drawStars();
+  drawBg(); if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2') drawStars();
   if (latticeOn) { if (M.easy) drawEasyPanel(); else if (M.key === 'just') drawLattice(); else drawRing(); }
-  if (hmp) { drawHmpTitle(); drawFloor(); drawKnot(); } else { drawMandala(); drawPoly(); }
+  const vw = viewOn();
+  if (hmp) { drawHmpTitle(); drawFloor(); if (vw === 'mandala') drawKnot(); else drawView(); } else if (vw === 'mandala') { if (skin === 'fieldstone') drawRosette(); drawMandala(); drawPoly(); } else drawView();
   drawLat(); drawConstellation(); drawHole(); drawBird(); drawReadout(); drawLight(); drawLandscape(); drawListen();
   if (hmp && tab !== 'resonance' && !phone) drawAnalyzer();
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
@@ -3644,8 +3901,443 @@ function listenUI() {
   if (s && $('lNote').textContent.startsWith('asking')) $('lNote').textContent = s === 'mic' ? 'listening on this page. nothing is recorded or sent. headphones help it hear only you.' : 'the demo hummer is singing, a little out of tune on purpose.';
 }
 
+// ===== the sound box: mandala, cymatics (a Chladni plate), the lattice cube, and a 5D experiment =====
+const VIEW_LIST = ['mandala', 'cymatics', 'cube', 'd5'];
+const VIEW_NAME = { mandala: 'mandala', cymatics: 'cymatics', cube: 'cube 3D', d5: '5D' };
+const viewOn = () => (!VIEW_NAME[SET.view] || (SET.view === 'd5' && !SET.x5d) ? 'mandala' : SET.view);
+const VW = { yaw: 0.62, pitch: -0.42, vyaw: 0, vpitch: 0, dist: 6.5, hover: null, pick: null, pickT: -99, drag: false, last: 0, th: [0, 0, 0, 0, 0, 0], twist: 0, idle: 0 };
+let mrotVel = 0;
+
+function setViewMode(v, quiet) {
+  if (!VIEW_NAME[v]) return;
+  if (v === 'd5' && !SET.x5d) { caption('the 5D lattice is an experiment. switch it on under experiments first.', 3000); syncUI(); return; }
+  SET.view = v; VW.hover = null; VW.pick = null;
+  if (v === 'cymatics') { cymReset(); discover('x-cymatics'); }
+  if (v === 'cube') discover('x-cube');
+  if (v === 'd5') discover('x-5d');
+  if (!quiet) caption({ mandala: 'the mandala: each voice a Lissajous figure against the root.', cymatics: 'cymatics: the chord drives a metal plate. the sand runs to wherever it is still.', cube: 'the lattice cube: fifths across, thirds up, sevenths in depth. drag to turn it, tap a node.', d5: 'five primes, five dimensions: 3, 5, 7, 11 and 13. an experiment.' }[v], 3600);
+  persistSoon(); syncUI(); jlog(`sound box: ${VIEW_NAME[v]}`);
+}
+function cycleView() { const L = VIEW_LIST.filter(v => v !== 'd5' || SET.x5d), i = L.indexOf(viewOn()); setViewMode(L[(i + 1) % L.length]); }
+function setX5d(on) { SET.x5d = !!on; if (!on && SET.view === 'd5') SET.view = 'mandala'; if (on) caption('5D experiment on. it lives in the sound box: tap the view chip until you reach it.', 3200); persistSoon(); syncUI(); }
+function inSoundBox(px, py) {
+  const dx = px - MX, dy = py - MY, v = viewOn();
+  if (v === 'cymatics' && SET.cymShape === 'square') return Math.abs(dx) < MR * 1.1 && Math.abs(dy) < MR * 1.1;
+  return Math.hypot(dx, dy) < MR * (v === 'mandala' ? 1.2 : 1.3);
+}
+
+// ---------- cymatics: a centre-driven Chladni plate ----------
+// square plate, side 2L, driven at the centre: only the symmetric pair cos(nπx)cos(mπy) + cos(mπx)cos(nπy) couples to the drive,
+// and a bending plate's modes rise as k², so f ∝ n² + m² (inharmonic, like a bell). the round plate uses J_m(kr)·cos(mθ) and Chladni's law f ∝ (m + 2n)².
+const CY = { N: 112, xs: null, A: null, GX: null, GY: null, tmp: null, tabs: new Map(), key: '', lead: null, gp: null, gv: null, gb: null, n: 0, pp: null, np: 0, sp: 0,
+  cv: null, cg: null, img: null, d32: null, cnt: null, bw: 0, glow: null, gctx: null, gimg: null, gain: 1, still: 0, motion: 1 };
+const CYS = [], CYC = [];
+for (let n = 0; n <= 9; n++) for (let m = n; m <= 9; m++) if (m > 0) CYS.push({ n, m, lam: n * n + m * m, key: `s${n},${m}` });
+// round plate: J_m(kr)·cos(mθ) with k ≈ (n + m/2 + 1/4)π, so mode (m, n) has m diameters, n circles and a free rim;
+// McMahon's correction to the Bessel zeros splits the pairs Chladni's law (m + 2n)² would make identical
+for (let m = 0; m <= 8; m++) for (let n = 0; n <= 4; n++) if (m + n > 1 || (m === 0 && n === 1)) { const b = (n + m / 2 + 0.25) * Math.PI, k = b - (4 * m * m - 1) / (8 * b); CYC.push({ m, n, k, lam: k * k, key: `c${m},${n}` }); }
+const CYM = new Map(); for (const o of CYS.concat(CYC)) CYM.set(o.key, o);
+function besselJ(m, x) { let s = 0; const K = 40; for (let i = 0; i < K; i++) { const u = ((i + 0.5) * Math.PI) / K; s += Math.cos(m * u - x * Math.sin(u)); } return s / K; }
+function cymInit() {
+  if (CY.A) return;
+  const N = CY.N; CY.xs = new Float32Array(N); for (let i = 0; i < N; i++) CY.xs[i] = -1 + (2 * i) / (N - 1);
+  CY.A = new Float32Array(N * N); CY.GX = new Float32Array(N * N); CY.GY = new Float32Array(N * N); CY.tmp = new Float32Array(N * N);
+  CY.AL = new Float32Array(N * N); CY.LX = new Float32Array(N * N); CY.LY = new Float32Array(N * N);
+}
+function cymTab(key) {
+  let tb = CY.tabs.get(key); if (tb) return tb;
+  const N = CY.N, xs = CY.xs; tb = new Float32Array(N * N);
+  if (key[0] === 's') {
+    const [n, m] = key.slice(1).split(',').map(Number), cn = xs.map(x => Math.cos(n * Math.PI * x)), cm = xs.map(x => Math.cos(m * Math.PI * x));
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) tb[j * N + i] = cn[i] * cm[j] + cm[i] * cn[j];
+  } else {
+    const mo = CYM.get(key), m = mo.m, k = mo.k;
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const x = xs[i], y = xs[j], r = Math.min(1, Math.hypot(x, y)); tb[j * N + i] = besselJ(m, k * r) * Math.cos(m * Math.atan2(y, x)); }   // held at the rim value outside, so the rim isn't a false node
+  }
+  if (CY.tabs.size > 160) CY.tabs.clear();
+  CY.tabs.set(key, tb); return tb;
+}
+// a driven, damped plate: each mode answers 1/√((1−r²)² + (2ζr)²), r = f / f_mode, ζ = 0.04
+function cymModes(f) {
+  const sq = SET.cymShape !== 'circle', L = sq ? CYS : CYC, unit = sq ? 12.5 : 3.6, z = 0.04, out = [];
+  for (const mo of L) { const r = f / (unit * mo.lam), a = 1 / Math.sqrt((1 - r * r) * (1 - r * r) + 4 * z * z * r * r); out.push([a, mo]); }
+  out.sort((a, b) => b[0] - a[0]);
+  const pk = out[0][0], res = [{ mo: out[0][1], a: 1 }];
+  for (let i = 1; i < 3; i++) if (out[i][0] > pk * 0.3) res.push({ mo: out[i][1], a: out[i][0] / pk });
+  return { res, pk };
+}
+function cymDrives() {
+  const D = [];
+  if (LS.src && t - LS.lastVoicedT < 0.6 && LS.f) D.push({ f: LS.f, w: 1.25, col: [255, 244, 220], id: 'sing', lab: 'your voice' });
+  for (const v of voices) if (v.w > 0.05) D.push({ f: OUT(fOf(v.x)), w: (v.dragging ? 1.3 : v === act ? 1 : 0.8) * v.w, col: v.col, id: v.id, lab: v.lab });
+  if (fRoot) D.push({ f: OUT(fRoot), w: 0.45, col: [255, 226, 170], id: 'root', lab: 'the root' });
+  return D;
+}
+function cymField() {
+  const D = cymDrives();
+  // the note that rings the plate hardest leads: drive times how near it sits to a plate resonance. sticky, so the figure doesn't flicker
+  let best = null, bs = -1;
+  for (const d of D) { d.m = cymModes(d.f); d.s = d.w * d.m.pk; if (d.s > bs) { bs = d.s; best = d; } }
+  const prev = D.find(d => d.id === CY.leadId), lead = prev && prev.s > bs * 0.75 ? prev : best;
+  const key = SET.cymShape + '|' + D.map(d => d.f.toFixed(1) + ':' + d.w.toFixed(2)).join('|') + '|' + (lead ? lead.id : '');
+  if (key === CY.key) return; CY.key = key; CY.leadId = lead ? lead.id : null;
+  const N = CY.N, NN = N * N, A = CY.A, tmp = CY.tmp; A.fill(0);
+  for (const d of D) {
+    // the other notes only whisper: about a fifth of the lead's amplitude at most, so its still lines stay still
+    const e = d === lead ? 1 : 0.035 * Math.min(1, d.s / Math.max(1e-6, lead.s));
+    tmp.fill(0);
+    for (const { mo, a } of d.m.res) { const tb = cymTab(mo.key); for (let i = 0; i < NN; i++) tmp[i] += a * tb[i]; }
+    for (let i = 0; i < NN; i++) A[i] += e * tmp[i] * tmp[i];
+    if (d === lead) for (let i = 0; i < NN; i++) CY.AL[i] = Math.abs(tmp[i]);
+  }
+  if (!lead) CY.AL.fill(0);
+  const lead_ = lead ? { f: lead.f, ms: lead.m.res, col: lead.col, lab: lead.lab } : null;
+  let mx = 1e-9; for (let i = 0; i < NN; i++) { A[i] = Math.sqrt(A[i]); if (A[i] > mx) mx = A[i]; }
+  for (let i = 0; i < NN; i++) { A[i] /= mx; CY.AL[i] /= mx; }
+  cymGrad(A, CY.GX, CY.GY); cymGrad(CY.AL, CY.LX, CY.LY);
+  CY.lead = lead_; CY.glowKey = '';
+}
+function cymGrad(F, GX, GY) {
+  const N = CY.N, h2 = (N - 1) / 4;
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const k = j * N + i, l = i > 0 ? k - 1 : k, r = i < N - 1 ? k + 1 : k, u = j > 0 ? k - N : k, d = j < N - 1 ? k + N : k;
+    GX[k] = (F[r] - F[l]) * h2 * (i > 0 && i < N - 1 ? 1 : 2); GY[k] = (F[d] - F[u]) * h2 * (j > 0 && j < N - 1 ? 1 : 2);
+  }
+}
+function cymInside(x, y) { return SET.cymShape === 'circle' ? x * x + y * y < 0.95 : Math.abs(x) < 0.975 && Math.abs(y) < 0.975; }
+function cymRand() { for (;;) { const x = Math.random() * 1.95 - 0.975, y = Math.random() * 1.95 - 0.975; if (cymInside(x, y)) return [x, y]; } }
+function cymReset() {
+  cymInit(); CY.key = '';
+  const n = Math.round((phone ? 3400 : 7000) * Math.max(0.55, qScale)); CY.n = n; CY.gp = new Float32Array(n * 2); CY.gb = new Uint8Array(n);
+  for (let i = 0; i < n; i++) { const [x, y] = cymRand(); CY.gp[2 * i] = x; CY.gp[2 * i + 1] = y; CY.gb[i] = 150 + ((Math.random() * 105) | 0); }
+  CY.np = 1100; CY.pp = new Float32Array(CY.np * 2); for (let i = 0; i < CY.np; i++) { const [x, y] = cymRand(); CY.pp[2 * i] = x; CY.pp[2 * i + 1] = y; }
+  CY.still = 0; CY.sp = 0;
+}
+function cymSprinkle(u, v, k) {
+  if (!CY.gp) return;
+  for (let j = 0; j < k; j++) {
+    const i = CY.sp++ % CY.n, a = Math.random() * TAU, r = Math.sqrt(Math.random()) * 0.07;
+    let x = u + Math.cos(a) * r, y = v + Math.sin(a) * r; if (!cymInside(x, y)) [x, y] = cymRand();
+    CY.gp[2 * i] = x; CY.gp[2 * i + 1] = y;
+  }
+}
+function cymTick(dt) {
+  if (viewOn() !== 'cymatics' || !entered) return;
+  if (!CY.gp) cymReset();
+  cymField();
+  if (paused || !CY.lead) return;
+  const N = CY.N, A = CY.A, GX = CY.GX, GY = CY.GY, gp = CY.gp, n = CY.n, circ = SET.cymShape === 'circle';
+  // a grain only hops where the plate's acceleration beats gravity: below the threshold it sits still. a harder drive lowers the threshold, so the lines get thinner
+  const drive = CY.gain * clamp(0.45 + 0.8 * dyn, 0.3, 1.3), Dk = 0.42 * drive * Math.sqrt(dt), Dr = 0.08 * drive * dt, s = (N - 1) / 2, th = clamp(0.15 / drive, 0.06, 0.4), inv = 1 / (1 - th);
+  let mov = 0, rest = 0;
+  for (let i = 0; i < n; i++) {
+    let x = gp[2 * i], y = gp[2 * i + 1];
+    const fx = (x + 1) * s, fy = (y + 1) * s, ix = Math.min(N - 2, fx | 0), iy = Math.min(N - 2, fy | 0), tx = fx - ix, ty = fy - iy, k = iy * N + ix;
+    const a = A[k] * (1 - tx) * (1 - ty) + A[k + 1] * tx * (1 - ty) + A[k + N] * (1 - tx) * ty + A[k + N + 1] * tx * ty;
+    if (a <= th) {
+      // below the threshold a grain no longer hops, but the plate still tilts under it: it creeps the last little way onto the still line
+      rest++; if (a < th * 0.45) continue;   // close enough: real sand lines have a little width
+      const LX = CY.LX, LY = CY.LY, w00 = (1 - tx) * (1 - ty), w10 = tx * (1 - ty), w01 = (1 - tx) * ty, w11 = tx * ty;
+      const cr = Dr * 1.1 * Math.min(1, a / th), nx = x - (LX[k] * w00 + LX[k + 1] * w10 + LX[k + N] * w01 + LX[k + N + 1] * w11) * cr, ny = y - (LY[k] * w00 + LY[k + 1] * w10 + LY[k + N] * w01 + LY[k + N + 1] * w11) * cr;
+      if (cymInside(nx, ny)) { gp[2 * i] = nx; gp[2 * i + 1] = ny; mov += Math.abs(nx - x) + Math.abs(ny - y); }
+      continue;
+    }
+    const j = Dk * (a - th) * inv, ddx = gauss() * j - GX[k] * Dr, ddy = gauss() * j - GY[k] * Dr;
+    x += ddx; y += ddy; mov += Math.abs(ddx) + Math.abs(ddy);
+    if (circ) { const r2 = x * x + y * y; if (r2 > 0.95) { const r = Math.sqrt(r2), q = (2 * 0.975 - r) / r; x *= q; y *= q; } }
+    else { if (x > 0.975) x = 1.95 - x; else if (x < -0.975) x = -1.95 - x; if (y > 0.975) y = 1.95 - y; else if (y < -0.975) y = -1.95 - y; }
+    gp[2 * i] = x; gp[2 * i + 1] = y;
+  }
+  CY.motion += (mov / Math.max(1, n) / Math.max(dt, 1e-3) - CY.motion) * (1 - Math.exp(-dt * 3)); CY.rest = rest / Math.max(1, n);
+  if (CY.rest > 0.9) { CY.still += dt; if (CY.still > 2) discover('x-figure'); } else CY.still = 0;
+  if (SET.cymPowder) {
+    const pp = CY.pp, Dp = 0.12 * drive * Math.sqrt(dt), Up = 0.05 * drive * dt;
+    for (let i = 0; i < CY.np; i++) {
+      let x = pp[2 * i], y = pp[2 * i + 1];
+      const ix = clamp(((x + 1) * s) | 0, 0, N - 1), iy = clamp(((y + 1) * s) | 0, 0, N - 1), k = iy * N + ix, a = A[k], j = Dp * (1.15 - a);
+      x += gauss() * j + GX[k] * Up; y += gauss() * j + GY[k] * Up;
+      if (!cymInside(x, y)) [x, y] = cymRand();
+      pp[2 * i] = x; pp[2 * i + 1] = y;
+    }
+    if (CY.still > 2) discover('x-powder');
+  }
+}
+function cymDraw() {
+  if (!CY.gp) cymReset();
+  const circ = SET.cymShape === 'circle', h = MR * (circ ? 1.08 : 1.03), x0 = MX - h, y0 = MY - h, side = 2 * h, eink = skin === 'eink' || skin === 'bw2';
+  ctx.save();
+  // the plate: anodized metal on a driver stud, with a slow sheen
+  ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 26 * S; ctx.shadowOffsetY = 10 * S;
+  const pg = ctx.createLinearGradient(x0, y0, x0 + side, y0 + side); pg.addColorStop(0, '#2e3036'); pg.addColorStop(0.45, '#18191d'); pg.addColorStop(1, '#0b0c0f');
+  ctx.fillStyle = pg; ctx.beginPath(); if (circ) ctx.arc(MX, MY, h, 0, TAU); else roundRect(ctx, x0, y0, side, side, 7 * S); ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.save(); ctx.clip();
+  const sh = (t * 0.035) % 1.6 - 0.3, sg = ctx.createLinearGradient(x0, y0, x0 + side, y0 + side);
+  sg.addColorStop(clamp(sh - 0.12, 0, 1), 'rgba(255,255,255,0)'); sg.addColorStop(clamp(sh, 0, 1), 'rgba(255,255,255,0.05)'); sg.addColorStop(clamp(sh + 0.12, 0, 1), 'rgba(255,255,255,0)');
+  ctx.fillStyle = sg; ctx.fillRect(x0, y0, side, side);
+  ctx.strokeStyle = 'rgba(255,255,255,0.018)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let k = 0; k < 46; k++) { const yy = y0 + ((k * 37.3) % 46) / 46 * side; ctx.moveTo(x0, yy); ctx.lineTo(x0 + side, yy); }
+  ctx.stroke();
+  // grains: one bright speck per grain, piles brighten, a hairline shadow under each
+  const dpr = Math.min(DPR, 2), bw = Math.max(16, Math.round(side * dpr)), blk = dpr >= 1.5 ? 2 : 1;
+  if (!CY.cv || CY.bw !== bw) { CY.bw = bw; CY.cv = document.createElement('canvas'); CY.cv.width = CY.cv.height = bw; CY.cg = CY.cv.getContext('2d'); CY.img = CY.cg.createImageData(bw, bw); CY.d32 = new Uint32Array(CY.img.data.buffer); CY.cnt = new Uint8Array(bw * bw); }
+  const d32 = CY.d32, cnt = CY.cnt, gp = CY.gp, n = CY.n, sc = (bw - blk - 1) / 2, sand = eink ? [255, 255, 255] : [242, 233, 214];
+  d32.fill(0); cnt.fill(0);
+  for (let i = 0; i < n; i++) { const X = ((gp[2 * i] + 1) * sc) | 0, Y = ((gp[2 * i + 1] + 1) * sc) | 0, q = Y * bw + X; if (cnt[q] < 250) cnt[q]++; }
+  const SH = (110 << 24) | 0;
+  for (let i = 0; i < n; i++) {
+    const X = ((gp[2 * i] + 1) * sc) | 0, Y = ((gp[2 * i + 1] + 1) * sc) | 0, q = Y * bw + X, c = cnt[q], b = (CY.gb[i] / 255) * Math.min(1, 0.5 + 0.22 * c);
+    const col = (255 << 24) | (((sand[2] * b) | 0) << 16) | (((sand[1] * b) | 0) << 8) | ((sand[0] * b) | 0);
+    const qs = q + bw * blk + blk; if (qs < d32.length && !d32[qs]) d32[qs] = SH;
+    d32[q] = col; if (blk === 2) { d32[q + 1] = col; d32[q + bw] = col; d32[q + bw + 1] = col; }
+  }
+  CY.cg.putImageData(CY.img, 0, 0);
+  ctx.imageSmoothingEnabled = false; ctx.drawImage(CY.cv, x0, y0, side, side); ctx.imageSmoothingEnabled = true;
+  // stylized: the still lines glow faintly in the lead voice's colour
+  if (SET.cymLines && CY.lead && !eink) {
+    const N = CY.N;
+    if (!CY.glow) { CY.glow = document.createElement('canvas'); CY.glow.width = CY.glow.height = N; CY.gctx = CY.glow.getContext('2d'); CY.gimg = CY.gctx.createImageData(N, N); }
+    if (CY.glowKey !== CY.key) {
+      CY.glowKey = CY.key; const d = CY.gimg.data, A = CY.A, col = mix(CY.lead.col, [255, 244, 220], 0.35);
+      for (let k = 0; k < N * N; k++) { const g = Math.exp(-(A[k] / 0.05) * (A[k] / 0.05)), o = 4 * k; d[o] = col[0]; d[o + 1] = col[1]; d[o + 2] = col[2]; d[o + 3] = (g * 170) | 0; }
+      CY.gctx.putImageData(CY.gimg, 0, 0);
+    }
+    ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.5; ctx.drawImage(CY.glow, x0, y0, side, side); ctx.globalAlpha = 1;
+  }
+  if (SET.cymPowder && CY.pp) {
+    ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = eink ? 'rgba(255,255,255,0.4)' : 'rgba(255,212,140,0.32)';
+    const pp = CY.pp; for (let i = 0; i < CY.np; i++) ctx.fillRect(MX + pp[2 * i] * h - 0.8, MY + pp[2 * i + 1] * h - 0.8, 1.6, 1.6);
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.strokeStyle = 'rgba(255,255,255,0.13)'; ctx.lineWidth = 1; ctx.beginPath(); if (circ) ctx.arc(MX, MY, h - 0.5, 0, TAU); else roundRect(ctx, x0 + 0.5, y0 + 0.5, side - 1, side - 1, 7 * S); ctx.stroke();
+  const st = ctx.createRadialGradient(MX - 1.5, MY - 1.5, 0, MX, MY, 6 * S); st.addColorStop(0, '#d9d4cc'); st.addColorStop(0.5, '#6d6a66'); st.addColorStop(1, '#1d1d20');
+  ctx.fillStyle = st; ctx.beginPath(); ctx.arc(MX, MY, 4.2 * S, 0, TAU); ctx.fill();
+  // what it is
+  if (CY.lead) {
+    const mo = CY.lead.ms[0].mo, lab = circ ? `${mo.m} diameter${mo.m === 1 ? '' : 's'}, ${mo.n} circle${mo.n === 1 ? '' : 's'}` : mo.n === mo.m ? `mode (${mo.n},${mo.m})` : `mode (${mo.n},${mo.m})+(${mo.m},${mo.n})`;
+    ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(234,220,198,0.58)'; ctx.font = fnt(10 * Math.max(S, 0.9), 'm');
+    ctx.fillText(`${circ ? 'round plate' : 'square plate'} · ${lab} · ${CY.lead.f.toFixed(0)} Hz`, MX, MY + h + 14 * Math.max(S, 0.9));
+    ctx.fillStyle = rgba(mix(CY.lead.col, [255, 244, 220], 0.4), 0.7); ctx.fillText(`rung by ${CY.lead.lab || 'a voice'}${CY.still > 1 ? ' · settled' : ''}`, MX, MY + h + 27 * Math.max(S, 0.9));
+  }
+  ctx.restore();
+}
+
+// ---------- the lattice: ratios as points, primes as axes ----------
+function ratioFromExp(e) {
+  const P = [3, 5, 7, 11, 13]; let p = 1, q = 1;
+  e.forEach((x, i) => { if (x > 0) p *= Math.pow(P[i], x); else if (x < 0) q *= Math.pow(P[i], -x); });
+  while (p / q >= 2) q *= 2; while (p / q < 1) p *= 2;
+  const g = gcd(p, q); return [p / g, q / g];
+}
+function expOfCents(c) {
+  const r = simplestWithin(JI, ((c % 1200) + 1200) % 1200, 7); if (!r) return null;
+  const P = [2, 3, 5, 7, 11, 13], f = n => { const e = [0, 0, 0, 0, 0, 0]; for (let i = 0; i < 6; i++) while (n % P[i] === 0) { n /= P[i]; e[i]++; } return n === 1 ? e : null; };
+  const a = f(r.p), b = f(r.q); if (!a || !b) return null;
+  return { e: [a[1] - b[1], a[2] - b[2], a[3] - b[3], a[4] - b[4], a[5] - b[5]], p: r.p === 2 && r.q === 1 ? 1 : r.p, q: r.q };
+}
+const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const sup = n => (n === 1 ? '' : String(n).split('').map(d => SUP[+d]).join(''));
+function factorStr(p, q) {
+  const P = [2, 3, 5, 7, 11, 13], f = n => { const out = []; for (const b of P) { let k = 0; while (n % b === 0) { n /= b; k++; } if (k) out.push(b + sup(k)); } return out.join('·') || '1'; };
+  return `${f(p)} / ${f(q)}`;
+}
+function proj3(x, y, z, sc) {
+  const cy = Math.cos(VW.yaw), sy = Math.sin(VW.yaw), cp = Math.cos(VW.pitch), sp = Math.sin(VW.pitch);
+  const x1 = x * cy + z * sy, z1 = -x * sy + z * cy, y1 = y * cp - z1 * sp, z2 = y * sp + z1 * cp, k = VW.dist / Math.max(0.6, VW.dist - z2);
+  return [MX + x1 * k * sc, MY - y1 * k * sc, z2, k];
+}
+const AXC = [[246, 195, 95], [126, 224, 195], [184, 162, 255], [255, 138, 112], [111, 214, 198]];
+function nodeInfo(p, q) { const c = 1200 * Math.log2(p / q); return { lab: p === 1 && q === 1 ? '1/1' : `${p}/${q}`, c, h: Math.log2(p * q), fac: factorStr(p, q) }; }
+function voiceAt(c, tol) { tol = tol || 6; for (const v of voices) { if (v.wT === 0) continue; let d = Math.abs(((v.c - c) % 1200 + 1800) % 1200 - 600); if (d < tol) return v; } return null; }
+function cubeBuild() {
+  const nodes = [];
+  for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (let c = -1; c <= 1; c++) { const [p, q] = ratioFromExp([a, b, c, 0, 0]); nodes.push({ x: a, y: b, z: c, e: [a, b, c, 0, 0], p, q, ...nodeInfo(p, q) }); }
+  for (const v of voices) {
+    if (v.wT === 0) continue; const x = expOfCents(v.c); if (!x || x.e[3] || x.e[4]) continue;
+    const [a, b, c] = x.e; if (Math.abs(a) <= 1 && Math.abs(b) <= 1 && Math.abs(c) <= 1) continue;
+    if (!nodes.some(nd => nd.x === a && nd.y === b && nd.z === c)) { const [p, q] = ratioFromExp(x.e); nodes.push({ x: a, y: b, z: c, e: x.e, p, q, out: true, ...nodeInfo(p, q) }); }
+  }
+  return nodes;
+}
+// detective: the evidence trail from the root to a ratio, one prime step at a time, each step in its axis colour
+function drawTrail(pts, cols, al) {
+  ctx.save(); ctx.lineCap = 'round'; ctx.globalCompositeOperation = 'lighter';
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1], b = pts[i], c = cols[i - 1];
+    ctx.strokeStyle = rgba(c, 0.22 * al); ctx.lineWidth = 6 * Math.max(S, 0.85); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    ctx.strokeStyle = rgba(mix(c, [255, 255, 255], 0.35), 0.85 * al); ctx.lineWidth = 1.8 * Math.max(S, 0.85); ctx.stroke();
+  }
+  ctx.restore();
+}
+function cubeDraw() {
+  const nodes = cubeBuild(), sc = MR * 0.6, pr = nodes.map(nd => proj3(nd.x, nd.y, nd.z * 0.9, sc));
+  ctx.save();
+  // a faint floor shadow and the frame of the cube
+  const fs = proj3(0, -1.55, 0, sc); ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.beginPath(); ctx.ellipse(fs[0], fs[1], MR * 0.95, MR * 0.22, 0, 0, TAU); ctx.fill();
+  const edges = [];
+  nodes.forEach((a, i) => nodes.forEach((b, j) => { if (j <= i) return; const d = Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z); if (d !== 1) return; const ax = a.x !== b.x ? 0 : a.y !== b.y ? 1 : 2; edges.push([i, j, ax, (pr[i][2] + pr[j][2]) / 2, a.out || b.out]); }));
+  edges.sort((p, q) => p[3] - q[3]);
+  ctx.lineCap = 'round';
+  for (const [i, j, ax, z, out] of edges) {
+    const dz = clamp((z + 1.6) / 3.2, 0, 1); ctx.strokeStyle = rgba(AXC[ax], (out ? 0.1 : 0.14) + 0.4 * dz); ctx.lineWidth = (0.8 + 1.4 * dz) * Math.max(S, 0.8);
+    if (out) ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(pr[i][0], pr[i][1]); ctx.lineTo(pr[j][0], pr[j][1]); ctx.stroke(); if (out) ctx.setLineDash([]);
+  }
+  // where the root came from (just intonation walks the 3·5 plane)
+  if (M.key === 'just' && path.length > 1) {
+    ctx.strokeStyle = 'rgba(255,226,170,0.42)'; ctx.lineWidth = 1.4; ctx.setLineDash([2, 4]); ctx.beginPath();
+    path.slice(-8).forEach((nd, i) => { const q = proj3(nd.a - rs.a, nd.b - rs.b, 0, sc); if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.stroke(); ctx.setLineDash([]);
+  }
+  // the chord as a shape
+  const occ = []; nodes.forEach((nd, i) => { const v = voiceAt(nd.c, 5); if (v || (nd.p === 1 && nd.q === 1)) occ.push([pr[i], v]); });
+  if (occ.length >= 3) {
+    const cx = occ.reduce((s, o) => s + o[0][0], 0) / occ.length, cyy = occ.reduce((s, o) => s + o[0][1], 0) / occ.length;
+    occ.sort((a, b) => Math.atan2(a[0][1] - cyy, a[0][0] - cx) - Math.atan2(b[0][1] - cyy, b[0][0] - cx));
+    ctx.fillStyle = `rgba(255,236,190,${0.07 + 0.08 * bloomFlash})`; ctx.strokeStyle = 'rgba(255,236,190,0.38)'; ctx.lineWidth = 1.2; ctx.beginPath();
+    occ.forEach((o, k) => (k ? ctx.lineTo(o[0][0], o[0][1]) : ctx.moveTo(o[0][0], o[0][1]))); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  if (SET.detect) for (const nd of nodes) {
+    const v = voiceAt(nd.c, 5); if (!v || (nd.p === 1 && nd.q === 1)) continue;
+    const pos = [0, 0, 0], pts = [proj3(0, 0, 0, sc)], cols = [];
+    for (let ax = 0; ax < 3; ax++) { const s = Math.sign(nd.e[ax]); for (let k = 0; k < Math.abs(nd.e[ax]); k++) { pos[ax] += s; pts.push(proj3(pos[0], pos[1], pos[2] * 0.9, sc)); cols.push(AXC[ax]); } }
+    drawTrail(pts, cols, 0.9);
+  }
+  const order = nodes.map((_, i) => i).sort((a, b) => pr[a][2] - pr[b][2]);
+  VW.hits = [];
+  for (const i of order) {
+    const nd = nodes[i], [X, Y, z, k] = pr[i], dz = clamp((z + 1.6) / 3.2, 0, 1), isRoot = nd.p === 1 && nd.q === 1, v = voiceAt(nd.c, 5), r = (isRoot ? 4.2 : v ? 4 : 2.3) * k * Math.max(S, 0.85);
+    VW.hits.push({ X, Y, nd, i });
+    if (v || isRoot) {
+      const col = v ? v.col : [255, 226, 170], gr = ctx.createRadialGradient(X, Y, 0, X, Y, r * 4.5); gr.addColorStop(0, rgba(col, 0.75)); gr.addColorStop(1, rgba(col, 0));
+      ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = gr; ctx.fillRect(X - r * 4.5, Y - r * 4.5, r * 9, r * 9); ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.fillStyle = v ? rgba(mix(v.col, [255, 255, 255], 0.3), 1) : isRoot ? `rgba(255,232,190,${0.9 + 0.1 * rootFlash})` : `rgba(234,220,198,${0.25 + 0.55 * dz})`;
+    ctx.beginPath(); ctx.arc(X, Y, r, 0, TAU); ctx.fill();
+    if (v || isRoot || dz > 0.55 || (SET.detect && dz > 0.2)) {
+      ctx.textAlign = 'center'; ctx.font = fnt((v || isRoot ? 12.5 : 10.5) * Math.max(S, 0.9), 's', 'italic');
+      ctx.fillStyle = v ? rgba(v.col, 0.95) : isRoot ? 'rgba(255,232,190,0.95)' : `rgba(234,220,198,${0.14 + 0.5 * dz})`;
+      ctx.fillText(nd.lab, X, Y - r - 5);
+      if (SET.detect && v && !isRoot) { ctx.font = fnt(9 * Math.max(S, 0.9), 'm'); ctx.fillStyle = rgba(v.col, 0.7); ctx.fillText(nd.fac, X, Y + r + 11); }
+    }
+  }
+  ctx.textAlign = 'left'; ctx.font = fnt(9.5 * Math.max(S, 0.9), 'm');
+  const lg = [['→ ×3/2', AXC[0]], ['↑ ×5/4', AXC[1]], ['⊙ ×7/4', AXC[2]]], ly = MY + MR * 1.32;
+  lg.forEach(([s, c], i) => { ctx.fillStyle = rgba(c, 0.75); ctx.fillText(s, MX - MR * 1.05 + i * MR * 0.75, ly); });
+  ctx.restore();
+  drawPick();
+}
+// the 5D experiment: a penteract of the primes 3, 5, 7, 11, 13 (32 ratios, 80 edges, one prime per edge)
+const ND5 = [], ED5 = [];
+for (let b = 0; b < 32; b++) { const e = [0, 1, 2, 3, 4].map(i => (b >> i) & 1), [p, q] = ratioFromExp(e); ND5.push({ e, b, p, q, ...nodeInfo(p, q) }); }
+for (let b = 0; b < 32; b++) for (let i = 0; i < 5; i++) if (!(b & (1 << i))) ED5.push([b, b | (1 << i), i]);
+const PL5 = [[0, 3, 0.23], [1, 4, 0.17], [2, 3, 0.11], [0, 4, 0.07], [1, 2, 0.05], [3, 4, 0.13]];
+function d5Draw() {
+  const sc = MR * 0.62, d5 = 1.8 + 3 * SET.x5dDepth, pr = [], held = [];
+  for (const nd of ND5) {
+    const x = nd.e.map(v => (v - 0.5) * 1.3);
+    PL5.forEach(([i, j], k) => { const a = VW.th[k] + (k === 0 ? VW.twist : 0), c = Math.cos(a), s = Math.sin(a), xi = x[i], xj = x[j]; x[i] = xi * c - xj * s; x[j] = xi * s + xj * c; });
+    const k5 = d5 / Math.max(0.4, d5 - x[4]); for (let i = 0; i < 4; i++) x[i] *= k5;
+    const k4 = d5 / Math.max(0.4, d5 - x[3]); for (let i = 0; i < 3; i++) x[i] *= k4;
+    pr.push(proj3(x[0], x[1], x[2], sc * 0.82));
+  }
+  ctx.save(); ctx.lineCap = 'round';
+  const order = ED5.map((e, i) => i).sort((a, b) => (pr[ED5[a][0]][2] + pr[ED5[a][1]][2]) - (pr[ED5[b][0]][2] + pr[ED5[b][1]][2]));
+  for (const k of order) { const [a, b, i] = ED5[k], z = (pr[a][2] + pr[b][2]) / 2, dz = clamp((z + 2) / 4, 0, 1); ctx.strokeStyle = rgba(VCOL[i], 0.08 + 0.4 * dz); ctx.lineWidth = (0.7 + 1.3 * dz) * Math.max(S, 0.8); ctx.beginPath(); ctx.moveTo(pr[a][0], pr[a][1]); ctx.lineTo(pr[b][0], pr[b][1]); ctx.stroke(); }
+  if (SET.detect) ND5.forEach((nd, i) => {
+    if (!i || !voiceAt(nd.c, 5)) return;
+    let bb = 0; const pts = [pr[0]], cols = [];
+    for (let ax = 0; ax < 5; ax++) if (nd.e[ax]) { bb |= 1 << ax; pts.push(pr[bb]); cols.push(VCOL[ax]); }
+    drawTrail(pts, cols, 0.9);
+  });
+  VW.hits = [];
+  const no = ND5.map((_, i) => i).sort((a, b) => pr[a][2] - pr[b][2]);
+  for (const i of no) {
+    const nd = ND5[i], [X, Y, z, k] = pr[i], dz = clamp((z + 2) / 4, 0, 1), isRoot = nd.b === 0, v = voiceAt(nd.c, 5), r = (isRoot || v ? 3.6 : 2.1) * Math.min(2.2, k) * Math.max(S, 0.85);
+    VW.hits.push({ X, Y, nd, i });
+    if (v || isRoot) { const col = v ? v.col : [255, 226, 170], gr = ctx.createRadialGradient(X, Y, 0, X, Y, r * 4.5); gr.addColorStop(0, rgba(col, 0.75)); gr.addColorStop(1, rgba(col, 0)); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = gr; ctx.fillRect(X - r * 4.5, Y - r * 4.5, r * 9, r * 9); ctx.globalCompositeOperation = 'source-over'; }
+    ctx.fillStyle = v ? rgba(mix(v.col, [255, 255, 255], 0.3), 1) : isRoot ? 'rgba(255,232,190,0.95)' : `rgba(234,220,198,${0.25 + 0.55 * dz})`;
+    ctx.beginPath(); ctx.arc(X, Y, r, 0, TAU); ctx.fill();
+    if (v || isRoot || (SET.detect ? dz > 0.4 : dz > 0.8)) { ctx.textAlign = 'center'; ctx.font = fnt((v || isRoot ? 12 : 9.5) * Math.max(S, 0.9), 's', 'italic'); ctx.fillStyle = v ? rgba(v.col, 0.95) : isRoot ? 'rgba(255,232,190,0.95)' : `rgba(234,220,198,${0.14 + 0.45 * dz})`; ctx.fillText(nd.lab, X, Y - r - 4); }
+  }
+  ctx.textAlign = 'left'; ctx.font = fnt(9.5 * Math.max(S, 0.9), 'm');
+  ['3', '5', '7', '11', '13'].forEach((s, i) => { ctx.fillStyle = rgba(VCOL[i], 0.8); ctx.fillText('— ×' + s, MX - MR * 1.1 + i * MR * 0.46, MY + MR * 1.36); });
+  ctx.restore();
+  drawPick();
+}
+function drawPick() {
+  const pk = VW.pick && t - VW.pickT < 6 ? VW.pick : VW.hover; if (!pk) return;
+  const h = VW.hits && VW.hits.find(x => x.nd.lab === pk.lab); if (!h) return;
+  const nd = pk, v = voiceAt(nd.c, 5), lines = [`${nd.lab} · ${nd.c.toFixed(1)}¢`, `${nd.fac} · height ${nd.h.toFixed(1)}`, v ? `held by a voice (${v.lab})` : nd.p === 1 && nd.q === 1 ? 'the root' : nd.e ? `exponents (${nd.e.slice(0, SET.view === 'd5' ? 5 : 3).join(', ')})` : ''];
+  ctx.save(); ctx.font = fnt(11.5, 'm'); const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + 18, hh = 16 * lines.length + 10;
+  const x = clamp(h.X + 14, 8, W - w - 8), y = clamp(h.Y - hh - 10, TOPH + 6, H - hh - 8);
+  ctx.fillStyle = 'rgba(16,12,20,0.9)'; ctx.strokeStyle = 'rgba(246,195,95,0.5)'; ctx.lineWidth = 1; roundRect(ctx, x, y, w, hh, 8); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(248,232,204,0.95)'; ctx.textAlign = 'left'; lines.forEach((l, i) => { ctx.fillStyle = i ? 'rgba(234,220,198,0.72)' : 'rgba(248,232,204,0.95)'; ctx.fillText(l, x + 9, y + 18 + i * 16); });
+  ctx.restore();
+}
+function viewPickAt(px, py) {
+  if (!VW.hits) return null; let best = null, bd = phone ? 24 : 16;
+  for (const h of VW.hits) { const d = Math.hypot(h.X - px, h.Y - py); if (d < bd) { bd = d; best = h.nd; } }
+  return best;
+}
+function playNode(nd) {
+  const f = fold(fRoot * (nd.p / nd.q), 2, 220);
+  audio.pip(f, 0.05, 0, 1.2); VW.pick = nd; VW.pickT = t; discover('x-detective'); haptic(5);
+  jlog(`inspected ${nd.lab} (${nd.c.toFixed(1)}¢, height ${nd.h.toFixed(1)})`);
+}
+
+// ---------- input and the tick ----------
+function viewDown(p) {
+  const v = viewOn(); p.vx0 = p.x; p.vy0 = p.y; p.vt = performance.now();
+  if (v === 'cymatics') { const h = MR * (SET.cymShape === 'circle' ? 1.08 : 1.03); cymSprinkle((p.x - MX) / h, (p.y - MY) / h, 50); if (!muted && A.ac) nz(aNow() + 0.005, 0.09, 'highpass', 5200, 0.7, 0.008); }
+  else { VW.drag = true; VW.vyaw = 0; VW.vpitch = 0; }
+}
+function viewMove(p, dx, dy, dtm, e) {
+  const v = viewOn();
+  if (v === 'cymatics') { if (Math.random() < 0.6) { const h = MR * (SET.cymShape === 'circle' ? 1.08 : 1.03); cymSprinkle((p.x - MX) / h, (p.y - MY) / h, 14); } return; }
+  const k = 0.0085, twist = v === 'd5' && e && e.shiftKey;
+  if (twist) { VW.twist += dx * k; return; }
+  VW.yaw += dx * k; VW.pitch = clamp(VW.pitch + dy * k, -1.35, 1.35);
+  const s = 1000 / Math.max(8, dtm); VW.vyaw = VW.vyaw * 0.5 + dx * k * s * 0.5; VW.vpitch = VW.vpitch * 0.5 + dy * k * s * 0.5;
+}
+function viewUp(p, now) {
+  VW.drag = false;
+  if (!p.moved) {
+    const v = viewOn();
+    if (v === 'cymatics') return;
+    const nd = viewPickAt(p.x, p.y);
+    if (nd) playNode(nd); else strum();
+    VW.vyaw = 0; VW.vpitch = 0;
+  } else if (now - p.lt > 90) { VW.vyaw = 0; VW.vpitch = 0; }
+}
+function viewWheel(dy) {
+  const v = viewOn();
+  if (v === 'mandala') return false;
+  if (v === 'cymatics') { CY.gain = clamp(CY.gain * Math.exp(-dy * 0.0015), 0.25, 2.2); caption(`plate drive ${Math.round(CY.gain * 100)}%`, 900); return true; }
+  VW.dist = clamp(VW.dist * Math.exp(dy * 0.0012), 3.2, 14); return true;
+}
+function viewHover(px, py) { const v = viewOn(); VW.hover = v === 'cube' || v === 'd5' ? viewPickAt(px, py) : null; if (VW.hover) hitEl.style.cursor = 'pointer'; }
+function viewTick(dt) {
+  if (mrotVel) { mrot += mrotVel * dt; mrotVel *= Math.exp(-dt * 1.7); if (Math.abs(mrotVel) < 0.01) mrotVel = 0; }
+  const v = viewOn();
+  if (v === 'cymatics') { cymTick(dt); return; }
+  if (v !== 'cube' && v !== 'd5') return;
+  if (!VW.drag) {
+    VW.yaw += VW.vyaw * dt; VW.pitch = clamp(VW.pitch + VW.vpitch * dt, -1.35, 1.35);
+    VW.vyaw *= Math.exp(-dt * 2.2); VW.vpitch *= Math.exp(-dt * 2.2);
+    if (Math.abs(VW.vyaw) < 0.05 && !reduceMotion) VW.yaw += dt * 0.16;
+  }
+  if (v === 'd5' && !reduceMotion) PL5.forEach(([, , sp], k) => (VW.th[k] += dt * sp * (0.2 + 2.2 * SET.x5dSpeed)));
+}
+function drawView() {
+  const v = viewOn();
+  if (v === 'cymatics') cymDraw();
+  else if (v === 'cube') cubeDraw();
+  else if (v === 'd5') d5Draw();
+}
+
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;
+const PERF_LOCK = (() => { try { return /[?&]hq\b/.test(location.search); } catch (e) { return false; } })();
 function update(dt) {
   if (BOX.auto && BOX.drag == null) {
     const tx = 0.62 * Math.sin(t * 0.043 + 1.1) * Math.cos(t * 0.017), ty = 0.58 * Math.sin(t * 0.031 + 0.4), cp = clamp(Rs - 0.45, 0, 0.5), gp = chordNow ? 0.12 : 0, kk = 1 - Math.exp(-dt * 0.35);
@@ -3677,14 +4369,25 @@ function update(dt) {
   let scaleHeld = false;
   for (const p of PTR.values()) if (p.role === 'scale' || p.role === 'pinch') scaleHeld = true;
   if (!scaleHeld) {
-    if (Math.abs(VIEW.vel) > 20) { const w = VIEW.x1 - VIEW.x0, nx = VIEW.x0 + VIEW.vel * dt; setView(nx, w); if (nx <= 0 || nx >= XMAX - w) VIEW.vel = 0; VIEW.vel *= Math.exp(-dt * 3.2); } else VIEW.vel = 0;
-    if (Math.abs(VIEW.rubber) > 0.3) VIEW.rubber *= Math.exp(-dt * 12); else VIEW.rubber = 0;
+    if (Math.abs(VIEW.vel) > 20) {
+      const w = VIEW.x1 - VIEW.x0, nx = VIEW.x0 + VIEW.vel * dt; setView(nx, w);
+      if (nx <= 0 || nx >= XMAX - w) { VIEW.rubber = clamp(VIEW.rubber + (nx <= 0 ? 1 : -1) * Math.min(42, Math.abs(VIEW.vel) * 0.012), -48, 48); VIEW.vel = 0; }
+      VIEW.vel *= Math.exp(-dt * 2.8);
+    } else VIEW.vel = 0;
+    if (Math.abs(VIEW.rubber) > 0.3) VIEW.rubber *= Math.exp(-dt * 9); else VIEW.rubber = 0;
+    if (VIEW.tgt) {
+      const T = VIEW.tgt, k = 1 - Math.exp(-dt * 14), w0 = VIEW.x1 - VIEW.x0, w = w0 + (T.w - w0) * k, x0 = VIEW.x0 + (T.x0 - VIEW.x0) * k;
+      if (Math.abs(T.w - w) < 0.05 && Math.abs(T.x0 - x0) < 0.05) { setView(T.x0, T.w); VIEW.tgt = null; } else setView(x0, w);
+    }
   }
+  viewTick(dt);
   if (zoomLevel() > 1.01) for (const p of PTR.values()) {
     if (p.role !== 'voice') continue;
     const e = 34, w = VIEW.x1 - VIEW.x0, sp = w * 0.9 * dt;
-    if (p.x < PX0 + e) { setView(VIEW.x0 - sp * (1 - (p.x - PX0) / e), w); p.v.x = xFromS(p.x); }
-    else if (p.x > PX0 + PW - e) { setView(VIEW.x0 + sp * (1 - (PX0 + PW - p.x) / e), w); p.v.x = xFromS(p.x); }
+    let moved = false;
+    if (p.x < PX0 + e) { setView(VIEW.x0 - sp * (1 - (p.x - PX0) / e), w); moved = true; }
+    else if (p.x > PX0 + PW - e) { setView(VIEW.x0 + sp * (1 - (PX0 + PW - p.x) / e), w); moved = true; }
+    if (moved) { const xr = xFromS(p.x); p.fx = clamp(p.fx + xr - p.lxr, 0, XMAX); p.lxr = xr; p.v.dragX = p.fx; }
   }
   const SUB = 4, h = dt / SUB;
   for (let k = 0; k < SUB; k++) for (const v of voices) stepVoice(v, h);
@@ -3785,7 +4488,7 @@ function frame(now) {
   if (window.innerWidth !== W || window.innerHeight !== H) resize();
   let dt = (now - last) / 1000; last = now;
   if (!(dt > 0)) dt = 0.016;
-  if (entered) {
+  if (entered && !PERF_LOCK) {
     perfAcc += dt; perfN++; perfT += dt;
     if (perfT > 2.5) {
       const avg = perfAcc / perfN;
@@ -3796,7 +4499,8 @@ function frame(now) {
   }
   if (dt > 0.05) dt = 0.05;
   t += dt; update(dt);
-  if (skin !== 'eink' || now - einkT > 450) { einkT = now; draw(); }
+  const slow = skin === 'eink' || skin === 'bw2';
+  if (!slow || now - einkT > (skin === 'bw2' ? 380 : 450)) { einkT = now; draw(); if (skin === 'bw2') ditherBW(); }
   requestAnimationFrame(frame);
 }
 
@@ -3852,7 +4556,11 @@ try {
     voices: () => voices.filter(v => v.wT > 0).map(v => ({ x: +v.x.toFixed(2), c: +v.c.toFixed(2), lab: v.lab, locked: v.locked, glide: !!v.glide, echo: v.echo })),
     ls: () => ({ src: LS.src, f: +LS.f.toFixed(2), conf: +LS.conf.toFixed(3), phrases: LS.phrases, lines: LS.lines.slice(), note: !!LS.note, roomC: LS.roomC, act: LS.lastAction, rms: +LS.rms.toFixed(4), dispX: LS.dispX }),
     state: () => ({ t: +t.toFixed(2), root: +fRoot.toFixed(3), tune: +TUNE.toFixed(5), Rs: +Rs.toFixed(4), chord: chordNow && chordNow.str, mood: moodNow(), mode: M.key, skin, found: [...found], score: GAME.score }),
-    listenStart, listenStop, setFollow, lean, setMood, setMode
+    listenStart, listenStop, setFollow, lean, setMood, setMode, setSkin, setViewMode, setX5d,
+    view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
+    box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),
+    geo: () => ({ W, H, LT, LB, SH, PX0, PW, DPR, phone, TOPH }),
+    xs: v => xToS(v), ball: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; const b = ballPos(v); return { X: Math.round(b.X), Y: Math.round(b.Y), x: +v.x.toFixed(2), locked: v.locked }; }, dv: (i, x) => { const v = voices.filter(o => o.wT > 0)[i]; return v ? Dv(v, x) : null; }, refine: (i, x) => { const v = voices.filter(o => o.wT > 0)[i]; return v ? refineMin(v, x, 11) : null; }
   };
 } catch (e) {}
 
