@@ -309,7 +309,8 @@ const path = [{ a: 0, b: 0 }], voices = [], sparks = [], rings = [], glyphs = []
 let vid = 0, act = null, nextAct = 0, userIdleUntil = 0, pump = null, lastPumpT = -999, gongDue = false;
 const gam = { next: 0, b: 0 };
 let Rs = 0, mrot = 0, bloomFlash = 0, rootFlash = 0, aurora = 0, chordNow = null, lastBloom = '', draggedOnce = false, drag = null;
-let found = new Set(), gDeg = new Set([0]), modesSeen = new Set(['just']), storeOK = false;
+let found = new Set(), gDeg = new Set([0]), modesSeen = new Set(['just']);
+const unlistedFound = new Set();
 const toastQ = [];
 let toastFlush = 0, toastHideAt = 0, flourishT = 0, hoverTip = null, lastUserT = 0, nextTryT = 0, hintOffAt = 0;
 const bird = { next: 0, notes: [], x: -100, y: -100, tx: -100, ty: -100, trail: [], alpha: 0, flash: 0, lastNote: -99, sung: false };
@@ -611,7 +612,7 @@ function lean(s) { for (const v of voices) if (v.wT > 0) tease(v, s * rand(0.75,
 
 // ---------- discovery ----------
 function saveFound() {
-  try { if (window.storage && window.storage.set) { const p = window.storage.set(STORE_KEY, JSON.stringify([...found]), false); if (p && p.catch) p.catch(() => {}); } } catch (e) {}
+  return persistenceReady.then(() => store(STORE_KEY, JSON.stringify([...unlistedFound, ...found])));
 }
 function discover(id, v) {
   if (found.has(id)) return;
@@ -941,9 +942,11 @@ $('sHp').addEventListener('change', e => {
 $('sSpark').addEventListener('change', e => { SET.sparkle = e.target.checked; audio.applyMix(); });
 $('sChime').addEventListener('change', e => { SET.chimes = e.target.checked; });
 $('sBird').addEventListener('change', e => { SET.bird = e.target.checked; });
-$('gReset').addEventListener('click', () => {
-  found.clear(); gDeg = new Set([0]); modesSeen = new Set([M.key]); bird.sung = false;
-  saveFound(); renderGuide(); caption('field guide wiped. everything is undiscovered again.', 3000);
+$('gReset').addEventListener('click', async () => {
+  found.clear(); unlistedFound.clear(); gDeg = new Set([0]); modesSeen = new Set([M.key]); bird.sung = false;
+  renderGuide();
+  const saved = await saveFound();
+  caption(saved ? 'field guide wiped. everything is undiscovered again.' : 'field guide reset for this session only; save not confirmed.', 3000);
 });
 $('gwBlurb').textContent = M.blurb;
 
@@ -2093,8 +2096,84 @@ const BUILTIN = {
   'event horizon': { mode: 'just', box: [-0.7, -0.25], theme: 'obsidian', tuplet: 4, rhythm: false, hole: true, set: { tease: 0.75, pace: 0.5, warm: 0.55, flip: false } },
   'daybreak drift': { mode: 'easy', box: [0, 0.65], theme: 'daybreak', tuplet: 3, rhythm: true, autoVibe: true, set: { tease: 0.4, pace: 0.3, warm: 0.66, flip: true } }
 };
-let userP = {};
-const store = (k, v) => { try { if (window.storage && window.storage.set) { const p = window.storage.set(k, v, false); if (p && p.catch) p.catch(() => {}); } } catch (e) {} };
+let userP = Object.create(null);
+// Keep the v1 keys/formats and the host API's private (false) scope. Select one
+// backend for this visit; switching after a failed write could revive stale data.
+let storageBackend, storageQueue = Promise.resolve(), savedOnce = false;
+const storageIssues = new Map(), blockedStorage = new Set();
+const storageLabels = { [STORE_KEY]: 'discoveries', [PRESET_KEY]: 'presets', [UNLOCK_KEY]: 'unlocks' };
+function storageOperation(operation) {
+  let timer;
+  return Promise.race([
+    Promise.resolve().then(operation),
+    new Promise((_, reject) => { timer = setTimeout(() => {
+      const error = new Error('storage timed out'); error.name = 'StorageTimeoutError'; reject(error);
+    }, 4000); })
+  ]).finally(() => clearTimeout(timer));
+}
+function renderStorageStatus() {
+  const el = $('gSave');
+  el.dataset.state = storageIssues.size ? 'session' : 'ready';
+  el.textContent = storageIssues.size
+    ? [...storageIssues].map(([k, reason]) => `${storageLabels[k]}: ${reason}; changes are this session only.`).join(' ') + ' click anything found to hear it.'
+    : (savedOnce ? 'last change saved, not shared. ' : 'saves are private to you. ') + 'click anything found to hear it.';
+}
+function storageFailure(k, reason, block = false) {
+  storageIssues.set(k, reason);
+  if (block) blockedStorage.add(k);
+  renderStorageStatus();
+}
+async function readStored(k, decode) {
+  let raw;
+  try {
+    if (!storageBackend) throw new Error('unavailable');
+    raw = await storageOperation(() => storageBackend.get(k));
+  } catch (e) {
+    storageFailure(k, 'storage unavailable; existing data kept unchanged', true);
+    return null;
+  }
+  if (raw === null || raw === undefined) return null;
+  try { return decode(raw); }
+  catch (e) {
+    storageFailure(k, 'unreadable stored data kept unchanged', true);
+    return null;
+  }
+}
+function store(k, value) {
+  const pending = storageQueue.then(async () => {
+    await persistenceReady;
+    if (blockedStorage.has(k)) return false;
+    try {
+      if (!storageBackend) throw new Error('unavailable');
+      const result = await storageOperation(() => storageBackend.set(k, value));
+      if (result === null || result === false) throw new Error('save failed');
+      storageIssues.delete(k); savedOnce = true; renderStorageStatus();
+      return true;
+    } catch (e) {
+      // A timed-out host write can still complete later. Do not send a newer
+      // value to that key during this visit and risk it being overwritten.
+      const uncertain = e && e.name === 'StorageTimeoutError';
+      storageFailure(k, uncertain ? 'save not confirmed; keep this visit open'
+        : e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') ? 'storage is full' : 'storage unavailable', uncertain);
+      return false;
+    }
+  });
+  storageQueue = pending;
+  return pending;
+}
+function decodePresets(raw) {
+  const obj = JSON.parse(raw), record = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!record(obj) || !Object.values(obj).every(p => record(p)
+    && (p.mode === undefined || Object.prototype.hasOwnProperty.call(MODES, p.mode))
+    && (p.set === undefined || (record(p.set) && Object.entries(p.set).every(([k, v]) =>
+      (typeof v === 'boolean' || typeof v === 'string' || Number.isFinite(v))
+      && (!Object.prototype.hasOwnProperty.call(SET, k) || typeof v === typeof SET[k]))))
+    && (p.box === undefined || (Array.isArray(p.box) && p.box.length === 2 && p.box.every(Number.isFinite)))
+    && (p.theme === undefined || typeof p.theme === 'string')
+    && (p.tuplet === undefined || (Number.isInteger(p.tuplet) && p.tuplet >= 2 && p.tuplet <= 9))
+    && ['autoVibe', 'rhythm', 'hole'].every(k => p[k] === undefined || typeof p[k] === 'boolean'))) throw new Error('invalid presets');
+  return Object.assign(Object.create(null), obj);
+}
 function renderPresets() {
   const sel = $('pSel'); sel.textContent = '';
   [['built-in', BUILTIN, 'b'], ['yours', userP, 'u']].forEach(([lab, obj, pre]) => {
@@ -2107,7 +2186,7 @@ function capturePreset() { return { mode: M.key, set: { ...SET }, box: [BOX.x, B
 function applyPreset(p, name) {
   if (!p || !entered) return;
   if (p.mode && MODES[p.mode] && p.mode !== M.key) setMode(p.mode, true);
-  if (p.set) for (const k in p.set) if (k in SET) SET[k] = p.set[k];
+  if (p.set) for (const k in p.set) if (Object.prototype.hasOwnProperty.call(SET, k)) SET[k] = p.set[k];
   if (p.box) { BOX.x = p.box[0]; BOX.y = p.box[1]; } BOX.auto = !!p.autoVibe;
   if (p.theme) setTheme(p.theme);
   if (p.tuplet) setTuplet(p.tuplet, true);
@@ -2569,7 +2648,11 @@ $('bAutoV').addEventListener('click', () => { BOX.auto = !BOX.auto; syncUI(); })
 $('bCenter').addEventListener('click', () => { BOX.x = 0; BOX.y = 0; BOX.auto = false; syncUI(); });
 document.querySelectorAll('#themeBtns .pill').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.th)));
 document.querySelector('.mode[data-m="easy"]').addEventListener('click', () => setMode('easy'));
-$('bSkip').addEventListener('click', () => { allUnlocked = true; store(UNLOCK_KEY, '1'); checkUnlocks(false); caption('everything unlocked. the incremental game respects your time.', 3000); });
+$('bSkip').addEventListener('click', async () => {
+  allUnlocked = true; checkUnlocks(false);
+  const saved = await store(UNLOCK_KEY, '1');
+  caption(saved ? 'everything unlocked. the incremental game respects your time.' : 'everything unlocked for this session only; save not confirmed.', 3000);
+});
 $('zIn').addEventListener('click', () => zoomBy(1.6));
 $('zOut').addEventListener('click', () => zoomBy(1 / 1.6));
 $('zReset').addEventListener('click', () => setZoom(1, XMAX / 2));
@@ -2580,15 +2663,21 @@ const padUp = e => { if (BOX.drag === e.pointerId) BOX.drag = null; };
 padEl.addEventListener('pointerup', padUp);
 padEl.addEventListener('pointercancel', padUp);
 $('pLoad').addEventListener('click', () => { const v = $('pSel').value; if (!v) return; const n = v.slice(2); applyPreset(v[0] === 'b' ? BUILTIN[n] : userP[n], n); });
-$('pSave').addEventListener('click', () => { const n = ($('pName').value || '').trim().slice(0, 28) || `vibe ${Object.keys(userP).length + 1}`; userP[n] = capturePreset(); store(PRESET_KEY, JSON.stringify(userP)); renderPresets(); $('pSel').value = 'u:' + n; $('pName').value = ''; caption(`saved: ${n}`, 2000); });
-$('pDel').addEventListener('click', () => { const v = $('pSel').value; if (!v || v[0] !== 'u') { caption("built-ins can't be deleted. they're load-bearing.", 2400); return; } delete userP[v.slice(2)]; store(PRESET_KEY, JSON.stringify(userP)); renderPresets(); });
+$('pSave').addEventListener('click', async () => {
+  const n = ($('pName').value || '').trim().slice(0, 28) || `vibe ${Object.keys(userP).length + 1}`;
+  userP[n] = capturePreset(); renderPresets(); $('pSel').value = 'u:' + n; $('pName').value = '';
+  const saved = await store(PRESET_KEY, JSON.stringify(userP));
+  caption(saved ? `saved: ${n}` : `preset: ${n} — this session only; save not confirmed.`, 3000);
+});
+$('pDel').addEventListener('click', async () => {
+  const v = $('pSel').value;
+  if (!v || v[0] !== 'u') { caption("built-ins can't be deleted. they're load-bearing.", 2400); return; }
+  delete userP[v.slice(2)]; renderPresets();
+  const saved = await store(PRESET_KEY, JSON.stringify(userP));
+  caption(saved ? 'preset deleted.' : 'preset deleted for this session only; save not confirmed.', 3000);
+});
 $('enter').addEventListener('click', () => { audioExtras(); $('zc').classList.add('on'); flipAt = t + 45; lastPX = W / 2; lastPY = H / 2; syncUI(); });
 renderPresets(); syncUI();
-(async () => {
-  try { if (window.storage && window.storage.get) { const r = await window.storage.get(UNLOCK_KEY, false); if (r && r.value === '1') allUnlocked = true; } } catch (e) {}
-  try { if (window.storage && window.storage.get) { const r = await window.storage.get(PRESET_KEY, false); if (r && r.value) userP = JSON.parse(r.value) || {}; } } catch (e) {}
-  renderPresets(); checkUnlocks(true);
-})();
 
 // ===== part three: skins, the 5D lattice, hands-on play, sound layers, recording, the journal =====
 var P3ready = false;
@@ -3324,16 +3413,41 @@ P3ready = true;
 renderPresets(); syncUI();
 
 resize();
-(async () => {
+// Finish reads before enabling edits, so delayed host reads cannot replace a new
+// preset or resurrect a guide that was just reset. Discoveries are merged below.
+const saveControls = ['enter', 'gReset', 'pSave', 'pDel', 'bSkip'].map($);
+saveControls.forEach(el => (el.disabled = true));
+$('gSave').dataset.state = 'loading';
+$('gSave').setAttribute('aria-live', 'polite');
+$('gSave').textContent = 'loading saved discoveries, presets and unlocks…';
+const persistenceReady = (async () => {
   try {
-    if (window.storage && window.storage.get) {
-      storeOK = true;
-      const r = await window.storage.get(STORE_KEY, false);
-      if (r && r.value) JSON.parse(r.value).forEach(id => { if (CAT.some(c => c.id === id)) found.add(id); });
+    const api = window.storage;
+    if (api && typeof api.get === 'function' && typeof api.set === 'function') {
+      storageBackend = {
+        get: async k => { const r = await api.get(k, false); return r == null ? null : r.value; },
+        set: (k, v) => api.set(k, v, false)
+      };
+    } else {
+      const browserStorage = window.localStorage;
+      storageBackend = { get: k => browserStorage.getItem(k), set: (k, v) => browserStorage.setItem(k, v) };
     }
-  } catch (e) {}
-  $('gSave').textContent = storeOK ? 'kept for you between visits, not shared. click anything found to hear it.' : 'this session only. click anything found to hear it.';
-  renderGuide();
+  } catch (e) { /* A denied storage getter is handled by each read below. */ }
+  const [savedFound, savedPresets, savedUnlock] = await Promise.all([
+    readStored(STORE_KEY, raw => {
+      const ids = JSON.parse(raw);
+      if (!Array.isArray(ids) || !ids.every(id => typeof id === 'string')) throw new Error('invalid discoveries');
+      return ids;
+    }),
+    readStored(PRESET_KEY, decodePresets),
+    readStored(UNLOCK_KEY, raw => { if (raw !== '1' && raw !== '0') throw new Error('invalid unlocks'); return raw === '1'; })
+  ]);
+  if (savedFound) savedFound.forEach(id => (CAT.some(c => c.id === id) ? found : unlistedFound).add(id));
+  if (savedPresets) userP = savedPresets;
+  if (savedUnlock) allUnlocked = true;
+  renderPresets(); renderGuide(); checkUnlocks(true);
+  saveControls.forEach(el => (el.disabled = false));
+  renderStorageStatus();
 })();
 requestAnimationFrame(frame);
 })();
