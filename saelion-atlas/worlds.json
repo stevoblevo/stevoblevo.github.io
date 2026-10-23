@@ -1,0 +1,676 @@
+{
+  "schema": "saelion-atlas-public-v1",
+  "updated": "2026-10-22",
+  "scope": "curated public wayfinding, not an exhaustive private archive",
+  "phases": {
+    "open": "Observed public entry; some may need browser features and save locally.",
+    "candidate": "Source prepared, publication or runtime review pending.",
+    "design": "Exploration, plan, or prototype; no public executable claimed.",
+    "dream": "Captured world seed; intentionally not presented as a released product."
+  },
+  "privacy": "Only public destinations and safe descriptions. No private project links, host IPs or raw system records.",
+  "entries": [
+    {
+      "id": "buy-a-bunny",
+      "title": "I Just Want to Buy a Bunny",
+      "kind": "play",
+      "phase": "open",
+      "description": "Meet two little personalities. Take your time, earn a keepsake, and return.",
+      "url": "https://saelion.co/buy-a-bunny",
+      "image": "https://saelion.co/images/ways-bunny.png",
+      "tags": [
+        "bunny",
+        "gentle",
+        "godot"
+      ],
+      "featured": true,
+      "sort": 0
+    },
+    {
+      "id": "nic-lan",
+      "title": "NIC.LAN · Microtikl Reel",
+      "kind": "listen",
+      "phase": "open",
+      "description": "A home network discovers its packets have pitch. Black obsidian, luminous ports, cymatics, a gold crack, then daybreak.",
+      "url": "https://stevoblevo.github.io/nic-lan/",
+      "image": "",
+      "tags": [
+        "microtonal",
+        "reel",
+        "cymatics",
+        "network"
+      ],
+      "featured": true,
+      "sort": 1
+    },
+    {
+      "id": "and-so-gamut",
+      "title": "AND SO · Gamut Field Guide",
+      "kind": "listen",
+      "phase": "open",
+      "description": "An appoggiatura you can hold: bend a note, feel it lean, and let it come home. A discovery-filled field guide to alternate tunings.",
+      "url": "https://stevoblevo.github.io/and-so/gamut-43/",
+      "image": "",
+      "tags": [
+        "gamut",
+        "microtonal",
+        "instrument",
+        "lean"
+      ],
+      "featured": true,
+      "sort": 2
+    },
+    {
+      "id": "and-so-original",
+      "title": "AND SO · the listening instrument",
+      "kind": "listen",
+      "phase": "open",
+      "description": "Hum or sing, then let the valleys guide the music. Microtonal consonance, optional microphone, and a demo hummer.",
+      "url": "https://stevoblevo.github.io/and-so/",
+      "image": "",
+      "tags": [
+        "microtonal",
+        "sing",
+        "interactive"
+      ],
+      "featured": false,
+      "sort": 3
+    },
+    {
+      "id": "peach-ball",
+      "title": "Peach Ball",
+      "kind": "play",
+      "phase": "open",
+      "description": "A peach, a mood, and nowhere else you need to be. A small browser visit that remembers on this device.",
+      "url": "https://saelion.co/peach-ball",
+      "image": "https://saelion.co/wall/peach-ball/1ddeb2a4.jpg",
+      "tags": [
+        "peach",
+        "mood",
+        "dance"
+      ],
+      "featured": true,
+      "sort": 4
+    },
+    {
+      "id": "porchfight",
+      "title": "Porchfight",
+      "kind": "play",
+      "phase": "open",
+      "description": "The porch is a threshold, and the game begins when someone crosses it.",
+      "url": "https://saelion.co/4newgam",
+      "image": "https://saelion.co/4newgam/stare.png",
+      "tags": [
+        "porch",
+        "story",
+        "play"
+      ],
+      "featured": false,
+      "sort": 5
+    },
+    {
+      "id": "night-garden",
+      "title": "Red Rain · Night Garden",
+      "kind": "wander",
+      "phase": "open",
+      "description": "Follow a golden thread and gather five small lights in a garden that remembers images.",
+      "url": "https://night-garden-beta.vercel.app/",
+      "image": "",
+      "tags": [
+        "garden",
+        "lantern",
+        "golden thread"
+      ],
+      "featured": true,
+      "sort": 6
+    },
+    {
+      "id": "saelion-field",
+      "title": "Saelion Field",
+      "kind": "wander",
+      "phase": "open",
+      "description": "Seven chapters, a cast, shifting seasons, and small games held together in one quiet field.",
+      "url": "https://saelion.co/field/app",
+      "image": "",
+      "tags": [
+        "chapters",
+        "cast",
+        "seasons"
+      ],
+      "featured": true,
+      "sort": 7
+    },
+    {
+      "id": "masquerade",
+      "title": "Masquerade Grotto",
+      "kind": "wander",
+      "phase": "open",
+      "description": "A peach-lit masquerade, with doors into portraits, guides and a reading room.",
+      "url": "https://saelion.co/masquerade",
+      "image": "https://saelion.co/gen4-next/assets/grotto-concept.png",
+      "tags": [
+        "peach",
+        "masquerade",
+        "gallery"
+      ],
+      "featured": false,
+      "sort": 8
+    },
+    {
+      "id": "fold-flow-room",
+      "title": "Fold / Flow room",
+      "kind": "wander",
+      "phase": "open",
+      "description": "Origami theatre, lantern paths, Knight Side, and a study of cymatics.",
+      "url": "https://saelion.co/fold-flow-room",
+      "image": "https://saelion.co/gen4-next/assets/fold-flow-concept.png",
+      "tags": [
+        "origami",
+        "lantern",
+        "cymatics"
+      ],
+      "featured": false,
+      "sort": 9
+    },
+    {
+      "id": "living-atlas",
+      "title": "Living Atlas",
+      "kind": "wander",
+      "phase": "open",
+      "description": "An observatory of words and worlds. Follow a sign into reading, characters and the wider field.",
+      "url": "https://saelion.co/living-atlas",
+      "image": "https://saelion.co/gen4-next/assets/living-atlas-concept.png",
+      "tags": [
+        "atlas",
+        "words",
+        "world"
+      ],
+      "featured": false,
+      "sort": 10
+    },
+    {
+      "id": "paper-conservatory",
+      "title": "Paper Conservatory",
+      "kind": "look",
+      "phase": "open",
+      "description": "Thirty-five guides and an illustrated paper interpretation of Fold / Flow.",
+      "url": "https://saelion.co/gen4-next",
+      "image": "",
+      "tags": [
+        "gallery",
+        "paper",
+        "portraits"
+      ],
+      "featured": false,
+      "sort": 11
+    },
+    {
+      "id": "public-classic",
+      "title": "Public Classic",
+      "kind": "wander",
+      "phase": "open",
+      "description": "The preserved public collection: worlds, portraits, lattice, and guides.",
+      "url": "https://saelion.co/classic",
+      "image": "",
+      "tags": [
+        "archive",
+        "public",
+        "classic"
+      ],
+      "featured": false,
+      "sort": 12
+    },
+    {
+      "id": "fold-flow",
+      "title": "Fold / Flow",
+      "kind": "wander",
+      "phase": "open",
+      "description": "Bring five lanterns home, explore cymatic light, and find a quiet guide.",
+      "url": "https://saelion.co/fold-flow",
+      "image": "",
+      "tags": [
+        "lantern",
+        "fold",
+        "flow"
+      ],
+      "featured": false,
+      "sort": 13
+    },
+    {
+      "id": "art-wall",
+      "title": "The Art Wall",
+      "kind": "look",
+      "phase": "open",
+      "description": "The cast, the places, and their little moments: an illustrated wall to wander rather than scroll past.",
+      "url": "https://saelion.co/wall",
+      "image": "https://saelion.co/wall/enter-play/f9daf514.jpg",
+      "tags": [
+        "art",
+        "portrait",
+        "gallery"
+      ],
+      "featured": false,
+      "sort": 14
+    },
+    {
+      "id": "cobalt",
+      "title": "Cobalt Gray",
+      "kind": "look",
+      "phase": "open",
+      "description": "Shape smoke and glass. Shift from daylight to night and leave a cornflower at the edges.",
+      "url": "https://saelion.co/cobalt",
+      "image": "",
+      "tags": [
+        "quiet",
+        "color",
+        "light"
+      ],
+      "featured": false,
+      "sort": 15
+    },
+    {
+      "id": "thirteenth-belle",
+      "title": "The Thirteenth Belle",
+      "kind": "read",
+      "phase": "open",
+      "description": "An unexpected guest. An unfinished grove. A place at the table that changes the entire room. Original draft in review.",
+      "url": "https://saelion.co/stories/thirteenth-belle",
+      "image": "",
+      "tags": [
+        "story",
+        "reading room",
+        "draft"
+      ],
+      "featured": false,
+      "sort": 16
+    },
+    {
+      "id": "dom-para",
+      "title": "Dom Para Dinaire",
+      "kind": "read",
+      "phase": "open",
+      "description": "A second place in the reading room, beneath lemonade stars. Original draft in review.",
+      "url": "https://saelion.co/stories/dom-para-dinaire",
+      "image": "",
+      "tags": [
+        "story",
+        "woodland",
+        "lemonade"
+      ],
+      "featured": false,
+      "sort": 17
+    },
+    {
+      "id": "room-hears",
+      "title": "The Room Hears",
+      "kind": "read",
+      "phase": "open",
+      "description": "Six quiet scenes and a listening room. Microphone is optional; recording and sending are separate choices.",
+      "url": "https://saelion.co/stories/the-room-hears",
+      "image": "",
+      "tags": [
+        "sound",
+        "room",
+        "story"
+      ],
+      "featured": false,
+      "sort": 18
+    },
+    {
+      "id": "saeliont-window",
+      "title": "Saeliont Window",
+      "kind": "wander",
+      "phase": "open",
+      "description": "An open window into the hold, with time to stay for a moment.",
+      "url": "https://saelion.co/saeliont/window",
+      "image": "https://saelion.co/saeliont/window/e77de846.jpg",
+      "tags": [
+        "window",
+        "quiet",
+        "hold"
+      ],
+      "featured": false,
+      "sort": 19
+    },
+    {
+      "id": "red-reign",
+      "title": "Red Reign",
+      "kind": "wander",
+      "phase": "open",
+      "description": "Red rain, a remembered passage and a way home that stays open.",
+      "url": "https://stevoblevo.github.io/red-reign/",
+      "image": "",
+      "tags": [
+        "red",
+        "reign",
+        "water"
+      ],
+      "featured": false,
+      "sort": 20
+    },
+    {
+      "id": "peachfall",
+      "title": "The Peachfall",
+      "kind": "play",
+      "phase": "open",
+      "description": "Play the dream or watch it. Move through a world built for meeting, kneeling, sitting and looking.",
+      "url": "https://stevoblevo.github.io/peachfall/",
+      "image": "",
+      "tags": [
+        "peachfall",
+        "dream",
+        "play"
+      ],
+      "featured": false,
+      "sort": 21
+    },
+    {
+      "id": "topi-berry",
+      "title": "Topi·Berry",
+      "kind": "wander",
+      "phase": "open",
+      "description": "A sweeter tomorrow and a little threshold into Peachfall.",
+      "url": "https://stevoblevo.github.io/topi/",
+      "image": "",
+      "tags": [
+        "peach",
+        "berry",
+        "characters"
+      ],
+      "featured": false,
+      "sort": 22
+    },
+    {
+      "id": "knight-side",
+      "title": "Knight Side",
+      "kind": "play",
+      "phase": "open",
+      "description": "An isometric knight, lanterns, and ways into gravity and wonder.",
+      "url": "https://stevoblevo.github.io/knight-side/",
+      "image": "",
+      "tags": [
+        "knight",
+        "lantern",
+        "isometric"
+      ],
+      "featured": false,
+      "sort": 23
+    },
+    {
+      "id": "goober",
+      "title": "Goober / Crossing",
+      "kind": "play",
+      "phase": "open",
+      "description": "Find your line and make it yours. A place worth coming back to.",
+      "url": "https://stevoblevo.github.io/goober/",
+      "image": "",
+      "tags": [
+        "learning",
+        "crossing",
+        "coding"
+      ],
+      "featured": false,
+      "sort": 24
+    },
+    {
+      "id": "skyknight",
+      "title": "Skyknight Raven",
+      "kind": "wander",
+      "phase": "open",
+      "description": "Do not collect her fragments. Meet them; each returns by choice.",
+      "url": "https://stevoblevo.github.io/skyknight-raven/",
+      "image": "",
+      "tags": [
+        "sky",
+        "raven",
+        "knight"
+      ],
+      "featured": false,
+      "sort": 25
+    },
+    {
+      "id": "sae-hmm",
+      "title": "Sae‑hmm · Listening Booth",
+      "kind": "listen",
+      "phase": "design",
+      "description": "A listening booth where silence has a shape, directional sound carries a story, and the visitor chooses how close to come.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "directional audio",
+        "booth",
+        "listening"
+      ],
+      "featured": false,
+      "sort": 26
+    },
+    {
+      "id": "mallow-mint",
+      "title": "Mallow Mint",
+      "kind": "look",
+      "phase": "design",
+      "description": "A velvet mint rabbit with violet eyes, moth wings, an apricot ear tip and a copper strawberry charm. Animated source and QA preserved privately.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "pet",
+        "bunny",
+        "mint",
+        "sprite"
+      ],
+      "featured": false,
+      "sort": 27
+    },
+    {
+      "id": "plumwing",
+      "title": "Plumwing",
+      "kind": "look",
+      "phase": "design",
+      "description": "A companion taking shape through little gestures, animation studies and a softer kind of presence.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "pet",
+        "wing",
+        "companion"
+      ],
+      "featured": false,
+      "sort": 28
+    },
+    {
+      "id": "phea",
+      "title": "Phea · companion voice",
+      "kind": "listen",
+      "phase": "design",
+      "description": "A voice for an illustrated companion who can share a story without breaking the spell.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "pet",
+        "voice",
+        "storybook"
+      ],
+      "featured": false,
+      "sort": 29
+    },
+    {
+      "id": "bun-bun-tea",
+      "title": "Bun‑Bun Tea",
+      "kind": "play",
+      "phase": "design",
+      "description": "A curious tea-room where bunny etiquette, strawberry lemonade and a purple velvet goat can all be true.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "bunny",
+        "tea",
+        "strawberry",
+        "goat"
+      ],
+      "featured": false,
+      "sort": 30
+    },
+    {
+      "id": "grandma-underground",
+      "title": "Grandma Underground",
+      "kind": "read",
+      "phase": "dream",
+      "description": "Twelve rooms below the ordinary world. Each scene keeps a little warmth in the dark.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "grandma",
+        "underground",
+        "story"
+      ],
+      "featured": false,
+      "sort": 31
+    },
+    {
+      "id": "save-anna",
+      "title": "Save Anna · Reignfawn",
+      "kind": "read",
+      "phase": "dream",
+      "description": "A red-haired princess, a rescue that must mean something, and the question of who gets to choose the ending.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "anna",
+        "reignfawn",
+        "princess"
+      ],
+      "featured": false,
+      "sort": 32
+    },
+    {
+      "id": "bambi",
+      "title": "Save Bambi",
+      "kind": "read",
+      "phase": "dream",
+      "description": "Strawberry-eyed tenderness held as a living character promise, not an asset to flatten into a task.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "bambi",
+        "strawberry",
+        "princess"
+      ],
+      "featured": false,
+      "sort": 33
+    },
+    {
+      "id": "marcy",
+      "title": "Marcy’s Playground",
+      "kind": "wander",
+      "phase": "design",
+      "description": "A sky of paths, a playground of voices and a sound that knows where you are looking. Immersive prototype in the private creative collection.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "marcy",
+        "sky",
+        "audio",
+        "playground"
+      ],
+      "featured": false,
+      "sort": 34
+    },
+    {
+      "id": "kirby",
+      "title": "Sae‑Kirby · Seed Harvester",
+      "kind": "build",
+      "phase": "design",
+      "description": "A friendly scavenger for lawful reusable ideas. Keep source, license and context attached to every seed.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "kirby",
+        "skein",
+        "provenance"
+      ],
+      "featured": false,
+      "sort": 35
+    },
+    {
+      "id": "the-world-desktop",
+      "title": "The World Is the Desktop",
+      "kind": "build",
+      "phase": "design",
+      "description": "Let the state of the machine and its constellation of hosts bloom into an infinitely zoomable, playable surface. Not a live telemetry dashboard yet.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "desktop",
+        "zoom",
+        "saelion",
+        "systems"
+      ],
+      "featured": false,
+      "sort": 36
+    },
+    {
+      "id": "intent-ly",
+      "title": "Intent.ly",
+      "kind": "build",
+      "phase": "design",
+      "description": "Keep intent with its evidence and competing possibilities, so a later human or agent can see why a choice matters.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "intent",
+        "decisions",
+        "saedo"
+      ],
+      "featured": false,
+      "sort": 37
+    },
+    {
+      "id": "gam-of-gams",
+      "title": "Anewgam · Game of Games",
+      "kind": "build",
+      "phase": "design",
+      "description": "One world with many ways in. A game, a room, a shell, and a gentle way to find the next story.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "anewgam",
+        "launcher",
+        "kids-mod"
+      ],
+      "featured": false,
+      "sort": 38
+    },
+    {
+      "id": "honey",
+      "title": "Honey · the Loving Board",
+      "kind": "play",
+      "phase": "dream",
+      "description": "A slow board game in which honey drips through choices and every move leaves a trace.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "honey",
+        "board game",
+        "peachfall"
+      ],
+      "featured": false,
+      "sort": 39
+    },
+    {
+      "id": "strawberry-dragon",
+      "title": "Strawberry Dragon",
+      "kind": "read",
+      "phase": "dream",
+      "description": "An origami dragon folded from strawberry paper, steeped in lemonade and summer Americana.",
+      "url": null,
+      "image": "",
+      "tags": [
+        "origami",
+        "strawberry",
+        "storybook"
+      ],
+      "featured": false,
+      "sort": 40
+    }
+  ]
+}
