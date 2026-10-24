@@ -51,6 +51,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .fine { margin-top: 20px; font-family: var(--f-serif); font-style: italic; font-size: 15px; line-height: 1.55; color: var(--ink-faint); max-width: 470px }
 .fine i { color: rgba(244, 226, 194, .8) }
 
+.btn2 { margin-top: 12px; min-height: 40px; padding: 6px 14px; background: none; border: none; color: rgba(244, 226, 194, .78); font-family: var(--f-serif); font-style: italic; font-size: 16px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(246, 195, 95, .4) }
+.btn2:hover { color: #f8e4bf }
+.ver { margin-top: 18px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .06em; line-height: 1.5; color: rgba(246, 195, 95, .66); max-width: 470px }
+
 /* captions & hints */
 #cap { position: fixed; left: 50%; top: calc(var(--capTop, 54px)); transform: translateX(-50%); z-index: 7; width: max-content; max-width: min(560px, 90vw); text-align: center; font-family: var(--f-serif); font-style: italic; font-size: clamp(16px, 1.8vw, 19px); line-height: 1.4; color: #f4e2c2; text-shadow: 0 0 16px #000, 0 0 4px #000; opacity: 0; transition: opacity .7s; pointer-events: none }
 #cap.on { opacity: .97 }
@@ -186,6 +190,27 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: none; b
 #zc button:hover { background: rgba(246, 195, 95, .14) }
 #zLab { font-family: var(--f-mono); font-size: 11px; color: rgba(234, 220, 198, .72); min-width: 40px; text-align: center }
 
+/* the spirit level on the phone's top bar, and the reel's button */
+#tTilt { width: 36px; padding: 0; justify-content: center; position: relative; flex: none }
+#tTilt i { width: 9px; height: 9px; border-radius: 50%; background: rgba(234, 220, 198, .42); transition: background .3s, box-shadow .3s }
+#tTilt::after { content: ''; position: absolute; inset: 9px; border-radius: 50%; border: 1px solid rgba(234, 220, 198, .22); pointer-events: none }
+#tTilt.on i { background: var(--mint); box-shadow: 0 0 8px rgba(126, 224, 195, .8) }
+#tTilt.roll i { background: var(--gold); box-shadow: 0 0 10px rgba(246, 195, 95, .9) }
+#tTilt.ask { animation: askp 1.6s ease-in-out infinite }
+@keyframes askp { 50% { border-color: rgba(246, 195, 95, .75) } }
+#tReel { padding: 6px 12px; flex: none }
+/* the reel */
+#reelHud { position: fixed; z-index: 9; left: 50%; top: 10px; transform: translateX(-50%); display: none; align-items: center; gap: 10px; max-width: calc(100vw - 24px); padding: 5px 6px 5px 14px; border-radius: 999px; background: rgba(10, 8, 12, .8); border: 1px solid rgba(246, 195, 95, .32); font-family: var(--f-mono); font-size: 11px; color: var(--ink-soft); white-space: nowrap }
+#reelHud.on { display: flex }
+#reelName { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-size: 15px; color: #f8e8c8 }
+#reelTune { overflow: hidden; text-overflow: ellipsis; min-width: 0; color: var(--ink-faint) }
+.rbar { width: 70px; height: 3px; border-radius: 2px; background: rgba(234, 220, 198, .16); overflow: hidden; flex: none }
+.rbar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #f6c35f, #ff8a70, #b8a2ff) }
+#reelStop { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(234, 220, 198, .22); background: none; color: var(--ink); cursor: pointer; font-size: 11px }
+#reelStop:hover { border-color: rgba(246, 195, 95, .6) }
+body.reel #hud, body.reel #quests { opacity: 0 !important; pointer-events: none }
+@media (max-width: 520px) { #reelTune { display: none } }
+
 /* the sound box view chip */
 #viewChip { position: fixed; z-index: 6; display: none; align-items: center; gap: 6px; min-height: 30px; padding: 4px 11px 4px 9px; border-radius: 999px; background: rgba(22, 16, 26, .62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 1px solid rgba(246, 195, 95, .3); color: rgba(240, 228, 210, .9); font-size: 11.5px; letter-spacing: .05em; cursor: pointer; white-space: nowrap; transition: border-color .2s, background .2s }
 #viewChip.on { display: inline-flex }
@@ -224,15 +249,26 @@ body[data-skin="story"] #c { filter: invert(1) hue-rotate(180deg) sepia(.32) sat
 body[data-skin="story"] #c3 { mix-blend-mode: multiply }
 body[data-skin="eink"] #c { filter: invert(1) grayscale(1) contrast(1.3) brightness(1.04) }
 body[data-skin="eink"] #c2 { filter: grayscale(1) contrast(1.2) }
-body:is([data-skin="daybreak"], [data-skin="story"]) :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip) { filter: invert(1) hue-rotate(180deg) }
-body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip) { filter: invert(1) grayscale(1) }
+body:is([data-skin="daybreak"], [data-skin="story"]) :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip, #reelHud) { filter: invert(1) hue-rotate(180deg) }
+body[data-skin="eink"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip, #reelHud) { filter: invert(1) grayscale(1) }
 
 /* bw2: one bit per pixel. the canvas is dithered in script at 1× and inverted to black ink on white */
 body[data-skin="bw2"] { --ground: #f7f6f1 }
 body[data-skin="bw2"] #c { filter: invert(1); image-rendering: pixelated }
 body[data-skin="bw2"] #c2 { filter: invert(1) grayscale(1) contrast(2.4) }
-body[data-skin="bw2"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip) { filter: invert(1) grayscale(1) contrast(1.8) }
+body[data-skin="bw2"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip, #reelHud) { filter: invert(1) grayscale(1) contrast(1.8) }
 body[data-skin="bw2"] :is(#gw, #toast, #quests, #round, #result, #top, #viewChip, #zc) { -webkit-backdrop-filter: none; backdrop-filter: none }
+
+/* glasshouse and peachfall, remixed from the Mint Glasshouse and Peachfall Crossing artifacts */
+body[data-skin="glasshouse"] { --ground: #07110f; --gold: #5ef2b8; --mint: #c9e6ff; --glass: rgba(14, 30, 27, .88); --glass-line: rgba(94, 242, 184, .26) }
+body[data-skin="glasshouse"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(94, 242, 184, .7); background: rgba(94, 242, 184, .12); color: #e9f5ef }
+body[data-skin="glasshouse"] :is(.sec, .tk, .qh) { color: rgba(94, 242, 184, .85) }
+body[data-skin="glasshouse"] .sw:checked { background: rgba(94, 242, 184, .8) }
+body[data-skin="peachfall"] { --ground: #111722; --gold: #ffb48a; --glass: rgba(27, 34, 48, .88); --glass-line: rgba(255, 180, 138, .26) }
+body[data-skin="peachfall"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(255, 180, 138, .7); background: rgba(255, 180, 138, .12); color: #f3ece6 }
+body[data-skin="peachfall"] :is(.sec, .tk, .qh) { color: rgba(255, 180, 138, .85) }
+body[data-skin="peachfall"] .sw:checked { background: rgba(255, 180, 138, .82) }
+body:is([data-skin="glasshouse"], [data-skin="peachfall"]) :is(#toast, #round, #result, #viewChip, #reelHud) { border-color: color-mix(in srgb, var(--gold) 45%, transparent) }
 
 /* fieldstone: warm stone, mint florals, a chartreuse accent, a carved rosette */
 body[data-skin="fieldstone"] { --ground: #241c17; --gold: #d9ec6c; --mint: #8fe3c9; --glass: rgba(38, 30, 24, .88); --glass-line: rgba(217, 236, 108, .26) }
@@ -259,6 +295,8 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
   <div class="big">AND SO</div>
   <div class="sub serif">every valley is a little sun</div>
   <button id="enter" class="btn">Enter</button>
+  <button id="enterReel" class="btn2">or watch the reel first</button>
+  <div class="ver">version 6 · tilt, shake &amp; twist · the reel · 31-EDO · glasshouse &amp; peachfall</div>
   <div class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree.<br>hum or sing and it follows you (a demo hummer goes first). use as many fingers as you like. sound on, headphones welcome.</div>
 </div>
 
@@ -269,11 +307,14 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
 <div id="top">
   <button class="chip" id="tMode" aria-label="change tuning"><i class="dot"></i><span id="tModeName">just</span></button>
   <button class="chip" id="tQuest" aria-label="quests">◇ <b id="tQuestN">0/3</b></button>
+  <button class="chip hidden" id="tTilt" aria-label="spirit level: tap to set level here, hold to switch tilt off"><i></i></button>
+  <button class="chip" id="tReel" aria-label="watch the reel">▶</button>
   <button class="chip ghost" id="tScore" aria-label="score">✦ <b id="tScoreN">0</b><span id="tCombo"></span></button>
   <button class="chip" id="tSound" aria-label="sound">♪ on</button>
 </div>
 
 <div id="hud">
+  <button class="ctl" id="bReel" title="W">▶ reel</button>
   <button class="ctl" id="bListen" title="V">◎ listen</button>
   <button class="ctl" id="bLean" title="space">glide</button>
   <button class="ctl" id="bNext" title="N">next chord</button>
@@ -324,7 +365,8 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
       <button class="mode" data-m="gamelan"><b>gamelan</b><span>slendro · ombak</span></button>
       <button class="mode" data-m="bp"><b>Bohlen–Pierce</b><span>no octaves</span></button>
       <button class="mode" data-m="tet10"><b>10-TET</b><span>Sethares spectrum</span></button>
-      <button class="mode wide" data-m="easy"><b>easy listening</b><span>12-TET · familiar chords · a beat</span></button>
+      <button class="mode" data-m="tet31"><b>31-EDO</b><span>Huygens · near-pure thirds</span></button>
+      <button class="mode" data-m="easy"><b>easy listening</b><span>12-TET · chords · a beat</span></button>
     </div>
     <p class="blurb" id="gwBlurb"></p>
     <label class="row"><span>auto-flip micro ⇄ easy</span><input type="checkbox" class="sw" id="sFlip" checked></label>
@@ -332,6 +374,18 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
     <div class="note">light: consonance first; voices glide from one sweet spot to the next and a soft bed holds the root. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
+
+    <div class="sec">the reel</div>
+    <div class="btns"><button class="pill" id="gReel">▶ watch the reel</button></div>
+    <div class="note">fourteen shots: every look, every view of the sound box, the 31-step floor, the weather, a crack in the obsidian. about two minutes. touch anything to take over.</div>
+
+    <div class="sec">motion</div>
+    <label class="row"><span>tilt, shake, twist, flick</span><input type="checkbox" class="sw" id="sMotion" checked></label>
+    <label class="row"><span>tilt rolls the voices</span><input type="checkbox" class="sw" id="sRoll" checked></label>
+    <label class="row"><span>tilt strength</span><input type="range" id="sTiltK" min="0" max="100" value="50"></label>
+    <div class="btns"><button class="pill" id="mLevel">level it here</button><button class="pill hidden" id="mAllow">allow motion</button></div>
+    <div class="note" id="mNote">tilt rolls the voices and leans the sky. shake for a new chord, twist your wrist to turn the root, flick to strum.</div>
+    <div class="note">the bubble on the top bar is a spirit level: tap it to set level, hold it to switch tilt off. a game controller works too: left stick moves a voice, A glides, B moves the root, X adds a voice, Y changes the view, the bumpers pick a voice, the triggers zoom.</div>
 
     <div class="sec">listen</div>
     <div class="btns"><button class="pill" id="lDemo">▶ demo hummer</button><button class="pill" id="lMic">◎ my microphone</button><button class="pill hidden" id="lStop">■ stop listening</button></div>
@@ -363,7 +417,7 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
     <div class="note" id="gSave">kept in this browser.</div>
 
     <div class="sec">gestures</div>
-    <div class="note">one finger per voice, up to four. drag the scale under the terrain to scroll, pinch it or drag up on it to zoom, tap it to hear a pitch, double-tap to jump in. turn the mandala to change chord; pinch it to change the beat. drag across the sky to play the harp. three fingers lean everything.</div>
+    <div class="note">one finger per voice, up to four. drag the scale under the terrain to scroll, pinch it or drag up on it to zoom, tap it to hear a pitch, double-tap to jump in. turn the mandala to change chord; pinch it to change the beat. drag across the sky to play the harp. three fingers lean everything. on a phone: tilt to roll the voices, shake for a new chord, twist to turn the root, flick to strum.</div>
 
     <div class="sec">5d lattice</div>
     <label class="row"><span>tuning</span><input type="range" id="sTune" min="0" max="100" value="50"></label>
@@ -425,7 +479,7 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
     </div>
 
     <div class="sec">vibe</div>
-    <div class="btns" id="themeBtns"><button class="pill on" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button></div>
+    <div class="btns" id="themeBtns"><button class="pill on" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
 
     <div class="sec">record</div>
     <div class="btns"><button class="pill" id="rRec">● record</button><button class="pill" id="rRep">↺ replay last 10s</button></div>
@@ -458,6 +512,7 @@ body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
   </div>
 </div>
 
+<div id="reelHud" role="status" aria-live="polite"><span id="reelId">S01 / 14</span><b id="reelName">Boot</b><span id="reelTune"></span><span class="rbar"><i id="reelBar"></i></span><button id="reelStop" aria-label="stop the reel">■</button></div>
 <button id="viewChip" aria-label="change what the sound box shows"><i>◈</i><span id="viewChipName">mandala</span><small>▸</small></button>
 <div id="zc"><button id="zOut" aria-label="zoom out">−</button><span id="zLab">1.0×</span><button id="zIn" aria-label="zoom in">+</button><button id="zReset" aria-label="reset zoom">⟲</button></div>
 <div id="tabs" class="hidden"><button class="tab on" data-tab="resonance">Resonance</button><button class="tab" data-tab="waveform">Waveform</button><button class="tab" data-tab="spectrum">Spectrum</button></div>
@@ -487,7 +542,7 @@ const F_SERIF = '"Newsreader", ui-serif, Georgia, serif', F_MONO = '"DM Mono", u
 const fnt = (px, kind, style) => `${style || ''} ${Math.round(px)}px ${kind === 'm' ? F_MONO : kind === 'u' ? F_UI : F_SERIF}`;
 
 // ---------- tunings: each is a spectrum, and the spectrum decides the scale ----------
-const E5 = m => Math.pow(2, m / 5), E10 = m => Math.pow(2, m / 10);
+const E5 = m => Math.pow(2, m / 5), E10 = m => Math.pow(2, m / 10), E31 = m => Math.pow(2, m / 31);
 const MODES = {
   just: { key: 'just', title: 'just · 7-limit', short: 'just', eq: 2, R: [1, 2, 3, 4, 5, 6, 7], A: [1, 0.62, 0.46, 0.37, 0.3, 0.25, 0.21], root0: 130.8128, chimeR: 2, struck: false, ombak: 0, bg: [30, 22, 17], flo: [1, 5 / 4, 3 / 2, 2],
     blurb: 'harmonic tone, seven partials. valleys at whole-number ratios like 5/4, 3/2, and 7/4. the root walks a 5-limit lattice.' },
@@ -497,6 +552,8 @@ const MODES = {
     blurb: 'odd harmonics only, roughly a clarinet. the octave stops being consonant, 3:1 takes over its job, and 3:5:7 is the major triad.' },
   tet10: { key: 'tet10', title: '10-TET · Sethares spectrum', short: '10-TET', eq: 2, n: 10, R: [0, 10, 16, 20, 23, 26, 28].map(E10), A: [1, 0.62, 0.46, 0.37, 0.3, 0.25, 0.21], root0: 110, chimeR: 2, struck: false, ombak: 0, bg: [15, 23, 30], flo: [1, E10(3), E10(6), 2],
     blurb: "ten equal steps per octave sound sour on harmonic tones. Sethares' fix: move the partials onto the ten-step grid, and the sourness goes with them." },
+  tet31: { key: 'tet31', title: '31-EDO · Huygens–Fokker', short: '31-EDO', eq: 2, n: 31, R: [0, 31, 49, 62, 72, 80, 87].map(E31), A: [1, 0.62, 0.46, 0.37, 0.3, 0.25, 0.21], root0: 110, chimeR: 2, struck: false, ombak: 0, bg: [26, 16, 40], flo: [1, E31(10), E31(18), 2],
+    blurb: "thirty-one equal steps of 38.7¢, Huygens' tuning and Fokker's organ. the partials sit on the grid, the thirds come out almost pure, and 25\\31 lands a hair under 7/4." },
   easy: { key: 'easy', title: 'easy listening · 12-TET', short: 'easy', eq: 2, n: 12, easy: true, R: [1, 2, 3, 4, 5, 6, 7], A: [1, 0.62, 0.46, 0.37, 0.3, 0.25, 0.21], root0: 130.8128, chimeR: 2, struck: false, ombak: 0, bg: [26, 20, 24], flo: [1, Math.pow(2, 4 / 12), Math.pow(2, 7 / 12), 2],
     blurb: "the piano's grid, familiar chords, a beat. the terrain stays honest: watch the thirds sit a little way up the valley walls." }
 };
@@ -506,9 +563,9 @@ for (const k in MODES) {
   m.eqC = 1200 * Math.log2(m.eq);
   m.norm = 1 / m.A.reduce((a, b) => a + b, 0);
 }
-const MODE_ORDER = ['just', 'gamelan', 'bp', 'tet10', 'easy'];
-const MODE_TITLES = { any: 'anywhere', just: 'just', gamelan: 'gamelan', bp: 'Bohlen–Pierce', tet10: '10-TET', easy: 'easy listening' };
-const ACC = { just: [246, 195, 95], gamelan: [111, 214, 198], bp: [184, 162, 255], tet10: [120, 200, 240], easy: [255, 160, 140] };
+const MODE_ORDER = ['just', 'gamelan', 'bp', 'tet10', 'tet31', 'easy'];
+const MODE_TITLES = { any: 'anywhere', just: 'just', gamelan: 'gamelan', bp: 'Bohlen–Pierce', tet10: '10-TET', tet31: '31-EDO', easy: 'easy listening' };
+const ACC = { just: [246, 195, 95], gamelan: [111, 214, 198], bp: [184, 162, 255], tet10: [120, 200, 240], tet31: [255, 150, 58], easy: [255, 160, 140] };
 let M = MODES.just, PR = M.R, PA = M.A, PK = PR.length;
 
 // ---------- range and sensory dissonance (Plomp–Levelt, Sethares' parameterization) ----------
@@ -635,6 +692,10 @@ const CAT = [
   ['t-first', 'tet10', 'ev', '', 'sour, sweetened', '120¢ steps', 'with harmonic tones most of these steps sound wrong. with these partials they settle. the timbre was the problem.', 'land a voice in 10-TET'],
   ['t-5', 'tet10', 'ev', '', 'the shared tritone', '5\\10 · 600¢', 'the only 10-TET step besides the octave that the piano also has.', 'the one step the piano shares'],
   ['t-nopiano', 'tet10', 'ev', '', "a chord the piano can't play", 'two intervals off the piano grid', 'only 0, 600 and 1200¢ are shared with 12-TET. the rest falls between the keys.', 'two intervals the piano lacks, at once'],
+  ['w-first', 'tet31', 'ev', '', 'thirty-one', '38.7¢ steps', 'Huygens proposed 31 equal steps in 1691; Fokker built an organ for them in 1950. a five-step grid with fine print.', 'land a voice in 31-EDO'],
+  ['w-10', 'tet31', 'ev', '', 'the nearly pure third', '10\\31 · 387.1¢', 'within a cent of 5/4. the meantone dream: thirds pure, fifths a little narrow.', 'the 31-step major third'],
+  ['w-25', 'tet31', 'ev', '', 'a hair under 7/4', '25\\31 · 967.7¢', 'the harmonic seventh, 1.1¢ flat. no smaller equal tuning gets this close.', 'the 31-step seventh'],
+  ['w-chord', 'tet31', 'ev', '', 'the 31-step seventh chord', '0 · 10 · 18 · 25', 'almost exactly 4:5:6:7, on a grid you can build a keyboard for.', 'the four-note 31-step chord'],
   ['e-first', 'easy', 'ev', '', 'easy listening', 'the piano grid', 'twelve equal semitones: every interval slightly off, and everyone agreed to stop noticing.', 'try easy listening'],
   ['e-doowop', 'easy', 'ev', '', 'I–vi–IV–V', 'the fifties changes', 'the doo-wop progression, twice through. 1955 would approve.', 'wait for the fifties progression'],
   ['x-pet', 'any', 'ev', '', 'Saelion', 'it hatched', 'species: indeterminate. dimensions: five. eyes: two, different.', 'find your first thing'],
@@ -672,6 +733,19 @@ const CAT = [
   ['x-detective', 'any', 'ev', '', 'lattice detective', 'inspected a ratio', 'every node knows its prime factors and its Tenney height: log₂ of numerator times denominator. lower is simpler.', 'tap a node in the cube'],
   ['x-bw2', 'any', 'ev', '', 'two colors', 'black and white e-paper', 'one bit per pixel. the grays are an ordered dither, the same trick e-paper badges and early Macs used.', 'try the bw2 look'],
   ['x-fieldstone', 'any', 'ev', '', 'fieldstone', 'a sundress and a stone wall', 'mint florals, warm river stone, a carved wooden rosette. summer, mostly.', 'try the fieldstone look'],
+  ['x-tilt', 'any', 'ev', '', 'marbles', 'tilted a voice into the next valley', 'tilt the phone and the voices roll downhill. level it again and the chord settles.', 'tilt your phone until a voice rolls'],
+  ['x-shake', 'any', 'ev', '', 'snow globe', 'shook the phone', 'every voice jumps and lands somewhere new that still agrees.', 'shake your phone'],
+  ['x-twist', 'any', 'ev', '', 'the dial', 'twisted the phone', 'a quick turn of the wrist turns the mandala, and the root moves with it.', 'give the phone a quick twist'],
+  ['x-flick', 'any', 'ev', '', 'flick', 'flicked the phone', 'a flick of the wrist strums the chord, like a wand.', 'flick the phone sideways'],
+  ['x-level', 'any', 'ev', '', 'spirit level', 'held it dead level', 'flat and still, within half a degree. the bubble is happy.', 'lay the phone flat and still'],
+  ['x-pad', 'any', 'ev', '', 'controller', 'played with a gamepad', 'the left stick moves a voice, A glides, B moves the root, Y changes the view. the gamepad lab, put to work.', 'connect a game controller'],
+  ['x-reel', 'any', 'ev', '', 'the reel', 'watched it all', 'fourteen shots, every look and view, one take.', 'watch the reel to the end'],
+  ['x-crack', 'any', 'ev', '', 'crazing', 'the obsidian cracked', 'hold a dissonance and the glass cracks. let it resolve and the cracks cool, then heal.', 'hold a dissonance on the obsidian look'],
+  ['x-wink', 'any', 'ev', '', 'Sae-wink', 'it winked back', 'open 2.6 seconds, closed 0.16, on its own clock. press it and it winks at you.', 'find the eye in the mint clearing'],
+  ['x-spores', 'any', 'ev', '', 'three spores', 'found them all', 'three spores were hiding in the glasshouse haze.', 'find three spores in the glasshouse'],
+  ['x-weather', 'any', 'ev', '', 'four weathers', 'peach fall to night garden', 'tension rains, a settled chord clears to mint, a quiet room turns to night.', 'see all four weathers in the peachfall look'],
+  ['x-glasshouse', 'any', 'ev', '', 'glasshouse', 'cool air', 'mint haze, frost light, ridges that lean when you do.', 'try the glasshouse look'],
+  ['x-peachfall', 'any', 'ev', '', 'peachfall', 'little worlds', 'petals, red rain, a mint clearing, a night garden: whatever the music is doing.', 'try the peachfall look'],
   ['x-ask', 'any', 'ev', '', 'conversation', 'asked Saelion something', 'it answered. mostly vibes, but well-read vibes.', 'ask Saelion a question'],
   ['x-newstory', 'any', 'ev', '', 'a new chapter', 'the storybook wrote one', 'written from what you found this session.', 'ask the storybook for a new story']
 ].map(a => ({ id: a[0], mode: a[1], kind: a[2], key: a[3], name: a[4], line: a[5], fact: a[6], hint: a[7] }));
@@ -680,7 +754,7 @@ const CATI = new Map(CAT.map(c => [c.id, c]));
 // ---------- settings and shared state ----------
 const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pace: 0.4, warm: 0.62, vol: 0.7, chimes: true, bird: true, haptics: true,
   flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
-  view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false };
+  view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5 };
 const LIGHT = () => !!SET.light && !SET.frolic;
 let W = 0, H = 0, S = 1, wide = true, latticeOn = false, LT = 0, LB = 0, SH = 34, PX0 = 0, PW = 1, MX = 0, MY = 0, MR = 100, BR = 8, NS = 0, DPR = 1, qScale = 1;
 let SAT = 0, SAB = 0, TOPH = 0, PEEK = 0, phone = false;
@@ -952,6 +1026,7 @@ const PAD = { mix: null, out: null, oscs: [], key: '', f: 0, lvl: -1 };
 function padRatios() {
   if (M.key === 'bp') return [[1 / 3, 0.22], [1, 0.34], [5 / 3, 0.1], [3, 0.12]];
   if (M.key === 'gamelan' || M.key === 'tet10') return [[0.5, 0.24], [1, 0.34], [2, 0.14]];
+  if (M.key === 'tet31') return [[0.5, 0.24], [1, 0.34], [E31(18), 0.2], [2, 0.15], [E31(49), 0.05]];
   return [[0.5, 0.24], [1, 0.34], [1.5, 0.2], [2, 0.15], [3, 0.05]];
 }
 function padSync() {
@@ -1000,6 +1075,7 @@ function bellScale() {
   if (M.key === 'gamelan') return [2, E5(4), E5(3), E5(2), E5(1), 1];
   if (M.key === 'bp') return [3, 7 / 3, 9 / 5, 5 / 3, 7 / 5, 1];
   if (M.key === 'tet10') return [2, E10(8), E10(6), E10(5), E10(3), 1];
+  if (M.key === 'tet31') return [2, E31(23), E31(18), E31(13), E31(10), 1];
   if (M.easy) return [2, Math.pow(2, 9 / 12), Math.pow(2, 7 / 12), Math.pow(2, 5 / 12), Math.pow(2, 4 / 12), 1];
   return [2, 5 / 3, 3 / 2, 4 / 3, 5 / 4, 1];
 }
@@ -1184,6 +1260,7 @@ function lockVoice(v) {
     const kk = +lab;
     if (M.key === 'gamelan') { discover('g-ombak', v); gDeg.add(kk); if (gDeg.size >= 5) discover('g-all5', v); }
     else if (M.key === 'tet10') { discover('t-first', v); if (kk === 5) discover('t-5', v); }
+    else if (M.key === 'tet31') { discover('w-first', v); if (kk === 10) discover('w-10', v); if (kk === 25) discover('w-25', v); }
   }
   onLand(v, fresh, lab);
 }
@@ -1238,6 +1315,7 @@ const RSTEPS = {
   just: [[[1, 0], 3], [[-1, 0], 3], [[0, 1], 1.2], [[0, -1], 1.2], [[1, -1], 1.5], [[-1, 1], 1.5]],
   gamelan: [[[1], 2], [[-1], 2], [[2], 2], [[-2], 2], [[3], 1], [[-3], 1]],
   tet10: [[[3], 2], [[-3], 2], [[4], 1.5], [[-4], 1.5], [[6], 1.5], [[-6], 1.5], [[7], 1], [[-7], 1]],
+  tet31: [[[18], 2], [[-18], 2], [[13], 2], [[-13], 2], [[10], 1.4], [[-10], 1.4], [[8], 1], [[-8], 1]],
   bp: [[[2, 0, -1], 2], [[-2, 0, 1], 2], [[0, -1, 1], 2], [[0, 1, -1], 2], [[-1, 1, 0], 2], [[1, -1, 0], 2], [[2, -1, 0], 1], [[-2, 1, 0], 1]]
 };
 function stepPenalty(st) {
@@ -1586,7 +1664,7 @@ function zoomBy(f) { setZoom(zoomLevel() * f, (VIEW.x0 + VIEW.x1) / 2); }
 
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
 const SAVE_KEY = 'andso:v2';
-const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect'];
+const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
@@ -1783,6 +1861,7 @@ const QDEF = [
   { id: 'q-357', m: 'bp', txt: 'settle a 3:5:7', n: 1, ev: 'chord', f: e => e.str === '3:5:7' },
   { id: 'q-gong', m: 'gamelan', txt: 'hear the gong 3 times', n: 3, ev: 'gong' },
   { id: 'q-tet', m: 'tet10', txt: 'land 4 voices in 10-TET', n: 4, ev: 'land' },
+  { id: 'q-31', m: 'tet31', txt: 'land 4 voices in 31-EDO', n: 4, ev: 'land' },
   { id: 'q-easy', m: 'easy', txt: 'ride 8 chord changes', n: 8, ev: 'change' },
   { id: 'q-hole', m: 'any', txt: 'feed the black hole', n: 1, ev: 'eat', need: () => UNL.hole }
 ];
@@ -1945,7 +2024,7 @@ function setMode(key, quiet) {
   if (prev.easy && key === 'just') { discover('x-flip'); if (!quiet) caption('flipped: the 12-TET thirds slide about 14¢ into their valleys.', 3600); }
   else if (!quiet) caption(M.title, 3000);
   modesSeen.add(key); renderGuide(); fillQuests(); syncUI();
-  if (modesSeen.size >= 5) discover('x-tour');
+  if (modesSeen.size >= MODE_ORDER.length) discover('x-tour');
   if (M.easy) discover('e-first');
   emit('mode'); jlog(`tuning: ${M.title}`);
 }
@@ -2021,13 +2100,13 @@ function applyPreset(p, name) {
 const TUPN = { 2: 'eighths', 3: 'triplets', 4: 'sixteenths', 5: 'quintuplets', 6: 'sextuplets', 7: 'septuplets', 8: 'thirty-seconds', 9: 'nonuplets' };
 const TUPC = { 2: 'eighths. plain.', 3: 'triplets. it swings now.', 4: 'sixteenths. home.', 5: 'quintuplets. silly, as requested.', 6: 'sextuplets.', 7: 'septuplets. good luck dancing.', 8: 'thirty-seconds. busy.', 9: 'nonuplets. this is a cry for help.' };
 function setTuplet(n, quiet) { n = clamp(n, 2, 9); if (n === tuplet) return; tuplet = n; rhy.base = null; syncUI(); if (!quiet) { caption(TUPC[n], 2200); haptic(6); } if (n === 5 || n === 7 || n === 9) discover('x-tuplet'); emit('tuplet', { v: n }); }
-const SKINS = ['obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone'];
+const SKINS = ['obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall'];
 function setSkin(s) {
   if (!SKINS.includes(s)) s = 'obsidian';
   const was = skin; skin = s; document.body.dataset.skin = s;
   if (s === 'story' && entered) $('story').classList.add('on');
   else if (was === 'story' && s !== 'story') $('story').classList.remove('on');
-  if (entered && s !== was && (s === 'bw2' || s === 'fieldstone')) discover('x-' + s);
+  if (entered && s !== was && (s === 'bw2' || s === 'fieldstone' || s === 'glasshouse' || s === 'peachfall')) discover('x-' + s);
   resize(); syncUI(); persistSoon(); if (entered) jlog(`skin: ${s}`);
 }
 
@@ -2099,6 +2178,7 @@ const RAIL = [
   { d: 11, cap: 'gamelan: the shimmer is on purpose.', go: () => setMode('gamelan', true) },
   { d: 11, cap: 'Bohlen–Pierce: no octaves, and nobody misses them.', go: () => setMode('bp', true) },
   { d: 11, cap: '10-TET, sweetened by its own spectrum.', go: () => setMode('tet10', true) },
+  { d: 11, cap: "31-EDO: Huygens' thirty-one steps. the thirds are almost pure.", go: () => setMode('tet31', true) },
   { d: 21, cap: 'the comma pump: four reasonable steps, and the root comes home flat.', go: () => { setMode('just', true); setTimeout(startPump, 1200); } },
   { d: 10, cap: 'back to easy listening. end of the line.', go: () => setMode('easy', true) }
 ];
@@ -2155,7 +2235,7 @@ function spinStep(dir) {
   if (M.easy) easyAdvance();
   else if (M.key === 'just') rootStep([dir, 0]);
   else if (M.key === 'bp') rootStep(dir > 0 ? [2, 0, -1] : [-2, 0, 1]);
-  else rootStep([dir * (M.n === 5 ? 1 : 3)]);
+  else rootStep([dir * (M.n === 5 ? 1 : M.n === 31 ? 18 : 3)]);
   audio.chime(fold(fRoot * 4, M.eq, 400), 0.02, 0); discover('x-spin'); emit('spin'); haptic(6);
 }
 function strum() { voices.filter(v => v.wT > 0).sort((a, b) => a.x - b.x).forEach((v, i) => audio.chime(fOf(v.x) * 2, 0.024, i * 0.07)); rings.push({ r: MR * 0.9, v: 160, life: 1.1, max: 1.1, c: [255, 236, 190] }); }
@@ -2183,11 +2263,11 @@ function conductor() {
   if (SET.flip && autoOn && !rail && t > flipAt && !listenBusy()) {
     const share = 0.2 + 0.7 * W5[0];
     if (LIGHT()) { if (M.easy) { if (Math.random() < share) setMode('just'); } else if (M.key === 'just' && Math.random() < 1 - share) setMode('easy'); }
-    else if (M.easy) { if (Math.random() < share) setMode(Math.random() < 0.62 - 0.3 * W5[0] ? 'just' : ['gamelan', 'bp', 'tet10', 'just'][(Math.random() * 4) | 0]); }
+    else if (M.easy) { if (Math.random() < share) setMode(Math.random() < 0.62 - 0.3 * W5[0] ? 'just' : ['gamelan', 'bp', 'tet10', 'tet31', 'just'][(Math.random() * 5) | 0]); }
     else if (Math.random() < 1 - share) setMode('easy');
     flipAt = t + rand(26, 46) * (M.easy ? 1.3 - 0.8 * W5[0] : 0.6 + 0.9 * W5[0]);
   }
-  if (!autoOn || t < userIdleUntil || t < nextAct) return;
+  if (!autoOn || t < userIdleUntil || t < nextAct || MO.busy > 0) return;
   const live = voices.filter(v => v.wT > 0), n = live.length, r = Math.random();
   if (M.easy) { if (n < 3) addVoice(rand(400, XMAX - 400), { temp: 0 }); else if (Math.random() < 0.3 + 0.4 * W5[4]) { const v = live[(Math.random() * n) | 0]; if (v.target != null) assignTarget(v, v.target); } nextAct = t + rand(4, 7); return; }
   if (!live.every(v => v.locked) && t < nextAct + 3.5) return;
@@ -2314,7 +2394,11 @@ function syncUI() {
   $('rRec').textContent = recOn ? '■ stop & save' : '● record'; $('pbRec').textContent = recOn ? '■ save' : '● rec';
   $('pbVol').value = Math.round(SET.vol * 100); $('pbVolP').textContent = Math.round(SET.vol * 100) + '%';
   $('pbPlay').textContent = paused ? '▶' : '❚❚';
-  $('viewChipName').textContent = VIEW_NAME[vw]; placeChrome();
+  $('viewChipName').textContent = VIEW_NAME[vw];
+  $('sMotion').checked = !!SET.motion; $('sRoll').checked = !!SET.roll; $('sTiltK').value = Math.round(SET.tiltK * 100);
+  const rOn = REEL.on; $('bReel').textContent = rOn ? '■ reel' : '▶ reel'; $('gReel').textContent = rOn ? '■ stop the reel' : '▶ watch the reel'; $('tReel').textContent = rOn ? '■' : '▶';
+  document.body.classList.toggle('reel', rOn); motionUI();
+  placeChrome();
   const hmpDesk = skin === 'hmp' && entered && !phone;
   $('pbar').classList.toggle('hidden', !hmpDesk); $('tabs').classList.toggle('hidden', !hmpDesk);
   document.querySelectorAll('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
@@ -2386,6 +2470,9 @@ function placeChrome() {
   const rb = $('round'), on = !!(round && !round.done), root = document.documentElement.style;
   if (phone) { rb.style.left = '50%'; rb.style.transform = 'translateX(-50%)'; rb.style.top = TOPH + 4 + 'px'; root.setProperty('--capTop', TOPH + (on ? 56 : 4) + 'px'); }
   else { const qTop = Math.max(latticeOn ? 300 : 120, LT - 150); rb.style.left = '22px'; rb.style.transform = 'none'; rb.style.top = qTop - 54 + 'px'; root.setProperty('--capTop', (skin === 'hmp' ? 84 : 54) + 'px'); }
+  // the reel's HUD sits under the phone's top bar, and the captions step down below it
+  const rh = $('reelHud'); rh.style.top = (phone ? TOPH + 6 : 10) + 'px';
+  if (REEL.on) root.setProperty('--capTop', (phone ? TOPH + 52 : 58) + 'px');
   // the view chip rides just above the sound box's top-right corner, clear of the lattice nodes
   const vc = $('viewChip'); vc.classList.toggle('on', !!entered);
   if (entered) { const w = vc.offsetWidth || 104, hh = vc.offsetHeight || 30; vc.style.left = clamp(Math.min(W - 12, MX + MR * 1.03 + 40) - w, 12, Math.max(12, W - w - 12)) + 'px'; vc.style.top = Math.max(TOPH + 6, MY - MR * 1.03 - 14 - hh) + 'px'; }
@@ -2442,6 +2529,7 @@ function detent(v, p, x) {
 hitEl.addEventListener('pointerdown', e => {
   if (!entered) return;
   e.preventDefault();
+  if (REEL.on) reelStop(false);
   const px = e.clientX, py = e.clientY, now = performance.now();
   lastUserT = t; userIdleUntil = t + 14; lastPX = px; lastPY = py;
   const p = { id: e.pointerId, x: px, y: py, x0: px, y0: py, t0: now, lt: now, moved: false, role: null, type: e.pointerType };
@@ -2472,12 +2560,14 @@ hitEl.addEventListener('pointerdown', e => {
     if (viewOn() === 'mandala') { p.role = 'spin'; p.a = Math.atan2(py - MY, px - MX); p.acc = 0; p.av = 0; mrotVel = 0; return; }
     p.role = 'view'; viewDown(p); return;
   }
+  if (wxHit(px, py)) { p.role = 'none'; return; }
+  if (wxWorld()) wxRipple(px, py, 0.7);
   p.role = 'harp'; p.h = { pool: harpPool(), idx: -1, lastT: 0 };
 });
 hitEl.addEventListener('pointermove', e => {
-  const px = e.clientX, py = e.clientY; lastPX = px; lastPY = py;
+  const px = e.clientX, py = e.clientY; lastPX = px; lastPY = py; WX.ptrT = t;
   const p = PTR.get(e.pointerId);
-  if (!p) { if (entered && e.pointerType === 'mouse') { hoverCursor(px, py); updateHover(px, py); viewHover(px, py); } return; }
+  if (!p) { if (entered && e.pointerType === 'mouse') { hoverCursor(px, py); updateHover(px, py); viewHover(px, py); wxHover(px, py); } return; }
   const now = performance.now(), dtm = Math.max(8, now - p.lt), dx = px - p.x, dy = py - p.y;
   if (!p.moved && Math.hypot(px - p.x0, py - p.y0) > (p.type === 'mouse' ? 4 : 8)) p.moved = true;
   p.x = px; p.y = py; p.lt = now;
@@ -2647,13 +2737,15 @@ window.addEventListener('keydown', e => {
   if (!entered) return;
   const tg = e.target && e.target.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'BUTTON' || tg === 'TEXTAREA') return;
   const k = e.key.toLowerCase(); lastUserT = t;
+  if (REEL.on && k !== 'w' && k !== 'shift') { reelStop(false); if (k === 'escape') return; }
   if (k === ' ' || k === 'l') { e.preventDefault(); lean(1); userIdleUntil = t + 10; }
   else if (k === 'n') { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; }
   else if (k === 'p') startPump();
   else if (k === 'g') showGw(true);
   else if (k === 'a') { autoOn = !autoOn; syncUI(); }
   else if (k === 'm') toggleMute();
-  else if (k >= '1' && k <= '5') setMode(MODE_ORDER[+k - 1]);
+  else if (k >= '1' && k <= '6') setMode(MODE_ORDER[+k - 1]);
+  else if (k === 'w') { if (REEL.on) reelStop(false); else reelStart(); }
   else if (k === 'b') toggleBeat();
   else if (k === 'r') toggleRound();
   else if (k === 'y' && UNL.rail) rail ? stopRail(false) : startRail();
@@ -2783,6 +2875,7 @@ function wrapText(g, s, maxW) { const out = []; let line = ''; for (const w of s
 function spaced(s, x, y, sp) { for (const ch of s) { ctx.fillText(ch, x, y); x += ctx.measureText(ch).width + sp; } return x; }
 
 function drawBg() {
+  if (wxWorld()) { drawWorldBg(); return; }
   if (skin === 'hmp') { const g = ctx.createRadialGradient(MX, MY, 0, MX, MY, Math.max(W, H) * 0.8); g.addColorStop(0, '#2b1630'); g.addColorStop(0.55, '#1a0e1d'); g.addColorStop(1, '#0b060c'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return; }
   if (skin === 'story') { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d150d'); g.addColorStop(1, '#0c0905'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return; }
   if (skin === 'eink') { ctx.fillStyle = '#0e0e0e'; ctx.fillRect(0, 0, W, H); return; }
@@ -2945,7 +3038,7 @@ function drawStars() {
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
   for (let i = 0; i < n; i++) {
     const s = stars[i];
-    let px = s.x * W + (lastPX - W / 2) * -0.012 * s.z, py = s.y * bot + (lastPY - H / 2) * -0.01 * s.z;
+    let px = s.x * W + (lastPX - W / 2) * -0.012 * s.z + MO.px * 26 * s.z, py = s.y * bot + (lastPY - H / 2) * -0.01 * s.z + MO.py * 18 * s.z;
     if (hole.on) { const dx = px - hole.x, dy = py - hole.y, r2 = dx * dx + dy * dy + 1; if (r2 < hr * hr) continue; px += (dx * E2) / r2; py += (dy * E2) / r2; }
     const tw = 0.6 + 0.4 * Math.sin(t * (0.6 + s.c) + s.tw), fade = skin === 'obsidian' || skin === 'hmp' ? 1 : clamp(1.6 - s.y * 1.5, 0, 1);
     if (s.z > 0.85) { const r = (4 + (16 * (s.z - 0.85)) / 0.15) * S; ctx.globalAlpha = 0.07 * tw * fade; ctx.drawImage(BOKEH, px - r, py - r, r * 2, r * 2); }
@@ -3172,7 +3265,7 @@ function drawReadout() {
   if (entered && !phone) {
     const m = dyn < 0.55 ? 'p' : dyn < 0.7 ? 'mp' : dyn < 0.86 ? 'mf' : 'f', tr = dynTrend > 0.015 ? ' · cresc.' : dynTrend < -0.015 ? ' · dim.' : '';
     ctx.fillStyle = 'rgba(234,220,198,0.5)'; ctx.font = fnt(12.5 * S, 's', 'italic');
-    ctx.fillText(m + tr + (rhyActive() ? ` · ${Math.round(rhy.bpm)} bpm · ${era ? 3 : tuplet} per beat` : ''), MX, y0 + (chordNow ? 36 * S : 32));
+    ctx.fillText(m + tr + (rhyActive() ? ` · ${Math.round(rhy.bpm)} bpm · ${era ? 3 : tuplet} per beat` : '') + (skin === 'peachfall' ? ` · ${wxName()}` : ''), MX, y0 + (chordNow ? 36 * S : 32));
   }
   ctx.restore();
 }
@@ -3362,6 +3455,7 @@ function drawLandscape() {
     if (bp.off) { const dir = v.x < VIEW.x0 ? -1 : 1; ctx.fillStyle = rgba(v.col, 0.85 * v.w); ctx.beginPath(); ctx.moveTo(bp.X + dir * 9, bp.Y); ctx.lineTo(bp.X - dir * 5, bp.Y - 8); ctx.lineTo(bp.X - dir * 5, bp.Y + 8); ctx.closePath(); ctx.fill(); continue; }
     let X = bp.X, Y = bp.Y;
     if ((t < v.pinUntil || (hole.on && v.hz > 0.2)) && !reduceMotion) { X += (Math.random() - 0.5) * 2.4; Y += (Math.random() - 0.5) * 2.4; }
+    if (MO.on && MO.lean && !v.dragging && !v.glide) { X += MO.lean * 4 * S; if (Math.abs(MO.lean) > 0.6 && !reduceMotion) Y += (Math.random() - 0.5) * 1.6 * Math.abs(MO.lean); }
     Y -= 12 * S * Math.sin(Math.PI * (1 - v.bounce)) * v.bounce;
     const al = v.w * (v.dropping ? 0.45 : 1), held = !!v.dragging, gr = BR * (4.2 + 2.2 * v.flash + (held ? 1.4 : 0)), br = BR * (1 + 0.18 * v.bounce + (held ? 0.2 : 0));
     ctx.globalCompositeOperation = 'lighter';
@@ -3411,6 +3505,7 @@ function drawPet(g) {
   if (!entered || !pet.placed) return;
   const sc = S * (phone ? 1 : 1.15);
   g.save(); g.translate(pet.x, pet.y);
+  if (MO.on) g.rotate(-MO.px * 0.35);
   if (hole.on) { const dx = hole.x - pet.x, dy = hole.y - pet.y, d = Math.hypot(dx, dy), lim = 170 * S; if (d < lim) { const a = Math.atan2(dy, dx), k = (1 - d / lim) * 0.55; g.rotate(a); g.scale(1 + k, 1 - k * 0.45); g.rotate(-a); } }
   if (!UNL.pet || pet.hatch > 0) {
     g.rotate(UNL.pet ? Math.sin(t * 22) * 0.12 * (1 - pet.hatch / 1.8) : Math.sin(t * 2.2) * 0.06);
@@ -3488,7 +3583,8 @@ function drawRail(g) {
 function draw() {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   const hmp = skin === 'hmp';
-  drawBg(); if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2') drawStars();
+  drawBg(); if (wxWorld()) {} else if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2') drawStars();
+  drawWorldMid();
   if (latticeOn) { if (M.easy) drawEasyPanel(); else if (M.key === 'just') drawLattice(); else drawRing(); }
   const vw = viewOn();
   if (hmp) { drawHmpTitle(); drawFloor(); if (vw === 'mandala') drawKnot(); else drawView(); } else if (vw === 'mandala') { if (skin === 'fieldstone') drawRosette(); drawMandala(); drawPoly(); } else drawView();
@@ -3501,7 +3597,7 @@ function draw() {
   ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
   drawTip();
   ctx3.clearRect(0, 0, W, H); if (skin === 'story') drawStory3();
-  ctx2.clearRect(0, 0, W, H); drawPet(ctx2); drawBubble(ctx2); drawRail(ctx2);
+  ctx2.clearRect(0, 0, W, H); drawPet(ctx2); drawBubble(ctx2); drawRail(ctx2); drawReelFx(ctx2);
   drawPad();
 }
 
@@ -3861,6 +3957,7 @@ function setFollow(f) {
 function listenTick(dt) {
   if (!entered) return;
   if (!LS.autoAt) LS.autoAt = t + 24;
+  if (REEL.on) LS.autoAt = Math.max(LS.autoAt, t + 30);   // the hummer waits until the reel is over, and a while after
   if (!LS.autoDone && autoOn && t > LS.autoAt && !LS.src && !round && !era && !paused && !muted) { LS.autoDone = true; if (!LS.used) listenStart('demo', true); }
   for (let i = LS.trail.length - 1; i >= 0; i--) { const p = LS.trail[i]; p.life -= dt * 0.75; p.y -= 26 * S * dt; if (p.life <= 0) LS.trail.splice(i, 1); }
   LS.show += ((LS.src ? 1 : 0) - LS.show) * (1 - Math.exp(-dt * 4));
@@ -4030,19 +4127,23 @@ function cymTick(dt) {
   // a grain only hops where the plate's acceleration beats gravity: below the threshold it sits still. a harder drive lowers the threshold, so the lines get thinner
   const drive = CY.gain * clamp(0.45 + 0.8 * dyn, 0.3, 1.3), Dk = 0.42 * drive * Math.sqrt(dt), Dr = 0.08 * drive * dt, s = (N - 1) / 2, th = clamp(0.15 / drive, 0.06, 0.4), inv = 1 / (1 - th);
   let mov = 0, rest = 0;
+  // tilt the phone and the plate tilts: hopping grains drift downhill, and past about 18° even resting sand starts to slide
+  const tlx = MO.on ? MO.tx : 0, tly = MO.on ? MO.ty : 0, hopT = 0.6 * dt, slide = Math.hypot(tlx, tly) > 0.3 ? 0.14 * dt : 0;
   for (let i = 0; i < n; i++) {
     let x = gp[2 * i], y = gp[2 * i + 1];
     const fx = (x + 1) * s, fy = (y + 1) * s, ix = Math.min(N - 2, fx | 0), iy = Math.min(N - 2, fy | 0), tx = fx - ix, ty = fy - iy, k = iy * N + ix;
     const a = A[k] * (1 - tx) * (1 - ty) + A[k + 1] * tx * (1 - ty) + A[k + N] * (1 - tx) * ty + A[k + N + 1] * tx * ty;
     if (a <= th) {
       // below the threshold a grain no longer hops, but the plate still tilts under it: it creeps the last little way onto the still line
-      rest++; if (a < th * 0.45) continue;   // close enough: real sand lines have a little width
+      rest++;
+      if (slide) { const nx = x + tlx * slide, ny = y + tly * slide; if (cymInside(nx, ny)) { gp[2 * i] = nx; gp[2 * i + 1] = ny; mov += Math.abs(nx - x) + Math.abs(ny - y); } continue; }
+      if (a < th * 0.45) continue;   // close enough: real sand lines have a little width
       const LX = CY.LX, LY = CY.LY, w00 = (1 - tx) * (1 - ty), w10 = tx * (1 - ty), w01 = (1 - tx) * ty, w11 = tx * ty;
       const cr = Dr * 1.1 * Math.min(1, a / th), nx = x - (LX[k] * w00 + LX[k + 1] * w10 + LX[k + N] * w01 + LX[k + N + 1] * w11) * cr, ny = y - (LY[k] * w00 + LY[k + 1] * w10 + LY[k + N] * w01 + LY[k + N + 1] * w11) * cr;
       if (cymInside(nx, ny)) { gp[2 * i] = nx; gp[2 * i + 1] = ny; mov += Math.abs(nx - x) + Math.abs(ny - y); }
       continue;
     }
-    const j = Dk * (a - th) * inv, ddx = gauss() * j - GX[k] * Dr, ddy = gauss() * j - GY[k] * Dr;
+    const j = Dk * (a - th) * inv, ddx = gauss() * j - GX[k] * Dr + tlx * hopT, ddy = gauss() * j - GY[k] * Dr + tly * hopT;
     x += ddx; y += ddy; mov += Math.abs(ddx) + Math.abs(ddy);
     if (circ) { const r2 = x * x + y * y; if (r2 > 0.95) { const r = Math.sqrt(r2), q = (2 * 0.975 - r) / r; x *= q; y *= q; } }
     else { if (x > 0.975) x = 1.95 - x; else if (x < -0.975) x = -1.95 - x; if (y > 0.975) y = 1.95 - y; else if (y < -0.975) y = -1.95 - y; }
@@ -4143,7 +4244,8 @@ function factorStr(p, q) {
   return `${f(p)} / ${f(q)}`;
 }
 function proj3(x, y, z, sc) {
-  const cy = Math.cos(VW.yaw), sy = Math.sin(VW.yaw), cp = Math.cos(VW.pitch), sp = Math.sin(VW.pitch);
+  // tilting the phone looks around the lattice a little, like a window
+  const yw = VW.yaw + MO.px * 0.6, pt = clamp(VW.pitch + MO.py * 0.45, -1.45, 1.45), cy = Math.cos(yw), sy = Math.sin(yw), cp = Math.cos(pt), sp = Math.sin(pt);
   const x1 = x * cy + z * sy, z1 = -x * sy + z * cy, y1 = y * cp - z1 * sp, z2 = y * sp + z1 * cp, k = VW.dist / Math.max(0.6, VW.dist - z2);
   return [MX + x1 * k * sc, MY - y1 * k * sc, z2, k];
 }
@@ -4335,6 +4437,724 @@ function drawView() {
   else if (v === 'd5') d5Draw();
 }
 
+// ===== motion: tilt, shake, twist and flick from the phone's own sensors, plus a game controller =====
+// tilt rolls the voices like marbles and moves the sky; shake throws every voice somewhere new that still agrees;
+// a quick twist of the wrist turns the mandala (and the root); a flick strums. nothing leaves the page.
+const MO = {
+  on: false, live: false, lastT: -99, hz: 0, nS: 0, rate0: 0,
+  sign: 0, vote: 0, votes: 0,
+  gx: 0, gy: 1, gz: 0, nx: 0, ny: 1, tx: 0, ty: 0, px: 0, py: 0, fx: 0, busy: 0,
+  shakeE: 0, shakeT: -99, twistA: 0, twistT: -99, flickT: -99, levelT: 0, ua: 0,
+  ori: null, perm: 'unknown', lastS: 0, uiT: 0, hinted: false, gesture: '', gestureT: -99, recenterT: -99, lean: 0, rolling: false, hops: 0
+};
+const rt = () => performance.now() / 1000;   // gestures run on the real clock: a slow frame must not stretch a shake
+const MO_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+const MO_NEEDS_PERM = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+function moAngle() {
+  try {
+    const a = screen.orientation && typeof screen.orientation.angle === 'number' ? screen.orientation.angle : typeof window.orientation === 'number' ? window.orientation : 0;
+    return ((a % 360) + 360) % 360;
+  } catch (e) { return 0; }
+}
+// device axes (x right, y toward the top of the phone) → canvas axes (x right, y down), for whichever way the screen is turned
+function moToScreen(x, y) { const th = (moAngle() * Math.PI) / 180, c = Math.cos(th), s = Math.sin(th); return [x * c - y * s, -(x * s + y * c)]; }
+function onOrient(e) {
+  if (e.beta == null || e.gamma == null) return;
+  MO.ori = { b: (e.beta * Math.PI) / 180, g: (e.gamma * Math.PI) / 180, t: performance.now() };
+}
+function onMotion(e) {
+  const g = e.accelerationIncludingGravity; if (!g || g.x == null || g.y == null) return;
+  const now = performance.now() / 1000, gap = MO.lastS ? now - MO.lastS : (e.interval || 16) / 1000, dt = clamp(gap, 0.004, 0.1);
+  MO.lastS = now; MO.lastT = now; MO.nS++;
+  if (!MO.live) { MO.live = true; MO.rate0 = now; motionUI(); }
+  const m = Math.hypot(g.x, g.y, g.z || 0); if (m < 1) return;
+  // which way do the numbers point? W3C (Android) reports the reaction to gravity, older iOS reports gravity itself.
+  // vote with the orientation angles while they are away from gimbal lock, then trust the vote
+  if (MO.ori && Math.abs(MO.ori.b) < 1.25 && performance.now() - MO.ori.t < 250 && MO.votes < 60) {
+    const cb = Math.cos(MO.ori.b), sb = Math.sin(MO.ori.b), cg = Math.cos(MO.ori.g), sg = Math.sin(MO.ori.g);
+    const dn = [cb * sg, -sb, -cb * cg], dot = -(g.x * dn[0] + g.y * dn[1] + (g.z || 0) * dn[2]) / m;
+    if (Math.abs(dot) > 0.5) { MO.vote += dot > 0 ? 1 : -1; MO.votes++; if (MO.votes >= 8) MO.sign = MO.vote >= 0 ? -1 : 1; }
+  }
+  // the hand's own acceleration, for shakes; while it is large the gravity reading is not trusted
+  const a = e.acceleration;
+  const ua = a && a.x != null ? Math.hypot(a.x, a.y, a.z || 0) : Math.abs(m - 9.81) * 1.4;
+  MO.ua = ua;
+  if (ua < 3.5) {
+    const sg0 = MO.sign || (MO_IOS ? 1 : -1), dx = (sg0 * g.x) / m, dy = (sg0 * g.y) / m, dz = (sg0 * (g.z || 0)) / m;
+    const [sx, sy] = moToScreen(dx, dy), k = 1 - Math.exp(-dt / 0.11);
+    MO.gx += (sx - MO.gx) * k; MO.gy += (sy - MO.gy) * k; MO.gz += (dz - MO.gz) * k;
+  }
+  if (!SET.motion || !entered) return;
+  MO.shakeE = MO.shakeE * Math.exp(-gap * 3) + Math.max(0, ua - 7) * dt;
+  if (MO.shakeE > 2.3 && now - MO.shakeT > 1.6) { MO.shakeE = 0; moShake(); }
+  const r = e.rotationRate;
+  if (r && r.alpha != null) {
+    const rz = r.alpha || 0, rv = moAngle() % 180 === 0 ? r.gamma || 0 : r.beta || 0;
+    MO.twistA = MO.twistA * Math.exp(-gap / 0.22) + rz * dt;
+    if (Math.abs(MO.twistA) > 32 && Math.abs(rz) > 200 && now - MO.twistT > 0.55 && now - MO.shakeT > 0.8 && ua < 14) { moTwist(rz > 0 ? -1 : 1); MO.twistA = 0; }
+    if (Math.abs(rv) > 260 && now - MO.flickT > 0.45 && now - MO.shakeT > 0.8 && now - MO.twistT > 0.35 && ua < 15) moFlick(rv > 0 ? 1 : -1);
+  }
+}
+function moListen() {
+  if (moListen.done) return; moListen.done = true;
+  try { window.addEventListener('devicemotion', onMotion, { passive: true }); window.addEventListener('deviceorientation', onOrient, { passive: true }); } catch (e) {}
+}
+async function moAsk() {
+  // iOS asks once, from a tap; everywhere else the events simply arrive
+  if (!MO_NEEDS_PERM) { moListen(); return 'granted'; }
+  try {
+    const a = await DeviceMotionEvent.requestPermission();
+    try { if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) await DeviceOrientationEvent.requestPermission(); } catch (e) {}
+    MO.perm = a; if (a === 'granted') moListen();
+  } catch (e) { MO.perm = 'denied'; }
+  motionUI(); return MO.perm;
+}
+function moLevel(quiet) { MO.nx = MO.gx; MO.ny = MO.gy; MO.tx = MO.ty = 0; MO.n0 = null; MO.calmT = 0; MO.recenterT = rt(); if (!quiet) { caption('level, right here. tilt from this angle.', 1800); haptic(8); } }
+function setMotion(on) {
+  SET.motion = !!on; persistSoon();
+  if (on) { moAsk().then(() => { if (MO.live) moLevel(true); }); }
+  else { MO.fx = 0; MO.busy = 0; }
+  motionUI(); syncUI();
+}
+
+// ---------- the gestures ----------
+function moGesture(name) { MO.gesture = name; MO.gestureT = rt(); lastUserT = t; userIdleUntil = t + 8; }
+function moShake() {
+  MO.shakeT = rt(); moGesture('shake');
+  if (round || era) { haptic(20); return; }
+  const live = voices.filter(v => v.wT > 0 && !v.dragging);
+  if (LIGHT()) live.forEach((v, i) => setTimeout(() => { if (v.wT > 0 && !v.dragging) lightGlide(v); }, 40 + i * 110));
+  else live.forEach(v => tease(v, 1.25));
+  if (Math.random() < 0.55) chooseRootStep();
+  if (viewOn() === 'cymatics') { cymReset(); CY.gain = clamp(CY.gain * 1.25, 0.25, 2.2); }
+  wxBurst(W / 2, (TOPH + LT) / 2, 1.4);
+  if (A.ac && !muted) { const t0 = aNow() + 0.01; for (let k = 0; k < 7; k++) nz(t0 + k * 0.055 + Math.random() * 0.02, 0.05, 'bandpass', 5200 + Math.random() * 2600, 1.4, 0.03); }
+  for (let i = 0; i < 26; i++) sparks.push({ x: rand(0, W), y: rand(TOPH, LT), vx: rand(-90, 90), vy: rand(-160, -40), life: rand(0.5, 1.2), max: 1.2, c: COLORS[i % 4] });
+  rings.push({ r: MR * 0.6, v: 260, life: 1.2, max: 1.2, c: [255, 236, 190] });
+  haptic([24, 40, 24]); gpRumble(0.6, 0.6, 260);
+  if (!found.has('x-shake')) caption('shaken: everyone jumps and lands somewhere new that still agrees.', 2800);
+  discover('x-shake'); jlog('shook the phone');
+}
+function moTwist(dir) {
+  MO.twistT = rt(); moGesture('twist');
+  mrotVel = clamp(mrotVel + dir * 3.2, -8, 8);
+  if (viewOn() === 'cube' || viewOn() === 'd5') VW.vyaw += dir * 2.4;
+  spinStep(dir); discover('x-twist');
+  if (!found.has('x-twist')) caption('a twist of the wrist turns the mandala, and the root moves with it.', 2800);
+  gpRumble(0.25, 0, 90);
+}
+function moFlick(dir) {
+  MO.flickT = rt(); moGesture('flick');
+  strum(); discover('x-flick');
+  const P = harpPool(); if (P.length) { const n = Math.min(6, P.length); for (let i = 0; i < n; i++) { const f = P[dir > 0 ? i : P.length - 1 - i]; audio.birdAt(f, f, 0.02, 0.45, (dir > 0 ? -0.5 : 0.5) + (i / n) * dir, 0.018, aNow() + 0.02 + i * 0.045); } }
+  haptic(10);
+}
+
+// ---------- the tick: tilt becomes a force on the voices and a lean in the sky ----------
+function motionTick(dt) {
+  const now = rt(), fresh = MO.live && now - MO.lastT < 1.2;
+  MO.on = !!SET.motion && fresh && entered;
+  if (!MO.on) {
+    MO.fx = 0; MO.busy = Math.max(0, MO.busy - dt);
+    MO.px *= Math.exp(-dt * 3); MO.py *= Math.exp(-dt * 3);
+    if (MO.live && !fresh && SET.motion) MO.hz = 0;
+    uiTilt(dt); return;
+  }
+  MO.hz = MO.nS / Math.max(0.5, now - MO.rate0);
+  // the neutral slowly follows however the phone is being held, so a resting hand never keeps the voices rolling.
+  // but the neutral a roll started from is remembered: once the phone comes back past halfway to it, the neutral snaps home,
+  // so tilting, holding and returning to level never rolls everyone back the other way
+  const kn = 1 - Math.exp(-dt / 8);
+  MO.nx += (MO.gx - MO.nx) * kn; MO.ny += (MO.gy - MO.ny) * kn;
+  if (MO.n0) {
+    const back = Math.hypot(MO.gx - MO.n0[0], MO.gy - MO.n0[1]), here = Math.hypot(MO.gx - MO.nx, MO.gy - MO.ny), drift = Math.hypot(MO.nx - MO.n0[0], MO.ny - MO.n0[1]);
+    if (drift > 0.02 && back < here) { MO.nx = MO.n0[0]; MO.ny = MO.n0[1]; }
+  }
+  MO.tx = MO.gx - MO.nx; MO.ty = MO.gy - MO.ny;
+  const kp = 1 - Math.exp(-dt * 6);
+  MO.px += (clamp(MO.tx * 2.2, -1, 1) - MO.px) * kp; MO.py += (clamp(MO.ty * 2.2, -1, 1) - MO.py) * kp;
+  // marbles: past a dead zone the voices lean downhill; past about 12° they hop, one valley at a time, faster the steeper it gets.
+  // every hop lands on a valley floor, so the chord changes but always agrees with itself
+  const twisting = now - MO.twistT < 0.4 || now - MO.shakeT < 0.6, dzn = 0.1 - 0.04 * SET.tiltK, hopAt = 0.22 - 0.1 * SET.tiltK, ax = MO.tx;
+  MO.lean = clamp((Math.abs(ax) - dzn) / Math.max(0.02, hopAt - dzn), 0, 1) * Math.sign(ax);
+  MO.fx = Math.abs(ax) > dzn ? ax : 0;
+  const rolling = SET.roll && Math.abs(ax) > hopAt && !round && !era && !twisting && !targetMode();
+  if (rolling) {
+    MO.busy = 0.8;
+    const dir = ax > 0 ? 1 : -1, steep = clamp((Math.abs(ax) - hopAt) / 0.35, 0, 1), every = 0.85 - 0.62 * steep;
+    if (!MO.rolling) { voices.filter(v => v.wT > 0).sort((a, b) => (b.x - a.x) * dir).forEach((v, i) => (v.hopT = 0.1 + i * 0.13)); MO.rolling = true; if (!MO.n0) MO.n0 = [MO.nx, MO.ny]; }
+    for (const v of voices) {
+      if (v.wT === 0 || v.dragging || v.echo != null || v.glide) continue;
+      v.hopT = (v.hopT || 0) - dt; if (v.hopT > 0) continue;
+      v.hopT = every * (0.85 + 0.3 * Math.random());
+      if (!v.locked && Math.abs(v.v) > 40) continue;
+      const xm = moNextValley(v, dir); if (xm == null) continue;
+      v.locked = false; v.pinUntil = 0; v.target = null; v.v = 0; v.hist.length = 0; v.histT.length = 0; v.glide = { x0: v.x, x1: xm, t0: t, dur: 0.18 + 0.0011 * Math.abs(xm - v.x) };
+      v.flash = Math.max(v.flash, 0.5); haptic(5); MO.hops++;
+      if (MO.hops >= 2) discover('x-tilt', v);
+    }
+  } else { MO.rolling = false; MO.busy = Math.max(0, MO.busy - dt); }
+  if (MO.n0 && !rolling && Math.abs(ax) < dzn) { MO.calmT = (MO.calmT || 0) + dt; if (MO.calmT > 3) MO.n0 = null; } else MO.calmT = 0;
+  // a spirit level: flat on a table, still
+  if (Math.hypot(MO.gx, MO.gy) < 0.012 && MO.ua < 0.6) { if (!MO.levelT) MO.levelT = now; else if (now - MO.levelT > 2.5) discover('x-level'); } else MO.levelT = 0;
+  if (!MO.hinted && t > 2 && entered) {
+    MO.hinted = true;
+    setTimeout(() => { if (MO.on) caption('tilt the phone: the voices roll like marbles. shake for a new chord, twist to turn the mandala, flick to strum.', 5200); }, 2600);
+  }
+  uiTilt(dt);
+}
+// the next valley floor downhill, read off the root's own terrain (those floors stay put while the other voices move):
+// walk up over the next hilltop, then down to the bottom. skip floors that would crowd or clash with another voice (thirds and wider
+// are fine, seconds are not; a gliding voice counts where it is headed), and stop 150¢ short of either end, where the walls bounce everyone around
+function moNextValley(v, dir) {
+  const st = 3, Dr = x => dTones(fOf(x), fRoot) + holeTerm(x);
+  let x = v.x, prev = Dr(x), rising = false, peaked = false;
+  for (let k = 0; k < 150; k++) {
+    const nx = x + dir * st; if (nx < 150 || nx > XMAX - 150) return null;
+    const d = Dr(nx);
+    if (!peaked) { if (d > prev + 1e-12) rising = true; else if (rising && d < prev - 1e-12) peaked = true; }
+    else if (d > prev + 1e-12) {
+      let a = x - st, b = x + st; for (let i = 0; i < 18; i++) { const m1 = a + (b - a) * 0.382, m2 = a + (b - a) * 0.618; if (Dr(m1) < Dr(m2)) b = m2; else a = m1; }
+      const xm = (a + b) / 2;
+      if (voices.every(o => { if (o === v || o.wT === 0) return true; const ox = o.glide ? o.glide.x1 : o.x; return Math.abs(ox - xm) >= 90 && dTones(fOf(xm), fOf(ox)) < 0.95 * D0; })) return xm;
+      peaked = false; rising = true;
+    }
+    prev = d; x = nx;
+  }
+  return null;
+}
+// voices rolling freely (after a fling, say) click over each hilltop: a tick in the hand
+function rollTicks() {
+  for (const v of voices) {
+    if (v.wT === 0 || v.dragging || v.locked || v.glide || Math.abs(v.v) < 25) { v.gsP = 0; continue; }
+    const g = Dv(v, v.x + 0.6) - Dv(v, v.x - 0.6), s = g > 0 ? 1 : -1;
+    if (v.gsP && s !== v.gsP && ((v.v > 0 && v.gsP > 0) || (v.v < 0 && v.gsP < 0))) { haptic(6); v.flash = Math.max(v.flash, 0.35); gpRumble(0.15, 0, 40); }
+    v.gsP = s;
+  }
+}
+
+// ---------- the little bubble level on the phone's top bar, and the sheet's readout ----------
+function uiTilt(dt) {
+  MO.uiT -= dt; if (MO.uiT > 0) return; MO.uiT = 0.06;
+  const b = $('tTilt'); if (!b) return;
+  const show = (MO.live || MO_NEEDS_PERM || isTouch) && entered;
+  b.classList.toggle('hidden', !show);
+  if (!show) return;
+  const dot = b.firstElementChild, on = MO.on, x = on ? clamp(MO.tx * 46, -9, 9) : 0, y = on ? clamp(MO.ty * 46, -9, 9) : 0;
+  dot.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+  b.classList.toggle('on', on); b.classList.toggle('roll', on && !!MO.rolling);
+  b.classList.toggle('ask', !on && SET.motion && MO_NEEDS_PERM && MO.perm !== 'granted');
+  const note = $('mNote');
+  if (note && MO.on && ((rt() * 4) | 0) % 2 === 0) {
+    const deg = v => Math.round((Math.asin(clamp(v, -1, 1)) * 180) / Math.PI);
+    note.textContent = `sensors live, about ${Math.round(MO.hz)} readings a second. tilt ${Math.abs(deg(MO.tx))}° ${MO.tx >= 0 ? 'right' : 'left'}, ${Math.abs(deg(MO.ty))}° ${MO.ty >= 0 ? 'toward you' : 'away'}${MO.gesture && rt() - MO.gestureT < 3 ? ` · last gesture: ${MO.gesture}` : ''}.`;
+  }
+}
+function motionUI() {
+  const note = $('mNote'); if (!note) return;
+  $('mAllow').classList.toggle('hidden', !(MO_NEEDS_PERM && MO.perm !== 'granted'));
+  if (!SET.motion) note.textContent = 'motion is off. switch it on to tilt, shake, twist and flick.';
+  else if (MO.live) note.textContent = 'sensors live. tilt rolls the voices and leans the sky; shake throws a new chord; twist your wrist to turn the root; flick to strum.';
+  else if (MO_NEEDS_PERM && MO.perm !== 'granted') note.textContent = 'this device asks first: press allow motion, then tilt away.';
+  else note.textContent = isTouch ? 'waiting for the motion sensors. if nothing arrives, this page is probably framed without them (the Claude app may keep sensors from artifacts); the standalone page has them: stevoblevo.github.io/and-so' : 'no motion sensors here. on a phone: tilt rolls the voices, shake throws a new chord, a twist turns the root.';
+}
+
+// ---------- a game controller (the gamepad lab's deadzones: left 0.18, right 0.25) ----------
+const GP = { seen: false, prev: [], held: null, v: null, lastId: '', zoomT: 0, rum: null };
+function gpRadial(x, y, dz) { const m = Math.hypot(x, y); if (m < dz) return [0, 0]; const k = Math.min(1, (m - dz) / (1 - dz)); return [(x / m) * k, (y / m) * k]; }
+function gpPad() { if (!navigator.getGamepads) return null; let gs; try { gs = navigator.getGamepads(); } catch (e) { return null; } for (const g of gs) if (g && g.connected) return g; return null; }
+function gpRumble(weak, strong, ms) {
+  const gp = GP.rum; if (!gp || !gp.vibrationActuator) return;
+  try { const p = gp.vibrationActuator.playEffect('dual-rumble', { startDelay: 0, duration: ms, weakMagnitude: weak, strongMagnitude: strong }); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+}
+function gpRelease() {
+  const v = GP.v; GP.held = null; GP.v = null;
+  if (v && v.dragging === 'pad') { v.dragging = false; v.dragX = null; v.temp = 0.3; v.v = 0; v.hist.length = 0; v.histT.length = 0; }
+}
+function gpSelect(dir) {
+  const live = voices.filter(v => v.wT > 0).sort((a, b) => a.x - b.x); if (!live.length) return;
+  const i = live.indexOf(act); act = live[(((i < 0 ? 0 : i + dir) % live.length) + live.length) % live.length]; act.flash = 1; haptic(4);
+}
+function padTick(dt) {
+  if (!entered) return;
+  const gp = gpPad(); GP.rum = gp;
+  if (!gp) { if (GP.held) gpRelease(); return; }
+  if (!GP.seen || GP.lastId !== gp.id) {
+    GP.seen = true; GP.lastId = gp.id; GP.prev = gp.buttons.map(b => b.pressed);
+    caption('controller: left stick moves a voice, A glides, B moves the root, X adds a voice, Y changes the view, the bumpers pick a voice.', 5200);
+    discover('x-pad'); jlog(`controller: ${gp.id}`); gpRumble(0.3, 0.2, 160); return;
+  }
+  const B = i => !!(gp.buttons[i] && gp.buttons[i].pressed), P = i => B(i) && !GP.prev[i], V = i => (gp.buttons[i] ? gp.buttons[i].value : 0);
+  const [lx] = gpRadial(gp.axes[0] || 0, gp.axes[1] || 0, 0.18), [rx, ry] = gpRadial(gp.axes[2] || 0, gp.axes[3] || 0, 0.25);
+  let any = Math.abs(lx) + Math.abs(rx) + Math.abs(ry) > 0;
+  // left stick drives the active voice like a finger: it follows, then rolls home when the stick lets go
+  if (Math.abs(lx) > 0) {
+    if (!GP.held) {
+      const v = act && act.wT > 0 ? act : voices.find(o => o.wT > 0);
+      if (v && !v.dragging) { GP.held = 'pad'; GP.v = v; v.dragging = 'pad'; v.dragX = v.x; v.locked = false; v.glide = null; v.echo = null; v.pinUntil = 0; v.temp = 0; v.v = 0; draggedOnce = true; }
+    }
+    const v = GP.v;
+    if (v && v.dragging === 'pad') { const sp = 110 + 540 * lx * lx; v.dragX = clamp(v.dragX + lx * sp * dt, 70, XMAX - 70); v.dragY = LT; }
+  } else if (GP.held) gpRelease();
+  // right stick turns whatever the sound box shows
+  if (Math.abs(rx) + Math.abs(ry) > 0) {
+    const vw = viewOn();
+    if (vw === 'cube' || vw === 'd5') { VW.yaw += rx * 2.4 * dt; VW.pitch = clamp(VW.pitch + ry * 1.8 * dt, -1.35, 1.35); VW.vyaw = 0; VW.vpitch = 0; }
+    else if (vw === 'mandala') { const d = rx * 2.6 * dt; mrot += d; GP.spin = (GP.spin || 0) + d; const st = TAU / 5; while (GP.spin > st) { GP.spin -= st; spinStep(1); } while (GP.spin < -st) { GP.spin += st; spinStep(-1); } }
+  }
+  if (P(0)) { lean(1); userIdleUntil = t + 10; }
+  if (P(1)) { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; }
+  if (P(2)) { const v = LIGHT() ? lightAdd() : addVoice(rand(300, XMAX - 300), { temp: 0.3 }); if (!v) caption('four voices is the limit.', 1600); }
+  if (P(3)) cycleView();
+  if (P(4)) gpSelect(-1);
+  if (P(5)) gpSelect(1);
+  if (P(8)) { const i = SKINS.indexOf(skin); setSkin(SKINS[(i + 1) % SKINS.length]); }
+  if (P(9)) showGw(true);
+  if (P(10)) { if (REEL.on) reelStop(false); else reelStart(); }
+  if (P(11)) { if (viewOn() === 'cymatics') cymReset(); else strum(); }
+  if (P(12)) setTuplet(tuplet + 1);
+  if (P(13)) setTuplet(tuplet - 1);
+  const lt = V(6), rt = V(7);
+  if ((lt > 0.15 || rt > 0.15) && t - GP.zoomT > 0.05) { GP.zoomT = t; wheelView(0, (lt - rt) * 140, PX0 + PW / 2); any = true; }
+  if (B(14) || B(15)) { const w = VIEW.x1 - VIEW.x0; VIEW.tgt = { x0: clamp(VIEW.x0 + (B(15) ? 1 : -1) * w * 0.9 * dt, 0, XMAX - w), w }; any = true; }
+  if (any || gp.buttons.some(b => b.pressed)) { lastUserT = t; if (REEL.on && (any || gp.buttons.some((b, i) => b.pressed && i !== 10))) reelStop(false); }
+  GP.prev = gp.buttons.map(b => b.pressed);
+}
+
+// ---------- wiring ----------
+moListen();
+let tiltPress = 0, tiltLong = false;
+$('tTilt').addEventListener('click', e => {
+  e.currentTarget.blur();
+  if (tiltLong) { tiltLong = false; return; }
+  if (MO_NEEDS_PERM && MO.perm !== 'granted') { SET.motion = true; moAsk().then(p => { if (p === 'granted') { moLevel(true); caption('tilt is on. level is wherever you hold it now.', 2600); } else caption('motion was not allowed. it stays off.', 2600); syncUI(); }); return; }
+  if (!MO.live) { caption(isTouch ? 'no motion sensors reached this page. the standalone page has them: stevoblevo.github.io/and-so' : 'no motion sensors on this device.', 4200); return; }
+  if (!SET.motion) { setMotion(true); caption('tilt is on.', 1600); return; }
+  moLevel(false);
+});
+$('tTilt').addEventListener('pointerdown', () => { tiltLong = false; tiltPress = setTimeout(() => { if (SET.motion) { tiltLong = true; setMotion(false); caption('tilt is off. tap the bubble to turn it back on.', 2600); haptic(12); } }, 650); });
+['pointerup', 'pointerleave', 'pointercancel'].forEach(n => $('tTilt').addEventListener(n, () => clearTimeout(tiltPress)));
+$('sMotion').addEventListener('change', e => setMotion(e.target.checked));
+$('sRoll').addEventListener('change', e => { SET.roll = e.target.checked; persistSoon(); });
+$('sTiltK').addEventListener('input', e => { SET.tiltK = e.target.value / 100; });
+$('sTiltK').addEventListener('change', persistSoon);
+$('mLevel').addEventListener('click', () => { if (MO.live) moLevel(false); else caption('no motion sensors reached this page.', 2400); });
+$('mAllow').addEventListener('click', () => moAsk().then(p => { if (p === 'granted') { SET.motion = true; moLevel(true); caption('motion allowed. tilt away.', 2200); } syncUI(); }));
+window.addEventListener('gamepadconnected', () => { GP.seen = false; });
+// turning the phone to landscape is not a twist, and the new "level" is however it is held afterwards
+const moTurned = () => { MO.twistT = rt() + 0.8; MO.flickT = rt() + 0.8; setTimeout(() => { if (MO.live) moLevel(true); }, 350); };
+try { if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', moTurned); else window.addEventListener('orientationchange', moTurned); } catch (e) {}
+window.addEventListener('gamepaddisconnected', () => { if (GP.held) gpRelease(); caption('controller disconnected.', 1800); GP.seen = false; });
+
+// ===== the world around the sound box =====
+// two new looks remixed from the Mint Glasshouse and Peachfall Crossing artifacts (ridges that lean when you do, light shafts,
+// weather that follows the music, the Sae-wink eye, three hidden spores), obsidian that cracks under a held dissonance
+// (the NIC.LAN reel's "Crack" shot), and a 31-EDO hex floor (its "Lattice" shot)
+const WX = {
+  w: [1, 0, 0, 0], force: null, parts: [], rip: [], tens: 0, tensT: 0, heat: 0, seen: [0, 0, 0, 0], ptrT: -99, mx: 0.5, my: 0.4,
+  eye: { open: 1, cyc: 0, forced: 0, x: -999, y: -999, r: 0, a: 0 },
+  spores: [{ u: 0.86, v: 0.62, L: 1 }, { u: 0.1, v: 0.72, L: 2 }, { u: 0.3, v: 0.16, L: 0 }].map(s => Object.assign(s, { f: false, g: 0, x: null, y: null })),
+  crack: { grow: 0, heat: 0, hotT: -99, segs: null, roots: null, key: '', all: null, paths: null, tips: [] },
+  floor: { hit: new Float32Array(31), z: 0 }
+};
+const WXP = Array.from({ length: 512 }, () => Math.random());
+const wxNoise = x => { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return WXP[i & 511] * (1 - u) + WXP[(i + 1) & 511] * u; };
+// Peachfall's four weathers, darkened a touch at the horizon so the light ink of the instrument still reads
+const WXK = [
+  { name: 'peach fall', sky: [[38, 26, 44], [196, 112, 98]], sun: [255, 200, 160], ridge: [[60, 34, 52], [86, 44, 58], [120, 60, 64]], rim: [255, 180, 138] },
+  { name: 'red rain', sky: [[22, 14, 24], [124, 34, 46]], sun: [255, 110, 110], ridge: [[40, 18, 28], [58, 22, 32], [80, 28, 38]], rim: [255, 107, 107] },
+  { name: 'mint clearing', sky: [[10, 26, 28], [38, 116, 98]], sun: [200, 255, 230], ridge: [[14, 46, 42], [18, 66, 56], [30, 96, 80]], rim: [94, 242, 184] },
+  { name: 'night garden', sky: [[10, 14, 26], [34, 48, 80]], sun: [201, 230, 255], ridge: [[18, 24, 40], [24, 32, 52], [32, 42, 66]], rim: [201, 230, 255] }
+];
+const WXG = { name: 'glasshouse', sky: [[8, 28, 26], [30, 88, 76]], sun: [201, 255, 230], ridge: [[14, 50, 42], [20, 72, 58], [34, 100, 82]], rim: [94, 242, 184] };
+const wxWorld = () => skin === 'glasshouse' || skin === 'peachfall';
+function wxPal() {
+  if (skin === 'glasshouse') return WXG;
+  const w = WX.w, mixN = f => { const o = [0, 0, 0]; for (let k = 0; k < 4; k++) { const c = f(WXK[k]); o[0] += c[0] * w[k]; o[1] += c[1] * w[k]; o[2] += c[2] * w[k]; } return o; };
+  return { sky: [mixN(k => k.sky[0]), mixN(k => k.sky[1])], sun: mixN(k => k.sun), ridge: [0, 1, 2].map(i => mixN(k => k.ridge[i])), rim: mixN(k => k.rim) };
+}
+function wxName() { let b = 0; for (let k = 1; k < 4; k++) if (WX.w[k] > WX.w[b]) b = k; return WXK[b].name; }
+function wxRidgeY(L, x) {
+  const sh = Math.max(80, LT - TOPH), f = [0.0015, 0.0023, 0.0033][L] * (phone ? 1.6 : 1), a = [0.15, 0.12, 0.1][L] * sh, base = LT - [0.3, 0.17, 0.05][L] * sh;
+  const par = (WX.mx - 0.5) * [16, 34, 60][L] + MO.px * [14, 30, 52][L];
+  return base - a * (wxNoise((x + par) * f + L * 40 + t * 0.015) * 1.2 + wxNoise((x + par) * f * 3 + L * 9) * 0.35) + MO.py * [4, 9, 16][L];
+}
+function wxEyePos() { const x = (phone ? 0.84 : 0.16) * W, r = Math.min(W, H) * (phone ? 0.05 : 0.04); return { x, y: wxRidgeY(2, x) - r * 1.25, r }; }
+function wxSporePos(s) { const x = s.u * W, sh = Math.max(80, LT - TOPH); return { x, y: Math.min(wxRidgeY(s.L, x) - 24, TOPH + s.v * sh) }; }
+
+// ---------- the tick ----------
+function wxParts() {
+  const n = Math.round(clamp((W * H) / 4500, 50, 240) * Math.max(0.55, qScale));
+  while (WX.parts.length < n) WX.parts.push({ x: Math.random() * W, y: TOPH + Math.random() * Math.max(10, LB - TOPH), vx: 0, vy: 0, z: Math.random(), r: Math.random() * TAU, s: Math.random() * TAU });
+  if (WX.parts.length > n) WX.parts.length = n;
+}
+function wxRipple(x, y, a) { WX.rip.push({ x, y, r: 4, a: a || 1 }); if (WX.rip.length > 12) WX.rip.shift(); }
+function wxBurst(x, y, k) { wxRipple(x, y, Math.min(1, k)); for (const o of WX.parts) { const dx = o.x - x, dy = o.y - y, d = Math.hypot(dx, dy) + 1; o.vx += (dx / d) * 9 * k * Math.random(); o.vy += (dy / d) * 9 * k * Math.random() - 2 * k; } }
+// the floor a held voice would roll down to if it let go: walk downhill until the ground rises again
+function wxFloor(v, x, d0) {
+  const dir = Dv(v, x + 1) < Dv(v, x - 1) ? 1 : -1; let d = d0;
+  for (let k = 0; k < 120; k++) { const nx = x + dir * 2; if (nx < 0 || nx > XMAX) break; const nd = Dv(v, nx); if (nd >= d) break; x = nx; d = nd; }
+  return d;
+}
+function wxTick(dt) {
+  if (!entered) return;
+  const f60 = Math.min(3, dt * 60), kk = 1 - Math.exp(-dt * 2.5);
+  const ptr = t - WX.ptrT < 3 && !isTouch;
+  WX.mx += ((ptr ? lastPX / Math.max(1, W) : 0.5) - WX.mx) * kk; WX.my += ((ptr ? lastPY / Math.max(1, H) : 0.4) - WX.my) * kk;
+  // tension: how far the held voices (dragged, or pinned on purpose) sit above their own valley floors.
+  // voices that are rolling, gliding or settling don't count: a held dissonance is the point
+  WX.tensT -= dt;
+  if (WX.tensT <= 0) {
+    WX.tensT = 0.12; let te = 0;
+    for (const v of voices) { if (v.wT === 0 || v.w < 0.4 || v.locked || v.glide || !(v.dragging || t < v.pinUntil)) continue; const d0 = Dv(v, v.x), e = (d0 - wxFloor(v, v.x, d0)) / D0; if (e > te) te = e; }
+    WX.tens = te;
+  }
+  WX.heat += (clamp(WX.tens * 2.4, 0, 1) - WX.heat) * (1 - Math.exp(-dt / 0.5));
+  // obsidian cracks grow while a dissonance is held, then cool and slowly heal
+  const C = WX.crack, cracky = skin === 'obsidian' || skin === 'dawn';
+  if (cracky) {
+    if (!C.segs) wxBuildCracks();
+    // only a held dissonance cracks the glass: the crack's own heat is slow, and it heals once things have been calm a while
+    C.heat += (WX.heat - C.heat) * (1 - Math.exp(-dt / 1.2));
+    if (C.heat > 0.25) { C.grow = Math.min(1.75, C.grow + dt * (0.16 + 0.8 * (C.heat - 0.25))); C.hotT = t; }
+    else if (t - C.hotT > 3) C.grow = Math.max(0, C.grow - dt * 0.2);
+    if (C.grow > 0.9) discover('x-crack');
+  }
+  // the 31 floor: lit pitch classes
+  if (M.key === 'tet31') {
+    const F = WX.floor, st = 1200 / 31, tgt = new Float32Array(31); tgt[0] = 0.35;
+    for (const v of voices) { if (v.wT === 0 || v.w < 0.2) continue; const pc = ((Math.round(v.c / st) % 31) + 31) % 31; tgt[pc] = Math.max(tgt[pc], (v.locked ? 0.95 : 0.5) * v.w + 0.4 * v.flash); }
+    for (let k = 0; k < 31; k++) F.hit[k] += (tgt[k] - F.hit[k]) * (1 - Math.exp(-dt * 6));
+    F.z += dt * (reduceMotion ? 0 : 0.32);
+  }
+  if (!wxWorld()) { WX.rip.length = 0; return; }
+  // weather follows the music: tension rains, a settled chord clears to mint, a quiet room turns to night
+  let tw;
+  if (WX.force) tw = WX.force;
+  else {
+    const idle = (t - lastUserT > 26 && !REEL.on) || paused, night = idle ? 1 : 0, rain = (1 - night) * clamp((WX.heat - 0.2) * 2.6, 0, 1), mint = (1 - night) * (1 - rain) * (chordNow ? 1 : 0);
+    tw = [Math.max(0, 1 - night - rain - mint), rain, mint, night];
+  }
+  const kw = 1 - Math.exp(-dt / (WX.force ? 0.9 : 2.2));
+  for (let k = 0; k < 4; k++) { WX.w[k] += (tw[k] - WX.w[k]) * kw; if (skin === 'peachfall' && WX.w[k] > 0.6) WX.seen[k] = 1; }
+  if (WX.seen[0] + WX.seen[1] + WX.seen[2] + WX.seen[3] >= 4) discover('x-weather');
+  // particles: petals, rain, motes and fireflies, falling toward the real ground when the phone tilts
+  wxParts();
+  const gl = skin === 'glasshouse', w = gl ? [0, 0, 1, 0] : WX.w, gxv = MO.on ? MO.gx : 0, gyv = MO.on ? MO.gy : 1, gm = Math.min(1, Math.hypot(gxv, gyv)), hx = gm > 0.04 ? gxv / gm : 0, hy = gm > 0.04 ? gyv / gm : 1;
+  const near = PTR.size > 0 || (t - WX.ptrT < 1.5 && !isTouch), damp = Math.pow(0.93, f60);
+  for (const o of WX.parts) {
+    if (near) { const dx = o.x - lastPX, dy = o.y - lastPY, d2 = dx * dx + dy * dy; if (d2 < 16000) { const f = (16000 - d2) / 16000, d = Math.sqrt(d2 + 1); o.vx += (dx / d) * f * 1.1 * f60; o.vy += (dy / d) * f * 0.6 * f60; } }
+    for (const r of WX.rip) { const rd = Math.hypot(o.x - r.x, o.y - r.y) + 0.01; if (Math.abs(rd - r.r) < 30) { o.vx += ((o.x - r.x) / rd) * 1.6 * r.a * f60; o.vy += ((o.y - r.y) / rd) * 1.6 * r.a * f60; } }
+    const fall = (w[0] * (0.6 + o.z) + w[1] * (7 + o.z * 6) - w[2] * (0.4 + o.z * 0.4) - w[3] * 0.05) * (gl ? 0.6 : 1);
+    if (!reduceMotion) { o.s += 0.02 * f60; o.r += 0.03 * (1 - w[1]) * f60; const sw = Math.cos(o.s) * 0.05 * (w[0] + w[3] + (gl ? 0.6 : 0)) - w[1] * 0.08; o.vx += -hy * sw * f60; o.vy += hx * sw * f60; }
+    o.vx *= damp; o.vy *= damp;
+    o.x += (o.vx + hx * fall * gm) * f60; o.y += (o.vy + hy * fall * gm) * f60;
+    if (o.x < -14 || o.x > W + 14 || o.y < TOPH - 16 || o.y > LB + 16) {
+      const up = fall >= 0 ? 1 : -1;
+      if (Math.abs(hy) >= Math.abs(hx)) { o.y = hy * up > 0 ? TOPH - 12 : LB + 12; o.x = Math.random() * W; }
+      else { o.x = hx * up > 0 ? -12 : W + 12; o.y = TOPH + Math.random() * Math.max(10, LB - TOPH); }
+      o.vx = o.vy = 0;
+    }
+  }
+  for (let i = WX.rip.length - 1; i >= 0; i--) { const r = WX.rip[i]; r.r += 8 * f60; r.a *= Math.pow(0.965, f60); if (r.a < 0.03) WX.rip.splice(i, 1); }
+  // the eye keeps Peachfall's clock: open 2.6 s, closed 0.16 s
+  const E = WX.eye; E.cyc += dt; if (E.forced > 0) E.forced -= dt;
+  const ot = E.forced > 0 ? 0 : E.cyc % 2.76 < 2.6 ? 1 : 0; E.open += (ot - E.open) * (1 - Math.pow(0.55, f60));
+  E.a += ((skin === 'peachfall' ? WX.w[2] : 0) - E.a) * kk;
+  for (const s of WX.spores) s.g *= Math.exp(-dt * 2);
+}
+function wxHover(px, py) { WX.ptrT = t; if (skin !== 'glasshouse') return; for (const s of WX.spores) if (s.x != null && Math.hypot(px - s.x, py - s.y) < 90) s.g = Math.max(s.g, 1 - Math.hypot(px - s.x, py - s.y) / 90); }
+// taps on the eye or a spore are caught before anything else in the sky
+function wxHit(px, py) {
+  if (skin === 'peachfall' && WX.eye.a > 0.35) {
+    const E = WX.eye;
+    if (Math.abs(px - E.x) < E.r * 1.4 && Math.abs(py - E.y) < E.r * 0.95) {
+      E.forced = 0.32; wxBurst(E.x, E.y, 0.8); audio.chime(fold(fRoot * 6, 2, 600), 0.03, 0); haptic(8);
+      if (!found.has('x-wink')) caption('it winked back.', 1800);
+      discover('x-wink'); return true;
+    }
+  }
+  if (skin === 'glasshouse') for (const s of WX.spores) {
+    if (s.x == null || Math.hypot(px - s.x, py - s.y) > (isTouch ? 30 : 24)) continue;
+    wxBurst(s.x, s.y, 0.9); s.g = 1; haptic(8);
+    if (!s.f) {
+      s.f = true; const n = WX.spores.filter(o => o.f).length;
+      audio.chime(fold(fRoot * [3, 4, 5][n - 1], 2, 520), 0.032, 0);
+      caption(n < 3 ? `a spore. ${n} of 3.` : 'all three spores. the glasshouse is yours.', 2200);
+      if (n === 3) discover('x-spores');
+    } else audio.chime(fold(fRoot * 4, 2, 520), 0.02, 0);
+    return true;
+  }
+  return false;
+}
+
+// ---------- drawing: the ridge world (glasshouse, peachfall) ----------
+function drawWorldBg() {
+  const P = wxPal(), sh = Math.max(80, LT - TOPH), gl = skin === 'glasshouse';
+  const g = ctx.createLinearGradient(0, 0, 0, LT + 30); g.addColorStop(0, rgba(P.sky[0], 1)); g.addColorStop(1, rgba(P.sky[1], 1));
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const night = gl ? 0 : WX.w[3];
+  if (night > 0.02) for (let i = 0; i < 90; i++) { const x = WXP[i] * W + MO.px * 10 * WXP[i + 200], y = TOPH + WXP[i + 100] * sh * 0.7; ctx.fillStyle = `rgba(201,230,255,${night * (0.3 + 0.5 * Math.abs(Math.sin(t + i)))})`; ctx.fillRect(x, y, 1.4, 1.4); }
+  // the sun (a moon at night) follows the pointer and leans with the phone
+  const sx = (0.3 + 0.4 * WX.mx + 0.12 * MO.px) * W, sy = TOPH + (0.14 + 0.08 * WX.my) * sh + MO.py * 12, R0 = Math.min(W, H);
+  const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(W, H) * 0.55); sg.addColorStop(0, rgba(P.sun, gl ? 0.5 : 0.55)); sg.addColorStop(0.22, rgba(P.sun, 0.15)); sg.addColorStop(1, rgba(P.sun, 0));
+  ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+  if (!gl) { ctx.fillStyle = rgba(P.sun, 0.85); ctx.beginPath(); ctx.arc(sx, sy, R0 * 0.035, 0, TAU); ctx.fill(); }
+  // light shafts, Glasshouse style
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 7; i++) {
+    const ang = -0.35 + (WX.mx - 0.5) * 0.3 + MO.px * 0.25 + i * 0.06 + Math.sin(t * 0.3 + i) * 0.02, w = 40 + wxNoise(i * 7 + t * 0.2) * 120;
+    ctx.save(); ctx.translate(sx, sy - 40); ctx.rotate(ang);
+    const lg = ctx.createLinearGradient(0, 0, 0, H * 1.4); lg.addColorStop(0, rgba(gl ? [160, 255, 215] : P.sun, (gl ? 0.07 : 0.05) + 0.03 * Math.sin(t + i))); lg.addColorStop(1, rgba(P.sun, 0));
+    ctx.fillStyle = lg; ctx.beginPath(); ctx.moveTo(-w * 0.2, 0); ctx.lineTo(w * 0.2, 0); ctx.lineTo(w * 2.4, H * 1.4); ctx.lineTo(-w * 2.4, H * 1.4); ctx.fill(); ctx.restore();
+  }
+  ctx.restore();
+  // three ridges, the haze between them, and what lives on them
+  const step = phone ? 6 : 8, bottom = LB + SH + 40;
+  for (let L = 0; L < 3; L++) {
+    ctx.beginPath(); ctx.moveTo(0, bottom); for (let x = 0; x <= W + step; x += step) ctx.lineTo(x, wxRidgeY(L, x)); ctx.lineTo(W, bottom); ctx.closePath();
+    const top = wxRidgeY(L, W / 2) - 80, rg = ctx.createLinearGradient(0, top, 0, bottom);
+    rg.addColorStop(0, rgba(P.ridge[L].map(v => v + 26), 1)); rg.addColorStop(0.3, rgba(P.ridge[L], 1)); rg.addColorStop(1, gl ? 'rgb(7,17,15)' : 'rgb(17,23,34)');
+    ctx.fillStyle = rg; ctx.fill();
+    ctx.strokeStyle = rgba(P.rim, 0.3 - L * 0.07); ctx.lineWidth = 1.2; ctx.beginPath(); for (let x = 0; x <= W + step; x += step) { const y = wxRidgeY(L, x); if (x) ctx.lineTo(x, y); else ctx.moveTo(x, y); } ctx.stroke();
+    const hy = wxRidgeY(L, W / 2), hz = ctx.createLinearGradient(0, hy - 40, 0, hy + 160);
+    hz.addColorStop(0, rgba(gl ? [140, 230, 195] : P.rim, 0)); hz.addColorStop(0.5, rgba(gl ? [140, 230, 195] : P.rim, gl ? 0.08 : 0.05)); hz.addColorStop(1, rgba(P.rim, 0));
+    ctx.fillStyle = hz; ctx.fillRect(0, hy - 40, W, 200);
+    if (gl) WX.spores.forEach((s, i) => { if (s.L === L) drawSpore(s, i); });
+    if (L === 2 && !gl) drawEye();
+  }
+  drawWxParts(P, gl);
+}
+function drawSpore(s, i) {
+  const q = wxSporePos(s); s.x = q.x; s.y = q.y;
+  const pulse = 0.5 + 0.5 * Math.sin(t * 2 + i), r = 6 + s.g * 14 + pulse * 2, hal = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, r * 5);
+  hal.addColorStop(0, `rgba(${s.f ? '201,230,255' : '94,242,184'},${0.3 + s.g * 0.4})`); hal.addColorStop(1, 'rgba(94,242,184,0)');
+  ctx.fillStyle = hal; ctx.beginPath(); ctx.arc(q.x, q.y, r * 5, 0, TAU); ctx.fill();
+  ctx.fillStyle = s.f ? '#c9e6ff' : '#5ef2b8'; ctx.beginPath(); ctx.arc(q.x, q.y, r * 0.6, 0, TAU); ctx.fill();
+  if (s.g > 0.05) { ctx.strokeStyle = `rgba(201,230,255,${s.g * 0.7})`; ctx.lineWidth = 1; for (let k = 0; k < 6; k++) { const a = (k / 6) * TAU + t; ctx.beginPath(); ctx.moveTo(q.x + Math.cos(a) * r, q.y + Math.sin(a) * r); ctx.lineTo(q.x + Math.cos(a) * r * (1.6 + s.g), q.y + Math.sin(a) * r * (1.6 + s.g)); ctx.stroke(); } }
+}
+function drawEye() {
+  const E = WX.eye; if (E.a < 0.02) { E.x = -999; return; }
+  const p = wxEyePos(); E.x = p.x; E.y = p.y; E.r = p.r;
+  const ptr = t - WX.ptrT < 3, lx = clamp(ptr ? (lastPX - p.x) / W * 2 : MO.px, -1, 1) * p.r * 0.35, ly = clamp(ptr ? (lastPY - p.y) / H * 2 : MO.py, -1, 1) * p.r * 0.25, o = Math.max(0.04, E.open);
+  ctx.save(); ctx.globalAlpha = E.a;
+  const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3); halo.addColorStop(0, 'rgba(94,242,184,0.28)'); halo.addColorStop(1, 'rgba(94,242,184,0)'); ctx.fillStyle = halo; ctx.fillRect(p.x - p.r * 3, p.y - p.r * 3, p.r * 6, p.r * 6);
+  ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r * 1.25, p.r * 0.75 * o, 0, 0, TAU); ctx.fillStyle = 'rgba(233,245,239,0.92)'; ctx.fill();
+  ctx.save(); ctx.clip();
+  ctx.beginPath(); ctx.arc(p.x + lx, p.y + ly, p.r * 0.48, 0, TAU); ctx.fillStyle = '#5ef2b8'; ctx.fill();
+  ctx.beginPath(); ctx.arc(p.x + lx, p.y + ly, p.r * 0.22, 0, TAU); ctx.fillStyle = '#07110f'; ctx.fill();
+  ctx.beginPath(); ctx.arc(p.x + lx - p.r * 0.12, p.y + ly - p.r * 0.12, p.r * 0.07, 0, TAU); ctx.fillStyle = '#fff'; ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(94,242,184,0.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r * 1.25, p.r * 0.75 * o, 0, 0, TAU); ctx.stroke();
+  for (let i = -2; i <= 2; i++) { const a = -Math.PI / 2 + i * 0.32, ry = p.r * 0.75 * o; ctx.beginPath(); ctx.moveTo(p.x + Math.cos(a) * p.r * 1.1, p.y - ry * 0.98); ctx.lineTo(p.x + Math.cos(a) * p.r * 1.35, p.y - ry - p.r * 0.28); ctx.stroke(); }
+  ctx.restore();
+}
+function drawWxParts(P, gl) {
+  const w = gl ? [0, 0, 1, 0] : WX.w, gxv = MO.on ? MO.gx : 0, gyv = MO.on ? MO.gy : 1, gm = Math.hypot(gxv, gyv), hx = gm > 0.04 ? gxv / gm : 0, hy = gm > 0.04 ? gyv / gm : 1;
+  for (const o of WX.parts) {
+    const z = 0.5 + o.z;
+    if (w[0] > 0.02) { ctx.save(); ctx.translate(o.x, o.y); ctx.rotate(o.r); ctx.globalAlpha = w[0] * (0.45 + o.z * 0.5); ctx.fillStyle = o.z > 0.7 ? '#ffd2b5' : '#ffb48a'; ctx.beginPath(); ctx.ellipse(0, 0, 4 * z, 2.2 * z, 0, 0, TAU); ctx.fill(); ctx.restore(); }
+    if (w[1] > 0.02) { const L = 10 + o.z * 14; ctx.strokeStyle = `rgba(255,${(100 + o.z * 40) | 0},${(100 + o.z * 30) | 0},${w[1] * (0.25 + o.z * 0.5)})`; ctx.lineWidth = 0.8 + o.z; ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(o.x - hx * L - o.vx, o.y - hy * L - o.vy); ctx.stroke(); }
+    if (w[2] > 0.02) { ctx.fillStyle = gl && o.z > 0.8 ? `rgba(201,230,255,${w[2] * (0.3 + o.z * 0.5)})` : `rgba(160,255,215,${w[2] * (0.25 + o.z * 0.5)})`; ctx.beginPath(); ctx.arc(o.x, o.y, 0.7 + o.z * 1.8, 0, TAU); ctx.fill(); }
+    if (w[3] > 0.02 && o.z > 0.6) { const fl = 0.5 + 0.5 * Math.sin(t * 3 + o.s * 4); ctx.fillStyle = `rgba(255,226,170,${w[3] * fl * 0.9})`; ctx.beginPath(); ctx.arc(o.x, o.y, 1.6, 0, TAU); ctx.fill(); ctx.fillStyle = `rgba(255,226,170,${w[3] * fl * 0.15})`; ctx.beginPath(); ctx.arc(o.x, o.y, 7, 0, TAU); ctx.fill(); }
+  }
+  ctx.globalAlpha = 1; ctx.lineWidth = 1.5;
+  for (const r of WX.rip) { ctx.strokeStyle = rgba(P.rim, r.a * 0.6); ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, TAU); ctx.stroke(); }
+}
+
+// ---------- obsidian that cracks (the reel's fracture network, seeded so it is the same crack every time) ----------
+function wxRng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let x = Math.imul(seed ^ (seed >>> 15), 1 | seed); x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
+function wxBuildCracks() {
+  const r = wxRng(9157), segs = [], roots = [];
+  function grow(x, y, a, n, depth, tt) {
+    for (let k = 0; k < n; k++) {
+      const st = 0.013 + 0.014 * r(); a += (r() - 0.5) * 0.5;
+      const nx = x + Math.cos(a) * st, ny = y + Math.sin(a) * st;
+      segs.push([x, y, nx, ny, tt, depth]); tt += st; x = nx; y = ny;
+      if (x * x + y * y > 2.6) return;
+      if (depth < 4 && r() < 0.055 + depth * 0.012) grow(x, y, a + (r() < 0.5 ? -1 : 1) * (0.45 + r() * 0.7), Math.floor((n - k) * (0.35 + r() * 0.4)), depth + 1, tt);
+    }
+  }
+  for (const [x, y, t0] of [[0.04, -0.06, 0], [-0.36, 0.16, 0.38], [0.4, 0.24, 0.62]]) { roots.push({ x, y, t: t0 }); const rays = 4 + Math.floor(r() * 3); for (let i = 0; i < rays; i++) grow(x, y, (i / rays) * TAU + r() * 0.6, 70 + Math.floor(r() * 50), 0, t0); }
+  WX.crack.segs = segs; WX.crack.roots = roots;
+}
+function drawCracks() {
+  const C = WX.crack; if (!C.segs || C.grow <= 0.003) return;
+  const S2 = Math.max(W, LT) * 0.55, cx = MX + MO.px * 8, cy = MY + MO.py * 6, key = `${C.grow.toFixed(2)}|${W}|${H}|${Math.round(cx)}|${Math.round(cy)}`;
+  if (key !== C.key) {
+    C.key = key; C.all = new Path2D(); C.paths = [0, 1, 2, 3, 4].map(() => new Path2D()); C.tips = [];
+    for (const s of C.segs) {
+      if (s[4] > C.grow) continue;
+      const x0 = cx + s[0] * S2, y0 = cy + s[1] * S2, x1 = cx + s[2] * S2, y1 = cy + s[3] * S2;
+      C.all.moveTo(x0, y0); C.all.lineTo(x1, y1); C.paths[s[5]].moveTo(x0, y0); C.paths[s[5]].lineTo(x1, y1);
+      if (C.grow - s[4] < 0.03) C.tips.push([x1, y1]);
+    }
+  }
+  const vis = clamp(C.grow * 2, 0, 1), hot = C.heat, pulse = 0.75 + 0.45 * beatPulse;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, LT - 4); ctx.clip(); ctx.lineCap = 'round';
+  ctx.strokeStyle = `rgba(0,0,0,${0.55 * vis})`; ctx.lineWidth = 2.4; ctx.stroke(C.all);
+  ctx.strokeStyle = `rgba(255,236,210,${0.06 * vis})`; ctx.lineWidth = 0.8; ctx.stroke(C.all);
+  if (hot > 0.02) {
+    ctx.globalCompositeOperation = 'lighter';
+    for (const r of C.roots) { const k = clamp((C.grow - r.t) / 0.4, 0, 1); if (k <= 0) continue; const x = cx + r.x * S2, y = cy + r.y * S2, gg = ctx.createRadialGradient(x, y, 0, x, y, S2 * 0.6); gg.addColorStop(0, `rgba(255,120,40,${0.12 * k * hot * pulse})`); gg.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = gg; ctx.fillRect(0, 0, W, LT); }
+    ctx.strokeStyle = `rgba(255,110,25,${0.12 * hot * pulse})`; ctx.lineWidth = 9; ctx.stroke(C.all);
+    ctx.strokeStyle = `rgba(255,165,60,${0.32 * hot * pulse})`; ctx.lineWidth = 3.2; ctx.stroke(C.all);
+    const WD = [1.7, 1.2, 0.9, 0.7, 0.55];
+    for (let d = 0; d < 5; d++) { ctx.strokeStyle = `rgba(255,228,172,${0.85 * hot})`; ctx.lineWidth = WD[d]; ctx.stroke(C.paths[d]); }
+    if (WX.heat > 0.15) { ctx.fillStyle = `rgba(255,250,235,${0.9 * hot})`; for (const p of C.tips) { ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, TAU); ctx.fill(); } }
+  }
+  ctx.restore();
+}
+
+// ---------- the 31-EDO floor: a generalized keyboard of hexagons, each key coloured by its pitch class ----------
+function drawFloor31() {
+  const top = TOPH + (LT - TOPH) * 0.6, bot = LT - 2; if (bot - top < 30) return;
+  const hz = top, f = Math.max(W, H) * 0.6, camH = 1.15, camZ = WX.floor.z, cx = W / 2 + MO.px * 24, F = WX.floor;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, hz, W, bot - hz); ctx.clip();
+  const hg = ctx.createLinearGradient(0, hz - 20, 0, hz + 40); hg.addColorStop(0, 'rgba(96,78,170,0)'); hg.addColorStop(0.4, 'rgba(96,78,170,0.22)'); hg.addColorStop(1, 'rgba(96,78,170,0)');
+  ctx.fillStyle = hg; ctx.fillRect(0, hz - 20, W, 60);
+  const R = 0.5, rowH = 1.5 * R, colW = Math.sqrt(3) * R, zN = 0.8, zF = phone ? 11 : 16, r0 = Math.floor((camZ + zN) / rowH), r1 = Math.ceil((camZ + zF) / rowH), glows = [];
+  const VX = [], VZ = []; for (let k = 0; k < 6; k++) { const a = ((30 + 60 * k) * Math.PI) / 180; VX.push(Math.cos(a) * R * 0.88); VZ.push(Math.sin(a) * R * 0.88); }
+  const pulse = 1 + 0.6 * beatPulse;
+  for (let r = r1; r >= r0; r--) {
+    const Zc = r * rowH - camZ; if (Zc < zN) continue;
+    const sy = hz + (f * camH) / Zc; if (sy > bot + 80) continue;
+    const fade = Math.pow(clamp(1 - Zc / zF, 0, 1), 1.25), halfX = (Zc * (W / 2)) / f + colW * 2, qo = r / 2, q0 = Math.floor(-halfX / colW - qo), q1 = Math.ceil(halfX / colW - qo);
+    for (let q = q0; q <= q1; q++) {
+      const Xc = colW * (q + qo), pitch = (((5 * q + 3 * r) % 31) + 31) % 31, hue = (210 + (pitch / 31) * 190) % 360;
+      const d = Math.hypot(Xc, Zc - 5), wave = Math.pow(0.5 + 0.5 * Math.sin(d * 0.72 - t * 2.6), 2), hit = F.hit[pitch] * pulse;
+      const Lg = Math.min(66, (3 + 18 * wave + 52 * hit) * fade + 2);
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) { const Z = Zc + VZ[k], X = Xc + VX[k], x = cx + (f * X) / Z, y = hz + (f * camH) / Z; if (k) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+      ctx.closePath(); ctx.fillStyle = `hsl(${hue.toFixed(1)},${(38 + 30 * wave + 30 * Math.min(1, hit)).toFixed(1)}%,${Lg.toFixed(1)}%)`; ctx.fill();
+      if (Zc < 7) { ctx.strokeStyle = `hsla(${hue.toFixed(1)},90%,${Math.min(92, Lg + 26).toFixed(1)}%,${(0.5 * fade).toFixed(3)})`; ctx.lineWidth = Math.max(1, (f * 0.01) / Zc); ctx.stroke(); }
+      if (F.hit[pitch] > 0.3 && Zc < 14) glows.push([cx + (f * Xc) / Zc, sy, (f * R) / Zc, hue, F.hit[pitch] * fade]);
+    }
+  }
+  ctx.globalCompositeOperation = 'lighter';
+  for (const [x, y, s, h, a] of glows) { const gg = ctx.createRadialGradient(x, y, 0, x, y, s * 2.2); gg.addColorStop(0, `hsla(${h},100%,70%,${0.45 * a})`); gg.addColorStop(1, `hsla(${h},100%,60%,0)`); ctx.fillStyle = gg; ctx.fillRect(x - s * 2.2, y - s * 2.2, s * 4.4, s * 4.4); }
+  ctx.restore();
+}
+function drawWorldMid() { if (skin === 'obsidian' || skin === 'dawn') { drawCracks(); if (M.key === 'tet31') drawFloor31(); } }
+
+// ===== the reel: a fourteen-shot tour of everything, cut like the NIC.LAN reel (each shot has a name, a tuning line and a caption) =====
+// touching anything hands it back to you, and whatever you had set comes back with it
+const REEL = { on: false, i: -1, next: 0, shotT: 0, t0: 0, saved: null, subs: [], flash: 0, bars: 0, total: 0 };
+const SHOTS = [
+  { n: 'Boot', d: 7, tune: 'just · 7-limit · a drone on the root', cap: 'a drone on the root. the voices roll home to their valleys.', go: () => { setMode('just', true); reelLook('dawn', 'mandala'); reelMood('light'); reelVoices(3); } },
+  { n: 'Bloom', d: 7, tune: 'light · consonance first', cap: 'every valley is a little sun. when they all land, the chord blooms.', go: () => lean(1), at: [[3.6, () => chooseRootStep()]] },
+  { n: 'Plate', d: 9, tune: 'cymatics · a centre-driven square plate', cap: 'the chord rings a steel plate. the sand runs off whatever moves and rests on the lines that stay still.', go: () => { SET.cymShape = 'square'; SET.cymPowder = false; reelLook(null, 'cymatics'); cymReset(); } },
+  { n: 'Round', d: 8, tune: 'cymatics · a round plate, bowed at the edge', cap: 'a round plate: diameters and circles. Chladni drew these in 1787.', go: () => { SET.cymShape = 'circle'; cymReset(); }, at: [[4.2, () => { SET.cymPowder = true; }]] },
+  { n: 'Lattice', d: 8, tune: 'cube 3D · 3 × 5 × 7', cap: 'fifths across, thirds up, sevenths back. the lit trail is the evidence.', go: () => { SET.cymPowder = REEL.saved.cymPowder; SET.cymShape = REEL.saved.cymShape; SET.detect = true; reelLook(null, 'cube'); VW.vyaw = 0.9; } },
+  { n: 'Penteract', d: 8, tune: '5D · primes 3, 5, 7, 11, 13', cap: 'five primes, five dimensions, thirty-two ratios on one shape.', go: () => { SET.x5d = true; reelLook(null, 'd5'); } },
+  { n: 'Crack', d: 9, tune: 'obsidian · a held dissonance', cap: 'hold a dissonance and the obsidian cracks.', go: () => { SET.detect = REEL.saved.detect; reelLook('obsidian', 'mandala'); reelMood('lean'); reelHill(); }, at: [[3.1, reelHill], [6.1, reelHill]] },
+  { n: 'Cool', d: 6, tune: 'resolution', cap: 'let it resolve and the glass cools.', go: () => { reelMood('light'); reelRelease(); } },
+  { n: 'Thirty-one', d: 10, tune: '31-EDO · 38.7¢ steps · 25\\31 = 967.7¢, a hair under 7/4', cap: 'thirty-one steps to the octave, Huygens’ tuning. 25\\31 sits a hair under 7/4.', go: () => { WX.crack.grow = 0; reelLook('dawn', 'mandala'); setMode('tet31', true); }, at: [[2.4, () => reelStep(25)], [5.4, () => reelStep(10)]] },
+  { n: 'Weather', d: 13, tune: 'peachfall · peach fall, red rain, mint clearing, night garden', cap: 'the weather follows the music: tension rains, a settled chord clears, a quiet room turns to night.', go: () => { setMode('just', true); reelLook('peachfall', 'mandala'); WX.force = [1, 0, 0, 0]; }, at: [[3.2, () => (WX.force = [0, 1, 0, 0])], [6.4, () => (WX.force = [0, 0, 1, 0])], [9.6, () => (WX.force = [0, 0, 0, 1])]] },
+  { n: 'Glasshouse', d: 8, tune: 'glasshouse · cool air, frost light', cap: 'cool air and frost light. tilt the phone and the ridges lean with you. three spores are hiding.', go: () => { WX.force = null; reelLook('glasshouse', 'mandala'); } },
+  { n: 'Fieldstone', d: 6, tune: 'fieldstone · a carved wooden rosette', cap: 'a stone wall, mint florals, a carved rosette behind the mandala.', go: () => reelLook('fieldstone', 'mandala') },
+  { n: 'Paper', d: 7, tune: 'bw2 · one bit per pixel, then e-ink', cap: 'one bit per pixel: every grey is a pattern of dots.', go: () => reelLook('bw2', 'cymatics'), at: [[3.6, () => reelLook('eink', 'mandala')]] },
+  { n: 'Daybreak', d: 10, tune: 'just · a held 9/8 resolves to 1/1', cap: 'a held 9/8 leans on the root, then resolves. that is the whole story.', go: () => { reelLook('daybreak', 'mandala'); reelMood('light'); reelNineEight(); } }
+];
+REEL.total = SHOTS.reduce((a, s) => a + s.d, 0);
+
+// ---------- what the shots do ----------
+function reelLook(s, v) {
+  if (s && skin !== s) setSkin(s);
+  if (v) { if (v === 'd5') SET.x5d = true; if (viewOn() !== v) setViewMode(v, true); }
+}
+function reelMood(m) {
+  if (m === moodNow()) return;
+  if (SET.frolic) { SET.frolic = false; SET.tease = SET._tease !== undefined ? SET._tease : 0.5; pet.pose = 0; }
+  if (m === 'frolic') { SET.frolic = true; SET._tease = SET.tease; SET.tease = 0.12; }
+  else SET.light = m === 'light';
+  if (m === 'light') for (const v of voices) if (v.wT > 0 && !v.dragging && !v.locked) { v.temp = 0; v.v *= 0.3; v.pinUntil = 0; }
+  syncUI();
+}
+function reelVoices(n) { for (let i = voices.filter(v => v.wT > 0).length; i < n; i++) if (!lightAdd()) break; }
+function reelVoice() { return (act && act.wT > 0 && !act.dragging ? act : null) || voices.find(v => v.wT > 0 && !v.dragging) || null; }
+// park a voice on the nearest hilltop and hold it there: a dissonance on purpose
+function reelHill() {
+  const v = reelVoice(); if (!v) return;
+  let bx = v.x, bd = -1;
+  for (let x = Math.max(80, v.x - 170); x <= Math.min(XMAX - 80, v.x + 170); x += 4) { const d = Dv(v, x); if (d > bd) { bd = d; bx = x; } }
+  v.locked = false; v.glide = null; v.echo = null; v.target = null; v.x = bx; v.v = 0; v.temp = 0; v.pinUntil = t + 2.9; v.flash = 1; act = v;
+}
+function reelRelease() { for (const v of voices) if (v.wT > 0 && !v.dragging) { v.pinUntil = 0; v.temp = 0.05; } }
+// glide a voice onto k steps of 31 above the root, in whichever octave is nearest
+function reelStep(k) {
+  const v = reelVoice(); if (!v || M.key !== 'tet31') return;
+  let best = null, bd = 1e9;
+  for (let o = -2; o <= 4; o++) { const x = xOf(fRoot * Math.pow(2, k / 31 + o)); if (x < 120 || x > XMAX - 120) continue; const d = Math.abs(x - v.x); if (d < bd) { bd = d; best = x; } }
+  if (best == null) return;
+  v.locked = false; v.pinUntil = 0; v.target = null; v.echo = null; v.hist.length = 0; v.histT.length = 0; v.glide = { x0: v.x, x1: best, t0: t, dur: 0.5 + 0.0011 * Math.abs(best - v.x) }; act = v;
+}
+// the NIC.LAN reel's last shot: a held 9/8 appoggiatura resolves to the root
+function reelNineEight() {
+  const v = reelVoice(); if (!v || M.key !== 'just') return;
+  const near = r => { let best = null, bd = 1e9; for (let o = -2; o <= 4; o++) { const x = xOf(fRoot * r * Math.pow(2, o)); if (x < 150 || x > XMAX - 150) continue; const d = Math.abs(x - v.x); if (d < bd) { bd = d; best = x; } } return best; };
+  const x98 = near(9 / 8); if (x98 == null) return;
+  v.locked = false; v.glide = null; v.echo = null; v.target = null; v.x = x98; v.v = 0; v.temp = 0; v.pinUntil = t + 3.8; v.flash = 1; act = v;
+  REEL.subs.push({ at: t + 4.2, fn: () => { const x1 = near(1); if (x1 == null || v.wT === 0) return; v.pinUntil = 0; v.hist.length = 0; v.histT.length = 0; v.glide = { x0: v.x, x1, t0: t, dur: 1.6 }; } });
+}
+
+// ---------- running it ----------
+function reelStart() {
+  if (!entered || REEL.on) return;
+  if (round) skipRound(); if (rail) stopRail(false); if (pump) pump = null; if (LS.src) listenStop(true);
+  REEL.saved = { skin, view: SET.view, cymShape: SET.cymShape, cymPowder: SET.cymPowder, x5d: SET.x5d, detect: SET.detect, mode: M.key, mood: moodNow(), flip: SET.flip, normie: SET.normie };
+  if (SET.normie) { SET.normie = false; SET.flip = SET._flip !== undefined ? SET._flip : true; }
+  REEL.saved.flip = SET.flip; SET.flip = false;
+  REEL.on = true; REEL.i = -1; REEL.next = t + 0.2; REEL.t0 = t + 0.2; REEL.subs = [];
+  if (phone) { setSheet('peek'); $('toast').classList.remove('on'); } else gw.classList.remove('on');
+  if (VIEW.x1 - VIEW.x0 < XMAX - 1) VIEW.tgt = { x0: 0, w: XMAX };
+  $('reelHud').classList.add('on'); syncUI(); jlog('the reel');
+}
+function reelStop(done) {
+  if (!REEL.on) return;
+  REEL.on = false; WX.force = null; REEL.subs = [];
+  const s = REEL.saved;
+  reelRelease();
+  SET.cymShape = s.cymShape; SET.cymPowder = s.cymPowder; SET.detect = s.detect; SET.x5d = s.x5d; SET.flip = s.flip;
+  if (s.normie) setNormie(true); else if (s.mode !== M.key) setMode(s.mode, true);
+  reelMood(s.mood);
+  if (skin !== s.skin) setSkin(s.skin);
+  const v = s.view === 'd5' && !s.x5d ? 'mandala' : s.view; if (viewOn() !== v) setViewMode(v, true);
+  if (viewOn() === 'cymatics') cymReset();
+  $('reelHud').classList.remove('on');
+  if (done) { discover('x-reel'); caption('that was everything. your turn.', 3200); } else caption('your turn.', 1500);
+  persistSoon(); syncUI(); jlog(done ? 'the reel, to the end' : 'the reel, stopped');
+}
+function reelTick(dt) {
+  REEL.bars += ((REEL.on ? 1 : 0) - REEL.bars) * (1 - Math.exp(-dt * 3)); REEL.flash *= Math.exp(-dt * 3.2);
+  if (!REEL.on) return;
+  userIdleUntil = t + 6; lastUserT = Math.max(lastUserT, t - 5);
+  if (t >= REEL.next) {
+    REEL.i++;
+    if (REEL.i >= SHOTS.length) { reelStop(true); return; }
+    const sh = SHOTS[REEL.i]; REEL.shotT = t; REEL.next = t + sh.d;
+    REEL.subs = (sh.at || []).map(([d, fn]) => ({ at: t + d, fn }));
+    try { sh.go(); } catch (e) {}
+    caption(sh.cap, sh.d * 1000 - 700); REEL.flash = 1; haptic(5);
+    $('reelId').textContent = `S${String(REEL.i + 1).padStart(2, '0')} / ${SHOTS.length}`; $('reelName').textContent = sh.n; $('reelTune').textContent = sh.tune;
+  }
+  for (const s of REEL.subs) if (!s.done && t >= s.at) { s.done = true; try { s.fn(); } catch (e) {} }
+  $('reelBar').style.width = (clamp((t - REEL.t0) / REEL.total, 0, 1) * 100).toFixed(2) + '%';
+}
+// letterbox bars and a soft flash at every cut, drawn on the top canvas
+function drawReelFx(g) {
+  if (REEL.bars < 0.01 && REEL.flash < 0.01) return;
+  const b = REEL.bars, top = b * Math.min(H * 0.055, 48), bot = b * Math.min(H * 0.03, 26);
+  g.fillStyle = `rgba(0,0,0,${0.88 * b})`; g.fillRect(0, 0, W, top); g.fillRect(0, H - bot, W, bot);
+  if (REEL.flash > 0.01) {
+    g.save(); g.globalCompositeOperation = 'lighter';
+    const gr = g.createRadialGradient(W / 2, H * 0.4, 0, W / 2, H * 0.4, Math.max(W, H) * 0.7); gr.addColorStop(0, `rgba(255,236,200,${0.22 * REEL.flash})`); gr.addColorStop(1, 'rgba(255,236,200,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H); g.restore();
+  }
+}
+$('reelStop').addEventListener('click', e => { e.stopPropagation(); reelStop(false); });
+['bReel', 'gReel', 'tReel'].forEach(id => $(id).addEventListener('click', e => { e.currentTarget.blur(); if (!tapOk()) return; if (REEL.on) reelStop(false); else reelStart(); }));
+
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;
 const PERF_LOCK = (() => { try { return /[?&]hq\b/.test(location.search); } catch (e) { return false; } })();
@@ -4349,6 +5169,7 @@ function update(dt) {
   conductor();
   rhythmTick();
   listenTick(dt);
+  motionTick(dt); padTick(dt);
   const nowA = aNow();
   while (visQ.length && visQ[0].t <= nowA) { const q = visQ.shift(); stepIdx = q.i; stepFlash = 1; if (q.i % q.n === 0) { beatPulse = 1; pet.jump = Math.max(pet.jump, 0.45 + 0.4 * W5[1]); } }
   stepFlash *= Math.exp(-dt * 7); beatPulse *= Math.exp(-dt * 5);
@@ -4380,7 +5201,7 @@ function update(dt) {
       if (Math.abs(T.w - w) < 0.05 && Math.abs(T.x0 - x0) < 0.05) { setView(T.x0, T.w); VIEW.tgt = null; } else setView(x0, w);
     }
   }
-  viewTick(dt);
+  viewTick(dt); wxTick(dt); reelTick(dt);
   if (zoomLevel() > 1.01) for (const p of PTR.values()) {
     if (p.role !== 'voice') continue;
     const e = 34, w = VIEW.x1 - VIEW.x0, sp = w * 0.9 * dt;
@@ -4389,12 +5210,13 @@ function update(dt) {
     else if (p.x > PX0 + PW - e) { setView(VIEW.x0 + sp * (1 - (PX0 + PW - p.x) / e), w); moved = true; }
     if (moved) { const xr = xFromS(p.x); p.fx = clamp(p.fx + xr - p.lxr, 0, XMAX); p.lxr = xr; p.v.dragX = p.fx; }
   }
-  const SUB = 4, h = dt / SUB;
+  const SUB = Math.max(4, Math.ceil(dt / 0.0042)), h = dt / SUB;   // keep each physics step short even when frames are slow: the valleys are stiff
   for (let k = 0; k < SUB; k++) for (const v of voices) stepVoice(v, h);
+  rollTicks();
   const tau = 0.55 + 0.9 * effTease(), tmode = targetMode();
   for (const v of voices) {
     if (v.wT === 0) continue;
-    const free = !v.dragging && t >= v.pinUntil, tm = tmode && v.target != null;
+    const free = !v.dragging && !v.glide && t >= v.pinUntil, tm = tmode && v.target != null;
     if (free) v.temp *= Math.exp(-dt / tau);
     v.hist.push(v.x); v.histT.push(t);
     while (v.histT.length && t - v.histT[0] > 0.4) { v.hist.shift(); v.histT.shift(); }
@@ -4442,7 +5264,9 @@ function update(dt) {
         if (LIGHT() && live.length >= 2) { discover('x-light'); aurora = Math.max(aurora, 0.35); }
         if (M.key === 'just' || M.key === 'bp') discoverCh(chordNow.str);
         else if (M.key === 'gamelan') { if (chordNow.ks && chordNow.ks.length >= 3) discover('g-chord'); }
-        else if (chordNow.ks && chordNow.ks.filter(k => k !== 0 && k !== 5).length >= 2) discover('t-nopiano');
+        else if (M.key === 'tet10' && chordNow.ks && chordNow.ks.filter(k => k !== 0 && k !== 5).length >= 2) discover('t-nopiano');
+        else if (M.key === 'tet31' && chordNow.ks && [10, 18, 25].every(k => chordNow.ks.includes(k))) discover('w-chord');
+        gpRumble(0.25, 0.05, 110);
         if (live.length >= 2) award(10 * live.length, MX, MY - MR * 0.4, 'chord');
         emit('chord', { str: chordNow.str, n: live.length });
       }
@@ -4463,7 +5287,7 @@ function update(dt) {
     if (!era.cap && t > era.endAt + 1.3) { era.cap = true; caption("1955 isn't ready for that yet. its kids will be.", 5200); discover('x-1955'); }
     if (t > era.endAt + 4.2) { const pv = era.prev, pr = era.prevRhy; era = null; for (const v of voices) { v.target = null; v.locked = false; v.temp = 0.2; } if (pv !== M.key) setMode(pv, true); rhy.on = pr; rhy.nextT = 0; syncUI(); }
   }
-  if (toastFlush && t >= toastFlush) { showToast(toastQ.splice(0, 4)); toastFlush = 0; toastHideAt = t + 7; }
+  if (toastFlush && t >= toastFlush && !(REEL.on && phone)) { showToast(toastQ.splice(0, 4)); toastFlush = 0; toastHideAt = t + 7; }
   if (toastHideAt && t >= toastHideAt) { $('toast').classList.remove('on'); toastHideAt = 0; if (toastQ.length) toastFlush = t + 0.9; }
   if (hintOffAt && t > hintOffAt) hideHint();
   if (entered && t - lastUserT > 30 && t > nextTryT && !$('hint').classList.contains('on')) { const pool = CAT.filter(c => !found.has(c.id) && (c.mode === 'any' || c.mode === M.key)); if (pool.length) showHint('try: ' + pool[(Math.random() * pool.length) | 0].hint, 8); nextTryT = t + 45; }
@@ -4532,6 +5356,7 @@ function boot(hotData) {
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
   requestAnimationFrame(frame);
 }
+$('enterReel').addEventListener('click', () => { $('enter').click(); setTimeout(reelStart, 1400); });
 $('enter').addEventListener('click', e => {
   if (entered) return;
   entered = true; e.currentTarget.blur();
@@ -4553,10 +5378,15 @@ try {
 // a read-only window for tests, only with ?debug in the address
 try {
   if (/[?&]debug\b/.test(location.search)) window.__andso = {
-    voices: () => voices.filter(v => v.wT > 0).map(v => ({ x: +v.x.toFixed(2), c: +v.c.toFixed(2), lab: v.lab, locked: v.locked, glide: !!v.glide, echo: v.echo })),
+    voices: () => voices.filter(v => v.wT > 0).map(v => ({ x: +v.x.toFixed(2), c: +v.c.toFixed(2), lab: v.lab, locked: v.locked, glide: !!v.glide, echo: v.echo, drag: !!v.dragging })),
     ls: () => ({ src: LS.src, f: +LS.f.toFixed(2), conf: +LS.conf.toFixed(3), phrases: LS.phrases, lines: LS.lines.slice(), note: !!LS.note, roomC: LS.roomC, act: LS.lastAction, rms: +LS.rms.toFixed(4), dispX: LS.dispX }),
     state: () => ({ t: +t.toFixed(2), root: +fRoot.toFixed(3), tune: +TUNE.toFixed(5), Rs: +Rs.toFixed(4), chord: chordNow && chordNow.str, mood: moodNow(), mode: M.key, skin, found: [...found], score: GAME.score }),
-    listenStart, listenStop, setFollow, lean, setMood, setMode, setSkin, setViewMode, setX5d,
+    listenStart, listenStop, setFollow, lean, setMood, setMode, setSkin, setViewMode, setX5d, reelStart, reelStop,
+    mo: () => ({ twistA: +MO.twistA.toFixed(1), sinceShake: +(performance.now() / 1000 - MO.shakeT).toFixed(2), sinceTwist: +(performance.now() / 1000 - MO.twistT).toFixed(2), on: MO.on, live: MO.live, sign: MO.sign, gx: +MO.gx.toFixed(3), gy: +MO.gy.toFixed(3), tx: +MO.tx.toFixed(3), ty: +MO.ty.toFixed(3), lean: +MO.lean.toFixed(2), rolling: MO.rolling, hops: MO.hops, busy: +MO.busy.toFixed(2), gesture: MO.gesture, hz: Math.round(MO.hz) }),
+    wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),
+    hill: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; let bx = v.x, be = -1; for (let x = Math.max(160, v.x - 320); x <= Math.min(XMAX - 160, v.x + 320); x += 4) { const d = Dv(v, x), e = (d - wxFloor(v, x, d)) / D0; if (e > be) { be = e; bx = x; } } return { x: bx, X: xToS(bx), e: +be.toFixed(3) }; },
+    pair: (x1, x2) => +(dTones(fOf(x1), fOf(x2)) / D0).toFixed(3), wxForce: f => { WX.force = f || null; }, crack: g => { WX.crack.grow = g; WX.crack.hotT = t; },
+    reel: () => ({ on: REEL.on, i: REEL.i, name: REEL.i >= 0 && REEL.i < SHOTS.length ? SHOTS[REEL.i].n : '', total: REEL.total }),
     view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
     box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),
     geo: () => ({ W, H, LT, LB, SH, PX0, PW, DPR, phone, TOPH }),
