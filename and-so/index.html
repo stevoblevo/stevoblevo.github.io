@@ -1668,9 +1668,14 @@ const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'v
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
+const LIGHT_LOOKS = ['daybreak', 'story', 'eink', 'bw2'];
 function snapshot() {
   const set = {}; PREF_KEYS.forEach(k => (set[k] = SET[k]));
-  return { v: 2, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin, set,
+  let sk = skin;
+  // the reel borrows looks and views for a few seconds each: what gets saved is whatever you had before it started,
+  // so leaving the page mid-reel never brings you back to its paper or daylight shot
+  try { if (REEL.on && REEL.saved) { const r = REEL.saved; sk = r.skin; ['view', 'cymShape', 'cymPowder', 'x5d', 'detect', 'flip', 'light', 'tease'].forEach(k => { if (k in r && k in set) set[k] = r[k]; }); } } catch (e) {}
+  return { v: 2, sv: 61, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin: sk, set,
     game: { score: GAME.score, best: GAME.best, rounds: GAME.rounds, stars: GAME.stars, qdone: GAME.qdone, bestTime: GAME.bestTime || 0 }, stamp: Date.now() };
 }
 function applySave(s, preferPrefs) {
@@ -1680,7 +1685,8 @@ function applySave(s, preferPrefs) {
   if (s.unlockAll) allUnlocked = true;
   if (s.game) { const g = s.game; GAME.score = Math.max(GAME.score, +g.score || 0); GAME.best = Math.max(GAME.best, +g.best || 0); GAME.rounds = Math.max(GAME.rounds, +g.rounds || 0); GAME.stars = Math.max(GAME.stars, +g.stars || 0); GAME.qdone = Math.max(GAME.qdone, +g.qdone || 0); if (g.bestTime && (!GAME.bestTime || g.bestTime < GAME.bestTime)) GAME.bestTime = g.bestTime; }
   if (preferPrefs && s.set) PREF_KEYS.forEach(k => { if (s.set[k] !== undefined && typeof s.set[k] === typeof SET[k]) SET[k] = s.set[k]; });
-  if (preferPrefs && s.skin && s.lit) savedSkin = s.skin;
+  // a light look saved before 6.1 (the old light-host default, or a reel cut short) is not kept: those come back dark once
+  if (preferPrefs && s.skin && s.lit && (!LIGHT_LOOKS.includes(s.skin) || (+s.sv || 0) >= 61)) savedSkin = s.skin;
 }
 function loadLocal() { try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { applySave(JSON.parse(raw), true); return true; } } catch (e) {} return false; }
 let localT = 0;
@@ -5102,7 +5108,7 @@ function reelNineEight() {
 function reelStart() {
   if (!entered || REEL.on) return;
   if (round) skipRound(); if (rail) stopRail(false); if (pump) pump = null; if (LS.src) listenStop(true);
-  REEL.saved = { skin, view: SET.view, cymShape: SET.cymShape, cymPowder: SET.cymPowder, x5d: SET.x5d, detect: SET.detect, mode: M.key, mood: moodNow(), flip: SET.flip, normie: SET.normie };
+  REEL.saved = { skin, view: SET.view, cymShape: SET.cymShape, cymPowder: SET.cymPowder, x5d: SET.x5d, detect: SET.detect, mode: M.key, mood: moodNow(), flip: SET.flip, normie: SET.normie, light: SET.light, tease: SET.tease };
   if (SET.normie) { SET.normie = false; SET.flip = SET._flip !== undefined ? SET._flip : true; }
   REEL.saved.flip = SET.flip; SET.flip = false;
   REEL.on = true; REEL.i = -1; REEL.next = t + 0.2; REEL.t0 = t + 0.2; REEL.subs = [];
@@ -5345,8 +5351,8 @@ function boot(hotData) {
   loadLocal();
   if (hotData && hotData.v) applySave(hotData, true);
   REF = SET.ref / 440;
-  const rootTheme = document.documentElement.dataset.theme, hostLight = rootTheme === 'light' || (!rootTheme && mq('(prefers-color-scheme: light)'));
-  skin = SKINS.includes(savedSkin) ? savedSkin : hostLight ? 'daybreak' : 'dawn';
+  // AND SO starts dark (dawn) wherever it opens; the light looks are a tap away in the sheet, and a light look you pick is kept
+  skin = SKINS.includes(savedSkin) ? savedSkin : 'dawn';
   document.body.dataset.skin = skin;
   $('stText').value = STORY;
   $('enterFine').insertAdjacentText('beforeend', ` there are ${CAT.length} things to find.`);
