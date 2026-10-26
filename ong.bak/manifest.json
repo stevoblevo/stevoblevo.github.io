@@ -1,0 +1,61 @@
+{
+  "what": "ong.bak: frozen, playable copies made by sae-kirby",
+  "uri": "sae://ong.bak",
+  "snapshots": [
+    {
+      "name": "and-so",
+      "version": "6.1",
+      "title": "AND SO",
+      "note": "Dark by default. Tilt, shake and twist reach the world; a guided reel; 31-EDO; glasshouse and peachfall looks; the demo hummer joins after a while.",
+      "source": "and-so/index.html",
+      "sha256": "b2ef5914e46126fc0839787cf5d2bd0adabcffc2f1e96bb5fe8aaeb99573da7e",
+      "bytes": 431542,
+      "frozen_at": "2026-10-26T07:18:47Z",
+      "sheet": "sheet.jpg",
+      "shots": [
+        {
+          "view": "phone",
+          "state": "title",
+          "file": "phone-title.jpg",
+          "w": 390,
+          "h": 844
+        },
+        {
+          "view": "phone",
+          "state": "play",
+          "file": "phone-play.jpg",
+          "w": 390,
+          "h": 844
+        },
+        {
+          "view": "laptop",
+          "state": "title",
+          "file": "laptop-title.jpg",
+          "w": 1440,
+          "h": 900
+        },
+        {
+          "view": "laptop",
+          "state": "play",
+          "file": "laptop-play.jpg",
+          "w": 1440,
+          "h": 900
+        },
+        {
+          "view": "4k",
+          "state": "title",
+          "file": "4k-title.jpg",
+          "w": 3840,
+          "h": 2160
+        },
+        {
+          "view": "4k",
+          "state": "play",
+          "file": "4k-play.jpg",
+          "w": 3840,
+          "h": 2160
+        }
+      ]
+    }
+  ]
+}

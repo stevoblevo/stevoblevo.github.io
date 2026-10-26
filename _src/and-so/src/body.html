@@ -1,0 +1,236 @@
+<canvas id="c" aria-label="AND SO: a microtonal instrument and game"></canvas>
+<canvas id="c3" aria-hidden="true"></canvas>
+<canvas id="c2" aria-hidden="true"></canvas>
+<div id="hit" aria-hidden="true"></div>
+<div id="probe" aria-hidden="true"></div>
+
+<div id="overlay">
+  <div class="big">AND SO</div>
+  <div class="sub serif">every valley is a little sun</div>
+  <button id="enter" class="btn">Enter</button>
+  <button id="enterReel" class="btn2">or watch the reel first</button>
+  <div class="ver">version 6 · tilt, shake &amp; twist · the reel · 31-EDO · glasshouse &amp; peachfall</div>
+  <div class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree.<br>hum or sing and it follows you (a demo hummer goes first). use as many fingers as you like. sound on, headphones welcome.</div>
+</div>
+
+<div id="cap"></div>
+<div id="hint"></div>
+<div id="toast" aria-live="polite"></div>
+
+<div id="top">
+  <button class="chip" id="tMode" aria-label="change tuning"><i class="dot"></i><span id="tModeName">just</span></button>
+  <button class="chip" id="tQuest" aria-label="quests">◇ <b id="tQuestN">0/3</b></button>
+  <button class="chip hidden" id="tTilt" aria-label="spirit level: tap to set level here, hold to switch tilt off"><i></i></button>
+  <button class="chip" id="tReel" aria-label="watch the reel">▶</button>
+  <button class="chip ghost" id="tScore" aria-label="score">✦ <b id="tScoreN">0</b><span id="tCombo"></span></button>
+  <button class="chip" id="tSound" aria-label="sound">♪ on</button>
+</div>
+
+<div id="hud">
+  <button class="ctl" id="bReel" title="W">▶ reel</button>
+  <button class="ctl" id="bListen" title="V">◎ listen</button>
+  <button class="ctl" id="bLean" title="space">glide</button>
+  <button class="ctl" id="bNext" title="N">next chord</button>
+  <button class="ctl" id="bPump" title="P">comma pump</button>
+  <button class="ctl" id="bBeat" title="B">beat: on</button>
+  <button class="ctl" id="bRound" title="R">▶ round</button>
+  <button class="ctl hidden" id="bRail" title="Y">rail</button>
+  <button class="ctl" id="bNorm" title="O">normie: off</button>
+  <button class="ctl" id="bFrol" title="F">lean mood</button>
+  <button class="ctl" id="bRep" title="T">↺ 10s</button>
+  <button class="ctl" id="bGam" title="G">gamut</button>
+  <button class="ctl" id="bAuto" title="A">saedo: on</button>
+  <button class="ctl" id="bSnd" title="M">sound: on</button>
+</div>
+
+<div id="quests" aria-live="polite">
+  <div class="qh"><span>quests</span><button id="qHide" aria-label="hide quests">hide</button></div>
+  <div id="qList"></div>
+</div>
+
+<div id="round">
+  <span id="rLabel">round</span><span id="rTime">0.0s</span>
+  <button class="pill" id="rHear">hear it</button>
+  <button class="pill" id="rSkip">skip</button>
+</div>
+<div id="result" role="dialog" aria-label="round result">
+  <div id="resStars">★★★</div>
+  <div id="resTitle">constellation complete</div>
+  <div id="resLine"></div>
+  <div class="btns"><button class="pill on" id="resNext">next round</button><button class="pill" id="resDone">done</button></div>
+</div>
+
+<div id="gw" role="dialog" aria-label="Gamut: tunings, settings and field guide">
+  <div class="wh" id="gwh"><span class="wt">GAMUT</span><span class="ws">tunings &amp; field guide</span><button class="wbtn" id="gwMin" aria-label="collapse">–</button></div>
+  <div class="grab" id="grab"><i></i></div>
+  <div class="dock" id="dock">
+    <button class="dk" id="dListen"><span>◎</span>listen</button>
+    <button class="dk" id="dLean"><span>∿</span>glide</button>
+    <button class="dk" id="dNext"><span>↻</span>chord</button>
+    <button class="dk" id="dRound"><span>✧</span>round</button>
+    <button class="dk" id="dBeat"><span>♩</span>beat</button>
+    <button class="dk" id="dMood"><span>☼</span>light</button>
+    <button class="dk" id="dMore"><span>⌃</span>more</button>
+  </div>
+  <div class="wb" id="wb">
+    <div class="modes">
+      <button class="mode on" data-m="just"><b>just</b><span>7-limit · harmonic</span></button>
+      <button class="mode" data-m="gamelan"><b>gamelan</b><span>slendro · ombak</span></button>
+      <button class="mode" data-m="bp"><b>Bohlen–Pierce</b><span>no octaves</span></button>
+      <button class="mode" data-m="tet10"><b>10-TET</b><span>Sethares spectrum</span></button>
+      <button class="mode" data-m="tet31"><b>31-EDO</b><span>Huygens · near-pure thirds</span></button>
+      <button class="mode" data-m="easy"><b>easy listening</b><span>12-TET · chords · a beat</span></button>
+    </div>
+    <p class="blurb" id="gwBlurb"></p>
+    <label class="row"><span>auto-flip micro ⇄ easy</span><input type="checkbox" class="sw" id="sFlip" checked></label>
+
+    <div class="sec">mood</div>
+    <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
+    <div class="note">light: consonance first; voices glide from one sweet spot to the next and a soft bed holds the root. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
+
+    <div class="sec">the reel</div>
+    <div class="btns"><button class="pill" id="gReel">▶ watch the reel</button></div>
+    <div class="note">fourteen shots: every look, every view of the sound box, the 31-step floor, the weather, a crack in the obsidian. about two minutes. touch anything to take over.</div>
+
+    <div class="sec">motion</div>
+    <label class="row"><span>tilt, shake, twist, flick</span><input type="checkbox" class="sw" id="sMotion" checked></label>
+    <label class="row"><span>tilt rolls the voices</span><input type="checkbox" class="sw" id="sRoll" checked></label>
+    <label class="row"><span>tilt strength</span><input type="range" id="sTiltK" min="0" max="100" value="50"></label>
+    <div class="btns"><button class="pill" id="mLevel">level it here</button><button class="pill hidden" id="mAllow">allow motion</button></div>
+    <div class="note" id="mNote">tilt rolls the voices and leans the sky. shake for a new chord, twist your wrist to turn the root, flick to strum.</div>
+    <div class="note">the bubble on the top bar is a spirit level: tap it to set level, hold it to switch tilt off. a game controller works too: left stick moves a voice, A glides, B moves the root, X adds a voice, Y changes the view, the bumpers pick a voice, the triggers zoom.</div>
+
+    <div class="sec">listen</div>
+    <div class="btns"><button class="pill" id="lDemo">▶ demo hummer</button><button class="pill" id="lMic">◎ my microphone</button><button class="pill hidden" id="lStop">■ stop listening</button></div>
+    <div class="btns" id="lFollow"><button class="pill on" data-fl="harmony">harmonize</button><button class="pill" data-fl="echo">echo me</button><button class="pill" data-fl="root">be the root</button></div>
+    <div class="note" id="lNote">the demo hums first, so you can hear what listening does. the microphone stays off until you press it; pitch is worked out on this page and nothing is recorded or sent. headphones help it hear only you.</div>
+    <div class="note jl" id="lLines"></div>
+
+    <div class="sec">sound box</div>
+    <div class="btns" id="viewBtns"><button class="pill on" data-view="mandala">mandala</button><button class="pill" data-view="cymatics">cymatics</button><button class="pill" data-view="cube">cube 3D</button><button class="pill hidden" data-view="d5">5D</button></div>
+    <div id="cymOpts">
+      <div class="btns" id="cymShape"><button class="pill on" data-shape="square">square plate</button><button class="pill" data-shape="circle">round plate</button></div>
+      <label class="row"><span>glow the still lines</span><input type="checkbox" class="sw" id="sCymLines" checked></label>
+      <label class="row"><span>fine powder (goes the other way)</span><input type="checkbox" class="sw" id="sCymPowder"></label>
+      <div class="btns"><button class="pill" id="cymSprinkle">fresh sand</button></div>
+      <div class="note">a Chladni plate, worked out from the physics: the chord shakes a metal plate from a stud at its centre, the sand is kicked off wherever the plate moves and comes to rest on the lines that stay still. higher notes, finer figures. tap the plate to sprinkle more; scroll over it to drive it harder.</div>
+    </div>
+    <div class="note" id="viewNote">tap the chip above the sound box, or press X, to change what it shows.</div>
+
+    <div class="sec">rounds</div>
+    <div class="btns"><button class="pill on" id="gRound">▶ play a round</button></div>
+    <div class="note" id="gStats">cover every target peg with a voice at rest. under 12 seconds earns three stars. every third round is by ear.</div>
+
+    <div class="sec">field guide</div>
+    <div class="prog"><span id="gProg">0 / 0</span><span class="pbar2"><i id="gBar"></i></span></div>
+    <div class="glist" id="glist"></div>
+    <div class="unl" id="unl"></div>
+    <button class="reset" id="bSkip">impatient? unlock everything</button>
+    <button class="reset" id="gReset">start the field guide over</button>
+    <div class="note" id="gSave">kept in this browser.</div>
+
+    <div class="sec">gestures</div>
+    <div class="note">one finger per voice, up to four. drag the scale under the terrain to scroll, pinch it or drag up on it to zoom, tap it to hear a pitch, double-tap to jump in. turn the mandala to change chord; pinch it to change the beat. drag across the sky to play the harp. three fingers lean everything. on a phone: tilt to roll the voices, shake for a new chord, twist to turn the root, flick to strum.</div>
+
+    <div class="sec">5d lattice</div>
+    <label class="row"><span>tuning</span><input type="range" id="sTune" min="0" max="100" value="50"></label>
+    <div class="note">drag the five glowing nodes around the mandala, or use the sliders: tuning, warmth, shimmer, space, pace.</div>
+    <label class="row"><span>inverted-U regulator</span><input type="checkbox" class="sw" id="sReg" checked></label>
+    <div class="note" id="regNote">keeps complexity in the middle band.</div>
+
+    <div class="sec">pandora's box · 5d</div>
+    <div id="boxLocked" class="lock">locked. it opens at 3 finds.</div>
+    <div id="boxWrap"><canvas id="pad" class="pad" width="480" height="400"></canvas>
+      <div class="btns"><button class="pill" id="bOpen">open the box</button><button class="pill" id="bAutoV">auto vibe</button><button class="pill" id="bCenter">center</button></div>
+      <div class="note">drag the puck. five vibes, blended: micro, groove, glow, drift, chaos. the music and Saelion both follow it.</div></div>
+
+    <div class="sec">headphones</div>
+    <label class="row"><span>binaural split</span><input type="checkbox" class="sw" id="sHp"></label>
+    <label class="row"><span>shimmer</span><input type="range" id="sShim" min="0" max="100" value="45"></label>
+    <label class="row"><span>space</span><input type="range" id="sSpace" min="0" max="100" value="50"></label>
+    <label class="row"><span>sparkle echoes</span><input type="checkbox" class="sw" id="sSpark" checked></label>
+    <div class="note">split sends each voice's two tunings to different ears, so the shimmer happens inside your head.</div>
+
+    <div class="sec">feel</div>
+    <label class="row"><span>tease</span><input type="range" id="sTease" min="0" max="100" value="50"></label>
+    <label class="row"><span>pace</span><input type="range" id="sPace" min="0" max="100" value="45"></label>
+    <label class="row"><span>warmth</span><input type="range" id="sWarm" min="0" max="100" value="55"></label>
+    <label class="row"><span>volume</span><input type="range" id="sVol" min="0" max="100" value="70"></label>
+    <label class="row"><span>birdsong</span><input type="checkbox" class="sw" id="sBird" checked></label>
+    <label class="row"><span>chimes</span><input type="checkbox" class="sw" id="sChime" checked></label>
+    <label class="row"><span>haptics</span><input type="checkbox" class="sw" id="sHap" checked></label>
+
+    <div class="sec">reference pitch</div>
+    <div class="btns"><button class="pill" data-ref="432">432 Hz</button><button class="pill on" data-ref="440">440 Hz</button><input class="txt" id="refC" type="number" min="400" max="480" step="0.1" value="440" style="max-width:88px" aria-label="custom reference pitch"><button class="pill" id="refSet">set</button></div>
+    <div class="note">432 Hz is 31.8¢ flat of 440. it doesn't heal anything; it's just lower.</div>
+
+    <div class="sec">sound layers</div>
+    <label class="row"><span>church bells, faint</span><input type="checkbox" class="sw" id="sBells" checked></label>
+    <label class="row"><span>wind chimes</span><input type="checkbox" class="sw" id="sWind"></label>
+    <label class="row"><span>rain</span><input type="checkbox" class="sw" id="sRain"></label>
+    <label class="row"><span>distant train</span><input type="checkbox" class="sw" id="sTrain"></label>
+    <div class="note">all tuned to the current scale. the bells keep their minor-third tierce, which is why bells sound like bells.</div>
+
+    <div class="sec">rhythm &amp; geometry</div>
+    <label class="row"><span>beat</span><input type="checkbox" class="sw" id="sRhy" checked></label>
+    <div class="note" id="tupNote"></div>
+
+    <div class="sec">black hole</div>
+    <div id="holeLocked" class="lock">locked. it forms at 6 finds.</div>
+    <label class="row" id="holeRow"><span>black hole</span><input type="checkbox" class="sw" id="sHole"></label>
+    <div class="note" id="holeNote">drag it around the sky. lower is stronger. it bends pitch, and it eats voices that sit too close.</div>
+
+    <div class="sec">saelion</div>
+    <div id="petLocked" class="lock">an egg. it hatches at your first find.</div>
+    <div id="petWrap">
+      <div class="btns" id="formBtns"><button class="pill on" data-f="bunny">bunny</button><button class="pill" data-f="tree">tree octopus</button><button class="pill" data-f="pixie">butterfly pixie</button><button class="pill" data-f="auto">follow the box</button></div>
+      <label class="row"><span>lock its form</span><input type="checkbox" class="sw" id="sPetLock"></label>
+      <div class="btns"><button class="pill" id="bPose">change pose</button><button class="pill" id="bTalk">trivia</button></div>
+      <div class="btns hidden" id="askRow"><input class="txt" id="askIn" maxlength="200" placeholder="ask Saelion anything" aria-label="question for Saelion"><button class="pill" id="askBtn">ask</button></div>
+      <div id="askOut" aria-live="polite"></div>
+      <div class="note">drag it anywhere. tap for trivia, double-tap to change pose.</div>
+    </div>
+
+    <div class="sec">vibe</div>
+    <div class="btns" id="themeBtns"><button class="pill on" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
+
+    <div class="sec">record</div>
+    <div class="btns"><button class="pill" id="rRec">● record</button><button class="pill" id="rRep">↺ replay last 10s</button></div>
+    <div class="note" id="recNote">recordings save as .webm. replay runs here on the page.</div>
+
+    <div class="sec">saedo's journal</div>
+    <div class="note jl" id="jLines">nothing yet.</div>
+    <div class="btns"><button class="pill" id="jExp">save the transcript</button><button class="pill" id="jCopy">copy it</button></div>
+
+    <div class="sec">storybook</div>
+    <div class="btns"><button class="pill" id="stOpen">open the storybook</button></div>
+
+    <div class="sec">presets</div>
+    <select class="sel" id="pSel" aria-label="presets"></select>
+    <div class="btns"><button class="pill" id="pLoad">load</button><button class="pill" id="pDel">delete</button></div>
+    <div class="btns"><input class="txt" id="pName" placeholder="name this vibe" maxlength="28" aria-label="preset name"><button class="pill" id="pSave">save</button></div>
+
+    <div class="sec">experiments</div>
+    <label class="row"><span>5D lattice · 3, 5, 7, 11, 13</span><input type="checkbox" class="sw" id="sX5d"></label>
+    <div id="x5dOpts">
+      <label class="row"><span>5D turning speed</span><input type="range" id="sX5dSpeed" min="0" max="100" value="40"></label>
+      <label class="row"><span>5D depth</span><input type="range" id="sX5dDepth" min="0" max="100" value="50"></label>
+    </div>
+    <label class="row"><span>detective mode</span><input type="checkbox" class="sw" id="sDetect"></label>
+    <div class="note">off until you switch it on. the 5D view is a penteract: 32 ratios, one prime per axis, projected 5D → 4D → 3D → your screen. drag to turn it, shift-drag to twist the hidden dimensions. detective mode names every node and lights the trail from the root to each voice, one prime step at a time. in any view, tap a node to hear it and read its factors, cents and Tenney height.</div>
+
+    <div class="sec">start over</div>
+    <div class="btns"><button class="pill" id="bRestart">restart the music</button></div>
+    <div class="foot">gamut: from <i>gamma ut</i>, the bottom note of Guido's hexachords. later, the whole range.</div>
+  </div>
+</div>
+
+<div id="reelHud" role="status" aria-live="polite"><span id="reelId">S01 / 14</span><b id="reelName">Boot</b><span id="reelTune"></span><span class="rbar"><i id="reelBar"></i></span><button id="reelStop" aria-label="stop the reel">■</button></div>
+<button id="viewChip" aria-label="change what the sound box shows"><i>◈</i><span id="viewChipName">mandala</span><small>▸</small></button>
+<div id="zc"><button id="zOut" aria-label="zoom out">−</button><span id="zLab">1.0×</span><button id="zIn" aria-label="zoom in">+</button><button id="zReset" aria-label="reset zoom">⟲</button></div>
+<div id="tabs" class="hidden"><button class="tab on" data-tab="resonance">Resonance</button><button class="tab" data-tab="waveform">Waveform</button><button class="tab" data-tab="spectrum">Spectrum</button></div>
+<div id="pbar" class="hidden"><button id="pbPlay" class="pbp" aria-label="pause">❚❚</button><select id="pbScene" class="sel pbs" aria-label="scene"></select><span id="pbTime">0:00</span><span class="pbv"><span>Master volume</span><input type="range" id="pbVol" min="0" max="100" value="70" aria-label="master volume"><b id="pbVolP">70%</b></span><button id="pbRec" class="pill">● rec</button><button id="pbRep" class="pill">↺ 10s</button><button id="pbStop" class="pbstop">■ Stop</button></div>
+
+<div id="story" role="dialog" aria-label="storybook"><h3>the field guide, read aloud</h3><textarea id="stText" spellcheck="false" aria-label="story text"></textarea>
+  <div class="btns"><button class="pill" id="stRead">read to me</button><button class="pill hidden" id="stNew">write a new one</button><button class="pill" id="stStop">stop</button><button class="pill" id="stClose">close</button></div>
+  <div class="note" id="stVoice">prefers an Irish English voice if your device has one. paste any story in.</div></div>
