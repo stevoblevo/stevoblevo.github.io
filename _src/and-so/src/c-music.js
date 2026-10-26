@@ -24,7 +24,7 @@ function Dv(v, x) {
   for (const o of voices) { if (o === v || o.w < 0.001) continue; const dx = (x - o.x) / PSW; d += (dTones(f, fOf(o.x)) + PSA * Math.exp(-dx * dx)) * o.w; }
   return d;
 }
-const targetMode = () => !!((M.easy || era) && !round);
+const targetMode = () => !!((M.easy || era || JAM.on) && !round);
 function stepVoice(v, h) {
   if (v.wT === 0 || v.locked) return;
   if (v.dragging) { v.glide = null; v.echo = null; if (v.dragX != null) v.x += (v.dragX - v.x) * (1 - Math.exp(-h * 45)); return; }
@@ -83,6 +83,7 @@ function lockVoice(v) {
   if (fresh) {
     v.lastChimeX = v.x; v.lastChimeT = t; v.bounce = 1;
     audio.chime(fOf(v.x) * M.chimeR, 0.024, 0);
+    if (plucky()) audio.pluck(v, 1.35, 0.75, 0);
     const b = ballPos(v);
     for (let i = 0; i < (reduceMotion ? 6 : 14) * qScale; i++) sparks.push({ x: b.X, y: b.Y, vx: rand(-40, 40), vy: rand(-110, -25), life: rand(0.6, 1.3), max: 1.3, c: v.col });
     rings.push({ r: MR * 0.95, v: 140, life: 1.2, max: 1.2, c: v.col });
@@ -253,7 +254,7 @@ function easyAdvance() {
 // ---------- 1955, by way of 1928 ----------
 const FORM55 = [0, 0, 0, 0, 1, 1, 0, 0, 2, 1, 0, 2], R55 = [1, 4 / 3, 3 / 2], BLUES = [1, 7 / 6, 4 / 3, 3 / 2, 7 / 4, 2, 7 / 3, 8 / 3, 3];
 function startEra() {
-  if (era || !entered || round) return;
+  if (era || !entered || round || JAM.on) return;
   era = { prev: M.key, prevRhy: rhy.on, bar: -1, ch: 0, base: 116.54, endAt: 0, cap: false };
   if (M.key !== 'just') setMode('just', true);
   rhy.on = true; rhy.nextT = 0; rhy.step = 0; flash55 = 1; peak = 0.6;
@@ -288,7 +289,7 @@ function play55(i, t0, spb) {
 }
 
 // ---------- rhythm: medium syncopation, repetition, then a turn ----------
-const rhyActive = () => !!(rhy.on && A.ac && entered && !paused && (era || M.easy || W5[1] > 0.08));
+const rhyActive = () => !!(A.ac && entered && !paused && (JAM.on || (rhy.on && (era || M.easy || W5[1] > 0.08))));
 function makePattern(n) {
   const N = 4 * n, sync = (0.22 + 0.32 * W5[1] + 0.14 * W5[4]) * (LIGHT() ? 0.6 : 1), P = { n, k: Array(N).fill(0), s: Array(N).fill(0), h: Array(N).fill(0), o: Array(N).fill(0), a: Array(N).fill(0) };
   P.k[0] = 1; if (Math.random() < 0.65) P.k[2 * n] = 0.85;
@@ -314,6 +315,7 @@ function playStep(i, t0, n, spb) {
 }
 function onBar(t0, n) {
   rhy.bar++;
+  if (JAM.on) { jamBar(t0); return; }
   if (era) { eraBar(t0); return; }
   if (!rhy.base || rhy.base.n !== n || rhy.bar % 4 === 0) rhy.base = makePattern(n);
   rhy.pat = rhy.bar % 4 === 3 ? mutate(rhy.base, n) : rhy.base;
@@ -323,7 +325,7 @@ function rhythmTick() {
   if (!rhyActive()) { rhy.nextT = 0; return; }
   const now = aNow();
   if (!rhy.nextT || rhy.nextT < now - 0.3) { rhy.nextT = now + 0.08; rhy.step = 0; }
-  const n = era ? 3 : tuplet, bpm = era ? 152 : clamp((M.easy ? 80 : 68) + 42 * W5[1] + 16 * (effPace() - 0.45) - 10 * W5[3], 58, 132);
+  const n = JAM.on ? 3 : era ? 3 : tuplet, bpm = JAM.on ? JAM.bpm : era ? 152 : clamp((M.easy ? 80 : 68) + 42 * W5[1] + 16 * (effPace() - 0.45) - 10 * W5[3], 58, 132);
   rhy.bpm = bpm;
   const spb = 60 / bpm / n, N = 4 * n;
   let guard = 0;
@@ -331,13 +333,45 @@ function rhythmTick() {
     const i = rhy.step % N;
     if (i === 0) onBar(rhy.nextT, n);
     if (!rhyActive()) break;
-    if (era) play55(i, rhy.nextT, spb); else playStep(i, rhy.nextT, n, spb);
+    if (JAM.on) jamStep(i, rhy.nextT, n, spb); else if (era) play55(i, rhy.nextT, spb); else playStep(i, rhy.nextT, n, spb);
+    if (plucky() && !JAM.on) pluckStep(i, rhy.nextT, n, spb);
     visQ.push({ t: rhy.nextT, i, n });
-    const sw = !era && n === 4 ? 0.5 + 0.1 * W5[1] + (M.easy ? 0.05 : 0) : 0.5;
+    const sw = !era && !JAM.on && n === 4 ? 0.5 + 0.1 * W5[1] + (M.easy ? 0.05 : 0) : 0.5;
     rhy.nextT += (i % 2 === 0 ? 2 * sw : 2 * (1 - sw)) * spb;
     rhy.step = (i + 1) % N;
   }
   if (visQ.length > 160) visQ.splice(0, visQ.length - 160);
+}
+
+// ---------- AND SO 7: the voices are plucked in time (a music box with a terrain under it) ----------
+const PL = { i: 0, next: 0, drag: 0 };
+function liveSorted() { return voices.filter(v => v.wT > 0 && v.w > 0.15).sort((a, b) => a.x - b.x); }
+function pluckStep(i, t0, n, spb) {
+  if (!plucky()) return;
+  const live = liveSorted(); if (!live.length) return;
+  const beat = (i / n) | 0, sub = i % n, lvl = clamp(0.7 + 0.5 * dyn, 0.6, 1.25) * (LIGHT() ? 0.92 : 1);
+  if (sub === 0) {
+    if (beat === 0 || beat === 2) live.forEach((v, k) => audio.pluck(v, (1.25 - 0.12 * k) * lvl, 0.62 + 0.25 * SET.space, t0 + k * 0.014));
+    else { const v = live[PL.i++ % live.length]; audio.pluck(v, 1.05 * lvl, 0.48, t0); }
+  } else if (n >= 2 && sub === (n >> 1) && Math.random() < 0.55 + 0.35 * W5[1]) {
+    const v = live[(PL.i++ * 2 + 1) % live.length]; audio.pluck(v, 0.72 * lvl, 0.32, t0);
+  } else if (rhy.pat && rhy.pat.a[i] && Math.random() < 0.6) {
+    const v = live[PL.i++ % live.length]; audio.pluck(v, 0.6 * rhy.pat.a[i] * lvl, 0.26, t0);
+  }
+}
+// without a beat the voices still ring in turn, slower, like wind chimes that agree
+function pluckFree() {
+  if (!plucky() || !A.ac || !entered || paused || rhyActive() || t < PL.next) return;
+  const live = liveSorted(); if (!live.length) { PL.next = t + 0.5; return; }
+  const k = PL.i++;
+  if (k % 6 === 0) live.forEach((v, j) => audio.pluck(v, 1.1, 0.9, aNow() + 0.02 + j * 0.05));
+  else audio.pluck(live[k % live.length], 0.95, 0.75, 0);
+  PL.next = t + (0.42 + 0.5 * (1 - effPace())) * (LIGHT() ? 1.15 : 1) * (k % 6 === 5 ? 1.8 : 1);
+}
+// a held voice sounds while it moves, so dragging is playing
+function pluckDrag(v, speed) {
+  if (!plucky() || !A.ac || t < PL.drag) return;
+  audio.pluck(v, 0.55 + Math.min(0.5, speed / 900), 0.22, 0); PL.drag = t + clamp(0.34 - speed / 3000, 0.11, 0.34);
 }
 
 // ---------- dynamics: swell into the lean, peak at the landing ----------
@@ -375,7 +409,7 @@ function makePhrase(live) {
   return out;
 }
 function birdTick() {
-  if (!SET.bird || !entered || paused) { bird.notes.length = 0; return; }
+  if (!SET.bird || !entered || paused || JAM.on) { bird.notes.length = 0; return; }
   if (t < bird.next) return;
   const live = voices.filter(v => v.wT > 0);
   if (!bird.notes.length) {
@@ -411,6 +445,7 @@ function valleyLab(c, tol) {
 }
 function chordOf(live) {
   if (era) return { str: ['I⁷', 'IV⁷', 'V⁷'][era.ch], name: '12-bar blues · 4:5:6:7 on every chord', beatless: true };
+  if (JAM.on && JAM.chord) return { str: JAM.chord.sym, name: `${JAM.S.name} · ${JAM.chord.name}`, beatless: true };
   if (M.easy && !round) return easyS.name ? { str: easyS.name, name: `${easyS.progName} · 12-TET, close enough for pop` } : null;
   if (M.key === 'just' || M.key === 'bp') {
     const list = M.key === 'just' ? JI : BPJI, eqP = M.eq, set = [[1, 1]];
@@ -454,6 +489,7 @@ function coincide(fv) {
   return best;
 }
 function rootLines() {
+  if (JAM.on && JAM.chord) return [`${JAM.S.name} · ${JAM.chord.sym} · ${JAM.chord.name}`, `${M.key === 'tet31' ? '31-EDO' : '7-limit just intonation'} · ${JAM.bpm} bpm, swung`];
   if (M.key === 'just') {
     let c = 1200 * (rs.a * L3 + rs.b * L5); c = ((c % 1200) + 1200) % 1200;
     const et = Math.round(c / 100), dev = c - et * 100;

@@ -1,6 +1,10 @@
 // ===== audio: every tone is two banks of sine partials, so any spectrum works =====
 const A = { ac: null, useCS: false, tones: new Map(), root: null, noise: null };
 const OUT = f => f * REF;
+// AND SO 7: voices are notes, not drones. In pluck articulation a tone is silent until something strikes it, and the root
+// is carried by the bass instead of a held tone. 'drone' brings back the held sines of every version before 7.
+const plucky = () => SET.artic === 'pluck' && !M.struck;
+const rootLevel = () => (plucky() ? 0 : 0.11);
 const aNow = () => (A.ac ? A.ac.currentTime : 0);
 function impulse(sec, dec) {
   const ac = A.ac, len = Math.floor(ac.sampleRate * sec), b = ac.createBuffer(2, len, ac.sampleRate);
@@ -31,7 +35,7 @@ function makeTone(f, level, pan, isRoot) {
   const ac = A.ac, now = ac.currentTime, out = ac.createGain();
   out.gain.setValueAtTime(0, now);
   if (level > 0) out.gain.linearRampToValueAtTime(level, now + 0.5);
-  const base = M.struck ? (isRoot ? 0.25 : 0.16) : 1, env = ac.createGain(); env.gain.value = base;
+  const base = M.struck ? (isRoot ? 0.25 : 0.16) : plucky() ? 0 : 1, env = ac.createGain(); env.gain.value = base;
   const mg = ac.createChannelMerger(2), sL = ac.createGain(), sR = ac.createGain();
   const LL = ac.createGain(), LR = ac.createGain(), RL = ac.createGain(), RR = ac.createGain();
   sL.connect(LL); sL.connect(LR); sR.connect(RL); sR.connect(RR);
@@ -117,7 +121,7 @@ const audio = {
       A.analyser = ac.createAnalyser(); A.analyser.fftSize = 2048; A.vol.connect(A.analyser);
       const now = ac.currentTime;
       A.vol.gain.setValueAtTime(0, now); A.vol.gain.linearRampToValueAtTime(muted ? 0 : 0.95 * SET.vol, now + 1.6);
-      A.root = makeTone(fRoot, 0.11, 0, true);
+      A.root = makeTone(fRoot, rootLevel(), 0, true);
       capture.setup();
       audio.applyMix();
       if (ac.state === 'suspended') ac.resume();
@@ -150,18 +154,20 @@ const audio = {
     if (A.useCS) { tn.fS.offset.cancelScheduledValues(now + 0.07); tn.fS.offset.setValueAtTime(OUT(f), now + 0.07); }
     else tn.oscs.forEach(x => { x.o.frequency.cancelScheduledValues(now + 0.07); x.o.frequency.setValueAtTime(OUT(f) * tn.R[x.k] + (x.sg * tn.R[x.k] * tn.beta) / 2, now + 0.07); });
     tn.f = f; tn.ref = REF;
-    g.setTargetAtTime(0.11, now + 0.08, 0.04);
+    g.setTargetAtTime(rootLevel(), now + 0.08, 0.04);
     padSync();
   },
   rebuild() {
     if (!A.ac) return;
-    killTone(A.root); A.root = makeTone(fRoot, 0.11, 0, true);
+    killTone(A.root); A.root = makeTone(fRoot, rootLevel(), 0, true);
     for (const tn of A.tones.values()) killTone(tn);
     A.tones.clear();
     for (const v of voices) if (v.wT > 0) A.tones.set(v.id, makeTone(fOf(v.x), 0, panOf(v.x), false));
     padSync();
   },
   strikeVoice(v, amt, tau, when) { strikeAt(A.tones.get(v.id), amt, tau, when); },
+  // a plucked note on a voice: louder than the held level, then it rings out to silence (or to the drone floor)
+  pluck(v, amt, tau, when) { if (!A.ac || muted) return; const tn = A.tones.get(v.id); if (!tn) return; strikeAt(tn, amt, tau, when); v.flash = Math.max(v.flash, Math.min(1, amt * 0.6)); v.lastPluck = t; },
   strikeRoot(amt, tau, when) { strikeAt(A.root, amt, tau, when); },
   chime(f, gain, delay) { if (SET.chimes) bell3(f, gain, delay); },
   bloom(fs) { if (SET.chimes) fs.slice().sort((a, b) => a - b).forEach((f, i) => bell3(f * M.chimeR, 0.024, 0.05 + i * 0.085)); },
@@ -219,7 +225,7 @@ function padRatios() {
 }
 function padSync() {
   if (!A.ac) return;
-  const ac = A.ac, now = ac.currentTime, lvl = LIGHT() && entered && !era ? 0.045 : 0;
+  const ac = A.ac, now = ac.currentTime, lvl = LIGHT() && entered && !era && (!plucky() || SET.bed) ? 0.045 : 0;
   if (!PAD.out) {
     PAD.mix = ac.createGain(); PAD.mix.gain.value = 0.75;
     const lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 0.07; lg.gain.value = 0.22; lfo.connect(lg); lg.connect(PAD.mix.gain); lfo.start();

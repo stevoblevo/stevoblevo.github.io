@@ -7,6 +7,15 @@ function spaced(s, x, y, sp) { for (const ch of s) { ctx.fillText(ch, x, y); x +
 
 function drawBg() {
   if (wxWorld()) { drawWorldBg(); return; }
+  // paper: the canvas stays clear so the watercolor page shows through; CSS prints what is drawn here in ink
+  if (paperLook()) { ctx.clearRect(0, 0, W, H); if (era || flash55 > 0.02) { ctx.fillStyle = `rgba(120,80,30,${(era ? 0.1 : 0) + 0.2 * flash55})`; ctx.fillRect(0, 0, W, H); } return; }
+  if (skin === 'sb-knight') {
+    const P = paperPal(), g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, rgba(mix(P.paper, [0, 0, 0], 0.35), 1)); g.addColorStop(clamp(LT / H, 0.5, 0.95), rgba(P.paper, 1)); g.addColorStop(1, rgba(mix(P.paper, [0, 0, 0], 0.5), 1));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const mg = ctx.createRadialGradient(W * 0.82, H * 0.14, 0, W * 0.82, H * 0.14, Math.max(W, H) * 0.42); mg.addColorStop(0, `rgba(244,239,230,${0.16 + 0.08 * peak})`); mg.addColorStop(1, 'rgba(244,239,230,0)');
+    ctx.fillStyle = mg; ctx.fillRect(0, 0, W, H); return;
+  }
   if (skin === 'hmp') { const g = ctx.createRadialGradient(MX, MY, 0, MX, MY, Math.max(W, H) * 0.8); g.addColorStop(0, '#2b1630'); g.addColorStop(0.55, '#1a0e1d'); g.addColorStop(1, '#0b060c'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return; }
   if (skin === 'story') { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d150d'); g.addColorStop(1, '#0c0905'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return; }
   if (skin === 'eink') { ctx.fillStyle = '#0e0e0e'; ctx.fillRect(0, 0, W, H); return; }
@@ -260,14 +269,15 @@ function drawMandala() {
   const cr = Math.cos(mrot), sr = Math.sin(mrot);
   ctx.save();
   ctx.strokeStyle = 'rgba(234,220,198,0.06)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(MX, MY, MR * 1.36, 0, TAU); ctx.stroke();
-  ctx.globalCompositeOperation = 'lighter';
+  const ink = paperLook(), ka = ink ? 0.55 : 1;   // on paper the figure is drawn like pencil, not added up like light
+  ctx.globalCompositeOperation = ink ? 'source-over' : 'lighter';
   const fl = Math.max(bloomFlash, rootFlash * 0.6);
   if (fl > 0.01) { const g = ctx.createRadialGradient(MX, MY, 0, MX, MY, MR * 1.8); g.addColorStop(0, `rgba(255,214,150,${0.2 * fl})`); g.addColorStop(1, 'rgba(255,214,150,0)'); ctx.fillStyle = g; ctx.fillRect(MX - MR * 2, MY - MR * 2, MR * 4, MR * 4); }
   const NL = Math.round(900 * qScale), SPAN = 10 * Math.PI, ob = M.ombak ? betaFor(false) : 0;
   voices.forEach((v, i) => {
     if (v.w < 0.02) return;
     const crisp = v.locked ? 1 : clamp(1 - v.beat / 9, 0, 1);
-    ctx.strokeStyle = rgba(v.col, Math.min(1, (0.16 + 0.5 * crisp) * (1 + 0.6 * v.flash)) * v.w); ctx.lineWidth = v.locked ? 1.3 : 1.05;
+    ctx.strokeStyle = rgba(v.col, Math.min(1, (0.16 + 0.5 * crisp) * (1 + 0.6 * v.flash)) * v.w * ka); ctx.lineWidth = ink ? (v.locked ? 1.1 : 0.8) : v.locked ? 1.3 : 1.05;
     ctx.beginPath();
     for (let k = 0; k <= NL; k++) { const th = (k / NL) * SPAN, px = Math.sin(v.fa * th), py = Math.sin(v.fb * (1 + v.kap) * th + v.phi), X = MX + MR * (px * cr - py * sr), Y = MY + MR * (px * sr + py * cr); if (k) ctx.lineTo(X, Y); else ctx.moveTo(X, Y); }
     ctx.stroke();

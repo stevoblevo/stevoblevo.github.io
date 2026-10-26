@@ -1,21 +1,29 @@
+<div id="paper" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-18%;--h:42%"></i><i class="sb-sun" style="--w:12%;right:6%;top:5%"></i><i class="sb-wash sb-wash--rose" style="--w:28%;left:-9%;top:30%"></i><i class="sb-wash sb-wash--sun" style="--w:22%;right:-6%;top:44%"></i><i class="sb-wash sb-wash--meadow sb-wash--band" style="bottom:-20%;--h:36%"></i></div>
 <canvas id="c" aria-label="AND SO: a microtonal instrument and game"></canvas>
 <canvas id="c3" aria-hidden="true"></canvas>
 <canvas id="c2" aria-hidden="true"></canvas>
 <div id="hit" aria-hidden="true"></div>
 <div id="probe" aria-hidden="true"></div>
 
-<div id="overlay">
-  <div class="big">AND SO</div>
-  <div class="sub serif">every valley is a little sun</div>
-  <button id="enter" class="btn">Enter</button>
-  <button id="enterReel" class="btn2">or watch the reel first</button>
-  <div class="ver">version 6 · tilt, shake &amp; twist · the reel · 31-EDO · glasshouse &amp; peachfall</div>
-  <div class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree.<br>hum or sing and it follows you (a demo hummer goes first). use as many fingers as you like. sound on, headphones welcome.</div>
+<div id="overlay" class="sbi">
+  <div class="ov-art" aria-hidden="true"><div id="ovCreature"></div></div>
+  <div class="ov-main">
+    <h1 class="big">AND SO</h1>
+    <p class="sub serif">every valley is a little sun</p>
+    <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reel first</button></div>
+    <p class="ver">AND SO 7 · Everfallen</p>
+    <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
+  </div>
+  <div id="ovBrook" class="ov-brook" role="group" aria-label="the brook: scenes you can walk to"></div>
 </div>
 
 <div id="cap"></div>
 <div id="hint"></div>
 <div id="toast" aria-live="polite"></div>
+
+<button id="jar" class="sb-jar sbi" aria-label="nougats in the jar. open the brook" title="the brook (C)"><span class="sb-jar__count" id="jarN">0</span></button>
+<button id="cWords" class="cw sbi" aria-pressed="false" aria-label="hide the words" title="hide the words (Q)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 6l5 12M5.8 14h6.4M15 18c0-2.2 1-3.6 3-3.6s3 1.4 3 3.6m-6-2.2h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path class="cw-x" d="M3 3l18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+<div id="mirBadge" class="hidden" role="note"><i></i><i></i><i></i><b>×1</b></div>
 
 <div id="top">
   <button class="chip" id="tMode" aria-label="change tuning"><i class="dot"></i><span id="tModeName">just</span></button>
@@ -27,6 +35,8 @@
 </div>
 
 <div id="hud">
+  <button class="ctl" id="bJam" title="J">♪ jam</button>
+  <button class="ctl" id="bBrook" title="C">brook</button>
   <button class="ctl" id="bReel" title="W">▶ reel</button>
   <button class="ctl" id="bListen" title="V">◎ listen</button>
   <button class="ctl" id="bLean" title="space">glide</button>
@@ -35,9 +45,10 @@
   <button class="ctl" id="bBeat" title="B">beat: on</button>
   <button class="ctl" id="bRound" title="R">▶ round</button>
   <button class="ctl hidden" id="bRail" title="Y">rail</button>
-  <button class="ctl" id="bNorm" title="O">normie: off</button>
+  <button class="ctl hidden" id="bNorm" title="O">normie: off</button>
   <button class="ctl" id="bFrol" title="F">lean mood</button>
-  <button class="ctl" id="bRep" title="T">↺ 10s</button>
+  <button class="ctl" id="bArtic" title="D">notes</button>
+  <button class="ctl hidden" id="bRep" title="T">↺ 10s</button>
   <button class="ctl" id="bGam" title="G">gamut</button>
   <button class="ctl" id="bAuto" title="A">saedo: on</button>
   <button class="ctl" id="bSnd" title="M">sound: on</button>
@@ -60,11 +71,11 @@
   <div class="btns"><button class="pill on" id="resNext">next round</button><button class="pill" id="resDone">done</button></div>
 </div>
 
-<div id="gw" role="dialog" aria-label="Gamut: tunings, settings and field guide">
-  <div class="wh" id="gwh"><span class="wt">GAMUT</span><span class="ws">tunings &amp; field guide</span><button class="wbtn" id="gwMin" aria-label="collapse">–</button></div>
+<div id="gw" role="dialog" aria-label="Gamut: tunings, looks, settings and field guide">
+  <div class="wh" id="gwh"><span class="wt">GAMUT</span><span class="ws">tunings, looks &amp; field guide</span><button class="wbtn" id="gwMin" aria-label="collapse">–</button></div>
   <div class="grab" id="grab"><i></i></div>
   <div class="dock" id="dock">
-    <button class="dk" id="dListen"><span>◎</span>listen</button>
+    <button class="dk" id="dJam"><span>♪</span>jam</button>
     <button class="dk" id="dLean"><span>∿</span>glide</button>
     <button class="dk" id="dNext"><span>↻</span>chord</button>
     <button class="dk" id="dRound"><span>✧</span>round</button>
@@ -83,14 +94,44 @@
     </div>
     <p class="blurb" id="gwBlurb"></p>
     <label class="row"><span>auto-flip micro ⇄ easy</span><input type="checkbox" class="sw" id="sFlip" checked></label>
+    <label class="row"><span>start in easy listening</span><input type="checkbox" class="sw" id="sEasyStart" checked></label>
+
+    <div class="sec">the brook</div>
+    <div class="note" id="gNougats">0 in the jar</div>
+    <div class="btns"><button class="pill" id="gBrook">open the brook</button><button class="pill" id="gEA">early access: open everything</button></div>
+    <div class="note">nougats come from finds, quests, three-star rounds, good choruses, coming back each day, and leaving it on. they are never spent: each stone opens when the jar holds enough.</div>
+
+    <div class="sec">the jam</div>
+    <div class="btns"><button class="pill" data-jam="1">one chord</button><button class="pill" data-jam="2">twelve bars</button><button class="pill" data-jam="3">the turnaround</button></div>
+    <div class="btns"><button class="pill" id="gLiner">liner notes &amp; sources</button></div>
+    <div class="note">a play-along band in the manner of Jamey Aebersold's records, in 7-limit just intonation and 31-EDO. play the pad, the home row (A to ' and Q to P), or drag across the sky. the horn plays two bars; answer it in the next two.</div>
+
+    <div class="sec">looks</div>
+    <div class="btns" id="lookBtns"><button class="pill" data-look="sb-daylight">Meta Daylight</button><button class="pill" data-look="sb-knight">Knight Night</button><button class="pill" data-look="sb-inkblot">Ink Blot</button><button class="pill" data-look="sb-comix">Comix</button><button class="pill" data-look="sb-origami">Origami</button><button class="pill" data-look="sb-skein">Skein silk</button></div>
+    <div class="btns" id="themeBtns"><button class="pill" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight 6</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook 6</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
+    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one.</div>
+
+    <div class="sec">words</div>
+    <label class="row"><span>hide the words</span><input type="checkbox" class="sw" id="sQuiet"></label>
+    <div class="note">nothing on screen but the music. a chord's name rises when it changes, and quests come and go on their own. Q, or the Aa button in the corner.</div>
+
+    <div class="sec">notes or drones</div>
+    <div class="btns"><button class="pill on" data-artic="pluck">notes</button><button class="pill" data-artic="drone">drones</button></div>
+    <label class="row"><span>a soft bed under the light mood</span><input type="checkbox" class="sw" id="sBed"></label>
+    <label class="row"><span>the demo hummer starts on its own</span><input type="checkbox" class="sw" id="sAutoHum"></label>
+    <div class="note">notes: every voice is plucked in time, like a music box, and nothing hums underneath. drones: the held sines of AND SO 6.</div>
+
+    <div class="sec">the mirror</div>
+    <div class="btns"><button class="pill" id="gMirror">open the mirror</button></div>
+    <div class="note">AND SO opened inside AND SO, as a phone, a foldable, a tablet, a laptop, 4:3 e-paper or a TV, to the pixel. copies can open copies, three deep. 6.1 is there as it was. K opens it.</div>
 
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
-    <div class="note">light: consonance first; voices glide from one sweet spot to the next and a soft bed holds the root. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
+    <div class="note">light: consonance first; voices glide from one sweet spot to the next. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
 
     <div class="sec">the reel</div>
     <div class="btns"><button class="pill" id="gReel">▶ watch the reel</button></div>
-    <div class="note">fourteen shots: every look, every view of the sound box, the 31-step floor, the weather, a crack in the obsidian. about two minutes. touch anything to take over.</div>
+    <div class="note">every look, every view of the sound box, the 31-step floor, the weather. about two minutes. touch anything to take over.</div>
 
     <div class="sec">motion</div>
     <label class="row"><span>tilt, shake, twist, flick</span><input type="checkbox" class="sw" id="sMotion" checked></label>
@@ -103,7 +144,7 @@
     <div class="sec">listen</div>
     <div class="btns"><button class="pill" id="lDemo">▶ demo hummer</button><button class="pill" id="lMic">◎ my microphone</button><button class="pill hidden" id="lStop">■ stop listening</button></div>
     <div class="btns" id="lFollow"><button class="pill on" data-fl="harmony">harmonize</button><button class="pill" data-fl="echo">echo me</button><button class="pill" data-fl="root">be the root</button></div>
-    <div class="note" id="lNote">the demo hums first, so you can hear what listening does. the microphone stays off until you press it; pitch is worked out on this page and nothing is recorded or sent. headphones help it hear only you.</div>
+    <div class="note" id="lNote">the microphone stays off until you press it; pitch is worked out on this page and nothing is recorded or sent. headphones help it hear only you.</div>
     <div class="note jl" id="lLines"></div>
 
     <div class="sec">sound box</div>
@@ -183,16 +224,14 @@
     <div class="sec">saelion</div>
     <div id="petLocked" class="lock">an egg. it hatches at your first find.</div>
     <div id="petWrap">
-      <div class="btns" id="formBtns"><button class="pill on" data-f="bunny">bunny</button><button class="pill" data-f="tree">tree octopus</button><button class="pill" data-f="pixie">butterfly pixie</button><button class="pill" data-f="auto">follow the box</button></div>
+      <div class="btns" id="formBtns"><button class="pill on" data-f="bunny">bunny</button><button class="pill" data-f="tree">tree octopus</button><button class="pill" data-f="pixie">butterfly pixie</button><button class="pill" data-f="skein">silk doll</button><button class="pill" data-f="auto">follow the box</button></div>
       <label class="row"><span>lock its form</span><input type="checkbox" class="sw" id="sPetLock"></label>
+      <label class="row"><span>let her get strange over time</span><input type="checkbox" class="sw" id="sEerie" checked></label>
       <div class="btns"><button class="pill" id="bPose">change pose</button><button class="pill" id="bTalk">trivia</button></div>
       <div class="btns hidden" id="askRow"><input class="txt" id="askIn" maxlength="200" placeholder="ask Saelion anything" aria-label="question for Saelion"><button class="pill" id="askBtn">ask</button></div>
       <div id="askOut" aria-live="polite"></div>
-      <div class="note">drag it anywhere. tap for trivia, double-tap to change pose.</div>
+      <div class="note">drag it anywhere. tap for trivia, double-tap to change pose. the deeper the mirror and the longer you stay, the more eyes she has.</div>
     </div>
-
-    <div class="sec">vibe</div>
-    <div class="btns" id="themeBtns"><button class="pill on" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
 
     <div class="sec">record</div>
     <div class="btns"><button class="pill" id="rRec">● record</button><button class="pill" id="rRep">↺ replay last 10s</button></div>
@@ -231,6 +270,70 @@
 <div id="tabs" class="hidden"><button class="tab on" data-tab="resonance">Resonance</button><button class="tab" data-tab="waveform">Waveform</button><button class="tab" data-tab="spectrum">Spectrum</button></div>
 <div id="pbar" class="hidden"><button id="pbPlay" class="pbp" aria-label="pause">❚❚</button><select id="pbScene" class="sel pbs" aria-label="scene"></select><span id="pbTime">0:00</span><span class="pbv"><span>Master volume</span><input type="range" id="pbVol" min="0" max="100" value="70" aria-label="master volume"><b id="pbVolP">70%</b></span><button id="pbRec" class="pill">● rec</button><button id="pbRep" class="pill">↺ 10s</button><button id="pbStop" class="pbstop">■ Stop</button></div>
 
-<div id="story" role="dialog" aria-label="storybook"><h3>the field guide, read aloud</h3><textarea id="stText" spellcheck="false" aria-label="story text"></textarea>
-  <div class="btns"><button class="pill" id="stRead">read to me</button><button class="pill hidden" id="stNew">write a new one</button><button class="pill" id="stStop">stop</button><button class="pill" id="stClose">close</button></div>
-  <div class="note" id="stVoice">prefers an Irish English voice if your device has one. paste any story in.</div></div>
+<div id="jam" class="sbi" role="region" aria-label="the jam" aria-hidden="true">
+  <div class="jam-top">
+    <b id="jamTitle" class="jam-title">One chord</b>
+    <span id="jamChart" class="jam-chart" aria-label="the chart"></span>
+    <span id="jamPhase" class="jam-phase" aria-live="polite">play anything</span>
+    <span id="jamChord" class="jam-chord"></span>
+    <span id="jamSet" class="jam-set"></span>
+    <span class="jam-score"><span class="jam-k">score</span> <b id="jamScore">0</b></span>
+    <span class="jam-btns"><button class="jam-b" data-jam="1" title="one chord">1</button><button class="jam-b" data-jam="2" title="twelve bars">2</button><button class="jam-b" data-jam="3" title="the turnaround">3</button><button class="jam-b" id="jamNotes" title="liner notes and sources">notes</button><button class="jam-b" id="jamStop" title="stop (Esc)">■</button></span>
+  </div>
+  <div id="jamFloats" class="jam-floats" aria-hidden="true"></div>
+  <div id="jamKeys" class="jam-keys" role="group" aria-label="the pad: play the scale"></div>
+</div>
+
+<div id="story" class="sbi" role="dialog" aria-label="storybook">
+  <div class="st-head"><h3 id="stTitle">The bottom of the valley</h3><button class="st-x" id="stClose" aria-label="close the storybook">×</button></div>
+  <div id="stPane" class="st-pane sb-prose" tabindex="0"></div>
+  <textarea id="stText" class="hidden" spellcheck="false" aria-label="your own story to read aloud"></textarea>
+  <div class="btns"><button class="pill on" id="stRead">read to me</button><button class="pill" id="stStop">stop</button><button class="pill" id="stPaste">read my own</button><button class="pill hidden" id="stNew">write a new one</button></div>
+  <div class="note" id="stVoice">prefers an Irish English voice if your device has one.</div>
+</div>
+
+<div id="brookMap" class="sbi" role="dialog" aria-label="the brook" aria-hidden="true">
+  <div class="bm-sheet">
+    <div class="bm-head"><h2>The brook</h2><span class="bm-jar"><span class="sb-nougat" data-sb-nougat="5" style="--n:40px"></span><b id="bmN">0</b> nougats</span><button class="bm-x" id="bmClose" aria-label="close the brook">×</button></div>
+    <div class="bm-body">
+      <div id="bmBrook" class="bm-brook"></div>
+      <div class="bm-side">
+        <h3>Stories</h3>
+        <ul id="bmStories" class="bm-stories"></ul>
+        <button class="sb-btn sb-btn--secondary" id="bmEA">Early access: open everything</button>
+        <p class="bm-note">every stone is a whole scene: a look, a tuning, a view and a mood at once. nougats are kept, never spent.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="liner" class="sbi" role="dialog" aria-label="liner notes">
+  <div class="ln-sheet sb-prose">
+    <div class="ln-head"><h2>Liner notes</h2><button class="bm-x" id="linerClose" aria-label="close the liner notes">×</button></div>
+    <p>The jam is built like a Jamey Aebersold Play-A-Long: a rhythm section and a chord chart, with the melody left out for you. Aebersold, born July 21, 1939, started the series in 1967; it runs to more than 130 volumes, and the piano and bass sit in opposite channels so you can turn either one off. He was named an NEA Jazz Master in 2014. Here the bass walks on the right and the voices on the terrain comp.</p>
+    <p>The changes are in tunings a piano can't play. Research summarized on Wikipedia puts the blue third anywhere from 7/6 (267¢) to about 350¢, with Cutting's analysis of early blues recordings centering it at 6/5 (316¢), often slurred toward 5/4 (386¢), which Temperley and colleagues call a neutral third; the blue fifth most often at 7/5 (583¢); the blue seventh at 7/4 (969¢, after Kubik and Curry) or, more commonly in Cutting's data, 9/5 (1018¢). Kubik and Curry also suggest 11/8 (551¢). Those are the blue keys on the pad.</p>
+    <p>Ethan Hein puts the theory in one line: “blues tonality comes from the overtone series of I and IV.” The twelve-bar jam builds every chord as 4:5:6:7, a slice of one overtone series, on 1/1, 4/3 and 3/2. The turnaround uses 31 equal steps, where 25 steps is 967.7¢, 1.1¢ under the barbershop seventh.</p>
+    <p>1955 inside AND SO (get a voice up to eighty-eight) is boogie-woogie in just intonation. Clarence “Pinetop” Smith recorded “Pinetop's Boogie Woogie” on December 29, 1928, in Chicago; Vocalion released it on March 1, 1929, the first known record with “boogie” in the title. Chuck Berry's “Johnny B. Goode” (Chess, March 31, 1958) opens with a riff borrowed from the single-note solo Carl Hogan played on Louis Jordan's “Ain't That Just Like a Woman” (1946), and Marty McFly plays it at the dance in Back to the Future (1985). These are citations: none of those recordings, melodies or lyrics is reproduced here.</p>
+    <p>Microtonal pop has precedent: King Gizzard &amp; the Lizard Wizard's Flying Microtonal Banana (February 24, 2017) is in quarter tones, 24 equal steps, played on guitars refretted for it; the idea began with the Turkish bağlama.</p>
+    <h3>Sources</h3>
+    <ul class="ln-src">
+      <li><a href="https://en.wikipedia.org/wiki/Jamey_Aebersold" target="_blank" rel="noopener">Jamey Aebersold</a>, Wikipedia</li>
+      <li><a href="https://en.wikipedia.org/wiki/Blue_note" target="_blank" rel="noopener">Blue note</a>, Wikipedia</li>
+      <li><a href="https://ethanhein.com/wp/2021/the-blues-and-the-harmonic-series/" target="_blank" rel="noopener">The blues and the harmonic series</a>, Ethan Hein</li>
+      <li><a href="https://en.wikipedia.org/wiki/Pinetop%27s_Boogie_Woogie" target="_blank" rel="noopener">Pinetop's Boogie Woogie</a>, Wikipedia</li>
+      <li><a href="https://en.wikipedia.org/wiki/Johnny_B._Goode" target="_blank" rel="noopener">Johnny B. Goode</a>, Wikipedia</li>
+      <li><a href="https://en.wikipedia.org/wiki/Flying_Microtonal_Banana" target="_blank" rel="noopener">Flying Microtonal Banana</a>, Wikipedia</li>
+    </ul>
+  </div>
+</div>
+
+<div id="mirror" class="sbi" role="region" aria-label="the mirror" aria-hidden="true">
+  <div id="mirBar" class="mir-bar">
+    <b class="mir-title">The mirror</b>
+    <span class="mir-add"><button class="mir-b" data-mdev="phone">+ phone</button><button class="mir-b" data-mdev="fold">+ foldable</button><button class="mir-b" data-mdev="tablet">+ tablet</button><button class="mir-b" data-mdev="laptop">+ laptop</button><button class="mir-b" data-mdev="eink">+ 4:3 e-paper</button><button class="mir-b" data-mdev="tv">+ 53L TV</button><button class="mir-b" id="mir61">+ 6.1</button></span>
+    <button class="mir-b" id="mirAll">close the windows</button><button class="mir-b mir-x" id="mirExit" aria-label="leave the mirror">×</button>
+  </div>
+  <div id="mirTable" class="mir-table"></div>
+</div>
+
+<div id="turn" class="sbi" aria-hidden="true"></div>

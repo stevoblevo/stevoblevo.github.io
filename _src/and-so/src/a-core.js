@@ -1,5 +1,12 @@
 // ===== core: tunings, the dissonance model, ratio names, the field guide, shared state =====
 const $ = id => document.getElementById(id);
+// the page's own source, read before anything has changed it, so the mirror can open a fresh copy of the whole thing
+const SELF_SRC = (() => {
+  try {
+    const app = $('andso-app'), css = $('andso-css'), js = $('andso-js'), sb = $('sb-js'), lk = document.querySelector('link[href*="fonts.googleapis.com/css2"]');
+    return app && css && js ? { app: app.outerHTML, css: css.textContent, js: js.textContent, sbj: sb ? sb.textContent : '', fonts: lk ? lk.href : '' } : null;
+  } catch (e) { return null; }
+})();
 const TAU = Math.PI * 2, L3 = Math.log2(3), L5 = Math.log2(5);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -11,7 +18,7 @@ const lcm = (a, b) => (a / gcd(a, b)) * b;
 const mq = q => { try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch (e) { return false; } };
 const reduceMotion = mq('(prefers-reduced-motion: reduce)');
 const isTouch = mq('(pointer: coarse)') || (navigator.maxTouchPoints || 0) > 1;
-const F_SERIF = '"Newsreader", ui-serif, Georgia, serif', F_MONO = '"DM Mono", ui-monospace, Menlo, monospace', F_UI = 'system-ui, -apple-system, "Segoe UI", sans-serif';
+let F_SERIF = '"Newsreader", ui-serif, Georgia, serif', F_MONO = '"DM Mono", ui-monospace, Menlo, monospace', F_UI = 'system-ui, -apple-system, "Segoe UI", sans-serif';
 const fnt = (px, kind, style) => `${style || ''} ${Math.round(px)}px ${kind === 'm' ? F_MONO : kind === 'u' ? F_UI : F_SERIF}`;
 
 // ---------- tunings: each is a spectrum, and the spectrum decides the scale ----------
@@ -220,14 +227,36 @@ const CAT = [
   ['x-glasshouse', 'any', 'ev', '', 'glasshouse', 'cool air', 'mint haze, frost light, ridges that lean when you do.', 'try the glasshouse look'],
   ['x-peachfall', 'any', 'ev', '', 'peachfall', 'little worlds', 'petals, red rain, a mint clearing, a night garden: whatever the music is doing.', 'try the peachfall look'],
   ['x-ask', 'any', 'ev', '', 'conversation', 'asked Saelion something', 'it answered. mostly vibes, but well-read vibes.', 'ask Saelion a question'],
-  ['x-newstory', 'any', 'ev', '', 'a new chapter', 'the storybook wrote one', 'written from what you found this session.', 'ask the storybook for a new story']
+  ['x-newstory', 'any', 'ev', '', 'a new chapter', 'the storybook wrote one', 'written from what you found this session.', 'ask the storybook for a new story'],
+  // AND SO 7 · Everfallen
+  ['x-quiet', 'any', 'ev', '', 'quiet', 'the words went away', 'nothing on screen but the music, and the name of a chord when it changes.', 'hide the words'],
+  ['x-drone', 'any', 'ev', '', 'the old hum', 'brought the drones back', 'AND SO 6 held every voice as a sine that never stopped. 7 plucks them. both are here.', 'switch from notes to drones'],
+  ['x-nougat10', 'any', 'ev', '', 'a sweet tooth', 'ten nougats in the jar', 'nougats are kept, never spent. the jar opens stones on the brook.', 'collect ten nougats'],
+  ['x-stone', 'any', 'ev', '', 'the brook', 'walked three stones', 'each stone is a whole scene at once: a look, a tuning, a view and a mood.', 'walk three stones on the brook'],
+  ['x-story2', 'any', 'ev', '', 'a second story', 'read another one aloud', 'stories open as you walk the brook. the voice is your device’s, Irish English when it has one.', 'open a new story from the brook'],
+  ['x-eyes', 'any', 'ev', '', 'how many eyes', 'she has nine now', 'the deeper the mirror and the longer you stay, the stranger Saelion gets. she says it is perfectly normal.', 'go deep enough that Saelion changes'],
+  ['x-jam', 'any', 'ev', '', 'the band', 'sat in with the band', "built like Jamey Aebersold's Play-A-Longs: a rhythm section and a chart, the melody left to you.", 'start a jam from the brook, or press J'],
+  ['x-blue', 'any', 'ev', '', 'a blue note', 'played between the keys', '7/6, 7/5 and 7/4 are where the research puts the blue third, fifth and seventh: none of them on a piano.', 'play a blue key on the jam pad'],
+  ['x-blues4', 'any', 'ev', '', 'all the blues', 'four kinds of blue', 'a blue third at 7/6 and at 6/5, a blue fifth at 7/5, a blue seventh at 7/4 or 9/5.', 'play four different blue notes in one jam'],
+  ['x-slur', 'any', 'ev', '', 'the slur', 'a blue third bent up to 5/4', 'between 6/5 and 5/4 is what Temperley and colleagues call a neutral third. the old records slide through it.', 'slide from a blue third up into the major third'],
+  ['x-call', 'any', 'ev', '', 'trading twos', 'answered the horn', 'the horn played two bars and you answered with the same shape. that is the whole conversation.', 'answer the horn with the same ups and downs'],
+  ['x-chorus', 'any', 'ev', '', 'a chorus', 'took a whole chorus', 'once around the form, on the changes. the band noticed.', 'play a good chorus in a jam'],
+  ['x-mirror', 'any', 'ev', '', 'the mirror', 'opened AND SO inside AND SO', 'the copy is the whole page, running, seeded with your progress. it cannot touch your save.', 'open the mirror from the brook'],
+  ['x-mirror3', 'any', 'ev', '', 'three deep', 'a window in a window in a window', 'three copies down, the copy stops copying. Saelion has opinions about it.', 'open windows three deep'],
+  ['x-device', 'any', 'ev', '', 'device lab', 'simulated a screen', 'the copy believes it is a phone, a tablet or a TV, to the pixel, and lays itself out to match.', 'open a window in the mirror'],
+  ['x-table', 'any', 'ev', '', 'the table', 'a TV or e-paper on the table', 'windows you can drag, fold and turn to face the other side of a table.', 'open a TV or e-paper window in the mirror'],
+  ['x-61', 'any', 'ev', '', 'as it was', 'opened 6.1', 'AND SO 6.1, frozen the night 7 began, playing in a window of 7.', 'open 6.1 in the mirror'],
+  ['x-look', 'any', 'ev', '', 'Storeybrook', 'a paper look', 'the same world printed in ink on watercolor paper, comic halftone, folded paper or knitted silk.', 'try a Storeybrook look'],
+  ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook']
 ].map(a => ({ id: a[0], mode: a[1], kind: a[2], key: a[3], name: a[4], line: a[5], fact: a[6], hint: a[7] }));
 const CATI = new Map(CAT.map(c => [c.id, c]));
 
 // ---------- settings and shared state ----------
 const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pace: 0.4, warm: 0.62, vol: 0.7, chimes: true, bird: true, haptics: true,
   flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
-  view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5 };
+  view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5,
+  // AND SO 7 · Everfallen: notes instead of drones, easy listening first, the hummer only when asked, words only when they matter
+  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true };
 const LIGHT = () => !!SET.light && !SET.frolic;
 let W = 0, H = 0, S = 1, wide = true, latticeOn = false, LT = 0, LB = 0, SH = 34, PX0 = 0, PW = 1, MX = 0, MY = 0, MR = 100, BR = 8, NS = 0, DPR = 1, qScale = 1;
 let SAT = 0, SAB = 0, TOPH = 0, PEEK = 0, phone = false;
@@ -262,7 +291,7 @@ const stars = Array.from({ length: 200 }, () => ({ x: Math.random(), y: Math.ran
 let lastMk = '', lastChordStr = '', lastRootJ = 0, sweetT = 0, seeds = 0, depth = 0, regHigh = 0, regLow = 0, regState = 'in the middle band', uiT = 0, frolT = 0;
 const journal = [];
 const LAT = [{ k: 'tune', n: 'Tuning', a: -90 }, { k: 'shim', n: 'Shimmer', a: -18 }, { k: 'pace', n: 'Pace', a: 54 }, { k: 'space', n: 'Space', a: 126 }, { k: 'warm', n: 'Warmth', a: 198 }];
-const GAME = { score: 0, best: 0, combo: 0, lastLand: -99, rounds: 0, stars: 0, qdone: 0, quests: [] };
+const GAME = { score: 0, best: 0, combo: 0, lastLand: -99, rounds: 0, stars: 0, qdone: 0, quests: [], nougats: 0, played: 0, stones: [], stories: ['valley'], jamBest: 0, lastDay: '' };
 let round = null, roundN = 0;
 
 const fold = (f, eq, lo) => { const hi = lo * eq; while (f >= hi) f /= eq; while (f < lo) f *= eq; return f; };

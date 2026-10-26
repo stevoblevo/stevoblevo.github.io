@@ -355,7 +355,8 @@ function listenTick(dt) {
   if (!entered) return;
   if (!LS.autoAt) LS.autoAt = t + 24;
   if (REEL.on) LS.autoAt = Math.max(LS.autoAt, t + 30);   // the hummer waits until the reel is over, and a while after
-  if (!LS.autoDone && autoOn && t > LS.autoAt && !LS.src && !round && !era && !paused && !muted) { LS.autoDone = true; if (!LS.used) listenStart('demo', true); }
+  // AND SO 7: the demo hummer no longer joins on its own (it sings a little out of tune on purpose, which was the point and also the problem)
+  if (SET.autoHum && !LS.autoDone && autoOn && t > LS.autoAt && !LS.src && !round && !era && !paused && !muted && !JAM.on) { LS.autoDone = true; if (!LS.used) listenStart('demo', true); }
   for (let i = LS.trail.length - 1; i >= 0; i--) { const p = LS.trail[i]; p.life -= dt * 0.75; p.y -= 26 * S * dt; if (p.life <= 0) LS.trail.splice(i, 1); }
   LS.show += ((LS.src ? 1 : 0) - LS.show) * (1 - Math.exp(-dt * 4));
   if (LS.selfF.length && LS.selfF[0][1] < t) LS.selfF.shift();
@@ -391,6 +392,6 @@ function listenUI() {
   $('lDemo').classList.toggle('on', s === 'demo'); $('lMic').classList.toggle('on', s === 'mic'); $('lStop').classList.toggle('hidden', !s);
   document.querySelectorAll('#lFollow .pill').forEach(b => b.classList.toggle('on', b.dataset.fl === SET.follow));
   const lab = s === 'mic' ? '◉ mic' : s === 'demo' ? '◉ hummer' : '◎ listen';
-  $('bListen').textContent = lab; $('dListen').classList.toggle('hot', !!s); $('dListen').lastChild.textContent = s === 'mic' ? 'mic' : s === 'demo' ? 'hum' : 'listen';
+  $('bListen').textContent = lab;
   if (s && $('lNote').textContent.startsWith('asking')) $('lNote').textContent = s === 'mic' ? 'listening on this page. nothing is recorded or sent. headphones help it hear only you.' : 'the demo hummer is singing, a little out of tune on purpose.';
 }

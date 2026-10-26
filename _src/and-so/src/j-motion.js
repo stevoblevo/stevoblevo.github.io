@@ -283,7 +283,7 @@ function padTick(dt) {
 }
 
 // ---------- wiring ----------
-moListen();
+if (!/^andso-mirror:/.test(window.name || '')) moListen();   // copies in the mirror don't listen to the phone's motion
 let tiltPress = 0, tiltLong = false;
 $('tTilt').addEventListener('click', e => {
   e.currentTarget.blur();

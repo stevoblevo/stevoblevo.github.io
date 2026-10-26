@@ -1,6 +1,7 @@
 // ===== layout and input: one pointer manager, multi-touch, the scale, the sheet =====
 const cvs = $('c'), ctx = cvs.getContext('2d'), cvs2 = $('c2'), ctx2 = cvs2.getContext('2d'), cvs3 = $('c3'), ctx3 = cvs3.getContext('2d'), hitEl = $('hit'), gw = $('gw');
 let dprScale = 1;
+const PANEL_DY = 56;   // the lattice panel sits under the jar
 const sheet = { h: 0, name: 'peek', drag: null, suppress: 0 };
 function sheetH(name) { return name === 'full' ? H - TOPH - 6 : name === 'half' ? Math.round(H * 0.56) : PEEK; }
 function setSheet(name) { sheet.name = name; sheet.h = sheetH(name); gw.style.height = sheet.h + 'px'; $('dMore').firstChild.textContent = name === 'peek' ? '⌃' : '⌄'; $('dMore').lastChild.textContent = name === 'peek' ? 'more' : 'less'; }
@@ -9,17 +10,17 @@ function placeGw(x, y) { const r = gw.getBoundingClientRect(); gw.style.left = c
 function resize() {
   readSafe();
   W = window.innerWidth; H = window.innerHeight;
-  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, 2) * dprScale;
+  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
   [cvs, cvs2, cvs3].forEach(c => { c.width = Math.max(1, Math.round(W * DPR)); c.height = Math.max(1, Math.round(H * DPR)); });
   [ctx, ctx2, ctx3].forEach(g => g.setTransform(DPR, 0, 0, DPR, 0, 0));
   S = clamp(Math.min(W, H) / 760, 0.7, 2);
   phone = W < 760 || (H > W * 1.15 && W < 900);
   wide = !phone && W > H * 1.05;
-  const hmp = skin === 'hmp';
+  const hmp = skin === 'hmp', JB = jamPadH();
   if (phone) {
     TOPH = 46 + SAT; PEEK = 84 + SAB; SH = 44;
-    LB = Math.round(H - PEEK - SH - 4);
-    LT = Math.round(LB - clamp(H * 0.25, 140, 240));
+    LB = Math.round(H - PEEK - SH - 4 - JB);
+    LT = Math.round(LB - (JB ? clamp((H - JB) * 0.22, 110, 220) : clamp(H * 0.25, 140, 240)));
     PX0 = 14; PW = Math.max(100, W - 28);
     const skyTop = TOPH + 10, skyH = Math.max(120, LT - 46 - skyTop);
     MX = W / 2; MY = skyTop + skyH * 0.5;
@@ -27,7 +28,7 @@ function resize() {
     latticeOn = false; BR = 9.5 * S;
   } else {
     TOPH = 0; PEEK = 0; SH = 34;
-    LT = Math.round(H * (hmp ? 0.66 : 0.6)); LB = Math.round(H - SH - (hmp ? 86 : 22));
+    LT = Math.round((H - JB) * (hmp ? 0.66 : 0.6)); LB = Math.round(H - SH - (hmp ? 86 : 22) - JB);
     PX0 = 56; PW = Math.max(100, W - 112);
     latticeOn = !hmp && W >= 980 && H >= 560;
     MX = hmp ? W * 0.4 : latticeOn ? W * 0.6 : W * 0.5; MY = hmp ? LT * 0.54 : LT * 0.47;
@@ -39,10 +40,10 @@ function resize() {
   $('hint').style.top = LT - 30 + 'px';
   const toast = $('toast');
   if (phone) { toast.style.left = '12px'; toast.style.width = W - 24 + 'px'; toast.style.top = TOPH + 4 + 'px'; }
-  else { toast.style.left = '22px'; toast.style.width = '300px'; toast.style.top = (latticeOn ? 296 : hmp ? 150 : 64) + 'px'; }
+  else { toast.style.left = '22px'; toast.style.width = '300px'; toast.style.top = (latticeOn ? 296 + PANEL_DY : hmp ? 150 : 104) + 'px'; }
   const qs = $('quests');
   if (phone) { qs.style.left = '12px'; qs.style.width = W - 24 + 'px'; qs.style.top = TOPH + 4 + 'px'; }
-  else { qs.style.left = '22px'; qs.style.width = '268px'; qs.style.top = Math.max(latticeOn ? 300 : 120, LT - 150) + 'px'; }
+  else { qs.style.left = '22px'; qs.style.width = '268px'; qs.style.top = Math.max(latticeOn ? 300 + PANEL_DY : 120, LT - 150) + 'px'; }
   placeChrome();
   const zc = $('zc'); zc.style.right = '56px'; zc.style.top = LT - 42 + 'px'; zc.classList.toggle('on', entered && !phone);
   const tb = $('tabs'); tb.style.left = PX0 + 'px'; tb.style.top = LT - 44 + 'px';
@@ -50,19 +51,20 @@ function resize() {
   gw.classList.toggle('sheet', phone);
   if (phone) { if (entered) gw.classList.add('on'); setSheet(sheet.name); gw.style.left = ''; gw.style.top = ''; }
   else { gw.style.height = ''; gw.style.maxHeight = Math.max(260, LT - 112) + 'px'; if (gw.classList.contains('on')) placeGw(parseFloat(gw.style.left) || W - 302, parseFloat(gw.style.top) || 52); }
-  $('quests').classList.toggle('on', entered && !phone && !questsHidden);
+  if (!entered || phone || QUIET()) $('quests').classList.remove('on'); else if (questsPinned) $('quests').classList.add('on');
+  const jp = $('jam'); jp.style.height = JB + 'px'; jp.style.bottom = (phone ? PEEK : 0) + 'px';
+  if (JAM.on && JAM.keys.length && (W < 560) !== (JAM.keys.length <= 12)) jamPadBuild();
   vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.78);
   vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.5)');
   if (hole.placed) { hole.x = clamp(hole.x, PX0, PX0 + PW); hole.y = clamp(hole.y, TOPH + 30, LT - 16); }
   if (pet.placed && (pet.hx > W - 10 || pet.hy > H - 10 || pet.hy < TOPH)) petHome();
   syncUI();
 }
-let questsHidden = false;
 // the round banner and captions share the top on phones; on desktop the banner sits above the quest card
 function placeChrome() {
   const rb = $('round'), on = !!(round && !round.done), root = document.documentElement.style;
   if (phone) { rb.style.left = '50%'; rb.style.transform = 'translateX(-50%)'; rb.style.top = TOPH + 4 + 'px'; root.setProperty('--capTop', TOPH + (on ? 56 : 4) + 'px'); }
-  else { const qTop = Math.max(latticeOn ? 300 : 120, LT - 150); rb.style.left = '22px'; rb.style.transform = 'none'; rb.style.top = qTop - 54 + 'px'; root.setProperty('--capTop', (skin === 'hmp' ? 84 : 54) + 'px'); }
+  else { const qTop = Math.max(latticeOn ? 300 + PANEL_DY : 120, LT - 150); rb.style.left = '22px'; rb.style.transform = 'none'; rb.style.top = qTop - 54 + 'px'; root.setProperty('--capTop', (skin === 'hmp' ? 84 : 54) + 'px'); }
   // the reel's HUD sits under the phone's top bar, and the captions step down below it
   const rh = $('reelHud'); rh.style.top = (phone ? TOPH + 6 : 10) + 'px';
   if (REEL.on) root.setProperty('--capTop', (phone ? TOPH + 52 : 58) + 'px');
@@ -86,7 +88,7 @@ function grabVoice(p, v) {
   v.dragging = p.id; v.locked = false; v.pinUntil = 0; v.temp = 0; v.v = 0; v.dropping = false; v.target = null; v.dragY = p.y; v.dragX = v.x; act = v;
   if (p.type === 'mouse') hitEl.style.cursor = 'grabbing';
   if (!draggedOnce) { draggedOnce = true; hideHint(); }
-  if (M.struck) { audio.strikeVoice(v, 0.9, 1); v.flash = 1; }
+  if (M.struck) { audio.strikeVoice(v, 0.9, 1); v.flash = 1; } else if (plucky()) audio.pluck(v, 1.1, 0.45, 0);
   haptic(5); handsCheck();
 }
 function startPinch(kind, a, b) {
@@ -116,7 +118,7 @@ function detent(v, p, x) {
   const xm = refineMin(v, x, 11), d0 = Dv(v, xm);
   if (!(d0 < Dv(v, xm - 2.5) && d0 < Dv(v, xm + 2.5)) || Math.abs(xm - x) > 10.5) { p.det = null; return x; }
   const s = (1 - sp / 650) * 0.72 * (1 - Math.abs(xm - x) / 14);
-  if (s > 0.3 && (p.det == null || Math.abs(xm - p.det) > 3)) { p.det = xm; haptic(4); v.flash = Math.max(v.flash, 0.3); }
+  if (s > 0.3 && (p.det == null || Math.abs(xm - p.det) > 3)) { p.det = xm; haptic(4); v.flash = Math.max(v.flash, 0.3); if (plucky()) { audio.pluck(v, 0.85, 0.32, 0); PL.drag = t + 0.12; } }
   return x + (xm - x) * s;
 }
 hitEl.addEventListener('pointerdown', e => {
@@ -173,7 +175,7 @@ hitEl.addEventListener('pointermove', e => {
       p.vel = p.vel * 0.6 + ((x - p.lx) / dtm) * 1000 * 0.4; p.mph = Math.abs(p.vel) / 50;
       if (p.mph >= 88 && !era && !round) { p.hit88 = true; fires.push({ x0: p.lsx, x1: px, life: 1.6 }); }
       if (!e.altKey && !fine) x = detent(v, p, x);
-      p.lx = p.fx; p.lsx = px; v.dragX = x; v.dragY = py;
+      p.lx = p.fx; p.lsx = px; v.dragX = x; v.dragY = py; if (p.moved) pluckDrag(v, Math.abs(p.vel));
       v.dropping = py > LB + SH * 0.55 && voices.filter(o => o.wT > 0).length > 1;
       break;
     }
@@ -326,10 +328,17 @@ padEl.addEventListener('pointermove', e => { if (BOX.drag === e.pointerId) moveP
 ['pointerup', 'pointercancel'].forEach(n => padEl.addEventListener(n, e => { if (BOX.drag === e.pointerId) { BOX.drag = null; persistSoon(); } }));
 
 // ---------- keyboard ----------
+window.addEventListener('keyup', e => { if (JAM.on) jamKey(e, false); });
 window.addEventListener('keydown', e => {
   if (!entered) return;
-  const tg = e.target && e.target.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'BUTTON' || tg === 'TEXTAREA') return;
+  const tg = e.target && e.target.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA') return;
+  if (JAM.on && jamKey(e, true)) return;
+  if (tg === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key.toLowerCase(); lastUserT = t;
+  if (k === 'escape' && $('brookMap').classList.contains('on')) { closeBrook(); return; }
+  if (k === 'escape' && $('liner').classList.contains('on')) { $('liner').classList.remove('on'); return; }
+  if (k === 'escape' && MIR.open) { mirrorTable(false); return; }
   if (REEL.on && k !== 'w' && k !== 'shift') { reelStop(false); if (k === 'escape') return; }
   if (k === ' ' || k === 'l') { e.preventDefault(); lean(1); userIdleUntil = t + 10; }
   else if (k === 'n') { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; }
@@ -350,7 +359,13 @@ window.addEventListener('keydown', e => {
   else if (k === 'v') listenToggle();
   else if (k === 'x') cycleView();
   else if (k === 't') doReplay();
-  else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); $('story').classList.remove('on'); }
+  else if (k === 'q') setQuiet(!SET.quiet);
+  else if (k === 'j') jamStart(jamOpen(JAM.sess) ? JAM.sess : 1);
+  else if (k === 'k') mirrorTable();
+  else if (k === 'd') setArtic(SET.artic === 'pluck' ? 'drone' : 'pluck');
+  else if (k === 'c') ($('brookMap').classList.contains('on') ? closeBrook() : openBrook());
+  else if (k === 'e') cycleLook();
+  else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); if ($('story').classList.contains('on')) closeStory(); }
 });
 
 // ---------- buttons ----------
@@ -366,10 +381,10 @@ function toggleRec() {
 }
 const on = (id, fn) => $(id).addEventListener('click', e => { if (!tapOk()) return; fn(e); });
 on('tMode', cycleMode);
-on('tQuest', () => { const q = $('quests'); q.classList.toggle('on'); questsHidden = !q.classList.contains('on'); });
+on('tQuest', () => { questsPinned = !questsPinned; if (questsPinned && !QUIET()) $('quests').classList.add('on'); else questsHide(); });
 on('tScore', () => caption(`resonance ${GAME.score.toLocaleString()} · ${GAME.rounds} rounds · ${GAME.stars} stars · best combo ×${GAME.best}`, 3200));
 on('tSound', toggleMute);
-on('qHide', () => { $('quests').classList.remove('on'); questsHidden = true; });
+on('qHide', () => { questsPinned = false; questsHide(); });
 on('bLean', () => { lean(1); userIdleUntil = t + 10; });
 on('bNext', () => { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; });
 on('bPump', startPump);
@@ -379,7 +394,6 @@ on('bRail', () => (rail ? stopRail(false) : startRail()));
 on('bNorm', () => setNormie(!SET.normie));
 on('bFrol', nextMood);
 on('bListen', listenToggle);
-on('dListen', () => { listenToggle(); haptic(6); });
 on('lDemo', () => listenStart('demo'));
 on('lMic', () => listenStart('mic'));
 on('lStop', () => listenStop());
@@ -431,11 +445,12 @@ on('rRec', toggleRec);
 on('rRep', doReplay);
 on('jExp', () => offerFile('and-so-journal.txt', `AND SO · Saedo's journal\n${new Date().toISOString()}\n\n${journal.join('\n')}\n`));
 on('jCopy', () => { const txt = journal.join('\n') || 'nothing yet.'; try { navigator.clipboard.writeText(txt).then(() => caption('journal copied.', 1600), () => caption("couldn't copy here.", 1800)); } catch (er) { caption("couldn't copy here.", 1800); } });
-on('stOpen', () => $('story').classList.add('on'));
-on('stRead', readStory);
-on('stNew', newStory);
-on('stStop', () => { if ('speechSynthesis' in window) speechSynthesis.cancel(); });
-on('stClose', () => { if ('speechSynthesis' in window) speechSynthesis.cancel(); $('story').classList.remove('on'); });
+on('stOpen', () => openStory(storyCur));
+on('stRead', readStoryAloud);
+on('stNew', () => { $('stPane').classList.add('hidden'); $('stText').classList.remove('hidden'); newStory(); });
+on('stPaste', () => { $('stPane').classList.add('hidden'); $('stText').classList.remove('hidden'); $('stText').focus(); });
+on('stStop', () => { try { if (window.Storeybrook) Storeybrook.read.stop(); else speechSynthesis.cancel(); } catch (er) {} $('stRead').textContent = 'read to me'; });
+on('stClose', closeStory);
 on('pLoad', () => { const v = $('pSel').value; if (!v) return; const n = v.slice(2); applyPreset(v[0] === 'b' ? BUILTIN[n] : userP[n], n); });
 on('pSave', () => { const n = ($('pName').value || '').trim().slice(0, 28) || `vibe ${Object.keys(userP).length + 1}`; userP[n] = capturePreset(); persistSoon(); renderPresets(); $('pSel').value = 'u:' + n; $('pName').value = ''; caption(`saved: ${n}`, 2000); });
 on('pDel', () => { const v = $('pSel').value; if (!v || v[0] !== 'u') { caption("built-ins can't be deleted. they're load-bearing.", 2400); return; } delete userP[v.slice(2)]; persistSoon(); renderPresets(); });
