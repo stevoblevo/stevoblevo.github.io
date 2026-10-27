@@ -11,7 +11,7 @@
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
     <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reel first</button></div>
-    <p class="ver">AND SO 7 · Everfallen</p>
+    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 7 · Everfallen<span class="ver-more"> · every version</span></button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
   </div>
   <div id="ovBrook" class="ov-brook" role="group" aria-label="the brook: scenes you can walk to"></div>
@@ -133,6 +133,10 @@
     <div class="sec">the mirror</div>
     <div class="btns"><button class="pill" id="gMirror">open the mirror</button></div>
     <div class="note">AND SO opened inside AND SO, as a phone, a foldable, a tablet, a laptop, 4:3 e-paper or a TV, to the pixel. copies can open copies, three deep. 6.1 is there as it was. K opens it.</div>
+
+    <div class="sec">versions</div>
+    <div class="btns"><button class="pill" id="gVersions">every version</button></div>
+    <div class="note" id="gVersionsNote">every AND SO stays playable: 6.1, 6, the cymatics build of 22 October, the first one from 12 October, and the Gamut Field Guide. each keeps its own save, so going back never takes anything away from this one.</div>
 
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
@@ -333,6 +337,15 @@
       <li><a href="https://en.wikipedia.org/wiki/Johnny_B._Goode" target="_blank" rel="noopener">Johnny B. Goode</a>, Wikipedia</li>
       <li><a href="https://en.wikipedia.org/wiki/Flying_Microtonal_Banana" target="_blank" rel="noopener">Flying Microtonal Banana</a>, Wikipedia</li>
     </ul>
+  </div>
+</div>
+
+<div id="versions" class="sbi" role="dialog" aria-modal="true" aria-labelledby="vsTitle">
+  <div class="vs-sheet">
+    <div class="ln-head"><h2 id="vsTitle">Every AND SO</h2><button class="bm-x" id="versionsClose" aria-label="close the versions">×</button></div>
+    <p class="vs-lede" id="vsLede"></p>
+    <ol class="vs-list" id="vsList"></ol>
+    <p class="vs-foot"><a id="vsAll" href="https://stevoblevo.github.io/and-so/versions/" target="_blank" rel="noopener">all versions, with notes</a></p>
   </div>
 </div>
 

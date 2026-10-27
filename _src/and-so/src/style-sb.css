@@ -278,6 +278,29 @@ html[data-sb="inkblot"] .jk[data-role="chord"] { background: #000; color: #fff }
 .ln-src { padding-left: 1.2em } .ln-src li { margin: .3em 0 }
 .ln-sheet { user-select: text; -webkit-user-select: text }
 
+/* ---------- every version ---------- */
+.ver-btn { all: unset; cursor: pointer; border-radius: 6px; text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1px; text-underline-offset: .3em; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent) }
+.ver-btn:hover { text-decoration-color: currentColor }
+.ver-btn:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px }
+#versions { position: fixed; inset: 0; z-index: 46; display: none; padding: 16px; overflow: auto; background: var(--scrim) }
+#versions.on { display: block }
+.vs-sheet { position: relative; width: min(720px, 100%); margin: 5vh auto; padding: clamp(18px, 3vw, 48px); background: var(--page); color: var(--ink); border: 2px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-page); font-family: var(--sb-ui) }
+.vs-lede { margin: 0 0 1em; font: 400 clamp(15px, .5vw + 11px, 24px)/1.45 var(--sb-story); color: var(--ink-muted) }
+.vs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px }
+.vs-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface); border: 2px solid transparent }
+.vs-item[aria-current] { border-color: var(--accent); background: var(--accent-soft) }
+.vs-name { font: var(--sb-display-weight) clamp(18px, .6vw + 13px, 30px)/1.1 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth) }
+.vs-name i { font: 700 .55em/1 var(--sb-ui); font-style: normal; margin-left: .5em; padding: .2em .6em; border-radius: 999px; background: var(--page); color: var(--cue); vertical-align: middle }
+.vs-line { grid-column: 1; font: 400 clamp(14px, .4vw + 11px, 22px)/1.4 var(--sb-story); color: var(--ink) }
+.vs-date { grid-column: 1; font: 700 clamp(12px, .3vw + 9px, 18px)/1.2 var(--sb-ui); color: var(--ink-muted) }
+.vs-go { grid-column: 2; grid-row: 1 / span 3; display: flex; flex-direction: column; gap: 6px; align-items: stretch }
+.vs-go a, .vs-go button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid var(--ink); background: var(--page); color: var(--ink); font: 700 clamp(13px, .3vw + 11px, 20px)/1 var(--sb-ui); text-decoration: none; cursor: pointer; white-space: nowrap }
+.vs-go a:hover, .vs-go button:hover { background: var(--cue-soft) }
+.vs-here { font: 700 clamp(13px, .3vw + 11px, 20px)/1 var(--sb-ui); color: var(--accent) }
+.vs-foot { margin: 1.2em 0 0; font: 400 clamp(14px, .3vw + 11px, 20px)/1.4 var(--sb-ui) }
+.vs-foot a { color: var(--link) }
+@media (max-width: 560px) { .vs-item { grid-template-columns: 1fr } .vs-go { grid-column: 1; grid-row: auto; flex-direction: row; flex-wrap: wrap } }
+
 /* ---------- the mirror ---------- */
 #mirror { position: fixed; inset: 0; z-index: 26; display: none; background: color-mix(in srgb, var(--paper) 55%, transparent) }
 #mirror.on { display: block }

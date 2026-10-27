@@ -6,14 +6,17 @@
 Storeybrook (the storybook design toolkit) is vendored in vendor/: its tokens are scoped under html[data-sb], so they
 only apply while a Storeybrook look is on, and its script defines window.Storeybrook before AND SO runs.
 """
+import json
 from pathlib import Path
+
+from versions import VERSIONS   # every version of AND SO, for the picker on the landing and in the gamut
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
 VENDOR = ROOT / "vendor"
 JS = ["a-core.js", "b-audio.js", "c-music.js", "d-game.js", "d2-world.js", "e-input.js", "f-draw.js", "f2-terrain.js",
       "h-listen.js", "i-views.js", "j-motion.js", "k-world.js", "l-reel.js", "m-paper.js", "n-mirror.js", "o-jam.js",
-      "p-brook.js", "q-guard.js", "g-loop.js"]
+      "p-brook.js", "q-guard.js", "r-versions.js", "g-loop.js"]
 FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
          "&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600"
          "&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800"
@@ -28,7 +31,8 @@ def main() -> None:
     css_sb = (SRC / "style-sb.css").read_text()
     body = (SRC / "body.html").read_text()
     sb_js = (VENDOR / "storeybrook.js").read_text()
-    script = "\n".join((SRC / name).read_text() for name in JS)
+    vers = [{k: v[k] for k in ("id", "short", "name", "date", "line", "path", "latest", "edition") if k in v} for v in VERSIONS]
+    script = f"const ANDSO_VERSIONS = {json.dumps(vers, ensure_ascii=False)};\n" + "\n".join((SRC / name).read_text() for name in JS)
     for bad in ("</script", "<!--"):
         assert bad not in script and bad not in sb_js, f"{bad} would end the inline script"
     for bad in ("</style",):

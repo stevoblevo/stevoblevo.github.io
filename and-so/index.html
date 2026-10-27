@@ -997,6 +997,29 @@ html[data-sb="inkblot"] .jk[data-role="chord"] { background: #000; color: #fff }
 .ln-src { padding-left: 1.2em } .ln-src li { margin: .3em 0 }
 .ln-sheet { user-select: text; -webkit-user-select: text }
 
+/* ---------- every version ---------- */
+.ver-btn { all: unset; cursor: pointer; border-radius: 6px; text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1px; text-underline-offset: .3em; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent) }
+.ver-btn:hover { text-decoration-color: currentColor }
+.ver-btn:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px }
+#versions { position: fixed; inset: 0; z-index: 46; display: none; padding: 16px; overflow: auto; background: var(--scrim) }
+#versions.on { display: block }
+.vs-sheet { position: relative; width: min(720px, 100%); margin: 5vh auto; padding: clamp(18px, 3vw, 48px); background: var(--page); color: var(--ink); border: 2px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-page); font-family: var(--sb-ui) }
+.vs-lede { margin: 0 0 1em; font: 400 clamp(15px, .5vw + 11px, 24px)/1.45 var(--sb-story); color: var(--ink-muted) }
+.vs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px }
+.vs-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface); border: 2px solid transparent }
+.vs-item[aria-current] { border-color: var(--accent); background: var(--accent-soft) }
+.vs-name { font: var(--sb-display-weight) clamp(18px, .6vw + 13px, 30px)/1.1 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth) }
+.vs-name i { font: 700 .55em/1 var(--sb-ui); font-style: normal; margin-left: .5em; padding: .2em .6em; border-radius: 999px; background: var(--page); color: var(--cue); vertical-align: middle }
+.vs-line { grid-column: 1; font: 400 clamp(14px, .4vw + 11px, 22px)/1.4 var(--sb-story); color: var(--ink) }
+.vs-date { grid-column: 1; font: 700 clamp(12px, .3vw + 9px, 18px)/1.2 var(--sb-ui); color: var(--ink-muted) }
+.vs-go { grid-column: 2; grid-row: 1 / span 3; display: flex; flex-direction: column; gap: 6px; align-items: stretch }
+.vs-go a, .vs-go button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid var(--ink); background: var(--page); color: var(--ink); font: 700 clamp(13px, .3vw + 11px, 20px)/1 var(--sb-ui); text-decoration: none; cursor: pointer; white-space: nowrap }
+.vs-go a:hover, .vs-go button:hover { background: var(--cue-soft) }
+.vs-here { font: 700 clamp(13px, .3vw + 11px, 20px)/1 var(--sb-ui); color: var(--accent) }
+.vs-foot { margin: 1.2em 0 0; font: 400 clamp(14px, .3vw + 11px, 20px)/1.4 var(--sb-ui) }
+.vs-foot a { color: var(--link) }
+@media (max-width: 560px) { .vs-item { grid-template-columns: 1fr } .vs-go { grid-column: 1; grid-row: auto; flex-direction: row; flex-wrap: wrap } }
+
 /* ---------- the mirror ---------- */
 #mirror { position: fixed; inset: 0; z-index: 26; display: none; background: color-mix(in srgb, var(--paper) 55%, transparent) }
 #mirror.on { display: block }
@@ -1048,7 +1071,7 @@ body.mirrored #gw:not(.sheet) { display: none }
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
     <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reel first</button></div>
-    <p class="ver">AND SO 7 · Everfallen</p>
+    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 7 · Everfallen<span class="ver-more"> · every version</span></button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
   </div>
   <div id="ovBrook" class="ov-brook" role="group" aria-label="the brook: scenes you can walk to"></div>
@@ -1170,6 +1193,10 @@ body.mirrored #gw:not(.sheet) { display: none }
     <div class="sec">the mirror</div>
     <div class="btns"><button class="pill" id="gMirror">open the mirror</button></div>
     <div class="note">AND SO opened inside AND SO, as a phone, a foldable, a tablet, a laptop, 4:3 e-paper or a TV, to the pixel. copies can open copies, three deep. 6.1 is there as it was. K opens it.</div>
+
+    <div class="sec">versions</div>
+    <div class="btns"><button class="pill" id="gVersions">every version</button></div>
+    <div class="note" id="gVersionsNote">every AND SO stays playable: 6.1, 6, the cymatics build of 22 October, the first one from 12 October, and the Gamut Field Guide. each keeps its own save, so going back never takes anything away from this one.</div>
 
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
@@ -1370,6 +1397,15 @@ body.mirrored #gw:not(.sheet) { display: none }
       <li><a href="https://en.wikipedia.org/wiki/Johnny_B._Goode" target="_blank" rel="noopener">Johnny B. Goode</a>, Wikipedia</li>
       <li><a href="https://en.wikipedia.org/wiki/Flying_Microtonal_Banana" target="_blank" rel="noopener">Flying Microtonal Banana</a>, Wikipedia</li>
     </ul>
+  </div>
+</div>
+
+<div id="versions" class="sbi" role="dialog" aria-modal="true" aria-labelledby="vsTitle">
+  <div class="vs-sheet">
+    <div class="ln-head"><h2 id="vsTitle">Every AND SO</h2><button class="bm-x" id="versionsClose" aria-label="close the versions">×</button></div>
+    <p class="vs-lede" id="vsLede"></p>
+    <ol class="vs-list" id="vsList"></ol>
+    <p class="vs-foot"><a id="vsAll" href="https://stevoblevo.github.io/and-so/versions/" target="_blank" rel="noopener">all versions, with notes</a></p>
   </div>
 </div>
 
@@ -1997,6 +2033,7 @@ body.mirrored #gw:not(.sheet) { display: none }
 (() => {
 'use strict';
 const ANDSO_VERSION = '7.0';
+const ANDSO_VERSIONS = [{"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, and guardians born from misheard words.", "path": "/and-so/v7/", "latest": true}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
 // ===== core: tunings, the dissonance model, ratio names, the field guide, shared state =====
 const $ = id => document.getElementById(id);
 // the page's own source, read before anything has changed it, so the mirror can open a fresh copy of the whole thing
@@ -3214,7 +3251,8 @@ function zoomAt(z, px) { z = clamp(z, 1, 12); const w = XMAX / z, cx = xFromS(px
 function zoomBy(f) { setZoom(zoomLevel() * f, (VIEW.x0 + VIEW.x1) / 2); }
 
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
-const SAVE_KEY = 'andso:v2';   // the same key since v2: AND SO 7 reads every earlier save and adds to it
+const SAVE_KEY = 'andso:v7';   // AND SO 7 keeps its own save, so playing an older version (they share andso:v2) never takes anything away
+const OLD_SAVE_KEYS = ['andso:v2'];   // read every time and merged in: counts take the larger, found things and stones the union
 const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
@@ -3248,7 +3286,12 @@ function applySave(s, preferPrefs) {
   // 7 opens in Meta Daylight: a look saved before 7 is not carried over, a look you pick in 7 is kept
   if (preferPrefs && s.skin && s.lit && (+s.sv || 0) >= 70) savedSkin = s.skin;
 }
-function loadLocal() { try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { applySave(JSON.parse(raw), true); return true; } } catch (e) {} return false; }
+function loadLocal() {
+  let any = false;
+  try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { applySave(JSON.parse(raw), true); any = true; } } catch (e) {}
+  OLD_SAVE_KEYS.forEach(k => { try { const raw = localStorage.getItem(k); if (raw) { applySave(JSON.parse(raw), !any); any = true; } } catch (e) {} });
+  return any;
+}
 let localT = 0;
 function persistSoon() {
   if (MIR.depth > 0) return;   // a copy in the mirror never saves: the page at the top keeps the one save
@@ -8071,6 +8114,57 @@ function heardTick() {
   if (el.textContent !== txt) el.textContent = txt;
   el.style.left = clamp(pet.x, 120, W - 120) + 'px'; el.style.top = Math.max(TOPH + 12, pet.y - 110 * S) + 'px';
 }
+
+// ===== every version: the older AND SOs stay a press away =====
+// ANDSO_VERSIONS is written into the build from versions.py. On stevoblevo.github.io each one opens in place; anywhere
+// else (the claude.ai artifact) they open on github.io in a new tab, and 6.1 can also open inside the mirror.
+const VER_HOST = 'https://stevoblevo.github.io';
+const VER_ON_PAGES = (() => { try { return /(^|\.)github\.io$/.test(location.hostname) && /^\/and-so\//.test(location.pathname); } catch (e) { return false; } })();
+function versionsBuild() {
+  const list = $('vsList'); if (!list || list.dataset.built) return; list.dataset.built = '1';
+  const cur = String(ANDSO_VERSION).replace(/\.0$/, '');
+  $('vsLede').textContent = VER_ON_PAGES
+    ? 'Every AND SO stays playable here, newest first. Each keeps its own save, so going back never takes anything away from this one.'
+    : 'Every AND SO stays playable on stevoblevo.github.io, newest first; they open in a new tab. 6.1 also lives inside the mirror.';
+  if (VER_ON_PAGES) { const a = $('vsAll'); a.href = '/and-so/versions/'; a.removeAttribute('target'); a.removeAttribute('rel'); }
+  ANDSO_VERSIONS.forEach(v => {
+    const li = document.createElement('li'); li.className = 'vs-item'; const here = v.id === cur;
+    if (here) li.setAttribute('aria-current', 'page');
+    const name = document.createElement('span'); name.className = 'vs-name'; name.textContent = v.name;
+    if (v.latest) { const i = document.createElement('i'); i.textContent = 'latest'; name.appendChild(i); }
+    if (v.edition) { const i = document.createElement('i'); i.textContent = 'edition'; name.appendChild(i); }
+    const date = document.createElement('span'); date.className = 'vs-date'; date.textContent = v.date;
+    const line = document.createElement('span'); line.className = 'vs-line'; line.textContent = v.line;
+    const go = document.createElement('span'); go.className = 'vs-go';
+    if (here) { const s = document.createElement('span'); s.className = 'vs-here'; s.textContent = 'you are here'; go.appendChild(s); }
+    else {
+      const a = document.createElement('a'); a.textContent = VER_ON_PAGES ? 'play' : 'play ↗';
+      a.href = (VER_ON_PAGES ? '' : VER_HOST) + (v.latest ? '/and-so/' : v.path);
+      if (!VER_ON_PAGES) { a.target = '_blank'; a.rel = 'noopener'; }
+      a.addEventListener('click', () => jlog(`went to ${v.name}`));
+      go.appendChild(a);
+      if (v.id === '6.1' && !VER_ON_PAGES) {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = 'in the mirror';
+        b.addEventListener('click', () => { versionsClose(); if (!mirAllowed()) { const st = STONE.get('mirror'); caption(`the mirror opens at ${st.need} nougats. the jar has ${GAME.nougats}.`, 2800); return; } mirrorTable(true); mirOpen('61', phone ? 'phone' : 'laptop'); });
+        go.appendChild(b);
+      }
+    }
+    li.append(name, line, date, go); list.appendChild(li);
+  });
+}
+function versionsOpen() {
+  if (MIR.depth > 0) return;
+  versionsBuild(); $('versions').classList.add('on'); jlog('opened every version');
+  setTimeout(() => { const f = $('vsList').querySelector('a, button') || $('versionsClose'); if (f) f.focus(); }, 30);
+}
+function versionsClose() { $('versions').classList.remove('on'); }
+on('verBtn', versionsOpen);
+on('gVersions', versionsOpen);
+on('versionsClose', versionsClose);
+$('versions').addEventListener('click', e => { if (e.target === $('versions')) versionsClose(); });
+if (MIR.depth > 0) { $('verBtn').disabled = true; $('gVersions').closest('.btns').classList.add('hidden'); $('gVersionsNote').classList.add('hidden'); }
+// while the sheet is open, keys belong to it: Escape closes it, and nothing reaches the instrument underneath
+window.addEventListener('keydown', e => { if (!$('versions').classList.contains('on')) return; e.stopImmediatePropagation(); if (e.key === 'Escape') versionsClose(); }, true);
 
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;

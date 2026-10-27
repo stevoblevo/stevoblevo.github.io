@@ -1,0 +1,69 @@
+{
+ "game": "AND SO",
+ "latest": "/and-so/",
+ "index": "/and-so/versions/",
+ "versions": [
+  {
+   "id": "7",
+   "short": "AND SO 7",
+   "name": "AND SO 7 · Everfallen",
+   "date": "2026-10-27",
+   "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, and guardians born from misheard words.",
+   "path": "/and-so/v7/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "b0da3c39c5e8b45827f9c788f36b53f5f21d10a27e2a60763e86bd9cfa4fbf3b"
+  },
+  {
+   "id": "6.1",
+   "short": "AND SO 6.1",
+   "name": "AND SO 6.1",
+   "date": "2026-10-24",
+   "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.",
+   "path": "/and-so/v6.1/",
+   "commit": "aa8cbe6",
+   "sha256": "703084ceeaa2fd8a92c2c393b400782becc28388b69fb247353c193c8974eb2e"
+  },
+  {
+   "id": "6",
+   "short": "AND SO 6",
+   "name": "AND SO 6",
+   "date": "2026-10-23",
+   "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.",
+   "path": "/and-so/v6/",
+   "commit": "bb58990",
+   "sha256": "a1cc29295278f72705b6cd0631f8c21a67ad3c00f388b0f6350975fdcd243b02"
+  },
+  {
+   "id": "2026-10-22",
+   "short": "AND SO, 22 Oct",
+   "name": "AND SO, 22 October",
+   "date": "2026-10-22",
+   "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.",
+   "path": "/and-so/2026-10-22/",
+   "commit": "60ed2e8",
+   "sha256": "f71033a1709518e282f87837ac2e70d7b3287f6627c99d9650e9281e312be7e2"
+  },
+  {
+   "id": "2026-10-12",
+   "short": "AND SO, 12 Oct",
+   "name": "AND SO, 12 October",
+   "date": "2026-10-12",
+   "line": "The first AND SO: a microtonal instrument you can hum to.",
+   "path": "/and-so/2026-10-12/",
+   "commit": "cf63f5c",
+   "sha256": "847fff816760a4dbaead7c778b742fe7e6aa133fccef9af15e398df0172d9c6c"
+  },
+  {
+   "id": "gamut-43",
+   "short": "Gamut Field Guide",
+   "name": "Gamut Field Guide",
+   "date": "2026-10-22",
+   "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.",
+   "path": "/and-so/gamut-43/",
+   "edition": true,
+   "commit": "06690c7",
+   "sha256": "22d87d7533eb6ebdbec2b29ff4931d6c7425521fb678f6028624197ed714013f"
+  }
+ ]
+}

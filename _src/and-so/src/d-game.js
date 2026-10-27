@@ -1,5 +1,6 @@
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
-const SAVE_KEY = 'andso:v2';   // the same key since v2: AND SO 7 reads every earlier save and adds to it
+const SAVE_KEY = 'andso:v7';   // AND SO 7 keeps its own save, so playing an older version (they share andso:v2) never takes anything away
+const OLD_SAVE_KEYS = ['andso:v2'];   // read every time and merged in: counts take the larger, found things and stones the union
 const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
@@ -33,7 +34,12 @@ function applySave(s, preferPrefs) {
   // 7 opens in Meta Daylight: a look saved before 7 is not carried over, a look you pick in 7 is kept
   if (preferPrefs && s.skin && s.lit && (+s.sv || 0) >= 70) savedSkin = s.skin;
 }
-function loadLocal() { try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { applySave(JSON.parse(raw), true); return true; } } catch (e) {} return false; }
+function loadLocal() {
+  let any = false;
+  try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { applySave(JSON.parse(raw), true); any = true; } } catch (e) {}
+  OLD_SAVE_KEYS.forEach(k => { try { const raw = localStorage.getItem(k); if (raw) { applySave(JSON.parse(raw), !any); any = true; } } catch (e) {} });
+  return any;
+}
 let localT = 0;
 function persistSoon() {
   if (MIR.depth > 0) return;   // a copy in the mirror never saves: the page at the top keeps the one save
