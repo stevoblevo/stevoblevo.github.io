@@ -125,7 +125,7 @@ function update(dt) {
   bird.alpha += ((singing ? 1 : 0) - bird.alpha) * (1 - Math.exp(-dt * 3)); bird.flash *= Math.exp(-dt * 4);
   if (bird.alpha > 0.02) { bird.trail.push([bird.x, bird.y]); if (bird.trail.length > 36) bird.trail.shift(); }
   else { bird.trail.length = 0; if (!singing) { bird.x = bird.tx = -100; bird.y = bird.ty = -100; } }
-  petTick(dt); pluckFree(); brookTick(dt); jamTick();
+  petTick(dt); pluckFree(); brookTick(dt); jamTick(); guardTick(dt); heardTick();
   if (era && era.endAt) {
     if (!era.cap && t > era.endAt + 1.3) { era.cap = true; caption("1955 isn't ready for that yet. its kids will be.", 5200); discover('x-1955'); }
     if (t > era.endAt + 4.2) { const pv = era.prev, pr = era.prevRhy; era = null; for (const v of voices) { v.target = null; v.locked = false; v.temp = 0.2; } if (pv !== M.key) setMode(pv, true); rhy.on = pr; rhy.nextT = 0; syncUI(); }
@@ -211,7 +211,7 @@ $('enter').addEventListener('click', e => {
   caption(LIGHT() ? 'light first. every valley is a little sun.' : 'a dissonance leans on its resolution.', 3800, 'music');
   // Everfallen starts in easy listening: familiar chords, plucked, that slide into just intonation when the auto-flip comes
   if (SET.easyStart && !M.easy) setTimeout(() => { if (entered && !M.easy && !round && !JAM.on && !era && !REEL.on) setMode('easy', true); }, 1600);
-  dailyNougat();
+  dailyNougat(); guardsLoad();
   nextAct = t + 10; lastUserT = t; nextTryT = t + 40; flipAt = t + 45; bellNext = t + 14; windNext = t + 9; trainNext = t + 200;
   lastPX = W / 2; lastPY = H / 2;
   fillQuests(); resize();
@@ -234,6 +234,7 @@ try {
     jam: () => ({ on: JAM.on, sess: JAM.sess, bar: JAM.bar, bi: JAM.bi, chorus: JAM.chorus, score: JAM.score, notes: JAM.notes, good: JAM.good, phase: JAM.phase, chord: JAM.chord && JAM.chord.sym, keys: JAM.keys.length, call: !!JAM.call, blues: [...JAM.blues] }),
     game: () => ({ nougats: GAME.nougats, stones: GAME.stones.slice(), stories: GAME.stories.slice(), played: Math.round(GAME.played), jamBest: GAME.jamBest, lastDay: GAME.lastDay, all: allUnlocked }),
     mir: () => ({ depth: MIR.depth, open: MIR.open, deep: MIR.deep, wins: MIR.wins.map(w => ({ kind: w.kind, dev: w.dev, look: w.look, ready: w.ready, k: +w.k.toFixed(3) })) }),
+    hearText, spawnGuard, guardsSleep, mishear, earNorm, guards: () => EAR.guards.map(g => ({ id: g.id, x: Math.round(g.x), y: Math.round(g.y), on: !!(GFEAT[g.id] && GFEAT[g.id].on()) })), ear: () => ({ q: EAR.q.map(q => q.id), heard: EAR.heardS, miss: EAR.missS, met: GAME.met.slice() }),
     nougat: n => nougat(n, W / 2, H / 2, 'a test'), played: s => { GAME.played = s; }, deep: d => { MIR.deep = d; }, folds: d => { depth = d; }, petForm: f => { SET.petForm = f; }, pet: () => ({ x: pet.x, y: pet.y, say: pet.say }),
     mo: () => ({ twistA: +MO.twistA.toFixed(1), sinceShake: +(performance.now() / 1000 - MO.shakeT).toFixed(2), sinceTwist: +(performance.now() / 1000 - MO.twistT).toFixed(2), on: MO.on, live: MO.live, sign: MO.sign, gx: +MO.gx.toFixed(3), gy: +MO.gy.toFixed(3), tx: +MO.tx.toFixed(3), ty: +MO.ty.toFixed(3), lean: +MO.lean.toFixed(2), rolling: MO.rolling, hops: MO.hops, busy: +MO.busy.toFixed(2), gesture: MO.gesture, hz: Math.round(MO.hz) }),
     wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),

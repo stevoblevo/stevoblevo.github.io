@@ -1,6 +1,6 @@
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
 const SAVE_KEY = 'andso:v2';   // the same key since v2: AND SO 7 reads every earlier save and adds to it
-const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie'];
+const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
@@ -13,7 +13,8 @@ function snapshot() {
   try { if (REEL.on && REEL.saved) { const r = REEL.saved; sk = r.skin; ['view', 'cymShape', 'cymPowder', 'x5d', 'detect', 'flip', 'light', 'tease'].forEach(k => { if (k in r && k in set) set[k] = r[k]; }); } } catch (e) {}
   return { v: 2, sv: 70, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin: sk, set,
     game: { score: GAME.score, best: GAME.best, rounds: GAME.rounds, stars: GAME.stars, qdone: GAME.qdone, bestTime: GAME.bestTime || 0,
-      nougats: GAME.nougats, played: Math.round(GAME.played), stones: GAME.stones.slice(), stories: GAME.stories.slice(), jamBest: GAME.jamBest, lastDay: GAME.lastDay }, stamp: Date.now() };
+      nougats: GAME.nougats, played: Math.round(GAME.played), stones: GAME.stones.slice(), stories: GAME.stories.slice(), jamBest: GAME.jamBest, lastDay: GAME.lastDay,
+      guards: GAME.guards.slice(0, 12), met: GAME.met.slice(), heard: GAME.heard, guardNougat: GAME.guardNougat }, stamp: Date.now() };
 }
 function applySave(s, preferPrefs) {
   if (!s || typeof s !== 'object') return;
@@ -23,7 +24,10 @@ function applySave(s, preferPrefs) {
   if (s.game) { const g = s.game; GAME.score = Math.max(GAME.score, +g.score || 0); GAME.best = Math.max(GAME.best, +g.best || 0); GAME.rounds = Math.max(GAME.rounds, +g.rounds || 0); GAME.stars = Math.max(GAME.stars, +g.stars || 0); GAME.qdone = Math.max(GAME.qdone, +g.qdone || 0); if (g.bestTime && (!GAME.bestTime || g.bestTime < GAME.bestTime)) GAME.bestTime = g.bestTime;
     GAME.nougats = Math.max(GAME.nougats, +g.nougats || 0); GAME.played = Math.max(GAME.played, +g.played || 0); GAME.jamBest = Math.max(GAME.jamBest, +g.jamBest || 0); if (g.lastDay && g.lastDay > GAME.lastDay) GAME.lastDay = g.lastDay;
     if (Array.isArray(g.stones)) g.stones.forEach(id => { if (typeof id === 'string' && !GAME.stones.includes(id)) GAME.stones.push(id); });
-    if (Array.isArray(g.stories)) g.stories.forEach(id => { if (typeof id === 'string' && !GAME.stories.includes(id)) GAME.stories.push(id); }); }
+    if (Array.isArray(g.stories)) g.stories.forEach(id => { if (typeof id === 'string' && !GAME.stories.includes(id)) GAME.stories.push(id); });
+    if (Array.isArray(g.met)) g.met.forEach(id => { if (typeof id === 'string' && !GAME.met.includes(id)) GAME.met.push(id); });
+    if (Array.isArray(g.guards) && !GAME.guards.length) GAME.guards = g.guards.filter(id => typeof id === 'string').slice(0, 12);
+    GAME.heard = Math.max(GAME.heard, +g.heard || 0); if (typeof g.guardNougat === 'string' && g.guardNougat > GAME.guardNougat) GAME.guardNougat = g.guardNougat; }
   if (preferPrefs && s.set) PREF_KEYS.forEach(k => { if (s.set[k] !== undefined && typeof s.set[k] === typeof SET[k]) SET[k] = s.set[k]; });
   // a light look saved before 6.1 (the old light-host default, or a reel cut short) is not kept: those come back dark once
   // 7 opens in Meta Daylight: a look saved before 7 is not carried over, a look you pick in 7 is kept
@@ -72,6 +76,7 @@ function capsUI() {
   $('recNote').textContent = canSave ? 'recordings save as .webm. replay runs here on the page.' : 'replay runs here on the page.';
   $('askRow').classList.toggle('hidden', !CAP.sample);
   $('stNew').classList.toggle('hidden', !CAP.sample);
+  earUI();
 }
 async function offerFile(filename, data) {
   if (!CAP.dl && CAP.selfHost) {

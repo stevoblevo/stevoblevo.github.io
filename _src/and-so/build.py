@@ -13,7 +13,7 @@ SRC = ROOT / "src"
 VENDOR = ROOT / "vendor"
 JS = ["a-core.js", "b-audio.js", "c-music.js", "d-game.js", "d2-world.js", "e-input.js", "f-draw.js", "f2-terrain.js",
       "h-listen.js", "i-views.js", "j-motion.js", "k-world.js", "l-reel.js", "m-paper.js", "n-mirror.js", "o-jam.js",
-      "p-brook.js", "g-loop.js"]
+      "p-brook.js", "q-guard.js", "g-loop.js"]
 FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
          "&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600"
          "&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800"
@@ -38,7 +38,7 @@ def main() -> None:
     body = f'<div id="andso-app">\n{body}</div>\n'
     scripts = f"<script id=\"sb-js\">\n{sb_js}\n</script>\n<script id=\"andso-js\">\n(() => {{\n'use strict';\nconst ANDSO_VERSION = '{VERSION}';\n{script}\n}})();\n</script>\n"
     page = (
-        "<title>AND SO</title>\n"
+        "<title>AND SO 7</title>\n"
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
         f"{styles}{body}\n{scripts}"
@@ -57,7 +57,7 @@ def main() -> None:
         '<meta name="description" content="AND SO 7 · Everfallen: a microtonal instrument and storybook game. voices roll into the valleys where notes agree; '
         'jam over a blues in 7-limit tuning, open the game inside itself, and keep the nougats.">\n'
         '<meta name="theme-color" content="#f4f6f2">\n'
-        '<title>AND SO</title>\n'
+        '<title>AND SO 7</title>\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
         f"{styles}</head>\n<body>\n{body}\n{scripts}</body>\n</html>\n")

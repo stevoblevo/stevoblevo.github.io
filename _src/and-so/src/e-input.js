@@ -138,6 +138,7 @@ hitEl.addEventListener('pointerdown', e => {
   if (sp && reg === 'mandala' && startPinch('mandala', sp, p)) return;
   const vq = others.find(q => q.role === 'view');
   if (vq && reg === 'mandala' && viewOn() !== 'cymatics' && startPinch('view', vq, p)) return;
+  const gq = guardAt(px, py); if (gq) { p.role = 'guard'; p.g = gq; p.dx = px - gq.x; p.dy = py - gq.y; p.gvx = 0; p.gvy = 0; gq.drag = true; return; }
   if (UNL.pet && pet.hatch <= 0 && Math.hypot(px - pet.x, py - (pet.y - 10 * S)) < 36 * S) { p.role = 'pet'; p.dx = px - pet.hx; p.dy = py - pet.hy; return; }
   if (hole.on && Math.hypot(px - hole.x, py - hole.y) < holeRad() * 2.4) { p.role = 'hole'; p.dx = px - hole.x; p.dy = py - hole.y; return; }
   for (let i = 0; i < 5; i++) { const q = latPos(i); if (Math.hypot(px - q[0], py - q[1]) < (phone ? 26 : 18) * Math.max(S, 0.9)) { p.role = 'node'; p.i = i; return; } }
@@ -197,6 +198,7 @@ hitEl.addEventListener('pointermove', e => {
     case 'view': viewMove(p, dx, dy, dtm, e); break;
     case 'node': { const L = LAT[p.i], a = (L.a * Math.PI) / 180, proj = (px - MX) * Math.cos(a) + (py - MY) * Math.sin(a); SET[L.k] = clamp((proj - MR * 1.3) / (MR * 0.6), 0, 1); if (t - (p.la || 0) > 0.1) { p.la = t; audio.applyMix(); } break; }
     case 'pet': pet.hx = clamp(px - p.dx, 20, W - 20); pet.hy = clamp(py - p.dy, TOPH + 30, H - 30); break;
+    case 'guard': p.g.x = px - p.dx; p.g.y = py - p.dy; p.gvx = p.gvx * 0.5 + (dx / dtm) * 500; p.gvy = p.gvy * 0.5 + (dy / dtm) * 500; break;
     case 'hole': hole.x = clamp(px - p.dx, PX0, PX0 + PW); hole.y = clamp(py - p.dy, TOPH + 30, LT - 16); break;
   }
 });
@@ -232,6 +234,17 @@ function endPtr(e) {
     case 'harp': if (!p.moved) lean(0.8); else { discover('x-harp'); jlog('played the sky harp'); } break;
     case 'node': audio.applyMix(); syncUI(); persistSoon(); discover('x-lattice'); jlog('lattice adjusted'); break;
     case 'pet': if (!p.moved) { if (now - pet.lastTap < 350) petPose(); else petTalk(); pet.lastTap = now; } break;
+    case 'guard': {
+      const g = p.g; g.drag = false;
+      if (!p.moved && dur < 450) { guardTap(g); break; }
+      const fast = Math.hypot(p.gvx, p.gvy) > 1500 && now - p.lt < 90, out = g.x < 8 || g.x > W - 8 || g.y < TOPH + 4 || g.y > H - 8;
+      if (fast || out) {
+        EAR.guards.splice(EAR.guards.indexOf(g), 1);
+        for (let i = 0; i < 14; i++) sparks.push({ x: clamp(g.x, 0, W), y: clamp(g.y, 0, H), vx: rand(-80, 80) + p.gvx * 0.05, vy: rand(-80, 80) + p.gvy * 0.05, life: rand(0.4, 0.9), max: 0.9, c: [220, 230, 255] });
+        if (!QUIET() && UNL.pet) { pet.say = `the ${GUARD[g.id].name} went to sleep.`; pet.sayUntil = t + 2.6; }
+      } else { g.free = true; g.hx = g.x; g.hy = g.y; }
+      persistGuards(); break;
+    }
   }
 }
 hitEl.addEventListener('pointerup', endPtr);
@@ -239,7 +252,7 @@ hitEl.addEventListener('pointercancel', endPtr);
 hitEl.addEventListener('lostpointercapture', e => { if (PTR.has(e.pointerId)) endPtr(e); });
 ['gesturestart', 'gesturechange'].forEach(n => document.addEventListener(n, e => e.preventDefault(), { passive: false }));
 function hoverCursor(px, py) {
-  let near = (UNL.pet && Math.hypot(px - pet.x, py - pet.y) < 34 * S) || (hole.on && Math.hypot(px - hole.x, py - hole.y) < holeRad() * 2.4);
+  let near = !!guardAt(px, py) || (UNL.pet && Math.hypot(px - pet.x, py - pet.y) < 34 * S) || (hole.on && Math.hypot(px - hole.x, py - hole.y) < holeRad() * 2.4);
   for (let i = 0; !near && i < 5; i++) { const q = latPos(i); if (Math.hypot(px - q[0], py - q[1]) < 18 * Math.max(S, 0.9)) near = true; }
   if (!near) for (const v of voices) { if (v.wT === 0) continue; const b = ballPos(v); if (Math.hypot(b.X - px, b.Y - py) < 30) { near = true; break; } }
   const reg = regionOf(px, py);

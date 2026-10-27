@@ -369,8 +369,8 @@ function drawBird() {
   if (bird.alpha < 0.02 || bird.x < -50) return;
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
   for (let i = 1; i < bird.trail.length; i++) { ctx.strokeStyle = `rgba(255,236,190,${(i / bird.trail.length) * 0.35 * bird.alpha})`; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(bird.trail[i - 1][0], bird.trail[i - 1][1]); ctx.lineTo(bird.trail[i][0], bird.trail[i][1]); ctx.stroke(); }
-  const r = (5 + 4 * bird.flash) * S, g = ctx.createRadialGradient(bird.x, bird.y, 0, bird.x, bird.y, r * 4);
-  g.addColorStop(0, `rgba(255,240,200,${0.8 * bird.alpha})`); g.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = g; ctx.fillRect(bird.x - r * 4, bird.y - r * 4, r * 8, r * 8);
+  const r = (5 + 4 * bird.flash) * S, g = ctx.createRadialGradient(bird.x, bird.y, 0, bird.x, bird.y, r * 4), pk = paperLook() ? 0.3 : 1;
+  g.addColorStop(0, `rgba(255,240,200,${0.8 * bird.alpha * pk})`); g.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = g; ctx.fillRect(bird.x - r * 4, bird.y - r * 4, r * 8, r * 8);
   const fl = reduceMotion ? 0.3 : Math.sin(t * 14) * 0.6;
   ctx.strokeStyle = `rgba(255,236,200,${0.75 * bird.alpha})`; ctx.lineWidth = 1.4; ctx.beginPath();
   ctx.moveTo(bird.x - 9 * S, bird.y - fl * 6 * S); ctx.quadraticCurveTo(bird.x - 4 * S, bird.y - 5 * S, bird.x, bird.y); ctx.quadraticCurveTo(bird.x + 4 * S, bird.y - 5 * S, bird.x + 9 * S, bird.y - fl * 6 * S); ctx.stroke();

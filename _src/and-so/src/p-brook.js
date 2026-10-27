@@ -252,3 +252,12 @@ on('mir61', () => mirOpen('61', phone ? 'phone' : 'laptop'));
 on('mirAll', () => { mirCloseAll(); mirrorTable(false); });
 on('mirExit', () => mirrorTable(false));
 jamPointer();
+
+// ---------- the overhearing's controls ----------
+$('sEars').addEventListener('change', e => earsOn(e.target.checked));
+$('sEarClaude').addEventListener('change', e => { SET.earClaude = e.target.checked; persistSoon(); });
+const earWhisper = () => { const v = $('earIn').value.trim(); if (!v) return; hearText(v, 'typed'); $('earIn').value = ''; };
+on('earGo', earWhisper);
+$('earIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); earWhisper(); } });
+on('earSleep', guardsSleep);
+document.addEventListener('visibilitychange', () => { if (document.hidden && EAR.want) earsOn(false); });

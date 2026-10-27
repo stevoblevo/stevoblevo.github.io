@@ -115,6 +115,15 @@
     <label class="row"><span>hide the words</span><input type="checkbox" class="sw" id="sQuiet"></label>
     <div class="note">nothing on screen but the music. a chord's name rises when it changes, and quests come and go on their own. Q, or the Aa button in the corner.</div>
 
+    <div class="sec">overheard</div>
+    <label class="row" id="earRow"><span>let Saelion overhear words</span><input type="checkbox" class="sw" id="sEars"></label>
+    <div class="btns"><input class="txt" id="earIn" maxlength="140" placeholder="or whisper something" aria-label="something for Saelion to overhear" autocomplete="off"><button class="pill" id="earGo">whisper</button></div>
+    <label class="row hidden" id="earClaudeRow"><span>let Claude mishear it too</span><input type="checkbox" class="sw" id="sEarClaude" checked></label>
+    <div class="note" id="earNote">off until you switch it on.</div>
+    <div class="note" id="earMet">no guardians yet.</div>
+    <div class="btns"><button class="pill" id="earSleep">send the guardians to sleep</button></div>
+    <div class="note">she hears the plain words first, then mishears them on purpose: I see becomes an ice cube, love a heart, and every I might become an eye. the guardians have no labels. tap one to switch its thing on, drag it anywhere, flick it away to send it to sleep.</div>
+
     <div class="sec">notes or drones</div>
     <div class="btns"><button class="pill on" data-artic="pluck">notes</button><button class="pill" data-artic="drone">drones</button></div>
     <label class="row"><span>a soft bed under the light mood</span><input type="checkbox" class="sw" id="sBed"></label>
@@ -337,3 +346,4 @@
 </div>
 
 <div id="turn" class="sbi" aria-hidden="true"></div>
+<div id="heard" class="sbi" aria-live="polite"></div>

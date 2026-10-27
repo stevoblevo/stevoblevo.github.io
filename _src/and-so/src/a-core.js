@@ -247,7 +247,15 @@ const CAT = [
   ['x-table', 'any', 'ev', '', 'the table', 'a TV or e-paper on the table', 'windows you can drag, fold and turn to face the other side of a table.', 'open a TV or e-paper window in the mirror'],
   ['x-61', 'any', 'ev', '', 'as it was', 'opened 6.1', 'AND SO 6.1, frozen the night 7 began, playing in a window of 7.', 'open 6.1 in the mirror'],
   ['x-look', 'any', 'ev', '', 'Storeybrook', 'a paper look', 'the same world printed in ink on watercolor paper, comic halftone, folded paper or knitted silk.', 'try a Storeybrook look'],
-  ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook']
+  ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook'],
+  ['x-heard', 'any', 'ev', '', 'overheard', 'Saelion heard some words', 'the plain words come first. the mishearings come later, on purpose.', 'whisper something to Saelion, in the gamut'],
+  ['x-ears', 'any', 'ev', '', 'ears open', 'let her overhear', "the browser's own speech recognition turns what it hears into words; Saelion only keeps the words.", 'switch on overhearing, in the gamut'],
+  ['x-guard', 'any', 'ev', '', 'a guardian', 'a mishearing came to life', 'I see became an ice cube. every guardian switches something real on when you tap it.', 'say something near Saelion and wait'],
+  ['x-guardtap', 'any', 'ev', '', 'the switch', 'tapped a guardian', 'no labels: the object is the button. tap it again to switch it off.', 'tap one of the guardians'],
+  ['x-guard8', 'any', 'ev', '', 'a whole menagerie', 'eight guardians met', 'ice, hearts, eyes, moons, bees: whatever the room happened to say.', 'meet eight different guardians'],
+  ['x-triclops', 'any', 'ev', '', 'triclops', 'three eyes found each other', 'every I she overhears might become an eye. three make a triclops, who likes triplets and three dimensions.', 'let Saelion overhear the word I, three times'],
+  ['x-psyk', 'any', 'ev', '', 'psyklopea', 'an eye met a sigh', 'one eye, a pea pod, five dimensions.', 'say sigh, or psych, or peas, near an eye'],
+  ['x-mondegreen', 'any', 'ev', '', 'mondegreen', 'Claude misheard it too', 'a mondegreen is a misheard lyric: the word comes from a 1954 essay that misheard a ballad.', 'whisper something where Claude can answer']
 ].map(a => ({ id: a[0], mode: a[1], kind: a[2], key: a[3], name: a[4], line: a[5], fact: a[6], hint: a[7] }));
 const CATI = new Map(CAT.map(c => [c.id, c]));
 
@@ -256,7 +264,7 @@ const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pac
   flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
   view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5,
   // AND SO 7 · Everfallen: notes instead of drones, easy listening first, the hummer only when asked, words only when they matter
-  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true };
+  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true };
 const LIGHT = () => !!SET.light && !SET.frolic;
 let W = 0, H = 0, S = 1, wide = true, latticeOn = false, LT = 0, LB = 0, SH = 34, PX0 = 0, PW = 1, MX = 0, MY = 0, MR = 100, BR = 8, NS = 0, DPR = 1, qScale = 1;
 let SAT = 0, SAB = 0, TOPH = 0, PEEK = 0, phone = false;
@@ -291,7 +299,7 @@ const stars = Array.from({ length: 200 }, () => ({ x: Math.random(), y: Math.ran
 let lastMk = '', lastChordStr = '', lastRootJ = 0, sweetT = 0, seeds = 0, depth = 0, regHigh = 0, regLow = 0, regState = 'in the middle band', uiT = 0, frolT = 0;
 const journal = [];
 const LAT = [{ k: 'tune', n: 'Tuning', a: -90 }, { k: 'shim', n: 'Shimmer', a: -18 }, { k: 'pace', n: 'Pace', a: 54 }, { k: 'space', n: 'Space', a: 126 }, { k: 'warm', n: 'Warmth', a: 198 }];
-const GAME = { score: 0, best: 0, combo: 0, lastLand: -99, rounds: 0, stars: 0, qdone: 0, quests: [], nougats: 0, played: 0, stones: [], stories: ['valley'], jamBest: 0, lastDay: '' };
+const GAME = { score: 0, best: 0, combo: 0, lastLand: -99, rounds: 0, stars: 0, qdone: 0, quests: [], nougats: 0, played: 0, stones: [], stories: ['valley'], jamBest: 0, lastDay: '', guards: [], met: [], heard: 0, guardNougat: '' };
 let round = null, roundN = 0;
 
 const fold = (f, eq, lo) => { const hi = lo * eq; while (f >= hi) f /= eq; while (f < lo) f *= eq; return f; };

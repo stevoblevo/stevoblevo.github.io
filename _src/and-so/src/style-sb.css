@@ -172,6 +172,13 @@ body.quiet #gw { opacity: 0 !important; visibility: hidden !important }
 body.quiet :is(.jam-title, .jam-set, .jam-score, .jam-chord, .jam-phase) { display: none }
 body.quiet .jf { width: 9px; height: 9px; border-radius: 50%; background: currentColor; padding: 0 }
 
+/* ---------- what Saelion overheard, in the storybook's hand ---------- */
+#heard { position: fixed; z-index: 7; left: 50%; top: 40%; max-width: min(26em, 80vw); translate: -50% -100%; rotate: -2deg; padding: .15em .7em .25em; pointer-events: none;
+  font: 600 clamp(20px, .7vw + 14px, 38px)/1.15 var(--sb-hand); color: var(--ink); background: color-mix(in srgb, var(--page) 88%, transparent); border: 1.5px solid var(--line); border-radius: 6px; box-shadow: var(--shadow-sticker);
+  opacity: 0; transition: opacity .5s }
+#heard.on { opacity: 1 }
+body.quiet #heard { display: none }
+
 /* ---------- the page turn ---------- */
 #turn { position: fixed; inset: 0; z-index: 60; display: none; pointer-events: none; background: var(--paper); transform: translateX(102%); box-shadow: -40px 0 70px rgba(0, 0, 0, .22) }
 #turn::before { content: ""; position: absolute; inset: 0; background-image: var(--sb-fibre-img); background-size: 420px; opacity: .5; mix-blend-mode: multiply }
