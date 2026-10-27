@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
-import {readFile, mkdir, writeFile} from 'node:fs/promises';
+import {readFile, mkdir, writeFile, mkdtemp} from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+import {tmpdir} from 'node:os';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -29,7 +31,8 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin='http://127.0.0.1:'+server.address().port;
-let browser;
+let browser,chromeProcess;
+let chromeStartupLog='';
 const check=(name,condition)=>{assert(condition,name);checks.push(name);console.log('PASS '+name)};
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function canvasHash(page,selector){
@@ -39,8 +42,8 @@ async function canvasHash(page,selector){
   return h>>>0;
  });
 }
-async function context(options={}){
- const c=await browser.newContext({viewport:{width:1280,height:900},hasTouch:true,...options});
+async function context(options={},existing){
+ const c=existing||await browser.newContext({viewport:{width:1280,height:900},hasTouch:true,...options});
  await c.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort('blockedbyclient'));
  await c.addInitScript(()=>{
   window.__repairEvents=[];
@@ -57,6 +60,7 @@ async function nativeCancel(page,selector){
  const el=page.locator(selector);await el.scrollIntoViewIfNeeded();
  const box=await el.boundingBox();assert(box);
  const session=await page.context().newCDPSession(page);
+ await session.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
  await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:box.x+box.width/2,y:box.y+box.height/2}]});
  await delay(100);
  await session.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
@@ -64,10 +68,24 @@ async function nativeCancel(page,selector){
  await session.detach();
 }
 try{
- browser=await chromium.launch({headless:false,executablePath:process.env.CHROME_PATH,args:['--mute-audio']});
+ // A fresh, owned Chrome profile; never attach to a user's existing browser.
+ // Official noDefaults avoids Playwright's primary-session focus override.
+ const profile=await mkdtemp(path.join(process.env.RUNNER_TEMP||tmpdir(),'saelion-visibility-'));
+ chromeProcess=spawn(process.env.CHROME_PATH,['--user-data-dir='+profile,'--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--mute-audio','about:blank'],{stdio:['ignore','ignore','pipe']});
+ chromeProcess.stderr.on('data',data=>{chromeStartupLog=(chromeStartupLog+data).slice(-6000)});
+ const deadline=Date.now()+15000;let port;
+ while(Date.now()<deadline){
+  if(chromeProcess.exitCode!==null)throw Error('Owned Chrome exited before connection: '+chromeStartupLog);
+  try{port=Number((await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);if(port>0)break}catch{}
+  await delay(100);
+ }
+ assert(port>0,'Owned Chrome did not publish its loopback debugging port: '+chromeStartupLog);
+ browser=await chromium.connectOverCDP('http://127.0.0.1:'+port,{noDefaults:true});
+ report.visibilityEnvironment='fresh owned default Chrome context; Playwright noDefaults=true';
  report.browser=browser.version();
  // Real keyboard focus/visibility and native browser-generated pointercancel.
- const c=await context(),p=await c.newPage();
+ const c=await context({},browser.contexts()[0]),p=await c.newPage();
+ await p.setViewportSize({width:1280,height:900});
  await p.goto(origin+'/goober/run/');
  await p.waitForFunction(()=>!!window.__controlsTest);
  check('Goober is idle before Start',await p.locator('#start').isVisible());
@@ -121,7 +139,7 @@ try{
   await p.keyboard.up('ArrowRight');
   check('Goober history return clears input '+n,await p.evaluate(()=>keys.size===0&&pointer===null));
  }
- await c.close();
+ await p.close();
  for(const width of [390,1280]){
   const pc=await context({viewport:{width,height:900}}),page=await pc.newPage();
   const images=[];
@@ -180,6 +198,7 @@ try{
 }catch(error){report.status='failed';report.error=String(error.stack||error);process.exitCode=1}
 finally{
  if(browser)await browser.close();
+ if(chromeProcess&&chromeProcess.exitCode===null)chromeProcess.kill('SIGTERM');
  await new Promise(resolve=>server.close(resolve));
  await writeFile(path.join(evidence,'browser.json'),JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify(report,null,2));
