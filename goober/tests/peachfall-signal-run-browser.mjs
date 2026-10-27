@@ -77,10 +77,16 @@ try{
  check('Goober real keyboard turns ship',Math.abs(firstYaw)>.05);
  const visibilitySession=await c.newCDPSession(p);
  await visibilitySession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
- const other=await c.newPage();await other.goto('about:blank');
+ const targetInfo=(await visibilitySession.send('Target.getTargetInfo')).targetInfo;
+ const browserSession=await browser.newBrowserCDPSession();
+ const nextPage=c.waitForEvent('page');
+ await browserSession.send('Target.createTarget',{url:'about:blank',browserContextId:targetInfo.browserContextId,newWindow:false,background:false});
+ const other=await nextPage;
  const otherSession=await c.newCDPSession(other);
+ report.visibilityWindows={game:await visibilitySession.send('Browser.getWindowForTarget'),other:await otherSession.send('Browser.getWindowForTarget')};
  await otherSession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
  await other.bringToFront();
+ check('Goober real blur releases held key',await p.evaluate(()=>!document.hasFocus()&&keys.size===0&&paused));
  let hiddenObserved=false;
  try{
   // Animation-frame polling cannot observe a page once its frames are suspended.
@@ -100,7 +106,7 @@ try{
  const resumedYaw=await p.evaluate(()=>window.__controlsTest.getYaw());await delay(250);
  if(hiddenObserved)check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
  await p.keyboard.up('ArrowRight');
- await otherSession.detach();await other.close();await visibilitySession.detach();
+ await otherSession.detach();await other.close();await visibilitySession.detach();await browserSession.detach();
  await nativeCancel(p,'.touch-controls [data-key="ArrowUp"]');
  check('Goober native pointercancel is trusted',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='pointercancel'&&e.trusted&&e.target==='ArrowUp')));
  check('Goober native cancellation releases thrust',await p.evaluate(()=>!keys.has('ArrowUp')));
@@ -121,6 +127,8 @@ try{
   const images=[];
   page.on('response',r=>{if(r.url().includes('/source/images/anchors/'))images.push({url:r.url(),status:r.status()})});
   for(const route of ['/peachfall/','/peachfall/play.html']){
+   // Each entry starts fresh in this disposable test profile; Play intentionally saves its scene.
+   if(route==='/peachfall/play.html')await page.evaluate(()=>localStorage.removeItem('peachfall-playable-v1'));
    await page.goto(origin+route);await page.waitForFunction(()=>document.body.dataset.scene==='title');
    await page.waitForFunction(()=>performance.getEntriesByType('resource').filter(e=>e.name.includes('/source/images/anchors/')).length>=3);
    check('Peachfall three nested image requests succeed '+width+' '+route,images.slice(-3).length===3&&images.slice(-3).every(x=>x.status===200&&x.url.includes('/peachfall/source/images/')));
