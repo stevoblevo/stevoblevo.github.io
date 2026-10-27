@@ -30,7 +30,10 @@ const server=createServer(async(req,res)=>{
  }catch{res.writeHead(404).end('Not found');}
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const origin='http://127.0.0.1:'+server.address().port;
+const verifyPublic=process.env.VERIFY_PUBLIC==='1';
+const origin=verifyPublic?'https://stevoblevo.github.io':'http://127.0.0.1:'+server.address().port;
+report.origin=origin;
+report.mode=verifyPublic?'signed-out public deployment':'isolated checkout';
 let browser,chromeProcess;
 let chromeStartupLog='';
 const check=(name,condition)=>{assert(condition,name);checks.push(name);console.log('PASS '+name)};
@@ -72,6 +75,28 @@ async function nativeCancel(page,selector){
  await session.detach();
 }
 try{
+ if(verifyPublic){
+  // Never test an older deployed bundle and call it this release. Wait only for exact bytes.
+  const targets=['peachfall/index.html','peachfall/play.html',...Object.keys(report.sourceHashes),
+   'peachfall/source/images/anchors/01_gen22_page1_the_princess_who_could_not_leave_the_tower.png',
+   'peachfall/source/images/anchors/02_astral_assembly_sae_and_little_princesses.png',
+   'peachfall/source/images/anchors/03_gameplay_assume_her_fragments.png'];
+  const expected=new Map(await Promise.all(targets.map(async p=>[p,createHash('sha256').update(await readFile(path.join(root,p))).digest('hex')])));
+  const deadline=Date.now()+180000;
+  do{
+   report.deployedFiles=await Promise.all(targets.map(async p=>{
+    try{
+     const response=await fetch(origin+'/'+p,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});
+     const sha256=createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex');
+     return {path:p,status:response.status,expected:expected.get(p),sha256,matched:response.status===200&&sha256===expected.get(p)};
+    }catch(error){return {path:p,matched:false,error:String(error)}}
+   }));
+   if(report.deployedFiles.every(f=>f.matched))break;
+   if(Date.now()>=deadline)break;
+   await delay(10000);
+  }while(true);
+  check('All nine public entry, runtime, style and image files match this checkout',report.deployedFiles.length===9&&report.deployedFiles.every(f=>f.matched));
+ }
  // A fresh, owned Chrome profile; never attach to a user's existing browser.
  // Official noDefaults avoids Playwright's primary-session focus override.
  const profile=await mkdtemp(path.join(process.env.RUNNER_TEMP||tmpdir(),'saelion-visibility-'));

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jar · Storeybrook</title>
+<meta name="description" content="The nougat jar: the count of every nougat a person has earned, filling toward a cap.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Rewards</p><section class="site-live" aria-label="Jar, live"><div class="pv row" style="gap:28px"><button class="sb-jar" id="jar" data-cap="30" type="button"></button>
+<span class="sb-nougat" data-sb-nougat="3"></span><span class="sb-nougat" data-sb-nougat="7" style="--n:56px"></span><span class="sb-nougat" data-sb-nougat="11"></span>
+<button class="sb-btn sb-btn--secondary sb-btn--sm" id="drop"><span data-sb-icon="nougat"></span>Drop a nougat</button></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="jar">Jar</h1>
+<p>The nougat jar: the count of every nougat a person has earned, filling toward a cap. Nougats fly into it from whatever earned them.</p>
+<p><strong>Provide</strong> <code>&lt;button class="sb-jar" data-cap="30" type="button"&gt;&lt;/button&gt;</code> (add <code>sb-jar--fixed</code> to pin it to the bottom-right corner). <code>init()</code> draws the jar and its count; <code>Storeybrook.rewards.paint()</code> repaints after a change. A single nougat is <code>&lt;span class="sb-nougat" data-sb-nougat="7"&gt;&lt;/span&gt;</code> (the seed places its nuts; set <code>--n</code> for its width, default 44px).</p>
+<ul>
+<li><code>Storeybrook.rewards.drop(n, {from, to, reason})</code> flies n nougats from <code>from</code> to the jar over <code>dur-drop</code>, 140ms apart; each one adds to the count as it lands, bumps the jar, crinkles (if sound is on), buzzes 12ms and fires <code>sb:nougat</code>.</li>
+<li>The jar's name is its count: "9 nougats in the jar". The count is <code>count</code> style, tabular.</li>
+<li>Under reduced motion the nougats land at once.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do drop nougats from the thing that earned them, so the flight explains itself.
+- Don't take nougats out of the jar. Nothing costs nougats.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S){document.querySelectorAll('[data-sb-nougat]').forEach(function(x){x.innerHTML=S.nougatSVG(+x.getAttribute('data-sb-nougat'));});var j=document.getElementById('jar');if(!j.querySelector('.sb-jar__count'))j.insertAdjacentHTML('beforeend','<span class="sb-jar__count"></span>');if(S.rewards.count()<9)S.rewards.set(9);S.rewards.paint();document.getElementById('drop').addEventListener('click',function(e){S.rewards.drop(1,{from:e.currentTarget,to:j,reason:'trying the preview'});});}</script>
+</body>
+</html>

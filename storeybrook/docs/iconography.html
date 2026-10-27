@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Iconography · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Iconography.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html" aria-current="page">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Iconography</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="iconography">Iconography</h1>
+<p>Storeybrook's pictures are drawn with the same pen: a round 2px line, round ends, very few fills. Three kinds of picture share it: icons, the creature, and the nougat with its jar.</p>
+<h2 id="icons">Icons</h2>
+<p>Forty-four icons on a 24px grid, <code>stroke-width</code> 2, round caps and joins, drawn in <code>currentColor</code> so they take the text color they sit in.</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Kind</th>
+<th>Icons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reading and playing</td>
+<td><code>play</code>, <code>pause</code>, <code>stop</code>, <code>voice</code>, <code>book</code>, <code>music</code>, <code>hum</code></td>
+</tr>
+<tr>
+<td>Moving around</td>
+<td><code>next</code>, <code>prev</code>, <code>up</code>, <code>down</code>, <code>home</code>, <code>menu</code>, <code>close</code>, <code>map</code></td>
+</tr>
+<tr>
+<td>Progress and rewards</td>
+<td><code>lock</code>, <code>key</code>, <code>check</code>, <code>star</code>, <code>sparkle</code>, <code>nougat</code>, <code>jar</code>, <code>sticker</code>, <code>gift</code>, <code>heart</code>, <code>egg</code></td>
+</tr>
+<tr>
+<td>The world</td>
+<td><code>stone</code>, <code>brook</code>, <code>sun</code>, <code>moon</code>, <code>leaf</code>, <code>bunny</code>, <code>eye</code></td>
+</tr>
+<tr>
+<td>The looks</td>
+<td><code>look</code>, <code>ink</code>, <code>comix</code>, <code>origami</code>, <code>skein</code> (Meta Daylight uses <code>sun</code>, Knight Night <code>moon</code>)</td>
+</tr>
+<tr>
+<td>Devices and input</td>
+<td><code>gamepad</code>, <code>tv</code>, <code>tap</code>, <code>drag</code></td>
+</tr>
+<tr>
+<td>Messages</td>
+<td><code>info</code>, <code>alert</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>In markup: an empty element with <code>data-sb-icon="name"</code> (and <code>data-size</code>, default 24) is filled when <code>Storeybrook.init()</code> or <code>Storeybrook.mountIcons()</code> runs.</li>
+<li>In script: <code>Storeybrook.icon(name, size)</code> returns the SVG string; <code>Storeybrook.icons</code> lists the names.</li>
+<li>Every icon is <code>aria-hidden</code>. A button that is only an icon gets an <code>aria-label</code> that says what it does ("Read it to me", "Close the book").</li>
+<li>Sizes: 20px inside stones and small buttons, 24px in buttons, 26px in the reader's play button, 46% of a seal.</li>
+<li>The files in the Icons group are drawn in a fixed mid ink so they read on light and dark here. In pages, use the bundle, which draws in <code>currentColor</code>.</li>
+</ul>
+<h2 id="the-creature">The creature</h2>
+<p>Saelion is one creature that is a bunny, a tree octopus and a butterfly pixie at once, and it grows. <code>Storeybrook.creatureSVG({form, stage, mood})</code> draws it; <code>Storeybrook.creature(host, opts)</code> puts it in a host and makes it breathe and blink.</p>
+<ul>
+<li><code>form</code>: <code>saelion</code> (all three at once, the default), <code>bunny</code>, <code>octopus</code>, <code>pixie</code>.</li>
+<li><code>stage</code> (Saelion only): 0 <code>egg</code>, 1 <code>kit</code> (ears), 2 <code>bun</code> (two arms), 3 <code>sprite</code> (three arms, small wings), 4 <code>saelion</code> (five arms, full wings, three stars).</li>
+<li><code>mood</code>: <code>happy</code> (default), <code>sleepy</code> (eyes shut, no blinking), <code>surprised</code> (round mouth).</li>
+<li>Eyes are odd on purpose: one amber (<code>#e4a623</code>), one blue (<code>#3f7fd0</code>). Fur is <code>--sbc-fur</code>, arms <code>--sbc-arm</code>; Knight Night warms the fur, Ink Blot draws it in black and white.</li>
+<li>The SVG carries <code>role="img"</code> and a label ("Saelion as a sprite").</li>
+</ul>
+<p>Rules: one creature per screen, at 120–220px. It reacts (cheers, sleeps, looks surprised); it never blocks content or talks over the story. In a game it may change with time and play (AND SO's grows stranger the deeper the mirror goes); in the kit it stays friendly.</p>
+<h2 id="the-nougat-and-the-jar">The nougat and the jar</h2>
+<ul>
+<li><code>Storeybrook.nougatSVG(seed)</code> draws a nougat: a <code>nougat</code> bar with five <code>nougat-nut</code> flecks placed by the seed, twisted <code>wrapper</code> ends and an <code>art-light</code> glint. Same seed, same nougat.</li>
+<li><code>Storeybrook.jarSVG(fill)</code> draws the jar with its <code>copper</code> lid, filled from 0 to 1 with nougat and a wavy <code>wrapper</code> line on top.</li>
+<li>Both use the look's inks, so a nougat in Knight Night is the same sweet under candlelight.</li>
+</ul>
+<h2 id="no-emoji">No emoji</h2>
+<p>Storeybrook never uses emoji in its interface or its stories. If a picture is needed, it is an icon from the set, the creature, a nougat, or a game's own drawing.</p></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="motion.html"><span data-sb-icon="prev"></span>Motion</a><a class="sb-btn sb-btn--secondary" href="writing.html">Writing<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

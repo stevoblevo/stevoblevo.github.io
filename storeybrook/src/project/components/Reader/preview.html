@@ -1,0 +1,12 @@
+<!-- @dsCard group="Story" height=240 -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Reader</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>html,body{margin:0}body.sb-body{min-height:0;background:var(--paper);color:var(--ink);font-family:var(--sb-story)}.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style></head>
+<body class="sb-body">
+<div class="pv stack" style="max-width:600px">
+<div class="sb-reader" id="rd" data-sb-read="#st"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button>
+<div class="sb-reader__info"><span class="sb-reader__title">The octopus who learned to be a bunny</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i style="--p:34%"></i></span></div></div>
+<div id="st" class="sb-prose" style="font-size:1.1rem"><p>Once the octopus had learned to be a bunny, the butterfly part was easy. She tried it in the morning, when the brook was loud enough to cover any mistakes.</p></div>
+</div>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S)S.read.bind(document.getElementById('rd'),document.getElementById('st'));</script></body></html>

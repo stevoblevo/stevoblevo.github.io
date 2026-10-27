@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Page · Storeybrook</title>
+<meta name="description" content="One book page: `page` with long fibres, a deckled edge and `shadow-page`, `size-page` wide, with a folio.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Paper</p><section class="site-live" aria-label="Page, live"><div class="pv" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+<article class="sb-page sb-page--right" style="min-height:220px"><h3 class="display-s" style="margin:0 0 10px">The far stone</h3>
+<div class="sb-prose" style="font-size:1.05rem"><p>Nobody had walked to the far stone in years, so the moss had made itself at home.</p></div><span class="sb-page__folio">7</span></article>
+<article class="sb-page sb-page--lined sb-page--right" style="min-height:220px"><p class="sb-note" style="margin:0">things the brook said</p>
+<div class="sb-prose" style="font-size:1.05rem;line-height:1.6em"><p>plink. plonk. a fish.</p></div><span class="sb-page__folio">8</span></article>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="page">Page</h1>
+<p>One book page: <code>page</code> with long fibres, a deckled edge and <code>shadow-page</code>, <code>size-page</code> wide, with a folio.</p>
+<p><strong>Provide</strong> <code>&lt;article class="sb-page"&gt;</code> with the page's content and <code>&lt;span class="sb-page__folio"&gt;7&lt;/span&gt;</code> for the page number. Add <code>sb-page--lined</code> for an exercise book's lines (a <code>cue</code> hairline every 1.6em). Inside a spread a page gets <code>sb-page--left</code> or <code>sb-page--right</code>, which also places the folio on the outer corner.</p>
+<ul>
+<li>Padding grows from <code>clamp(1.5rem, 4vw, 3.5rem)</code>; text inside is <code>sb-prose</code> at the reading measure.</li>
+<li>Comix squares the page and inks its edge.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do put one chapter or one scene on a page; turn the page rather than scroll inside it.
+- Don't put controls other than links and the reader on a page: they belong to the chrome.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>

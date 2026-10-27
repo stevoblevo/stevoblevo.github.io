@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The short version · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: The short version.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html" aria-current="page">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">The short version</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="the-short-version">The short version</h1>
+<p>Storeybrook is a light-first kit for storybook pages and little games: watercolor paper, pages that turn, stories read aloud, a brook of stepping stones to walk, nougats that fly into a jar, and a creature that grows. It is the daylight counterpart to Depthfield. Where Depthfield is a dark scene with a quiet HUD, Storeybrook is a book on a table with a game folded inside it.</p>
+<p>The system has six looks (Meta Daylight, Knight Night, Ink Blot, Comix, Origami, Skein silk), one set of token names that every look fills, twenty-eight components with live previews, a behavior bundle (<code>window.Storeybrook</code>), drawn icons, the creature and the nougat as art, and the rules below. This page is the short version. The sections after it go deep: paper, looks, color, type, layout, motion, iconography, writing, sound and reading aloud, rewards and progression, devices, accessibility, code, governance, and play.</p>
+<h2 id="principles">Principles</h2>
+<ul>
+<li><strong>Paper first.</strong> Every surface is a material. The page is <code>paper</code>; a card, a dialog or a book page is a sheet of <code>page</code> laid on it, deckled, taped or sealed; color arrives as washes that bleed. No flat floating boxes, no glass, no gradients that are not pigment.</li>
+<li><strong>One accent per page.</strong> <code>accent</code> marks the one thing to do now: the primary button, the current stone, the drop cap, the open tab. If two things are <code>accent</code>, one is wrong.</li>
+<li><strong>The brook is the cue.</strong> <code>cue</code> is the color of the path through the page: links, the word being read aloud, the walked trail, a switched-on toggle, every "tap" or "say it" hint. Never put <code>cue</code> and <code>accent</code> on the same control.</li>
+<li><strong>The story leads; the game lives inside it.</strong> Text is set to be read, in <code>story-body</code> at a reading measure. A game is a stone on the brook or a cover on the shelf, never a modal that interrupts the page.</li>
+<li><strong>Rewards are gifts, not prices.</strong> Nougats are never spent, never lost and never sold. A lock always says why it is shut and how to open it. No timers, no streaks to break, no "only today".</li>
+<li><strong>Read it to me.</strong> Every page can be read aloud, an Irish English voice first when the device has one, with the words lighting as they are read. With no voices the words are all still there.</li>
+<li><strong>Six looks, one page.</strong> A look changes materials and fonts, never content, order or meaning. Check a page in Meta Daylight first, then Knight Night, then Ink Blot (e-ink and print), then the rest.</li>
+<li><strong>Across the room.</strong> The same page works on a phone, an e-ink slate and a 75-inch TV: <code>data-density="tv"</code> raises targets to 64px and focus rings to 5px, and the arrow keys, a remote and a gamepad all move focus.</li>
+<li><strong>Quiet until asked.</strong> Sound is off until a person turns it on, and stays on for that visit only. Nothing needs a camera, a microphone or motion sensors.</li>
+</ul>
+<h2 id="voice">Voice</h2>
+<ul>
+<li>Narration is past tense and plain: "The brook went on without asking, so Dora went with it." Instructions are present tense and short.</li>
+<li>Sentence case everywhere. Inside a game the game's own voice may be lower case (AND SO speaks in lower case); the chrome around it does not.</li>
+<li>Calls to action are verbs that say what happens: "Play this one", "Read it to me", "Skip the story", "Walk to the next stone", "Open the jar".</li>
+<li>No exclamation marks outside Comix balloons and sound effects. No emoji: Storeybrook draws its own icons.</li>
+<li>A lock says why and how in one breath: "Walk two more stones to open Origami."</li>
+<li>Prices are honest: "99¢ each" on the tag, "Free to play now" until a shop exists.</li>
+</ul>
+<h2 id="start-here">Start here</h2>
+<p>Load <code>tokens.css</code>, <code>components/bundle.css</code> and <code>components/bundle.js</code>; set the look on <code>&lt;html&gt;</code>, give <code>&lt;body&gt;</code> <code>sb-body sb-no-js</code>, and call <code>Storeybrook.init()</code> at the end of the body:</p>
+<pre class="sb-noread"><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot; data-theme=&quot;daylight&quot; class=&quot;sb-root&quot;&gt;
+&lt;head&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1,viewport-fit=cover&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;tokens.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;components/bundle.css&quot;&gt;
+&lt;/head&gt;
+&lt;body class=&quot;sb-body sb-no-js&quot;&gt;
+  &lt;div class=&quot;sb-washes&quot; aria-hidden=&quot;true&quot;&gt;
+    &lt;i class=&quot;sb-wash sb-wash--sky sb-wash--band&quot; style=&quot;top:-14%;--h:34%&quot;&gt;&lt;/i&gt;
+    &lt;i class=&quot;sb-sun&quot; style=&quot;--w:12%;right:4%;top:2%&quot;&gt;&lt;/i&gt;
+  &lt;/div&gt;
+  &lt;main&gt;
+    &lt;h1 class=&quot;display-xl&quot;&gt;Little games&lt;/h1&gt;
+    &lt;p class=&quot;sb-lede&quot;&gt;The brook went on without asking, so Dora went with it.&lt;/p&gt;
+    &lt;button class=&quot;sb-btn sb-btn--primary sb-btn--lg&quot;&gt;Play this one&lt;/button&gt;
+    &lt;div class=&quot;sb-reader&quot; data-sb-read=&quot;#story&quot;&gt;
+      &lt;button class=&quot;sb-btn sb-btn--primary sb-btn--icon sb-reader__play&quot; aria-label=&quot;Read it to me&quot;&gt;&lt;/button&gt;
+      &lt;div class=&quot;sb-reader__info&quot;&gt;&lt;span class=&quot;sb-reader__title&quot;&gt;The octopus who learned to be a bunny&lt;/span&gt;
+        &lt;span class=&quot;sb-reader__voice&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sb-reader__meter&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;article id=&quot;story&quot; class=&quot;sb-page sb-prose&quot; data-sb-story&gt;&lt;p&gt;Once the octopus had learned to be a bunny…&lt;/p&gt;&lt;/article&gt;
+  &lt;/main&gt;
+  &lt;button class=&quot;sb-jar sb-jar--fixed&quot; data-cap=&quot;30&quot;&gt;&lt;/button&gt;
+  &lt;script src=&quot;components/bundle.js&quot;&gt;&lt;/script&gt;
+  &lt;script&gt;Storeybrook.init();&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Look (<code>data-theme</code>)</th>
+<th>Name</th>
+<th>Material</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>daylight</code></td>
+<td>Meta Daylight</td>
+<td>watercolor on north-light paper</td>
+<td>the default: landings, shelves, story pages, the brook</td>
+</tr>
+<tr>
+<td><code>knight</code></td>
+<td>Knight Night</td>
+<td>a cobalt paper theatre by candle</td>
+<td>evenings, bedtime stories, the same pages after dark</td>
+</tr>
+<tr>
+<td><code>inkblot</code></td>
+<td>Ink Blot</td>
+<td>black ink, e-ink and print</td>
+<td>e-ink slates, printing, anyone who wants no color and no motion</td>
+</tr>
+<tr>
+<td><code>comix</code></td>
+<td>Comix</td>
+<td>halftone, panels and balloons</td>
+<td>loud chapters, sound effects, a game's title card</td>
+</tr>
+<tr>
+<td><code>origami</code></td>
+<td>Origami</td>
+<td>folded paper on a cutting mat</td>
+<td>making and building: editors, level makers, settings</td>
+</tr>
+<tr>
+<td><code>skein</code></td>
+<td>Skein silk</td>
+<td>silk, copper thread and lace</td>
+<td>the doll's chapters, keepsakes, the album</td>
+</tr>
+</tbody>
+</table>
+<h2 id="color">Color</h2>
+<ul>
+<li>Ground everything on <code>paper</code>. Step up to <code>surface</code> for bands and tracks, <code>page</code> for anything laid on the paper (book pages, covers, dialogs, the drawer), <code>chrome</code> for fixed bars.</li>
+<li>Text: <code>ink</code> for story and display, <code>ink-muted</code> for captions, credits and the small print, on <code>paper</code>, <code>surface</code>, <code>page</code> and <code>scrim</code> in every look.</li>
+<li><code>accent</code> is the one accent, with <code>on-accent</code> for labels on it and <code>accent-soft</code> behind accent text. It aliases a pigment per look: <code>rose</code> in Meta Daylight, <code>gamboge</code> (candle) in Knight Night, <code>copper</code> in Skein silk.</li>
+<li><code>cue</code> is the brook: links (<code>link</code> aliases it, with a wavy underline), the read-aloud highlight (<code>cue-soft</code> with a <code>cue</code> edge), switched-on toggles, the walked trail.</li>
+<li>Washes (<code>wash-sky</code>, <code>wash-meadow</code>, <code>wash-rose</code>, <code>wash-sun</code>, <code>wash-brook</code>) are decoration. Never set small text straight on a wash; put it on a <code>page</code> sheet or a <code>scrim</code>.</li>
+<li>Drawings use the art inks: <code>art-line</code> for every outline, <code>art-light</code> for catchlights, <code>art-shade</code> for shadows, <code>art-stone</code> and <code>art-water</code> for the brook's stones and water.</li>
+<li><code>gamboge</code> is a fill and a mark (suns, stars, nougat glints, the Comix shout), not text on light papers.</li>
+<li><code>danger</code> is errors only, always with a word or icon. Tags (<code>tag-sun</code>, <code>tag-rose</code>, <code>tag-lilac</code>, <code>tag-sea</code>, <code>tag-sky</code>) carry a dot and a word, never color alone.</li>
+</ul>
+<h2 id="type">Type</h2>
+<ul>
+<li>Load from Google Fonts: DynaPuff (display), Alegreya (story), Andika (interface), Caveat (handwritten notes), and per look IM Fell English (Knight Night and Ink Blot display), Bangers and Comic Neue (Comix), Zen Maru Gothic (Origami). <code>components/bundle.css</code> imports them all; a page that needs one look loads only its families.</li>
+<li><code>display-xl</code> once per page, for the title. <code>display-l</code> for chapter titles, <code>display-m</code> and <code>display-s</code> for covers and dialogs. Display faces follow the look through <code>--sb-display</code>.</li>
+<li>Stories are <code>story-body</code> (20px, 1.6) at <code>size-measure</code> (60ch); <code>story-lede</code> opens a page; <code>dropcap</code> opens a chapter, once.</li>
+<li>Interface text is Andika: <code>title</code>, <code>button</code>, <code>label</code>, <code>small</code>, <code>count</code> (tabular, for the jar). Andika was drawn for children learning to read, so it also carries the kid density.</li>
+<li><code>note</code> (Caveat) is the hand of the person who owns the book: margin notes, a sticker's name, "try the far stone!". One per view.</li>
+</ul>
+<h2 id="layout-and-space">Layout and space</h2>
+<ul>
+<li>A page is <code>size-page</code> (680px) wide; a spread is two pages with the gutter shadow, one page below <code>bp-expanded</code> (1024px). The shelf and the brook run up to <code>size-container</code> (1280px).</li>
+<li>Spacing steps run <code>space-1</code> (4px) to <code>space-10</code> (168px). Use <code>space-5</code> inside sheets, <code>space-7</code> between blocks, <code>space-9</code> between chapters.</li>
+<li><code>size-root</code> scales the root size with the viewport: 16px on phones and laptops, about 18px at 1920 CSS pixels, about 21px at 2560, capped at 28px on an unscaled 4K or 5K screen. Everything set in rem grows with it; the TV density does the rest.</li>
+<li>Layers: <code>z-art</code> → <code>z-content</code> → <code>z-stone</code> → <code>z-sticky</code> → <code>z-reader</code> → <code>z-drawer</code> → <code>z-overlay</code> → <code>z-drop</code> (a nougat in flight passes over everything).</li>
+</ul>
+<h2 id="motion">Motion</h2>
+<ul>
+<li><code>dur-tap</code> (press), <code>dur-quick</code> (hover, toggles), <code>dur-base</code> (dialogs, toasts, a sticker peeling on), <code>dur-turn</code> (page turns, folds, a lock unfolding), <code>dur-drop</code> (a nougat's flight), <code>dur-bleed</code> (a wash blooming, a blot opening). Easings: <code>ease-out</code> for arrivals, <code>ease-paper</code> for anything paper does, <code>ease-bounce</code> for stones and seals.</li>
+<li>Motion answers a person: a page turns because they turned it, a nougat flies because they earned it. The only things that move on their own are the current stone (a slow bob), the creature (breathing and blinking) and the brook's glints.</li>
+<li><code>prefers-reduced-motion: reduce</code> turns every animation off: pages cut, nougats land at once, locks simply open. Ink Blot turns motion off for everyone, because e-ink cannot show it.</li>
+</ul>
+<h2 id="states-and-accessibility">States and accessibility</h2>
+<ul>
+<li>Focus is a <code>border-focus</code> (3px) ring in <code>focus</code> at <code>border-focus-offset</code>, 5px and 5px at the TV density; never removed.</li>
+<li>Targets are <code>size-target</code> (48px), 56px at the kid density and 64px on a TV.</li>
+<li>Hover lifts by a pixel; pressed sinks by one; disabled dims to <code>op-disabled</code> and says why nearby.</li>
+<li>Every page reads with JS off: <code>sb-no-js</code> keeps the story, the stones are links, the reader explains itself.</li>
+<li>Locks, stones and stickers name their state in words ("locked", "walked", "you are here"), not by color.</li>
+</ul>
+<h2 id="imagery">Imagery</h2>
+<ul>
+<li>Watercolor and ink, drawn: the creature, the nougat, stones, covers made of washes. Covers may hold a game's own art on <code>surface</code>.</li>
+<li>No photographs of people, no stock illustration, no emoji, no gradients that are not pigment.</li>
+</ul>
+<h2 id="iconography">Iconography</h2>
+<ul>
+<li>Use the Storeybrook set (Icons): 24px grid, 2px round strokes, drawn in <code>currentColor</code>. In code call <code>Storeybrook.icon(name, size)</code> or put <code>data-sb-icon="name"</code> on an empty element.</li>
+<li>The creature (Creature) and the nougat and jar (Nougat) are drawn by the bundle (<code>creatureSVG</code>, <code>nougatSVG</code>, <code>jarSVG</code>) so they take the look's inks. The files here are Meta Daylight renders for reference.</li>
+<li>Storeybrook has no mark yet: set its name in <code>display-l</code>.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--secondary" href="paper.html">Paper<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reader · Storeybrook</title>
+<meta name="description" content="The read-aloud bar: a play button, the chapter&#x27;s title, the voice in use and a meter, bound to the text it reads.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Story</p><section class="site-live" aria-label="Reader, live"><div class="pv stack" style="max-width:600px">
+<div class="sb-reader" id="rd" data-sb-read="#st"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button>
+<div class="sb-reader__info"><span class="sb-reader__title">The octopus who learned to be a bunny</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i style="--p:34%"></i></span></div></div>
+<div id="st" class="sb-prose" style="font-size:1.1rem"><p>Once the octopus had learned to be a bunny, the butterfly part was easy. She tried it in the morning, when the brook was loud enough to cover any mistakes.</p></div>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="reader">Reader</h1>
+<p>The read-aloud bar: a play button, the chapter's title, the voice in use and a meter, bound to the text it reads. Irish English first, word by word.</p>
+<p><strong>Provide</strong></p>
+<pre class="sb-noread"><code class="language-html">&lt;div class=&quot;sb-reader&quot; data-sb-read=&quot;#story&quot;&gt;
+  &lt;button class=&quot;sb-btn sb-btn--primary sb-btn--icon sb-reader__play&quot; aria-label=&quot;Read it to me&quot;&gt;&lt;/button&gt;
+  &lt;div class=&quot;sb-reader__info&quot;&gt;
+    &lt;span class=&quot;sb-reader__title&quot;&gt;The octopus who learned to be a bunny&lt;/span&gt;
+    &lt;span class=&quot;sb-reader__voice&quot;&gt;&lt;/span&gt;
+    &lt;span class=&quot;sb-reader__meter&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;select data-sb-voice aria-label=&quot;Voice&quot;&gt;&lt;/select&gt; &lt;!-- optional --&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Add <code>sb-reader--fixed</code> to pin it to the bottom-left corner above the page (<code>z-reader</code>, safe areas respected). <code>Storeybrook.init()</code> binds every reader; <code>Storeybrook.read.bind(bar, target)</code> binds one by hand.</p>
+<ul>
+<li>The play button's icon and name follow the state: "Read it to me", "Pause reading", "Keep reading".</li>
+<li>The voice line says "Irish English voice", or which voice is used when there is no Irish one. With no voices at all the button is disabled and the line says the words are all on the page.</li>
+<li>The word being spoken gets <code>cue-soft</code> with a <code>cue</code> edge; the meter fills in <code>cue</code>.</li>
+<li><code>&lt;select data-sb-voice&gt;</code> and <code>&lt;select data-sb-rate&gt;</code> are filled and remembered (<code>sb:voice</code>, <code>sb:rate</code>).</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do give the bar a chapter title; the voice reads the text, the title says what it is.
+- Don't autoplay. Reading starts from a press.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S)S.read.bind(document.getElementById('rd'),document.getElementById('st'));</script>
+</body>
+</html>

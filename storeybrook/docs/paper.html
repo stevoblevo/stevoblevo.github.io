@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Paper · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Paper.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html" aria-current="page">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Paper</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="paper">Paper</h1>
+<p>Storeybrook is made of materials, not boxes. Every component is one of five things: the paper itself, a sheet laid on it, a wash of pigment, a drawing in ink, or a small object (tape, a seal, a stone, a nougat). Pick the material first; the component follows.</p>
+<h2 id="the-three-grounds">The three grounds</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Token</th>
+<th>Material</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>paper</code></td>
+<td>the table-sized sheet the whole page is painted on</td>
+<td>washes, the brook, the shelf, display type</td>
+</tr>
+<tr>
+<td><code>surface</code></td>
+<td>one step off the paper</td>
+<td>bands, tracks (the reader's meter, a toggle's track), a caption's label, a cover's art well</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>a sheet laid on the paper</td>
+<td>book pages, covers, dialogs, the drawer, stickers' backing</td>
+</tr>
+</tbody>
+</table>
+<p><code>page</code> never floats as a plain rectangle. It arrives as <code>sb-sheet</code>, <code>sb-page</code>, <code>sb-dialog</code> or <code>sb-drawer</code>, each of which draws its edge through the deckle filter (<code>#sb-deckle</code>, displacement <code>tex-deckle</code>), carries <code>shadow-page</code>, and lays the grain over itself.</p>
+<h2 id="grain-and-fibre">Grain and fibre</h2>
+<ul>
+<li><code>sb-body</code> lays a fixed grain over the whole page: an SVG fractal noise tile at <code>tex-grain-size</code> (160px), at <code>op-grain</code> (0.2), blended <code>multiply</code>. Knight Night blends it <code>soft-light</code> at 0.5 (candle grain on dark paper); Ink Blot turns it off (e-ink shows noise as dirt).</li>
+<li><code>sb-grain</code> puts the same grain on any one element (a cover's art, a band).</li>
+<li><code>sb-page</code> adds long paper fibres (<code>--sb-fibre-img</code>, 420px) at a quarter of the grain's strength.</li>
+</ul>
+<h2 id="washes">Washes</h2>
+<p>Watercolor is the only way color arrives in a large field. A wash is an <code>&lt;i class="sb-wash"&gt;</code> inside an absolutely placed <code>sb-washes</code> layer behind the content.</p>
+<ul>
+<li>Five pigments: <code>sb-wash--sky</code>, <code>--meadow</code>, <code>--rose</code>, <code>--sun</code>, <code>--brook</code> (the tokens <code>wash-sky</code> … <code>wash-brook</code>).</li>
+<li>Size and shape: <code>--w</code> (width, default 40%) and <code>--ar</code> (aspect, 1.35), always <code>shape-blob</code>; <code>sb-wash--band</code> makes a full-width band (<code>--h</code> its height) for skies and meadows.</li>
+<li>Each wash is a radial pool that is darker at its rim (pigment collects where water dries), granulated by the grain, bled through <code>#sb-bleed</code> (displacement <code>tex-bleed</code>), at <code>op-wash</code>, blended <code>multiply</code> so overlaps mix like real glazes.</li>
+<li><code>sb-bloom</code> lets a wash arrive over <code>dur-bleed</code> with <code>ease-out</code>, once.</li>
+<li><code>sb-sun</code> is paper left unpainted with a <code>wash-sun</code> halo: the sun is the absence of paint.</li>
+</ul>
+<p>Rules: no more than five washes on a screen; one band at the top (sky) and one at the foot (meadow) at most; never set text straight on a wash without a sheet or <code>scrim</code>.</p>
+<h2 id="how-each-look-translates-the-materials">How each look translates the materials</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Material</th>
+<th>Meta Daylight</th>
+<th>Knight Night</th>
+<th>Ink Blot</th>
+<th>Comix</th>
+<th>Origami</th>
+<th>Skein silk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wash</td>
+<td>watercolor glaze</td>
+<td>glaze lit from behind (<code>screen</code>)</td>
+<td>stipple dots, 7px pitch</td>
+<td>halftone at <code>tex-halftone</code></td>
+<td>a folded facet, two tones</td>
+<td>watercolor, stronger grain</td>
+</tr>
+<tr>
+<td>Sheet edge</td>
+<td>deckled</td>
+<td>deckled, candle shadow</td>
+<td>hairline black</td>
+<td>3px ink border, square</td>
+<td>crisp, dog-eared corner</td>
+<td>silk sheen with a dashed copper stitch</td>
+</tr>
+<tr>
+<td>Grain</td>
+<td>multiply 0.2</td>
+<td>soft-light 0.5</td>
+<td>none</td>
+<td>0.18</td>
+<td>0.22, cutting-mat grid under it</td>
+<td>0.28</td>
+</tr>
+<tr>
+<td>Sun</td>
+<td>unpainted paper</td>
+<td>a candle disc</td>
+<td>a ring</td>
+<td>a gamboge disc with an ink rim</td>
+<td>(as daylight)</td>
+<td>(as daylight)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="small-objects">Small objects</h2>
+<ul>
+<li><strong>Tape</strong> (<code>sb-tape</code>, <code>--tl</code>, <code>--tr</code>, <code>--bl</code>, <code>--br</code>): striped <code>wash-sun</code> and <code>wash-rose</code> washi holding a sheet's corner. Two corners at most.</li>
+<li><strong>Seal</strong> (<code>sb-seal</code>): a wax seal in <code>accent</code> for the one irreversible or important press: begin, sign, keep.</li>
+<li><strong>Stone</strong> (<code>sb-stone</code>): a stepping stone on the brook, <code>shape-stone</code>, <code>art-stone</code> top, <code>art-shade</code> underside.</li>
+<li><strong>Nougat</strong> (<code>sb-nougat</code>): the reward, wrapped in <code>wrapper</code>, flecked with <code>nougat-nut</code>.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="index.html"><span data-sb-icon="prev"></span>The short version</a><a class="sb-btn sb-btn--secondary" href="looks.html">Looks<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

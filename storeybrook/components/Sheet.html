@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sheet · Storeybrook</title>
+<meta name="description" content="A sheet of `page` laid on the paper: a deckled edge, the paper&#x27;s grain, `shadow-page`, held down with washi tape at up to two corners.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Paper</p><section class="site-live" aria-label="Sheet, live"><div class="pv" style="padding:36px 40px"><div class="sb-sheet" style="max-width:520px">
+<span class="sb-tape sb-tape--tl" aria-hidden="true"></span><span class="sb-tape sb-tape--br" aria-hidden="true"></span>
+<h3 class="title" style="margin:0 0 6px">The porch stone</h3>
+<p class="story-body" style="margin:0;font-size:1.1rem">The first stone was warm from the sun, and Dora sat on it to read the rest of the map.</p>
+</div></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="sheet">Sheet</h1>
+<p>A sheet of <code>page</code> laid on the paper: a deckled edge, the paper's grain, <code>shadow-page</code>, held down with washi tape at up to two corners.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-sheet"&gt;</code> with its content. Add tape as the first children: <code>&lt;span class="sb-tape sb-tape--tl" aria-hidden="true"&gt;&lt;/span&gt;</code> (<code>--tl</code>, <code>--tr</code>, <code>--bl</code>, <code>--br</code>).</p>
+<ul>
+<li>Padding runs <code>clamp(1.25rem, 3vw, 2.5rem)</code>. The edge comes from the <code>#sb-deckle</code> filter, which <code>Storeybrook.init()</code> (or <code>ensureDefs()</code>) puts in the page.</li>
+<li>Comix gives the sheet a square 3px ink border; Origami a crisp edge with a folded corner; Skein silk a sheen and a dashed copper stitch; Ink Blot a plain white sheet.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do use a sheet for anything that holds text over washes: a lede, a note, a form.
+- Don't nest sheets, and don't tape more than two corners.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>

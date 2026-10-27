@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Spread · Storeybrook</title>
+<meta name="description" content="Two pages open like a book, with a gutter shadow down the middle; pages turn with a leaf.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Paper</p><section class="site-live" aria-label="Spread, live"><div class="pv"><div class="sb-spread" id="sp" aria-label="The octopus who learned to be a bunny">
+<article class="sb-page"><h3 class="display-s" style="margin:0 0 8px">Chapter one</h3><div class="sb-prose" style="font-size:1.05rem"><p>Once the octopus had learned to be a bunny, the butterfly part was easy.</p></div><span class="sb-page__folio">1</span></article>
+<article class="sb-page"><div class="sb-prose" style="font-size:1.05rem"><p>She tried it in the morning, when the brook was loud enough to cover any mistakes.</p></div><span class="sb-page__folio">2</span></article>
+<article class="sb-page"><div class="sb-prose" style="font-size:1.05rem"><p>By noon she could hover over the stones without touching them.</p></div><span class="sb-page__folio">3</span></article>
+<article class="sb-page"><div class="sb-prose" style="font-size:1.05rem"><p>By evening she had forgotten she had ever been only one thing.</p></div><span class="sb-page__folio">4</span></article>
+</div></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="spread">Spread</h1>
+<p>Two pages open like a book, with a gutter shadow down the middle; pages turn with a leaf. Below <code>bp-expanded</code> (1024px) it shows one page at a time.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-spread" data-sb-spread&gt;</code> holding the book's <code>&lt;article class="sb-page"&gt;</code>s in order. <code>Storeybrook.init()</code> (or <code>Storeybrook.spread(host)</code>) adds a turn button down each outer edge (18% wide, labelled "Previous page" and "Next page"), turns on ←/→ and Page Up/Page Down while the spread has focus, turns on a 50px swipe, and fires <code>sb:page</code> with <code>{index, count}</code>.</p>
+<ul>
+<li>A turn flips a leaf over <code>dur-turn</code> with <code>ease-paper</code>; the new pages show at the half-way point; a paper rustle plays if sound is on. Reduced motion cuts straight to the new pages.</li>
+<li><code>spread(host)</code> returns <code>{next(), prev(), index(), count}</code>.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do give each page a folio, and the first page a title.
+- Don't turn pages by themselves; a turn always answers a press, a key or a swipe.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S)S.spread(document.getElementById('sp'));</script>
+</body>
+</html>

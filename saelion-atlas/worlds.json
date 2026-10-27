@@ -1,6 +1,6 @@
 {
   "schema": "saelion-atlas-public-v1",
-  "updated": "2026-10-22",
+  "updated": "2026-10-27",
   "scope": "curated public wayfinding, not an exhaustive private archive",
   "phases": {
     "open": "Observed public entry; some may need browser features and save locally.",
@@ -62,18 +62,19 @@
     },
     {
       "id": "and-so-original",
-      "title": "AND SO · the listening instrument",
+      "title": "AND SO 7 · Everfallen",
       "kind": "listen",
       "phase": "open",
-      "description": "Hum or sing, then let the valleys guide the music. Microtonal consonance, optional microphone, and a demo hummer.",
+      "description": "A storybook microtonal toy: plucked notes, a jam band in just intonation and 31 steps, a brook of stones and nougats, the game opened inside itself, and guardians born from misheard words.",
       "url": "https://stevoblevo.github.io/and-so/",
       "image": "",
       "tags": [
         "microtonal",
-        "sing",
+        "storybook",
+        "jam",
         "interactive"
       ],
-      "featured": false,
+      "featured": true,
       "sort": 3
     },
     {
@@ -671,6 +672,54 @@
       ],
       "featured": false,
       "sort": 40
+    },
+    {
+      "id": "and-so-6-1",
+      "title": "AND SO 6.1 · the listening instrument",
+      "kind": "listen",
+      "phase": "open",
+      "description": "Hum or sing, then let the valleys guide the music. Microtonal consonance, optional microphone, and a demo hummer, kept as it was.",
+      "url": "https://stevoblevo.github.io/and-so/v6.1/",
+      "image": "",
+      "tags": [
+        "microtonal",
+        "sing",
+        "archive"
+      ],
+      "featured": false,
+      "sort": 4
+    },
+    {
+      "id": "the-99-shelf",
+      "title": "The 99¢ Shelf",
+      "kind": "play",
+      "phase": "open",
+      "description": "Saelion's little games on one shelf, each priced at ninety-nine cents for when a shop opens, and each free to play now.",
+      "url": "https://stevoblevo.github.io/gg/",
+      "image": "",
+      "tags": [
+        "games",
+        "shelf",
+        "tv"
+      ],
+      "featured": true,
+      "sort": 1
+    },
+    {
+      "id": "storeybrook",
+      "title": "Storeybrook",
+      "kind": "build",
+      "phase": "open",
+      "description": "The light-first design kit for storybook pages and little games: six looks, read-aloud, the brook, nougats, and its rules and files.",
+      "url": "https://stevoblevo.github.io/storeybrook/",
+      "image": "",
+      "tags": [
+        "design",
+        "kit",
+        "storybook"
+      ],
+      "featured": false,
+      "sort": 5
     }
   ]
 }

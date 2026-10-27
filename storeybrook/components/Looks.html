@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Looks · Storeybrook</title>
+<meta name="description" content="The look picker: one button per look, each showing that look&#x27;s paper, two of its pigments and its display face.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Inputs</p><section class="site-live" aria-label="Looks, live"><div class="pv"><div class="sb-looks"><button class="sb-look" type="button" data-sb-look="daylight" style="--sw-paper:#f4f6f2;--sw-a:#f3c6d3;--sw-b:#8cc2e6;--sw-ink:#26323f;--sw-font:'DynaPuff'"><span class="sb-look__swatch" aria-hidden="true"><i></i><i></i><b>Aa</b></span>Meta Daylight<small>Watercolor paper</small></button><button class="sb-look" type="button" data-sb-look="knight" style="--sw-paper:#1c2838;--sw-a:#f0c75e;--sw-b:#8fb4e8;--sw-ink:#f4efe6;--sw-font:'IM Fell English'"><span class="sb-look__swatch" aria-hidden="true"><i></i><i></i><b>Aa</b></span>Knight Night<small>By candle</small></button><button class="sb-look" type="button" data-sb-look="inkblot" style="--sw-paper:#ffffff;--sw-a:#000000;--sw-b:#9e9e9e;--sw-ink:#000000;--sw-font:'IM Fell English'"><span class="sb-look__swatch" aria-hidden="true"><i></i><i></i><b>Aa</b></span>Ink Blot<small>E-ink and print</small></button><button class="sb-look" type="button" data-sb-look="comix" style="--sw-paper:#fffdf5;--sw-a:#ff9fd0;--sw-b:#38b6ee;--sw-ink:#111111;--sw-font:'Bangers'"><span class="sb-look__swatch" aria-hidden="true"><i></i><i></i><b>Aa</b></span>Comix<small>Halftone and balloons</small></button><button class="sb-look" type="button" data-sb-look="origami" style="--sw-paper:#eceef0;--sw-a:#f6c3b8;--sw-b:#9ab6e0;--sw-ink:#1f2a33;--sw-font:'Zen Maru Gothic'"><span class="sb-look__swatch" aria-hidden="true"><i></i><i></i><b>Aa</b></span>Origami<small>Folded paper</small></button><button class="sb-look" type="button" data-sb-look="skein" aria-disabled="true" data-sb-why="Skein silk opens at 25 nougats." style="--sw-paper:#f6ecee;--sw-a:#f2c6d2;--sw-b:#cfe8dc;--sw-ink:#3a2330;--sw-font:'Caveat'"><span class="sb-look__swatch" aria-hidden="true"><i></i><i></i><b>Aa</b></span>Skein silk<small>Silk and copper</small></button></div></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="looks">Looks</h1>
+<p>The look picker: one button per look, each showing that look's paper, two of its pigments and its display face.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-looks"&gt;</code> holding a <code>&lt;button class="sb-look" data-sb-look="&lt;id&gt;"&gt;</code> per look, each with <code>&lt;span class="sb-look__swatch" aria-hidden="true"&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;b&gt;Aa&lt;/b&gt;&lt;/span&gt;</code>, the look's name and a <code>&lt;small&gt;</code> line. Set the swatch with inline custom properties: <code>--sw-paper</code>, <code>--sw-a</code>, <code>--sw-b</code> (two pigments), <code>--sw-ink</code>, <code>--sw-font</code>. The swatch values are the look's own and do not change with the current look.</p>
+<ul>
+<li><code>Storeybrook.init()</code> binds every <code>[data-sb-look]</code>: pressing one sets the look, remembers it and keeps <code>aria-pressed</code> true on the current one (an <code>accent</code> border with an <code>accent-soft</code> halo).</li>
+<li>A look that waits behind progress has <code>aria-disabled="true"</code> and a <code>data-sb-why</code> sentence; pressing it shows the sentence as a toast.</li>
+<li>The grid fills columns of at least 150px.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do keep Meta Daylight first and Ink Blot reachable early: it is the look for e-ink, print and no motion.
+- Don't hide a locked look; show it dimmed with its reason, so people know it exists.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}document.querySelectorAll('[data-sb-look]').forEach(function(b){function sync(){var cur=document.documentElement.getAttribute('data-theme')||'daylight';document.querySelectorAll('[data-sb-look]').forEach(function(x){x.setAttribute('aria-pressed',String(x.getAttribute('data-sb-look')===cur));});}sync();b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true'){if(S)S.toast(b.getAttribute('data-sb-why'),{ms:2600});return;}if(S)S.theme.set(b.getAttribute('data-sb-look'),{persist:false});else document.documentElement.setAttribute('data-theme',b.getAttribute('data-sb-look'));sync();});});</script>
+</body>
+</html>

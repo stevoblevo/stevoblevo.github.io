@@ -1,0 +1,9 @@
+<!-- @dsCard group="Transitions" height=290 -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Fold</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>html,body{margin:0}body.sb-body{min-height:0;background:var(--paper);color:var(--ink);font-family:var(--sb-story)}.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style></head>
+<body class="sb-body">
+<div class="pv stack"><div class="sb-sheet" id="fh" style="max-width:460px;min-height:120px"><h3 class="display-s" style="margin:0 0 6px">Morning paper</h3><p class="label" style="margin:0">Meta Daylight, easy listening, the mandala.</p></div>
+<p class="row" style="margin:0"><button class="sb-btn sb-btn--secondary sb-btn--sm" id="fb"><span data-sb-icon="origami"></span>Fold to the next stone</button></p></div>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}var n=0,P=[['Morning paper','Meta Daylight, easy listening, the mandala.'],['The glasshouse','Mint haze, just intonation, sand on a plate.'],['Knight Night','A cobalt paper theatre in thirty-one steps.']],h=document.getElementById('fh');document.getElementById('fb').addEventListener('click',function(){n=(n+1)%P.length;var sw=function(){h.querySelector('h3').textContent=P[n][0];h.querySelector('p').textContent=P[n][1];};if(S)S.fold(h,sw);else sw();});</script></body></html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Code · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Code.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html" aria-current="page">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Code</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="code">Code</h1>
+<h2 id="files">Files</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>File</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tokens.css</code></td>
+<td>every token as a custom property; looks as <code>[data-theme]</code> blocks; a class per type style</td>
+</tr>
+<tr>
+<td><code>components/bundle.css</code></td>
+<td>every component, prefixed <code>sb-</code>; the look hooks; reduced-motion, forced-colors and print rules; the Google Fonts import</td>
+</tr>
+<tr>
+<td><code>components/bundle.js</code></td>
+<td>one classic script, no dependencies, no network: <code>window.Storeybrook</code></td>
+</tr>
+<tr>
+<td><code>components/index.d.ts</code></td>
+<td>the markup contracts (<code>&lt;Comp&gt;Props</code>) and the JS API, as types</td>
+</tr>
+</tbody>
+</table>
+<p>Load them in that order, set <code>data-theme</code> on <code>&lt;html&gt;</code> (and <code>class="sb-root"</code> for the fluid root size), give <code>&lt;body&gt;</code> <code>sb-body sb-no-js</code>, and call <code>Storeybrook.init()</code> at the end of the body.</p>
+<h2 id="data-attributes">Data attributes</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>On</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data-theme="&lt;look&gt;"</code></td>
+<td><code>&lt;html&gt;</code></td>
+<td>the look; <code>init()</code> may replace it with <code>?look=</code> or the saved look</td>
+</tr>
+<tr>
+<td><code>data-density="regular"</code>, <code>"kid"</code>, <code>"tv"</code></td>
+<td><code>&lt;html&gt;</code></td>
+<td>targets, focus rings, story face; <code>tv</code> turns on spatial navigation</td>
+</tr>
+<tr>
+<td><code>data-sb-look="&lt;look&gt;"</code> (+ <code>aria-disabled</code>, <code>data-sb-why</code>)</td>
+<td>a button</td>
+<td>switches the look, or explains why it cannot</td>
+</tr>
+<tr>
+<td><code>data-sb-story</code></td>
+<td>the story's container</td>
+<td>what the reader reads when it has no other target</td>
+</tr>
+<tr>
+<td><code>data-sb-read="#id"</code></td>
+<td><code>.sb-reader</code></td>
+<td>which element this reader reads</td>
+</tr>
+<tr>
+<td><code>data-sb-voice</code>, <code>data-sb-rate</code></td>
+<td><code>&lt;select&gt;</code>s inside a reader</td>
+<td>voice and pace pickers, filled and remembered</td>
+</tr>
+<tr>
+<td><code>data-sb-brook='{"stones":[…]}'</code></td>
+<td>an empty element</td>
+<td>draws a brook with those stones (JSON, see <code>BrookOptions</code>)</td>
+</tr>
+<tr>
+<td><code>data-sb-creature='{"form":"saelion","stage":3}'</code></td>
+<td>an empty element</td>
+<td>draws the creature, breathing and blinking</td>
+</tr>
+<tr>
+<td><code>data-sb-spread</code></td>
+<td><code>.sb-spread</code> holding <code>.sb-page</code>s</td>
+<td>page turns: buttons, arrow keys, swipes</td>
+</tr>
+<tr>
+<td><code>data-sb-open="#id"</code>, <code>data-sb-close</code></td>
+<td>a button; a button inside</td>
+<td>opens a <code>&lt;dialog&gt;</code> or <code>.sb-drawer</code>; closes the one it is in</td>
+</tr>
+<tr>
+<td><code>data-sb-drop="n"</code> (+ <code>data-sb-reason</code>)</td>
+<td>a button</td>
+<td>drops n nougats into the jar from this button</td>
+</tr>
+<tr>
+<td><code>data-sb-unlock="id"</code> (+ <code>data-sb-name</code>)</td>
+<td>a button</td>
+<td>unlocks <code>id</code></td>
+</tr>
+<tr>
+<td><code>data-sb-lock="id"</code></td>
+<td><code>.sb-lock</code></td>
+<td>hidden (unfolding) once <code>id</code> is unlocked</td>
+</tr>
+<tr>
+<td><code>data-sb-sticker="id"</code></td>
+<td><code>.sb-sticker</code></td>
+<td>locked until <code>id</code>, then peels on</td>
+</tr>
+<tr>
+<td><code>data-sb-when="id"</code></td>
+<td>anything</td>
+<td>hidden until <code>id</code> is unlocked</td>
+</tr>
+<tr>
+<td><code>data-sb-sound</code></td>
+<td>a button</td>
+<td>toggles paper sounds; keeps <code>aria-pressed</code> in step</td>
+</tr>
+<tr>
+<td><code>data-sb-nougat="seed"</code></td>
+<td>an empty <code>.sb-nougat</code></td>
+<td>filled with that nougat</td>
+</tr>
+<tr>
+<td><code>data-sb-icon="name"</code> (+ <code>data-size</code>)</td>
+<td>an empty element</td>
+<td>filled with that icon</td>
+</tr>
+<tr>
+<td><code>data-cap="30"</code></td>
+<td><code>.sb-jar</code></td>
+<td>how many nougats fill the jar</td>
+</tr>
+<tr>
+<td><code>data-sb-autofocus</code>, <code>data-sb-focus</code></td>
+<td>anything</td>
+<td>first stop for arrow keys; makes a non-control reachable by them</td>
+</tr>
+<tr>
+<td><code>class="sb-noread"</code></td>
+<td>anything</td>
+<td>the reader skips it</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-api">The API</h2>
+<p><code>Storeybrook.init(options)</code> binds all of the above and returns the API. Underneath:</p>
+<ul>
+<li><code>theme</code>: <code>list()</code>, <code>get()</code>, <code>set(id, {persist})</code>, <code>cycle(allowed)</code>, <code>init({fallback})</code></li>
+<li><code>density</code>: <code>get()</code>, <code>set(v)</code>, <code>isTV()</code>, <code>init()</code></li>
+<li><code>nav</code>: <code>enable()</code>, <code>move(dir)</code>, <code>back()</code>, <code>candidates()</code></li>
+<li><code>read</code>: <code>speak(target, {voice, rate, pitch})</code>, <code>pause()</code>, <code>resume()</code>, <code>toggle(target)</code>, <code>stop()</code>, <code>bind(bar, target)</code>, <code>voices()</code>, <code>pick(name)</code>, <code>isIrish(voice)</code>, <code>supported</code>, <code>state</code></li>
+<li><code>rewards</code>: <code>count()</code>, <code>set(n)</code>, <code>drop(n, {from, to, reason})</code>, <code>paint()</code></li>
+<li><code>unlocks</code>: <code>list()</code>, <code>has(id)</code>, <code>unlock(id, {name, line, toast})</code>, <code>lock(id)</code>, <code>paint()</code>; <code>unlock(id, o)</code> is also on the root</li>
+<li><code>brook(host, {stones, seed, direction, onStep})</code> → <code>{set(id, state), layout(), path, length, vertical}</code></li>
+<li><code>creature(host, {form, stage, mood, blink, idle})</code> → <code>{set(o), get(), stop(), stages}</code>; <code>creatureSVG(o)</code> → string</li>
+<li><code>spread(host)</code> → <code>{next(), prev(), index(), count}</code></li>
+<li><code>fold(host, swap)</code> and <code>blot(host, {duration})</code> → Promises that settle when the motion ends</li>
+<li><code>drawer.open/close(el)</code>, <code>dialog.open/close(el)</code>, <code>toast(html, {ms})</code></li>
+<li><code>sound.enable(on)</code>, <code>sound.play('stone' | 'nougat' | 'sticker' | 'page')</code>, <code>haptic(pattern)</code></li>
+<li><code>icon(name, size)</code>, <code>icons</code>, <code>mountIcons(root)</code>, <code>nougatSVG(seed)</code>, <code>jarSVG(fill)</code>, <code>token(name)</code>, <code>reducedMotion()</code>, <code>ensureDefs()</code>, <code>version</code></li>
+</ul>
+<p>Every function is typed in <code>index.d.ts</code>.</p>
+<h2 id="events">Events</h2>
+<p>Events arrive on <code>window</code> as <code>sb:&lt;name&gt;</code> with a <code>detail</code>: <code>ready</code>, <code>theme</code>, <code>density</code>, <code>back</code>, <code>read</code>, <code>nougat</code>, <code>unlock</code>, <code>step</code>, <code>creature</code>, <code>page</code>, <code>drawer</code>, <code>dialog</code>, <code>sound</code>.</p>
+<pre class="sb-noread"><code class="language-js">addEventListener('sb:nougat', e =&gt; console.log(e.detail.count, e.detail.reason));
+</code></pre>
+<h2 id="storage">Storage</h2>
+<p>Local storage: <code>sb:theme</code>, <code>sb:density</code>, <code>sb:voice</code>, <code>sb:rate</code>, <code>sb:nougats</code>, <code>sb:unlocks</code>. Session storage: <code>sb:sound</code> (this visit only). Every read and write is wrapped: with storage blocked (a private window, an embedded frame) the page works and simply forgets.</p>
+<h2 id="progressive-enhancement">Progressive enhancement</h2>
+<ul>
+<li>No JS: <code>sb-no-js</code> stays on <code>&lt;body&gt;</code>; every story, link and cover still works; looks fall back to the markup's <code>data-theme</code>.</li>
+<li>No speech synthesis: the reader disables itself and says so.</li>
+<li>No Web Animations: page turns, folds, blots and drops happen at once.</li>
+<li>No storage: nothing is remembered between visits.</li>
+<li>Old browsers: <code>color-mix()</code>, <code>:is()</code>, <code>backdrop-filter</code>, <code>inset</code> and <code>translate</code> are used; where missing, surfaces fall back to solid <code>page</code> and <code>chrome</code>.</li>
+</ul>
+<h2 id="embedding-in-another-app">Embedding in another app</h2>
+<p>A game or a host page that has its own theme uses the embedded export instead of <code>tokens.css</code> and <code>bundle.css</code>:</p>
+<ul>
+<li><code>storeybrook-tokens.css</code>: every look's tokens keyed on <code>[data-sb="&lt;look&gt;"]</code>, so they apply only inside elements that ask for a look.</li>
+<li><code>storeybrook.css</code>: the components with <code>[data-theme]</code> rewritten to <code>[data-sb]</code> and the font import removed (the host loads fonts).</li>
+<li><code>storeybrook.js</code>: the same bundle.</li>
+</ul>
+<p>Put <code>data-sb="daylight"</code> (or another look) on any panel and it becomes a Storeybrook page inside the host. AND SO 7 builds this way: <code>tools/export_andso.py</code> writes the three files into the game's <code>vendor/</code> folder.</p>
+<h2 id="budgets">Budgets</h2>
+<ul>
+<li><code>bundle.js</code> under 60 KB and <code>bundle.css</code> under 56 KB before compression (1.0.0: 56.9 KB and 51.8 KB).</li>
+<li>No network from the bundle; fonts are the largest cost: load only the families a page uses.</li>
+<li>One canvas at most per page belongs to a game, not the kit; the kit draws with SVG and CSS.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="accessibility.html"><span data-sb-icon="prev"></span>Accessibility</a><a class="sb-btn sb-btn--secondary" href="governance.html">Governance<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

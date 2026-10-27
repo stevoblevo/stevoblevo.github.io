@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fold · Storeybrook</title>
+<meta name="description" content="A view folds away like paper to show the next one underneath: the top half folds down over the bottom, then the folded sheet drops away.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Transitions</p><section class="site-live" aria-label="Fold, live"><div class="pv stack"><div class="sb-sheet" id="fh" style="max-width:460px;min-height:120px"><h3 class="display-s" style="margin:0 0 6px">Morning paper</h3><p class="label" style="margin:0">Meta Daylight, easy listening, the mandala.</p></div>
+<p class="row" style="margin:0"><button class="sb-btn sb-btn--secondary sb-btn--sm" id="fb"><span data-sb-icon="origami"></span>Fold to the next stone</button></p></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="fold">Fold</h1>
+<p>A view folds away like paper to show the next one underneath: the top half folds down over the bottom, then the folded sheet drops away.</p>
+<p><strong>Provide</strong> a container and a function that swaps its content, then call <code>Storeybrook.fold(host, swap)</code>. It snapshots the old view, calls <code>swap()</code> at once (so the new view is already underneath), plays the fold over <code>dur-turn</code> with <code>ease-paper</code>, and resolves its Promise when the paper is gone. A paper rustle plays if sound is on.</p>
+<ul>
+<li>The snapshot has its ids removed so nothing is duplicated; it is <code>aria-hidden</code>.</li>
+<li>Under reduced motion (and in Ink Blot) <code>swap()</code> runs and the Promise resolves at once.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do use it for changing a whole view in place: a new look, the next scene, a settings page.
+- Don't fold something that is still being read or typed in.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}var n=0,P=[['Morning paper','Meta Daylight, easy listening, the mandala.'],['The glasshouse','Mint haze, just intonation, sand on a plate.'],['Knight Night','A cobalt paper theatre in thirty-one steps.']],h=document.getElementById('fh');document.getElementById('fb').addEventListener('click',function(){n=(n+1)%P.length;var sw=function(){h.querySelector('h3').textContent=P[n][0];h.querySelector('p').textContent=P[n][1];};if(S)S.fold(h,sw);else sw();});</script>
+</body>
+</html>

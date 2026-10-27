@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Devices · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Devices.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html" aria-current="page">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Devices</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="devices">Devices</h1>
+<p>One Storeybrook page runs on a phone in a hand, a folding phone, a tablet on a lap, a laptop, an e-ink slate, a 5K desktop display and a 75-inch TV across the room. The page does not change; its density, its root size and its way of being moved through do.</p>
+<h2 id="densities">Densities</h2>
+<p>Set <code>data-density</code> on <code>&lt;html&gt;</code>, or let <code>Storeybrook.init()</code> choose (<code>?tv=1</code> in the URL, then the saved choice <code>sb:density</code>, then a TV browser by its user agent, then <code>regular</code>).</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Density</th>
+<th>Targets</th>
+<th>Focus ring</th>
+<th>Story text</th>
+<th>For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>regular</code></td>
+<td><code>size-target</code> (48px)</td>
+<td>3px at 3px</td>
+<td>Alegreya</td>
+<td>phones, tablets, laptops, desktop displays</td>
+</tr>
+<tr>
+<td><code>kid</code></td>
+<td>56px</td>
+<td>3px at 3px</td>
+<td>Andika, 1.3–1.6rem</td>
+<td>early readers, a parent reading along</td>
+</tr>
+<tr>
+<td><code>tv</code></td>
+<td>64px</td>
+<td>5px at 5px</td>
+<td>Alegreya</td>
+<td>TVs and anything seen from across a room</td>
+</tr>
+</tbody>
+</table>
+<p><code>Storeybrook.density.set('tv')</code> also turns on spatial navigation. <code>Storeybrook.density.isTV()</code> recognises webOS (LG), Tizen (Samsung), Android TV, Fire TV, Chromecast, Roku, BRAVIA, Viera, HbbTV and console browsers.</p>
+<h2 id="screens">Screens</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Screen</th>
+<th>CSS size</th>
+<th>Look and density</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phone</td>
+<td>390 × 844</td>
+<td>any, <code>regular</code></td>
+<td>the brook turns vertical; spreads show one page; the reader bar and the jar sit in the safe area</td>
+</tr>
+<tr>
+<td>Folding phone, open</td>
+<td>768 × 840</td>
+<td>any, <code>regular</code></td>
+<td>a square page; covers in two columns</td>
+</tr>
+<tr>
+<td>Tablet</td>
+<td>820 × 1180</td>
+<td>any, <code>regular</code> or <code>kid</code></td>
+<td>the best reading device; spreads show one page in portrait</td>
+</tr>
+<tr>
+<td>Laptop</td>
+<td>1440 × 900</td>
+<td>any, <code>regular</code></td>
+<td>the landing fits one screen; spreads show two pages</td>
+</tr>
+<tr>
+<td>E-ink slate</td>
+<td>1024 × 768</td>
+<td>Ink Blot, <code>regular</code></td>
+<td>no motion, no color, high contrast; turn pages instead of scrolling</td>
+</tr>
+<tr>
+<td>4K or 5K display</td>
+<td>2560 × 1440 CSS (5K at 2×)</td>
+<td>any, <code>regular</code></td>
+<td><code>size-root</code> is about 21px (28px when unscaled); nothing is a thumbnail</td>
+</tr>
+<tr>
+<td>TV, 1080p or 4K</td>
+<td>1920 × 1080 CSS</td>
+<td>any, <code>tv</code></td>
+<td>seen from three metres: 64px targets, 5px rings, D-pad and gamepad</td>
+</tr>
+</tbody>
+</table>
+<p>TV browsers, LG's webOS among them, typically lay out a 4K panel at 1920 × 1080 CSS pixels, so on a 75-inch TV it is the TV density that makes things big, not the pixel count.</p>
+<h2 id="input">Input</h2>
+<ul>
+<li><strong>Touch and mouse.</strong> Everything is a real button or link. Spreads also turn with a 50px swipe.</li>
+<li><strong>Keyboard.</strong> Tab order follows the page. Spreads take ←/→ and Page Up/Page Down when focused. Escape closes the drawer and dialogs.</li>
+<li><strong>Remote and D-pad.</strong> At the TV density (or after <code>Storeybrook.nav.enable()</code>), the arrow keys move focus to the nearest control in that direction, scrolling it into view. Back (Escape, Backspace, BrowserBack, or webOS key 461) closes a dialog or the drawer, then fires <code>sb:back</code>.</li>
+<li><strong>Gamepad.</strong> With navigation on: the D-pad or left stick moves focus (repeating every 240ms when held), A presses, B goes back.</li>
+<li>Give the first thing to press <code>data-sb-autofocus</code> so the first arrow press lands there.</li>
+</ul>
+<h2 id="big-screens">Big screens</h2>
+<ul>
+<li>Covers lift and scale up 7% when focused at the TV density, so the focused one is obvious from the sofa.</li>
+<li>Keep text on sheets, never straight on washes, because TVs crush contrast.</li>
+<li>No hover-only affordances anywhere: a TV has no hover.</li>
+</ul>
+<h2 id="e-ink">E-ink</h2>
+<ul>
+<li>Use Ink Blot: black on white, stipple instead of wash, no animation at all, a 4:1 <code>line</code>.</li>
+<li>Prefer page turns to scrolling (e-ink redraws whole screens), so long stories go in a spread.</li>
+<li>Avoid the grain and big black fills (Ink Blot already does): they ghost.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="progression.html"><span data-sb-icon="prev"></span>Rewards and progression</a><a class="sb-btn sb-btn--secondary" href="accessibility.html">Accessibility<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

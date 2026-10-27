@@ -125,7 +125,7 @@ function update(dt) {
   bird.alpha += ((singing ? 1 : 0) - bird.alpha) * (1 - Math.exp(-dt * 3)); bird.flash *= Math.exp(-dt * 4);
   if (bird.alpha > 0.02) { bird.trail.push([bird.x, bird.y]); if (bird.trail.length > 36) bird.trail.shift(); }
   else { bird.trail.length = 0; if (!singing) { bird.x = bird.tx = -100; bird.y = bird.ty = -100; } }
-  petTick(dt);
+  petTick(dt); pluckFree(); brookTick(dt); jamTick(); guardTick(dt); heardTick();
   if (era && era.endAt) {
     if (!era.cap && t > era.endAt + 1.3) { era.cap = true; caption("1955 isn't ready for that yet. its kids will be.", 5200); discover('x-1955'); }
     if (t > era.endAt + 4.2) { const pv = era.prev, pr = era.prevRhy; era = null; for (const v of voices) { v.target = null; v.locked = false; v.temp = 0.2; } if (pv !== M.key) setMode(pv, true); rhy.on = pr; rhy.nextT = 0; syncUI(); }
@@ -188,29 +188,34 @@ function boot(hotData) {
   loadLocal();
   if (hotData && hotData.v) applySave(hotData, true);
   REF = SET.ref / 440;
-  // AND SO starts dark (dawn) wherever it opens; the light looks are a tap away in the sheet, and a light look you pick is kept
-  skin = SKINS.includes(savedSkin) ? savedSkin : 'dawn';
-  document.body.dataset.skin = skin;
+  // AND SO 7 opens in Meta Daylight, and a look you pick in 7 is kept; a copy in the mirror opens in the look it was handed
+  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SKINS.includes(savedSkin) ? savedSkin : 'sb-daylight';
+  document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
+  quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);
   $('stText').value = STORY;
   $('enterFine').insertAdjacentText('beforeend', ` there are ${CAT.length} things to find.`);
   checkUnlocks(true); renderGuide(); renderPresets(); scoreUI(); renderQuests(); saveNote();
   resize();
-  initCaps();
+  if (MIR.depth === 0) initCaps(); else capsUI();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
+  jarPaint(false); landing(); mirBoot();
   requestAnimationFrame(frame);
 }
 $('enterReel').addEventListener('click', () => { $('enter').click(); setTimeout(reelStart, 1400); });
 $('enter').addEventListener('click', e => {
   if (entered) return;
   entered = true; e.currentTarget.blur();
-  $('overlay').classList.add('gone'); $('hud').classList.add('on');
+  $('overlay').classList.add('gone'); $('hud').classList.add('on'); document.body.classList.remove('landing');
   audio.init();
   startVoices();
-  caption(LIGHT() ? 'light first. every valley is a little sun.' : 'a dissonance leans on its resolution.', 3800);
+  caption(LIGHT() ? 'light first. every valley is a little sun.' : 'a dissonance leans on its resolution.', 3800, 'music');
+  // Everfallen starts in easy listening: familiar chords, plucked, that slide into just intonation when the auto-flip comes
+  if (SET.easyStart && !M.easy) setTimeout(() => { if (entered && !M.easy && !round && !JAM.on && !era && !REEL.on) setMode('easy', true); }, 1600);
+  dailyNougat(); guardsLoad();
   nextAct = t + 10; lastUserT = t; nextTryT = t + 40; flipAt = t + 45; bellNext = t + 14; windNext = t + 9; trainNext = t + 200;
   lastPX = W / 2; lastPY = H / 2;
   fillQuests(); resize();
-  if (!phone) setTimeout(() => showGw(false), 900);
+  if (!phone && MIR.depth === 0) setTimeout(() => showGw(false), 900);
   setTimeout(() => { if (!draggedOnce) showHint(phone ? 'drag a voice · tap the terrain to add one · drag the scale' : 'drag a voice off its rest · tap the terrain to add one · scroll the scale · tap the sky to ' + (LIGHT() ? 'glide' : 'lean'), 16); }, 1600);
   jlog('entered');
 });
@@ -225,6 +230,12 @@ try {
     ls: () => ({ src: LS.src, f: +LS.f.toFixed(2), conf: +LS.conf.toFixed(3), phrases: LS.phrases, lines: LS.lines.slice(), note: !!LS.note, roomC: LS.roomC, act: LS.lastAction, rms: +LS.rms.toFixed(4), dispX: LS.dispX }),
     state: () => ({ t: +t.toFixed(2), root: +fRoot.toFixed(3), tune: +TUNE.toFixed(5), Rs: +Rs.toFixed(4), chord: chordNow && chordNow.str, mood: moodNow(), mode: M.key, skin, found: [...found], score: GAME.score }),
     listenStart, listenStop, setFollow, lean, setMood, setMode, setSkin, setViewMode, setX5d, reelStart, reelStop,
+    jamStart, jamStop, jamNoteOn, jamNoteOff, openBrook, closeBrook, walkStone, mirrorTable, mirOpen, setQuiet, setArtic, earlyAccess, openStory, cycleLook, eerie,
+    jam: () => ({ on: JAM.on, sess: JAM.sess, bar: JAM.bar, bi: JAM.bi, chorus: JAM.chorus, score: JAM.score, notes: JAM.notes, good: JAM.good, phase: JAM.phase, chord: JAM.chord && JAM.chord.sym, keys: JAM.keys.length, call: !!JAM.call, blues: [...JAM.blues] }),
+    game: () => ({ nougats: GAME.nougats, stones: GAME.stones.slice(), stories: GAME.stories.slice(), played: Math.round(GAME.played), jamBest: GAME.jamBest, lastDay: GAME.lastDay, all: allUnlocked }),
+    mir: () => ({ depth: MIR.depth, open: MIR.open, deep: MIR.deep, wins: MIR.wins.map(w => ({ kind: w.kind, dev: w.dev, look: w.look, ready: w.ready, k: +w.k.toFixed(3) })) }),
+    hearText, spawnGuard, guardsSleep, mishear, earNorm, guards: () => EAR.guards.map(g => ({ id: g.id, x: Math.round(g.x), y: Math.round(g.y), on: !!(GFEAT[g.id] && GFEAT[g.id].on()) })), ear: () => ({ q: EAR.q.map(q => q.id), heard: EAR.heardS, miss: EAR.missS, met: GAME.met.slice() }),
+    nougat: n => nougat(n, W / 2, H / 2, 'a test'), played: s => { GAME.played = s; }, deep: d => { MIR.deep = d; }, folds: d => { depth = d; }, petForm: f => { SET.petForm = f; }, pet: () => ({ x: pet.x, y: pet.y, say: pet.say }),
     mo: () => ({ twistA: +MO.twistA.toFixed(1), sinceShake: +(performance.now() / 1000 - MO.shakeT).toFixed(2), sinceTwist: +(performance.now() / 1000 - MO.twistT).toFixed(2), on: MO.on, live: MO.live, sign: MO.sign, gx: +MO.gx.toFixed(3), gy: +MO.gy.toFixed(3), tx: +MO.tx.toFixed(3), ty: +MO.ty.toFixed(3), lean: +MO.lean.toFixed(2), rolling: MO.rolling, hops: MO.hops, busy: +MO.busy.toFixed(2), gesture: MO.gesture, hz: Math.round(MO.hz) }),
     wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),
     hill: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; let bx = v.x, be = -1; for (let x = Math.max(160, v.x - 320); x <= Math.min(XMAX - 160, v.x + 320); x += 4) { const d = Dv(v, x), e = (d - wxFloor(v, x, d)) / D0; if (e > be) { be = e; bx = x; } } return { x: bx, X: xToS(bx), e: +be.toFixed(3) }; },

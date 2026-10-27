@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sticker · Storeybrook</title>
+<meta name="description" content="Stickers for things found and places opened, kept in an album.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Rewards</p><section class="site-live" aria-label="Sticker, live"><div class="pv"><div class="sb-album"><div class="sb-sticker" style="--rot:-4deg"><span class="sb-sticker__art"><span data-sb-icon="star" data-size="48"></span></span><span class="sb-sticker__name">first stone</span></div><div class="sb-sticker" style="--rot:3deg"><span class="sb-sticker__art"><span data-sb-icon="leaf" data-size="48"></span></span><span class="sb-sticker__name">the meadow</span></div><div class="sb-sticker sb-sticker--locked" style="--rot:-2deg"><span class="sb-sticker__art"><span data-sb-icon="origami" data-size="48"></span></span><span class="sb-sticker__name">origami</span></div><div class="sb-sticker is-new" style="--rot:5deg"><span class="sb-sticker__art"><span data-sb-icon="heart" data-size="48"></span></span><span class="sb-sticker__name">a friend</span></div></div></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="sticker">Sticker</h1>
+<p>Stickers for things found and places opened, kept in an album. A sticker not found yet is a dashed outline with its name, so a person can see what is still to find.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-sticker" data-sb-sticker="&lt;id&gt;"&gt;</code> holding <code>&lt;span class="sb-sticker__art"&gt;</code> (an icon or a small drawing) and <code>&lt;span class="sb-sticker__name"&gt;</code> (the hand face). Put stickers in <code>&lt;div class="sb-album"&gt;</code> (a grid of 132px columns). Set <code>--rot</code> for its tilt.</p>
+<ul>
+<li><code>Storeybrook.unlock(id)</code> turns <code>sb-sticker--locked</code> off for the matching sticker and peels it on (<code>is-new</code>, <code>dur-base</code>, <code>ease-bounce</code>), with a toast and a peel sound.</li>
+<li>Locked: dashed <code>line</code> outline, faded art, <code>ink-muted</code> name. Found: a <code>page</code> sticker with a white border on a <code>wash-sun</code> glow and <code>shadow-sticker</code>.</li>
+<li>Origami turns the art 45°; Comix rims it in ink.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do name stickers for what was found ("the far stone"), in two or three words.
+- Don't hide unfound stickers: the outline is the hint.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>

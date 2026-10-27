@@ -1,0 +1,1 @@
+The nougat (three seeds: the nuts move with the seed) and the jar empty, half full and full, in Meta Daylight's inks with colors baked in. In pages use `Storeybrook.nougatSVG(seed)` and `.sb-jar`, which take the current look's `nougat`, `nougat-nut`, `wrapper` and `copper` (see the Jar component).

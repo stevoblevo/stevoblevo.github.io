@@ -1,6 +1,8 @@
 // ===== world: tunings, moods, presets, skins, the black hole, the box, Saelion, the rail, the conductor =====
 function setMode(key, quiet) {
   if (!entered || !MODES[key] || M.key === key || (era && !quiet)) return;
+  if (JAM.on && !JAM.switching) jamStop(true);   // picking another tuning ends the jam
+  if (M.key === key) return;
   const prev = M, nm = MODES[key];
   const same = prev.R.length === nm.R.length && prev.R.every((r, i) => Math.abs(r - nm.R[i]) < 1e-9 && Math.abs(prev.A[i] - nm.A[i]) < 1e-9) && prev.struck === nm.struck && prev.ombak === nm.ombak;
   M = nm; PR = M.R; PA = M.A; PK = PR.length;
@@ -94,14 +96,19 @@ function applyPreset(p, name) {
 const TUPN = { 2: 'eighths', 3: 'triplets', 4: 'sixteenths', 5: 'quintuplets', 6: 'sextuplets', 7: 'septuplets', 8: 'thirty-seconds', 9: 'nonuplets' };
 const TUPC = { 2: 'eighths. plain.', 3: 'triplets. it swings now.', 4: 'sixteenths. home.', 5: 'quintuplets. silly, as requested.', 6: 'sextuplets.', 7: 'septuplets. good luck dancing.', 8: 'thirty-seconds. busy.', 9: 'nonuplets. this is a cry for help.' };
 function setTuplet(n, quiet) { n = clamp(n, 2, 9); if (n === tuplet) return; tuplet = n; rhy.base = null; syncUI(); if (!quiet) { caption(TUPC[n], 2200); haptic(6); } if (n === 5 || n === 7 || n === 9) discover('x-tuplet'); emit('tuplet', { v: n }); }
-const SKINS = ['obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall'];
-function setSkin(s) {
-  if (!SKINS.includes(s)) s = 'obsidian';
+const SKINS = ['sb-daylight', 'sb-knight', 'sb-inkblot', 'sb-comix', 'sb-origami', 'sb-skein', 'obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall'];
+// the Storeybrook looks other than Meta Daylight open with their stones on the brook (or all at once, in early access)
+const LOOK_STONE = { 'sb-knight': 'knight', 'sb-inkblot': 'ink', 'sb-comix': 'comix', 'sb-origami': 'origami', 'sb-skein': 'skein' };
+const lookOpen = s => !LOOK_STONE[s] || MIR.depth > 0 || REEL.on || stoneOpen(STONE.get(LOOK_STONE[s]));
+function setSkin(s, force) {
+  if (!SKINS.includes(s)) s = 'sb-daylight';
+  if (!force && entered && !lookOpen(s)) { const st = STONE.get(LOOK_STONE[s]); caption(`${SB_NAMES[s]} opens with its stone on the brook, at ${st.need} nougats.`, 2800); return; }
   const was = skin; skin = s; document.body.dataset.skin = s;
+  applyLook();
   if (s === 'story' && entered) $('story').classList.add('on');
-  else if (was === 'story' && s !== 'story') $('story').classList.remove('on');
   if (entered && s !== was && (s === 'bw2' || s === 'fieldstone' || s === 'glasshouse' || s === 'peachfall')) discover('x-' + s);
-  resize(); syncUI(); persistSoon(); if (entered) jlog(`skin: ${s}`);
+  if (entered && s !== was && SB_LOOK[s] && s !== 'sb-daylight') discover('x-look');
+  resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || s}`);
 }
 
 // ---------- black hole ----------
@@ -147,7 +154,7 @@ const TRIVIA = [
 ];
 function petTalk() { if (!UNL.pet || pet.hatch > 0) return; pet.say = TRIVIA[pet.triv++ % TRIVIA.length]; pet.sayUntil = t + 7.5; pet.cheer = 0.6; }
 function petPose() { if (!UNL.pet) return; pet.pose = (pet.pose + 1) % 4; pet.say = ['floating.', 'dancing.', 'sitting.', 'storybook pose.'][pet.pose]; pet.sayUntil = t + 1.6; }
-function petTarget() { const f = SET.petForm || 'bunny'; if (f === 'bunny') return [0.08, 0.3, 1, 0.12, 0.04]; if (f === 'tree') return [1, 0.15, 0.1, 0.1, 0.9]; if (f === 'pixie') return [0.1, 0.9, 0.2, 1, 0.05]; return W5.map(w => clamp(w * 2.6, 0, 1)); }
+function petTarget() { const f = SET.petForm || 'bunny'; if (f === 'bunny') return [0.08, 0.3, 1, 0.12, 0.04]; if (f === 'skein') return [0.05, 0.2, 0.5, 0.05, 0.15]; if (f === 'tree') return [1, 0.15, 0.1, 0.1, 0.9]; if (f === 'pixie') return [0.1, 0.9, 0.2, 1, 0.05]; return W5.map(w => clamp(w * 2.6, 0, 1)); }
 function petHome() { pet.hx = phone ? W * 0.16 : skin === 'hmp' ? Math.min(W - 60, W * 0.62) : Math.max(70, MX - MR * 2.05); pet.hy = phone ? clamp(LT - 40, TOPH + 60, H) : skin === 'hmp' ? LT - 50 : MY + MR * 0.35; }
 function petTick(dt) {
   if (!entered) return;
@@ -208,6 +215,7 @@ function readStory() {
 // ---------- hands-on helpers ----------
 function latPos(i) { const L = LAT[i], a = (L.a * Math.PI) / 180, r = MR * (1.3 + 0.6 * clamp(SET[L.k], 0, 1)); return [MX + Math.cos(a) * r, MY + Math.sin(a) * r]; }
 function harpPool() {
+  if (JAM.on) return jamHarpPool();
   const pcs = [0, ...voices.filter(v => v.wT > 0 && v.locked).map(v => v.c)], pool = [];
   for (const c of pcs) for (let k = -3; k <= 7; k++) { const f = fRoot * Math.pow(2, c / 1200) * Math.pow(M.eq, k); if (f >= 260 && f <= 1700) pool.push(f); }
   pool.sort((a, b) => a - b); const P = []; for (const f of pool) if (!P.length || f / P[P.length - 1] > 1.012) P.push(f); return P;
@@ -218,6 +226,7 @@ function harpAt(h, px, py) {
   harpTrail.push({ x: px, y: py, life: 1.2 });
   if (idx !== h.idx && t - h.lastT > 0.045) {
     h.idx = idx; h.lastT = t;
+    if (JAM.on) { jamHarp(idx, py); for (let i = 0; i < 4; i++) sparks.push({ x: px, y: py, vx: rand(-40, 40), vy: rand(-60, -10), life: rand(0.4, 0.9), max: 0.9, c: COLORS[idx % 4] }); emit('harp'); return; }
     const f1 = P[idx], f0 = f1 * Math.pow(2, (SET.frolic ? 0 : (LIGHT() ? rand(4, 12) : rand(15, 45)) * (Math.random() < 0.6 ? 1 : -1)) / 1200), br = clamp(1 - (py - TOPH) / Math.max(1, LT - TOPH), 0, 1);
     audio.birdNote(f0, f1, 0.06, 0.5 + 0.4 * br, (px / W - 0.5) * 1.4, 0.022 + 0.022 * br);
     for (let i = 0; i < 4; i++) sparks.push({ x: px, y: py, vx: rand(-40, 40), vy: rand(-60, -10), life: rand(0.4, 0.9), max: 0.9, c: COLORS[idx % 4] });
@@ -238,7 +247,7 @@ function strum() { voices.filter(v => v.wT > 0).sort((a, b) => a.x - b.x).forEac
 function conductor() {
   if (!entered || paused) return;
   if (rail) railTick();
-  if (era) return;
+  if (era || JAM.on) return;
   if (round) { gamelanClock(); return; }
   if (pump) {
     if (t >= pump.next) {
@@ -383,6 +392,7 @@ function syncUI() {
     cube: 'cube 3D: fifths run left to right, major thirds go up, harmonic sevenths go back. lit nodes are voices, the gold one is the root. drag to turn it, pinch or scroll to come closer, tap a node to hear and inspect it.',
     d5: '5D: the penteract of 3, 5, 7, 11 and 13. drag to turn, shift-drag to twist the hidden dimensions, tap a node to inspect it.'
   }[vw];
+  sync7();
   $('tupNote').textContent = `pinch or scroll the mandala to change the subdivision. now ${tuplet}: ${TUPN[tuplet]}.`;
   const recOn = capture.recording();
   $('rRec').textContent = recOn ? '■ stop & save' : '● record'; $('pbRec').textContent = recOn ? '■ save' : '● rec';

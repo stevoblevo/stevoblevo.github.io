@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Creature · Storeybrook</title>
+<meta name="description" content="Saelion: a bunny, a tree octopus and a butterfly pixie at once, which grows from an egg.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Play</p><section class="site-live" aria-label="Creature, live"><div class="pv" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px"><figure style="margin:0;text-align:center"><div data-c='{"form":"saelion","stage":0}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">egg</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"saelion","stage":1}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">kit</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"saelion","stage":2}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">bun</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"saelion","stage":3}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">sprite</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"saelion","stage":4}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">saelion</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"bunny","mood":"happy"}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">bunny</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"octopus","mood":"surprised"}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">octopus, surprised</figcaption></figure><figure style="margin:0;text-align:center"><div data-c='{"form":"pixie","mood":"sleepy"}' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">pixie, sleepy</figcaption></figure></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="creature">Creature</h1>
+<p>Saelion: a bunny, a tree octopus and a butterfly pixie at once, which grows from an egg. It breathes and blinks; it can be sleepy or surprised.</p>
+<p><strong>Provide</strong> an empty element and call <code>Storeybrook.creature(host, {form, stage, mood})</code>, or write the options in <code>data-sb-creature</code> and let <code>init()</code> draw it. Size it with <code>--cw</code> (default 180px).</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Option</th>
+<th>Values</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>form</code></td>
+<td><code>saelion</code>, <code>bunny</code>, <code>octopus</code>, <code>pixie</code></td>
+<td><code>saelion</code></td>
+</tr>
+<tr>
+<td><code>stage</code></td>
+<td>0 <code>egg</code>, 1 <code>kit</code>, 2 <code>bun</code>, 3 <code>sprite</code>, 4 <code>saelion</code> (Saelion only)</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>mood</code></td>
+<td><code>happy</code>, <code>sleepy</code> (eyes shut), <code>surprised</code> (round mouth)</td>
+<td><code>happy</code></td>
+</tr>
+<tr>
+<td><code>blink</code>, <code>idle</code></td>
+<td>blink every few seconds; breathe</td>
+<td><code>true</code>, <code>true</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>It returns <code>{set(options), get(), stop(), stages}</code>; <code>set</code> redraws and fires <code>sb:creature</code>. <code>Storeybrook.creatureSVG(options)</code> returns the drawing as a string.</li>
+<li>The drawing is <code>role="img"</code> with a label ("Saelion as a sprite"). Its outline is <code>art-line</code>, its cheeks <code>wash-rose</code>, its wings <code>wash-sky</code>, its stars <code>gamboge</code>; one eye amber, one blue. Fur warms in Knight Night and turns white in Ink Blot.</li>
+<li>Breathing and blinking stop under reduced motion and in Ink Blot.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do keep one creature per screen, 120–220px, near the title or the brook.
+- Do let it grow with progress, never shrink back.
+- Don't let it talk over the story: its lines go in a Balloon beside it, briefly.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S)document.querySelectorAll('[data-c]').forEach(function(h){S.creature(h,JSON.parse(h.getAttribute('data-c')));});</script>
+</body>
+</html>

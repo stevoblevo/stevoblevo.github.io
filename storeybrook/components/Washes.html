@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Washes · Storeybrook</title>
+<meta name="description" content="Watercolor fields that bleed, mix and granulate: the only way large color arrives on the page.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Paper</p><section class="site-live" aria-label="Washes, live"><div class="pv" style="height:220px;overflow:hidden;padding:0">
+<div class="sb-washes"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-30%;--h:60%"></i><i class="sb-sun" style="--w:13%;right:6%;top:4%"></i>
+<i class="sb-wash sb-wash--rose sb-bloom" style="--w:30%;left:-6%;top:34%"></i><i class="sb-wash sb-wash--brook" style="--w:26%;left:58%;top:50%;--ar:2"></i>
+<i class="sb-wash sb-wash--meadow sb-wash--band" style="bottom:-34%;--h:56%"></i></div>
+<div class="sb-sheet" style="position:absolute;left:32%;top:30%;max-width:300px;padding:14px 18px"><p class="label" style="margin:0">Text sits on a sheet, never straight on a wash.</p></div>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="washes">Washes</h1>
+<p>Watercolor fields that bleed, mix and granulate: the only way large color arrives on the page.</p>
+<p><strong>Provide</strong> an absolutely placed <code>&lt;div class="sb-washes" aria-hidden="true"&gt;</code> as the first child of a positioned container, holding up to five <code>&lt;i class="sb-wash sb-wash--sky"&gt;</code> (or <code>--meadow</code>, <code>--rose</code>, <code>--sun</code>, <code>--brook</code>). Size and place each with inline style: <code>--w</code> (width, default 40%), <code>--ar</code> (aspect ratio, default 1.35), and <code>left</code>, <code>top</code>, <code>right</code> or <code>bottom</code>. <code>sb-wash--band</code> makes a full-width band (<code>--h</code> its height) for a sky or a meadow. <code>&lt;i class="sb-sun"&gt;</code> is a sun of unpainted paper with a <code>wash-sun</code> halo.</p>
+<ul>
+<li>Each wash is darker at its rim, granulated, bled through <code>#sb-bleed</code>, at <code>op-wash</code>, and blended <code>multiply</code>, so overlaps mix like glazes. Knight Night glows them (<code>screen</code>); Ink Blot turns them to stipple; Comix to halftone; Origami to folded facets.</li>
+<li><code>sb-bloom</code> on a wash lets it arrive once over <code>dur-bleed</code>.</li>
+<li><code>sb-grain</code> lays the paper grain on any one element.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do keep text on a sheet over washes, never straight on them.
+- Don't use more than five washes on a screen, or a wash to mean something: they are weather, not signals.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>

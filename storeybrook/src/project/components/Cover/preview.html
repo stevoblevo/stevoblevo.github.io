@@ -1,0 +1,58 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Storeybrook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Andika:wght@400;700&display=swap">
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--paper); color:var(--ink); font-family:var(--font-ui); overflow:hidden; }
+  .cover { position:relative; width:960px; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .rose { fill:var(--rose); }
+  .cerulean { fill:var(--cerulean); }
+  .gamboge { fill:var(--gamboge); }
+  .sap { fill:var(--sap); }
+  .brook { fill:var(--wash-brook); }
+  .tile { rx:var(--radius-lg); }
+  .words { position:absolute; left:var(--space-6); bottom:var(--space-6); max-width:440px; }
+  .name { margin:0; font-family:var(--font-display); font-size:64px; line-height:.95; font-weight:600; font-variation-settings:"wdth" 92; color:var(--ink); }
+  .tag { margin:var(--space-3) 0 0 2px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="480 0 480 288" width="480" height="288">
+<!--
+  blocks      rose 176×232 (the accent, largest, bled off the top) · cerulean 144×208 (the brook's own pigment) · gamboge 128×152 and sap 128×116 stacked and bled off the right (sun and growth) · wash-brook as the one tint, in the pattern — about 38% of 960×288
+  arrangement a staggered stack stepping down to the right like stones across water: rose high, cerulean low, gamboge over sap at the edge; space-4 gutters, every corner radius-lg
+  pattern     the brook as a meander of half-rings in wash-brook crossing every block at one level — "the brook is the cue", the path through the page, built from arcs, not drawn as a picture
+  scales      gutters space-4 (16); blocks radius-lg (20); half-rings at radius space-5 (24) with a space-4 (16) band; the meander's level sits space-8 (72)+ from the foot
+-->
+<rect class="rose tile" x="496" y="-20" width="176" height="232" rx="20"/>
+<rect class="cerulean tile" x="688" y="56" width="144" height="208" rx="20"/>
+<rect class="gamboge tile" x="848" y="-20" width="128" height="152" rx="20"/>
+<rect class="sap tile" x="848" y="148" width="128" height="116" rx="20"/>
+<path class="brook" d="M472 196 A32 32 0 0 1 536 196 L520 196 A16 16 0 0 0 488 196 Z"/>
+<path class="brook" d="M520 196 A32 32 0 0 0 584 196 L568 196 A16 16 0 0 1 536 196 Z"/>
+<path class="brook" d="M568 196 A32 32 0 0 1 632 196 L616 196 A16 16 0 0 0 584 196 Z"/>
+<path class="brook" d="M616 196 A32 32 0 0 0 680 196 L664 196 A16 16 0 0 1 632 196 Z"/>
+<path class="brook" d="M664 196 A32 32 0 0 1 728 196 L712 196 A16 16 0 0 0 680 196 Z"/>
+<path class="brook" d="M712 196 A32 32 0 0 0 776 196 L760 196 A16 16 0 0 1 728 196 Z"/>
+<path class="brook" d="M760 196 A32 32 0 0 1 824 196 L808 196 A16 16 0 0 0 776 196 Z"/>
+<path class="brook" d="M808 196 A32 32 0 0 0 872 196 L856 196 A16 16 0 0 1 824 196 Z"/>
+<path class="brook" d="M856 196 A32 32 0 0 1 920 196 L904 196 A16 16 0 0 0 872 196 Z"/>
+<path class="brook" d="M904 196 A32 32 0 0 0 968 196 L952 196 A16 16 0 0 1 920 196 Z"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Storeybrook</h1>
+<p class="tag">A light-first kit for storybook pages and little games.</p>
+</div>
+</div>
+<script></script>
+</body>
+</html>

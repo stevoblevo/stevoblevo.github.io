@@ -48,6 +48,22 @@ jobs:
         run: |
           export CHROME_PATH="$(command -v google-chrome || command -v chromium)"
           xvfb-run -a node goober/tests/peachfall-signal-run-browser.mjs
+      - name: Verify signed-out public release after master publication
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/saelion-browser/node_modules/playwright-core/index.mjs
+          EVIDENCE_DIR: ${{ runner.temp }}/public-game-live-evidence
+          VERIFY_PUBLIC: '1'
+        run: |
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium)"
+          xvfb-run -a node goober/tests/peachfall-signal-run-browser.mjs
+      - name: Preserve public release evidence
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-game-live-evidence
+          path: ${{ runner.temp }}/public-game-live-evidence/
+          if-no-files-found: warn
       - name: Preserve browser evidence
         if: always()
         uses: actions/upload-artifact@v4

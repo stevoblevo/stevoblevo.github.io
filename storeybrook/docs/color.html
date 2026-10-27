@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Color · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Color.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html" aria-current="page">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Color</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="color">Color</h1>
+<p>Storeybrook's colors are pigments on paper. Every look fills the same fifty names; components only ever name roles (<code>ink</code>, <code>accent</code>, <code>cue</code>…) or pigments (<code>rose</code>, <code>cerulean</code>…), never a hex.</p>
+<h2 id="roles">Roles</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Role</th>
+<th>What it is for</th>
+<th>Pairs with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>paper</code>, <code>surface</code>, <code>page</code></td>
+<td>the three grounds (see Paper)</td>
+<td>text in <code>ink</code>, <code>ink-muted</code></td>
+</tr>
+<tr>
+<td><code>line</code></td>
+<td>pencil lines: dividers, quiet outlines, empty sticker slots</td>
+<td>decorative except in Ink Blot and Comix, where it is a real border</td>
+</tr>
+<tr>
+<td><code>ink</code></td>
+<td>story text, display type, every label</td>
+<td><code>paper</code>, <code>surface</code>, <code>page</code>, <code>scrim</code>, <code>cue-soft</code></td>
+</tr>
+<tr>
+<td><code>ink-muted</code></td>
+<td>captions, credits, hints, the price tag's small print</td>
+<td>the same grounds</td>
+</tr>
+<tr>
+<td><code>accent</code>, <code>accent-soft</code>, <code>on-accent</code></td>
+<td>the one thing to do now</td>
+<td><code>on-accent</code> on <code>accent</code>; <code>accent</code> text on <code>accent-soft</code></td>
+</tr>
+<tr>
+<td><code>cue</code>, <code>cue-soft</code>, <code>on-cue</code></td>
+<td>the brook: links, read-aloud, walked paths, switched-on toggles, hints</td>
+<td><code>ink</code> on <code>cue-soft</code>; <code>on-cue</code> on <code>cue</code></td>
+</tr>
+<tr>
+<td><code>link</code></td>
+<td>inline links (alias of <code>cue</code>), wavy underline</td>
+<td>grounds</td>
+</tr>
+<tr>
+<td><code>danger</code></td>
+<td>errors only, with a word or icon</td>
+<td>grounds</td>
+</tr>
+<tr>
+<td><code>focus</code></td>
+<td>the focus ring</td>
+<td>3:1 or more on every ground</td>
+</tr>
+<tr>
+<td><code>scrim</code>, <code>chrome</code></td>
+<td>veils behind dialogs; fixed bars</td>
+<td><code>ink</code> on both</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pigments">Pigments</h2>
+<p>Five pigments, each with a <code>-soft</code> tint and an <code>on-</code> label color: <code>rose</code> (quinacridone), <code>cerulean</code>, <code>sap</code> (sap green: growth, success, the walked stone), <code>gamboge</code> (new gamboge: sun, stars, nougat glints, the candle), <code>copper</code> (thread, the shelf's board, Skein silk's accent). A look aliases <code>accent</code> and <code>cue</code> to two of them.</p>
+<h2 id="washes-and-art">Washes and art</h2>
+<ul>
+<li>Washes: <code>wash-sky</code>, <code>wash-meadow</code>, <code>wash-rose</code>, <code>wash-sun</code>, <code>wash-brook</code>. Decorative; text sits on a sheet or <code>scrim</code>, never straight on a wash, except display type 24px and up in <code>ink</code> (6.8:1 or better on every wash in Meta Daylight).</li>
+<li>Art inks: <code>art-line</code> (every outline), <code>art-light</code> (catchlights), <code>art-shade</code> (shadows, a stone's underside), <code>art-stone</code>, <code>art-water</code>.</li>
+<li>The nougat: <code>nougat</code>, <code>nougat-nut</code>, <code>wrapper</code>.</li>
+<li>Tags: <code>tag-sun</code>, <code>tag-rose</code>, <code>tag-lilac</code>, <code>tag-sea</code>, <code>tag-sky</code>; text and dot in the tag color on <code>page</code>, fill at 12%. A tag is always a word, never a bare dot.</li>
+</ul>
+<h2 id="contrast">Contrast</h2>
+<p>Every text pair below was measured in every look (176 checks, all passing). The lowest ratio per look:</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Pair</th>
+<th>Daylight</th>
+<th>Knight</th>
+<th>Ink Blot</th>
+<th>Comix</th>
+<th>Origami</th>
+<th>Skein</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ink</code> on grounds</td>
+<td>11.1</td>
+<td>10.0</td>
+<td>18.4</td>
+<td>17.0</td>
+<td>11.5</td>
+<td>11.2</td>
+</tr>
+<tr>
+<td><code>ink-muted</code> on grounds</td>
+<td>5.4</td>
+<td>6.4</td>
+<td>9.5</td>
+<td>10.2</td>
+<td>5.7</td>
+<td>5.7</td>
+</tr>
+<tr>
+<td><code>accent</code> on grounds</td>
+<td>4.9</td>
+<td>7.1</td>
+<td>18.4</td>
+<td>5.2</td>
+<td>4.7</td>
+<td>4.7</td>
+</tr>
+<tr>
+<td><code>cue</code> / <code>link</code> on grounds</td>
+<td>4.9</td>
+<td>5.4</td>
+<td>18.4</td>
+<td>5.6</td>
+<td>6.7</td>
+<td>4.8</td>
+</tr>
+<tr>
+<td><code>danger</code> on grounds</td>
+<td>5.6</td>
+<td>5.0</td>
+<td>18.4</td>
+<td>5.6</td>
+<td>5.2</td>
+<td>5.8</td>
+</tr>
+<tr>
+<td><code>accent</code> on <code>accent-soft</code></td>
+<td>4.6</td>
+<td>5.5</td>
+<td>16.8</td>
+<td>4.8</td>
+<td>4.5</td>
+<td>4.6</td>
+</tr>
+<tr>
+<td><code>ink</code> on <code>cue-soft</code> (word being read)</td>
+<td>10.6</td>
+<td>8.3</td>
+<td>16.8</td>
+<td>16.2</td>
+<td>10.9</td>
+<td>11.0</td>
+</tr>
+<tr>
+<td><code>on-accent</code> on <code>accent</code></td>
+<td>5.7</td>
+<td>9.2</td>
+<td>21.0</td>
+<td>5.8</td>
+<td>6.0</td>
+<td>6.0</td>
+</tr>
+<tr>
+<td><code>on-cue</code> on <code>cue</code></td>
+<td>5.8</td>
+<td>7.0</td>
+<td>21.0</td>
+<td>6.2</td>
+<td>8.5</td>
+<td>6.2</td>
+</tr>
+<tr>
+<td><code>ink</code> on <code>scrim</code> over washes</td>
+<td>11.1</td>
+<td>11.3</td>
+<td>20.3</td>
+<td>17.1</td>
+<td>11.8</td>
+<td>11.8</td>
+</tr>
+<tr>
+<td><code>focus</code> ring on grounds (3:1)</td>
+<td>4.9</td>
+<td>7.1</td>
+<td>18.4</td>
+<td>17.0</td>
+<td>6.7</td>
+<td>5.8</td>
+</tr>
+<tr>
+<td>tags on grounds (lowest of five)</td>
+<td>4.9</td>
+<td>5.4</td>
+<td>18.4</td>
+<td>5.5</td>
+<td>4.7</td>
+<td>4.8</td>
+</tr>
+</tbody>
+</table>
+<p>"Grounds" means <code>paper</code>, <code>surface</code> and <code>page</code>, all three. <code>on-gamboge</code> on <code>gamboge</code> is 4.9:1 in Meta Daylight and Skein silk, more elsewhere.</p>
+<h2 id="rules">Rules</h2>
+<ul>
+<li>Never use <code>gamboge</code> as text on a light paper (2.2:1 on Meta Daylight's grounds, 1.3:1 in Comix). It is a fill and a mark, and its labels use <code>on-gamboge</code>.</li>
+<li><code>line</code> is about 1.4:1 in the light looks: a control is never told apart by <code>line</code> alone. Give it an <code>ink</code> border, a fill, or a shadow (<code>shadow-sticker</code>).</li>
+<li><code>accent</code> and <code>cue</code> never meet on one control. A switched-on toggle is <code>cue</code>; the button that confirms is <code>accent</code>.</li>
+<li>Status is a word or an icon first: a locked stone says "locked" and shows the lock; a walked one shows a check in <code>sap</code>.</li>
+<li>When you need a new color, take it from the five pigments' soft tints. If it truly is new, add it to every look in <code>tokens.json</code>, measure it, and add it to this table.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="looks.html"><span data-sb-icon="prev"></span>Looks</a><a class="sb-btn sb-btn--secondary" href="type.html">Type<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

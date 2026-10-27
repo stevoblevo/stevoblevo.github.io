@@ -1,0 +1,10 @@
+<!-- @dsCard group="Rewards" height=150 -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Jar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>html,body{margin:0}body.sb-body{min-height:0;background:var(--paper);color:var(--ink);font-family:var(--sb-story)}.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style></head>
+<body class="sb-body">
+<div class="pv row" style="gap:28px"><button class="sb-jar" id="jar" data-cap="30" type="button"></button>
+<span class="sb-nougat" data-sb-nougat="3"></span><span class="sb-nougat" data-sb-nougat="7" style="--n:56px"></span><span class="sb-nougat" data-sb-nougat="11"></span>
+<button class="sb-btn sb-btn--secondary sb-btn--sm" id="drop"><span data-sb-icon="nougat"></span>Drop a nougat</button></div>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S){document.querySelectorAll('[data-sb-nougat]').forEach(function(x){x.innerHTML=S.nougatSVG(+x.getAttribute('data-sb-nougat'));});var j=document.getElementById('jar');if(!j.querySelector('.sb-jar__count'))j.insertAdjacentHTML('beforeend','<span class="sb-jar__count"></span>');if(S.rewards.count()<9)S.rewards.set(9);S.rewards.paint();document.getElementById('drop').addEventListener('click',function(e){S.rewards.drop(1,{from:e.currentTarget,to:j,reason:'trying the preview'});});}</script></body></html>

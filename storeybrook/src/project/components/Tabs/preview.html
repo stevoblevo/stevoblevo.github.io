@@ -1,0 +1,11 @@
+<!-- @dsCard group="Navigation" height=330 -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Tabs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>html,body{margin:0}body.sb-body{min-height:0;background:var(--paper);color:var(--ink);font-family:var(--sb-story)}.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style></head>
+<body class="sb-body">
+<div class="pv" style="display:grid;grid-template-columns:200px 1fr;gap:0;align-items:start">
+<div class="sb-tabs" role="tablist" aria-orientation="vertical"><button class="sb-tab" role="tab" aria-selected="false">The porch</button><button class="sb-tab" role="tab" aria-selected="true">The far stone</button><button class="sb-tab" role="tab" aria-selected="false">Under the stones</button><button class="sb-tab" role="tab" aria-selected="false">Home</button></div>
+<article class="sb-page" role="tabpanel" style="min-height:200px"><h3 class="display-s" style="margin:0 0 8px">The far stone</h3><div class="sb-prose" style="font-size:1.05rem"><p>Nobody had walked to the far stone in years.</p></div></article>
+</div>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}document.querySelectorAll('.sb-tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.sb-tab').forEach(function(x){x.setAttribute('aria-selected',String(x===t));});document.querySelector('[role=tabpanel] h3').textContent=t.textContent;});});</script></body></html>

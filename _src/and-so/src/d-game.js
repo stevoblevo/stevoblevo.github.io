@@ -1,32 +1,42 @@
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
-const SAVE_KEY = 'andso:v2';
-const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK'];
+const SAVE_KEY = 'andso:v2';   // the same key since v2: AND SO 7 reads every earlier save and adds to it
+const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
-const LIGHT_LOOKS = ['daybreak', 'story', 'eink', 'bw2'];
+const LIGHT_LOOKS = ['daybreak', 'story', 'eink', 'bw2', 'sb-daylight', 'sb-inkblot', 'sb-comix', 'sb-origami', 'sb-skein'];
 function snapshot() {
   const set = {}; PREF_KEYS.forEach(k => (set[k] = SET[k]));
   let sk = skin;
   // the reel borrows looks and views for a few seconds each: what gets saved is whatever you had before it started,
   // so leaving the page mid-reel never brings you back to its paper or daylight shot
   try { if (REEL.on && REEL.saved) { const r = REEL.saved; sk = r.skin; ['view', 'cymShape', 'cymPowder', 'x5d', 'detect', 'flip', 'light', 'tease'].forEach(k => { if (k in r && k in set) set[k] = r[k]; }); } } catch (e) {}
-  return { v: 2, sv: 61, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin: sk, set,
-    game: { score: GAME.score, best: GAME.best, rounds: GAME.rounds, stars: GAME.stars, qdone: GAME.qdone, bestTime: GAME.bestTime || 0 }, stamp: Date.now() };
+  return { v: 2, sv: 70, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin: sk, set,
+    game: { score: GAME.score, best: GAME.best, rounds: GAME.rounds, stars: GAME.stars, qdone: GAME.qdone, bestTime: GAME.bestTime || 0,
+      nougats: GAME.nougats, played: Math.round(GAME.played), stones: GAME.stones.slice(), stories: GAME.stories.slice(), jamBest: GAME.jamBest, lastDay: GAME.lastDay,
+      guards: GAME.guards.slice(0, 12), met: GAME.met.slice(), heard: GAME.heard, guardNougat: GAME.guardNougat }, stamp: Date.now() };
 }
 function applySave(s, preferPrefs) {
   if (!s || typeof s !== 'object') return;
   if (Array.isArray(s.found)) s.found.forEach(id => { if (CATI.has(id)) found.add(id); });
   if (s.presets && typeof s.presets === 'object') userP = Object.assign({}, s.presets, userP);
   if (s.unlockAll) allUnlocked = true;
-  if (s.game) { const g = s.game; GAME.score = Math.max(GAME.score, +g.score || 0); GAME.best = Math.max(GAME.best, +g.best || 0); GAME.rounds = Math.max(GAME.rounds, +g.rounds || 0); GAME.stars = Math.max(GAME.stars, +g.stars || 0); GAME.qdone = Math.max(GAME.qdone, +g.qdone || 0); if (g.bestTime && (!GAME.bestTime || g.bestTime < GAME.bestTime)) GAME.bestTime = g.bestTime; }
+  if (s.game) { const g = s.game; GAME.score = Math.max(GAME.score, +g.score || 0); GAME.best = Math.max(GAME.best, +g.best || 0); GAME.rounds = Math.max(GAME.rounds, +g.rounds || 0); GAME.stars = Math.max(GAME.stars, +g.stars || 0); GAME.qdone = Math.max(GAME.qdone, +g.qdone || 0); if (g.bestTime && (!GAME.bestTime || g.bestTime < GAME.bestTime)) GAME.bestTime = g.bestTime;
+    GAME.nougats = Math.max(GAME.nougats, +g.nougats || 0); GAME.played = Math.max(GAME.played, +g.played || 0); GAME.jamBest = Math.max(GAME.jamBest, +g.jamBest || 0); if (g.lastDay && g.lastDay > GAME.lastDay) GAME.lastDay = g.lastDay;
+    if (Array.isArray(g.stones)) g.stones.forEach(id => { if (typeof id === 'string' && !GAME.stones.includes(id)) GAME.stones.push(id); });
+    if (Array.isArray(g.stories)) g.stories.forEach(id => { if (typeof id === 'string' && !GAME.stories.includes(id)) GAME.stories.push(id); });
+    if (Array.isArray(g.met)) g.met.forEach(id => { if (typeof id === 'string' && !GAME.met.includes(id)) GAME.met.push(id); });
+    if (Array.isArray(g.guards) && !GAME.guards.length) GAME.guards = g.guards.filter(id => typeof id === 'string').slice(0, 12);
+    GAME.heard = Math.max(GAME.heard, +g.heard || 0); if (typeof g.guardNougat === 'string' && g.guardNougat > GAME.guardNougat) GAME.guardNougat = g.guardNougat; }
   if (preferPrefs && s.set) PREF_KEYS.forEach(k => { if (s.set[k] !== undefined && typeof s.set[k] === typeof SET[k]) SET[k] = s.set[k]; });
   // a light look saved before 6.1 (the old light-host default, or a reel cut short) is not kept: those come back dark once
-  if (preferPrefs && s.skin && s.lit && (!LIGHT_LOOKS.includes(s.skin) || (+s.sv || 0) >= 61)) savedSkin = s.skin;
+  // 7 opens in Meta Daylight: a look saved before 7 is not carried over, a look you pick in 7 is kept
+  if (preferPrefs && s.skin && s.lit && (+s.sv || 0) >= 70) savedSkin = s.skin;
 }
 function loadLocal() { try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { applySave(JSON.parse(raw), true); return true; } } catch (e) {} return false; }
 let localT = 0;
 function persistSoon() {
+  if (MIR.depth > 0) return;   // a copy in the mirror never saves: the page at the top keeps the one save
   clearTimeout(localT);
   localT = setTimeout(() => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(snapshot())); } catch (e) {} }, 400);
   if (CAP.dbOk) { CAP.dirty = true; clearTimeout(CAP.timer); CAP.timer = setTimeout(flushDb, 4000); }
@@ -66,6 +76,7 @@ function capsUI() {
   $('recNote').textContent = canSave ? 'recordings save as .webm. replay runs here on the page.' : 'replay runs here on the page.';
   $('askRow').classList.toggle('hidden', !CAP.sample);
   $('stNew').classList.toggle('hidden', !CAP.sample);
+  earUI();
 }
 async function offerFile(filename, data) {
   if (!CAP.dl && CAP.selfHost) {
@@ -82,7 +93,9 @@ async function offerFile(filename, data) {
 
 // ---------- words ----------
 let capTimer = 0;
-function caption(text, ms) {
+// kind 'music' captions still show when the words are hidden: a chord name, a tuning, the band's opening line
+function caption(text, ms, kind) {
+  if (QUIET() && kind !== 'music') return;
   const el = $('cap'), wasOn = el.classList.contains('on');
   clearTimeout(capTimer); el.classList.remove('on');
   capTimer = setTimeout(() => { el.textContent = text; el.classList.add('on'); capTimer = setTimeout(() => el.classList.remove('on'), ms || 3200); }, wasOn ? 600 : 30);
@@ -95,6 +108,8 @@ function discover(id, v) {
   if (found.has(id)) return;
   const e = CATI.get(id); if (!e) return;
   found.add(id); persistSoon(); renderGuide(id);
+  if (MIR.depth > 0) mirUp({ andso: 'found', id });
+  else if (found.size % 4 === 0) setTimeout(() => nougat(1, MX, MY - MR, `${found.size} things found`), 900);
   toastQ.push(e); if (!toastFlush && !toastHideAt) toastFlush = t + 0.7;
   joyBurst(e, v); pet.cheer = 1; checkUnlocks(false); jlog(`found: ${e.name}`);
   const b = v && v.wT !== undefined ? ballPos(v) : null;
@@ -231,6 +246,7 @@ function completeQuest(a, q) {
   a.done = true; GAME.qdone++;
   award(Math.min(220, 60 + 20 * q.n), W / 2, LT * 0.45, 'quest');
   caption(`quest done: ${q.txt}.`, 2600); audio.flourish(); haptic([10, 40, 10]); discover('x-quest'); jlog(`quest: ${q.txt}`);
+  nougat(1, W / 2, LT * 0.45, `quest: ${q.txt}`);
   setTimeout(() => { GAME.quests = GAME.quests.filter(x => x !== a); fillQuests(); persistSoon(); }, 1700);
 }
 function renderQuests() {
@@ -243,6 +259,7 @@ function renderQuests() {
     it.appendChild(tx); it.appendChild(bar); list.appendChild(it);
   }
   $('tQuestN').textContent = `${GAME.quests.filter(a => !a.done).length}`;
+  questsPeek();
 }
 
 // ---------- rounds: build the constellation ----------
@@ -301,7 +318,7 @@ function endRound() {
   const secs = t - round.t0, stars = secs <= 12 ? 3 : secs <= 25 ? 2 : 1;
   GAME.rounds++; GAME.stars += stars; if (!GAME.bestTime || secs < GAME.bestTime) GAME.bestTime = secs;
   award(100 * stars + 20 * round.xs.length, MX, MY, '★'.repeat(stars));
-  discover('x-round'); if (stars === 3) discover('x-3star'); if (round.ear) discover('x-ear');
+  discover('x-round'); if (stars === 3) { discover('x-3star'); nougat(1, MX, MY, 'three stars'); } if (round.ear) discover('x-ear');
   emit('round', { stars });
   bloomFlash = 1; aurora = 1; peak = 1; chill = 1; haptic([20, 60, 20]);
   audio.bloom(voices.filter(v => v.wT > 0).map(v => fOf(v.x)));

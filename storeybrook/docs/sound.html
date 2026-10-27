@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sound and reading aloud · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Sound and reading aloud.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html" aria-current="page">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Sound and reading aloud</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="sound-and-reading-aloud">Sound and reading aloud</h1>
+<p>Storeybrook has two kinds of sound: a voice that reads the story, and small paper noises. Both wait to be asked.</p>
+<h2 id="reading-aloud">Reading aloud</h2>
+<p><code>Storeybrook.read</code> speaks a page with the browser's own speech synthesis and lights each word as it is spoken. It runs on the device; nothing is sent anywhere by the kit.</p>
+<ul>
+<li><strong>Voice choice.</strong> Voices are ranked: Irish English (<code>en-IE</code>, or a voice named Moira, Orla or "Irish") first, then British English, then any English, then the rest; on-device voices before network ones. A person's choice is kept (<code>sb:voice</code>).</li>
+<li><strong>Pace.</strong> Rate 0.96 and pitch 1.05 by default, a touch slower and brighter than the engine's default; the rate is kept (<code>sb:rate</code>). Offer 0.8, 0.96 and 1.15 at most.</li>
+<li><strong>Chunks.</strong> Text is spoken in chunks that end at sentence marks, up to 220 characters, so long pages do not stall the engine.</li>
+<li><strong>Highlight.</strong> Words are wrapped in <code>sb-word</code> the first time a page is read; the spoken word gets <code>is-reading</code> (<code>cue-soft</code> behind it, a <code>cue</code> edge under it; inverted in Ink Blot). Where the engine reports word boundaries the highlight follows them; where it does not, it follows a steady 2.6 words a second times the rate.</li>
+<li><strong>What is skipped.</strong> <code>script</code>, <code>style</code>, anything <code>aria-hidden="true"</code> and anything inside <code>.sb-noread</code>.</li>
+<li><strong>No voices.</strong> If the browser has no speech synthesis the reader disables its play button and says "This browser has no voices. The words are all here to read." If there is no Irish voice it says which voice it is using.</li>
+<li><strong>Events.</strong> <code>sb:read</code> fires with <code>{state, progress}</code>: <code>speaking</code>, <code>paused</code>, <code>stopped</code>, <code>done</code>, <code>unsupported</code>.</li>
+</ul>
+<p>The reader is an aid, never a gate: every story is readable without it, and nothing happens only because a page was read aloud.</p>
+<h3 id="the-irish-voice">The Irish voice</h3>
+<p>Irish English is Storeybrook's first choice because the stories were written to be heard in it. Which voices exist depends on the device: Apple devices ship Moira (en-IE); Microsoft Edge offers Irish neural voices (Emily, Connor) online; many Android and Linux devices have none. The reader always falls back gracefully and says so.</p>
+<h2 id="paper-noises">Paper noises</h2>
+<p><code>Storeybrook.sound</code> makes four small sounds with the Web Audio API; there are no audio files.</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Name</th>
+<th>When</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stone</code></td>
+<td>stepping on a stone</td>
+<td>two soft sine tones, C and G</td>
+</tr>
+<tr>
+<td><code>nougat</code></td>
+<td>a nougat landing in the jar</td>
+<td>a wrapper's crinkle and a high triangle tick</td>
+</tr>
+<tr>
+<td><code>sticker</code></td>
+<td>a sticker peeling on</td>
+<td>a peel and two rising tones</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>a page turning, a fold</td>
+<td>a brush of filtered noise</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Off until a person turns it on (<code>data-sb-sound</code> on a button toggles it; <code>Storeybrook.sound.enable()</code> from script). The choice lasts for this visit only (<code>sb:sound</code> in session storage).</li>
+<li>Each sound is quiet (peak gain 0.12) and short (under 0.4s). They never loop and never play on load.</li>
+<li>A game that has its own music (AND SO) mutes these while its own sound is on, or routes them through its mixer.</li>
+</ul>
+<h2 id="haptics">Haptics</h2>
+<p><code>Storeybrook.haptic(pattern)</code> vibrates where the device can and reduced motion is off: 12ms for a nougat, a 10–40–18ms pattern for a sticker. Nothing else buzzes.</p>
+<h2 id="rules">Rules</h2>
+<ul>
+<li>Sound and voice are never required to play, read or win.</li>
+<li>Never autoplay. The first sound always follows a press.</li>
+<li>A page with sound has a visible sound toggle that says its state ("Sound on" / "Sound off"), not just an icon.</li>
+<li>Microphones and cameras are not part of the kit. A game that listens (AND SO's overhearing) asks from a press, says where the sound goes, and is off again when the person leaves.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="writing.html"><span data-sb-icon="prev"></span>Writing</a><a class="sb-btn sb-btn--secondary" href="progression.html">Rewards and progression<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

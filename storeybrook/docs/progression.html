@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rewards and progression · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Rewards and progression.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html" aria-current="page">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Rewards and progression</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="rewards-and-progression">Rewards and progression</h1>
+<p>Storeybrook games reward people the way a picture book does: with something to keep and somewhere new to go. They never take anything back.</p>
+<h2 id="nougats">Nougats</h2>
+<p>A nougat is the kit's one reward. It flies from the thing that earned it into the jar.</p>
+<ul>
+<li><code>Storeybrook.rewards.drop(n, {from, to, reason})</code> flies <code>n</code> nougats from the <code>from</code> element to the jar (<code>to</code>, default the first <code>.sb-jar</code>), adds them as each lands, plays the crinkle if sound is on, buzzes 12ms, and fires <code>sb:nougat</code> with <code>{count, delta, reason}</code>.</li>
+<li><code>Storeybrook.rewards.count()</code> reads the total; it is kept in local storage (<code>sb:nougats</code>).</li>
+<li>The jar (<code>sb-jar</code>) shows the count and fills toward <code>data-cap</code> (default 30); past the cap it stays full and keeps counting.</li>
+<li>A button with <code>data-sb-drop="2"</code> and <code>data-sb-reason</code> drops nougats when pressed (for demos and tutorials).</li>
+</ul>
+<p><strong>Nougats are never spent.</strong> They open things by being in the jar, the way height opens a shelf. Nothing ever costs nougats, so nothing can be lost, and a person who stops for a month comes back to the same jar.</p>
+<h2 id="stones">Stones</h2>
+<p>A brook of stones is the map of a game: each stone is a place, a chapter, a mini-game or a look. <code>Storeybrook.brook(host, {stones, seed, direction, onStep})</code> draws it.</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>State</th>
+<th>Looks like</th>
+<th>Says</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>open</code></td>
+<td>a plain stone with its number or mark</td>
+<td>its name</td>
+</tr>
+<tr>
+<td><code>current</code></td>
+<td>rose halo, a slow bob</td>
+<td>"you are here"</td>
+</tr>
+<tr>
+<td><code>done</code></td>
+<td>sap stone with a check</td>
+<td>"walked"</td>
+</tr>
+<tr>
+<td><code>locked</code></td>
+<td>dimmed, a lock</td>
+<td>"locked", and on press its <code>why</code> as a toast</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>A stone with <code>href</code> is a link; without one it is a button that calls <code>onStep(stone, index)</code> and fires <code>sb:step</code>.</li>
+<li>The trail behind the last <code>current</code> or <code>done</code> stone is drawn as the walked path (<code>sb-brook__walked</code>, in <code>cue</code>).</li>
+<li>Labels sit beside the stones on a vertical brook, under them on a horizontal one. Keep labels to two or three words, with a <code>sub</code> line for the detail ("2 more").</li>
+</ul>
+<h2 id="unlocks-and-stickers">Unlocks and stickers</h2>
+<ul>
+<li><code>Storeybrook.unlock(id, {name, line})</code> records an unlock (<code>sb:unlocks</code>), peels on any sticker with <code>data-sb-sticker="&lt;id&gt;"</code>, opens any lock with <code>data-sb-lock="&lt;id&gt;"</code>, shows anything with <code>data-sb-when="&lt;id&gt;"</code>, and toasts "<name> is open now."</li>
+<li>Stickers fill the album (<code>sb-album</code>): a locked sticker is a dashed outline with its name in <code>ink-muted</code>, so a person can see what is still to find.</li>
+<li>A lock (<code>sb-lock</code>) covers a cover or a panel with stripes, a keyhole, its reason (<code>sb-lock__why</code>) and how to open it (<code>sb-lock__how</code>).</li>
+</ul>
+<h2 id="the-creature-grows">The creature grows</h2>
+<p>The creature's <code>stage</code> can follow progress: an egg at the start, a kit at the first unlock, a bun, a sprite, and Saelion with its stars at the end. Growth is a reward in itself; it never shrinks back.</p>
+<h2 id="rules-no-dark-patterns">Rules (no dark patterns)</h2>
+<ul>
+<li>Nothing is lost: no nougats spent, no streaks broken, no lives, no energy, no timers.</li>
+<li>Every lock says how to open it, and an "open everything" switch is always available for people who just want to play (AND SO's early-access switch opens every stone and look at once).</li>
+<li>Daily gifts are a hello, not a chore: a few nougats for coming back on a new day, never a penalty for missing one.</li>
+<li>Idle gifts are small and rare (AND SO drops one nougat every two and a half minutes after a minute and a half of quiet listening).</li>
+<li>Never sell nougats, never show a price next to a nougat, never ask for money to skip a lock.</li>
+<li>Rewards are announced once, briefly (a toast for 3.6s), and never block play.</li>
+</ul>
+<h2 id="a-worked-example-and-so-7">A worked example: AND SO 7</h2>
+<p>AND SO's brook has thirteen stones opened by nougats in the jar (0, 2, 4, 6, 8, 10, 12, 15, 18, 21, 25, 30, 36). Nougats come from the first visit (two) and each new day after it (three), every fourth thing found, each stone's first walk, finished quests, three-star rounds, jam choruses, and quiet listening. Looks wait behind stones; "open everything" opens them all at once.</p></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="sound.html"><span data-sb-icon="prev"></span>Sound and reading aloud</a><a class="sb-btn sb-btn--secondary" href="devices.html">Devices<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

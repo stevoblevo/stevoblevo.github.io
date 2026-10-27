@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tabs · Storeybrook</title>
+<meta name="description" content="Chapter tabs on the edge of the book: the open one is a `page` tab with an `accent` bar, pulled out from the stack.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Navigation</p><section class="site-live" aria-label="Tabs, live"><div class="pv" style="display:grid;grid-template-columns:200px 1fr;gap:0;align-items:start">
+<div class="sb-tabs" role="tablist" aria-orientation="vertical"><button class="sb-tab" role="tab" aria-selected="false">The porch</button><button class="sb-tab" role="tab" aria-selected="true">The far stone</button><button class="sb-tab" role="tab" aria-selected="false">Under the stones</button><button class="sb-tab" role="tab" aria-selected="false">Home</button></div>
+<article class="sb-page" role="tabpanel" style="min-height:200px"><h3 class="display-s" style="margin:0 0 8px">The far stone</h3><div class="sb-prose" style="font-size:1.05rem"><p>Nobody had walked to the far stone in years.</p></div></article>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="tabs">Tabs</h1>
+<p>Chapter tabs on the edge of the book: the open one is a <code>page</code> tab with an <code>accent</code> bar, pulled out from the stack.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-tabs" role="tablist" aria-orientation="vertical"&gt;</code> holding <code>&lt;button class="sb-tab" role="tab" aria-selected="true"&gt;</code> per chapter (or links with <code>aria-current="true"</code> when each tab is its own page). Keep the panels as <code>role="tabpanel"</code>, labelled by their tabs.</p>
+<ul>
+<li>Closed tabs: <code>surface</code> with a <code>line</code> edge, <code>ink-muted</code> text. The open tab: <code>page</code>, <code>accent</code> text and a 6px <code>accent</code> bar on its inner edge, nudged out 6px with <code>shadow-sticker</code>.</li>
+<li>Each tab is at least <code>size-target</code> tall; arrow keys move between tabs when you wire them as a tablist.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do name tabs with chapter titles, short.
+- Don't use more than seven tabs; a longer book uses the drawer for its contents.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}document.querySelectorAll('.sb-tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.sb-tab').forEach(function(x){x.setAttribute('aria-selected',String(x===t));});document.querySelector('[role=tabpanel] h3').textContent=t.textContent;});});</script>
+</body>
+</html>

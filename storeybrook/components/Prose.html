@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prose · Storeybrook</title>
+<meta name="description" content="Story text and its marks: the lede, the body at the reading measure, a drop cap, ink links and the owner&#x27;s handwritten note.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Story</p><section class="site-live" aria-label="Prose, live"><div class="pv" style="max-width:640px">
+<p class="sb-lede">The brook went on without asking, so Dora went with it.</p>
+<div class="sb-prose" style="margin-top:14px"><p><span class="sb-dropcap">E</span>very stone was a small game, and every game had a door in it. The first door was a porch, and the porch had a jar on it, and the jar was nearly empty. <a class="sb-ink-link" href="#">Read the first chapter</a>.</p></div>
+<p class="sb-note">try the far stone!</p>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="prose">Prose</h1>
+<p>Story text and its marks: the lede, the body at the reading measure, a drop cap, ink links and the owner's handwritten note.</p>
+<p><strong>Provide</strong>
+- <code>&lt;p class="sb-lede"&gt;</code> for the first paragraph of a page (<code>story-lede</code>, up to 34em).
+- <code>&lt;div class="sb-prose"&gt;</code> around the story's paragraphs (<code>story-body</code>, fluid from 1.125rem to 1.375rem, at <code>size-measure</code>).
+- <code>&lt;span class="sb-dropcap"&gt;O&lt;/span&gt;</code> as the first letter of a chapter: the display face in <code>accent</code>, 4.6em, over a small sun wash (a square in Ink Blot, a gamboge panel in Comix).
+- <code>&lt;a class="sb-ink-link"&gt;</code> (or any link inside <code>sb-prose</code>): <code>link</code> with a wavy underline that darkens on hover; solid and 2px in Ink Blot.
+- <code>&lt;p class="sb-note"&gt;</code> for a handwritten note in <code>cue</code> (Caveat, 1.6rem).</p>
+<p>At the kid density, ledes and prose switch to Andika at 1.3–1.6rem.</p>
+<p><strong>Do / Don't</strong>
+- Do use one drop cap per chapter and one note per view.
+- Don't justify, don't set story text in capitals, don't underline anything that is not a link.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>
