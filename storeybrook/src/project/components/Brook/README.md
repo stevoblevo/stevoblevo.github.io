@@ -14,7 +14,7 @@ The map of a game: a meandering watercolor brook with stepping stones that are s
 A stone: `id`, `label`, `sub` (a second line), `state` (`open`, `current`, `done`, `locked`), `mark` (one character on the stone, default its number), `href` (makes it a link), `why` (the toast for a locked stone). Options: `seed` (the brook's meander), `direction` (`"down"` for a vertical brook; by default it turns vertical when the host is taller than it is wide), `onStep(stone, index, event)`.
 
 - The brook is drawn in four strokes: a broad `wash-brook` wash, a deeper core, drifting `art-light` glints, and a dotted `cue` trail; the trail behind the last current or walked stone is drawn solid as the walked path.
-- Stones are buttons (or links) with names that include their state ("Wake the doll, you are here"). A locked stone shows the lock and toasts its `why`; a walked stone shows a check in `sap`; the current stone has an `accent` halo and bobs.
+- Stones are buttons (or links) with names that include their state ("Wake the doll, you are here"). A locked stone shows the lock on a paler, dashed face and toasts its `why`; its label never dims, so its name and reason stay readable; a walked stone shows a check in `sap`; the current stone has an `accent` halo and bobs.
 - It redraws itself when its host changes size. `brook.set(id, state)` changes one stone.
 
 **Do / Don't**

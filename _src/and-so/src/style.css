@@ -247,6 +247,12 @@ body[data-skin="bw2"] #c { filter: invert(1); image-rendering: pixelated }
 body[data-skin="bw2"] #c2 { filter: invert(1) grayscale(1) contrast(2.4) }
 body[data-skin="bw2"] :is(#gw, #hud, #toast, #zc, #cap, #hint, #top, #quests, #round, #result, #viewChip, #reelHud) { filter: invert(1) grayscale(1) contrast(1.8) }
 body[data-skin="bw2"] :is(#gw, #toast, #quests, #round, #result, #top, #viewChip, #zc) { -webkit-backdrop-filter: none; backdrop-filter: none }
+/* these light looks print night-styled panels through invert(): quiet night text (42–70% cream) comes out pale grey
+   on light glass, about 2.5:1, so here it takes a heavier hand (past 4.5:1 once printed) */
+body:is([data-skin="daybreak"], [data-skin="story"], [data-skin="eink"], [data-skin="bw2"]) :is(#gw, #hud, #toast, #zc, #cap, #top, #quests, #round, #result, #viewChip, #reelHud) { --ink-soft: rgba(234, 220, 198, .92); --ink-faint: rgba(234, 220, 198, .84) }
+body:is([data-skin="daybreak"], [data-skin="story"], [data-skin="eink"], [data-skin="bw2"]) :is(#gw, #hud, #toast, #zc, #cap, #top, #quests, #round, #result, #viewChip, #reelHud) :is(.ctl, .mode, .blurb, .tm, .tf, .qt, .btn2, #zLab, button, .wbtn, .prog, .row, .pill, .gi:not(.f) .gn) { color: rgba(234, 220, 198, .94) }
+body:is([data-skin="daybreak"], [data-skin="story"], [data-skin="eink"], [data-skin="bw2"]) #hint { color: rgba(246, 215, 160, .96) }
+body:is([data-skin="daybreak"], [data-skin="story"], [data-skin="eink"], [data-skin="bw2"]) :is(#gw, #hud, #toast, #quests, #top) :is(.sec, .qh, .ver, .unl b) { color: rgba(246, 195, 95, .96) }
 
 /* glasshouse and peachfall, remixed from the Mint Glasshouse and Peachfall Crossing artifacts */
 body[data-skin="glasshouse"] { --ground: #07110f; --gold: #5ef2b8; --mint: #c9e6ff; --glass: rgba(14, 30, 27, .88); --glass-line: rgba(94, 242, 184, .26) }

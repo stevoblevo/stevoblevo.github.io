@@ -191,7 +191,7 @@ function boot(hotData) {
   // AND SO 7 opens in Meta Daylight, and a look you pick in 7 is kept; a copy in the mirror opens in the look it was handed
   skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SKINS.includes(savedSkin) ? savedSkin : 'sb-daylight';
   document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
-  quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);
+  inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
   $('stText').value = STORY;
   $('enterFine').insertAdjacentText('beforeend', ` there are ${CAT.length} things to find.`);
   checkUnlocks(true); renderGuide(); renderPresets(); scoreUI(); renderQuests(); saveNote();

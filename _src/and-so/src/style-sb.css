@@ -101,6 +101,8 @@ html[data-sb] #tTilt i { background: var(--line) }
 html[data-sb] #tTilt.on i { background: var(--sap); box-shadow: none }
 html[data-sb] #tTilt.roll i { background: var(--accent); box-shadow: none }
 .pill.locked, .jam-b.locked, .mir-b.locked { opacity: .5; border-style: dashed }
+/* on paper a half-transparent name reads about 3:1; a locked control keeps its dashed edge and says its name in ink-muted */
+html[data-sb]:not([data-sb="knight"]) :is(.pill.locked, .jam-b.locked, .mir-b.locked) { opacity: 1; color: var(--ink-muted); background: transparent; box-shadow: none }
 html[data-sb="comix"] :is(.pill, .ctl.hot, .chip, #toast, #quests, #gw, #viewChip) { border-color: var(--line); box-shadow: 3px 3px 0 var(--line) }
 html[data-sb="origami"] :is(.pill, .mode, .chip, #toast, #quests, #gw, #viewChip, .jk, .jb) { border-radius: 4px }
 html[data-sb="skein"] :is(#gw, #toast, #quests) { outline: 2px dashed color-mix(in srgb, var(--copper) 55%, transparent); outline-offset: -7px }

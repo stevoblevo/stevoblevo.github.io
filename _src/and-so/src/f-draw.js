@@ -199,7 +199,7 @@ function drawLattice() {
   ctx.fillStyle = 'rgba(234,220,198,0.4)'; ctx.font = fnt(10, 'm'); ctx.textAlign = 'left';
   ctx.fillText('5-limit lattice   → ×3/2   ↗ ×5/4', 22, 62);
   ctx.beginPath(); ctx.rect(14, 72, 312, 170); ctx.clip();
-  ctx.strokeStyle = 'rgba(234,220,198,0.07)'; ctx.lineWidth = 1; ctx.beginPath();
+  ctx.strokeStyle = `rgba(234,220,198,${inkA(0.07)})`; ctx.lineWidth = 1; ctx.beginPath();
   for (let a = rs.a - 4; a <= rs.a + 4; a++) for (let b = rs.b - 3; b <= rs.b + 3; b++) { const p = P(a, b), q1 = P(a + 1, b), q2 = P(a, b + 1), q3 = P(a + 1, b - 1); ctx.moveTo(p[0], p[1]); ctx.lineTo(q1[0], q1[1]); ctx.moveTo(p[0], p[1]); ctx.lineTo(q2[0], q2[1]); ctx.moveTo(p[0], p[1]); ctx.lineTo(q3[0], q3[1]); }
   ctx.stroke();
   ctx.strokeStyle = 'rgba(246,195,95,0.5)'; ctx.lineWidth = 1.6; ctx.beginPath();
@@ -208,7 +208,7 @@ function drawLattice() {
   ctx.textAlign = 'center';
   for (let a = rs.a - 4; a <= rs.a + 4; a++) for (let b = rs.b - 3; b <= rs.b + 3; b++) {
     const p = P(a, b), isR = a === rs.a && b === rs.b, isS = a === 0 && b === 0;
-    ctx.fillStyle = isR ? 'rgba(255,226,170,1)' : 'rgba(234,220,198,0.28)'; ctx.beginPath(); ctx.arc(p[0], p[1], isR ? 4 + 2 * rootFlash : 2, 0, TAU); ctx.fill();
+    ctx.fillStyle = isR ? 'rgba(255,226,170,1)' : `rgba(234,220,198,${inkA(0.28)})`; ctx.beginPath(); ctx.arc(p[0], p[1], isR ? 4 + 2 * rootFlash : 2, 0, TAU); ctx.fill();
     if (isS && !isR) { ctx.strokeStyle = 'rgba(255,226,170,0.5)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(p[0], p[1], 6, 0, TAU); ctx.stroke(); }
     ctx.fillStyle = isR ? 'rgba(255,232,190,0.95)' : 'rgba(234,220,198,0.34)'; ctx.font = isR ? fnt(13, 's', 'italic') : fnt(10.5, 's');
     ctx.fillText(noteName(a, b), p[0], p[1] + (isR ? 17 : 13));
@@ -228,11 +228,11 @@ function drawRing() {
   ctx.save();
   ctx.fillStyle = 'rgba(234,220,198,0.4)'; ctx.font = fnt(10, 'm'); ctx.textAlign = 'left';
   ctx.fillText(M.key === 'bp' ? 'tritave ring · 13 steps' : `octave ring · ${n} steps`, 22, 62); ctx.fillText('spectrum', 214, 62);
-  ctx.strokeStyle = 'rgba(234,220,198,0.14)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = `rgba(234,220,198,${inkA(0.14)})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
   ctx.textAlign = 'center'; ctx.font = fnt(10.5, 's');
   for (let k = 0; k < n; k++) {
     const a = -Math.PI / 2 + (TAU * k) / n, c = Math.cos(a), s = Math.sin(a);
-    ctx.strokeStyle = 'rgba(234,220,198,0.28)'; ctx.beginPath(); ctx.moveTo(cx + c * (R - 4), cy + s * (R - 4)); ctx.lineTo(cx + c * (R + 4), cy + s * (R + 4)); ctx.stroke();
+    ctx.strokeStyle = `rgba(234,220,198,${inkA(0.28)})`; ctx.beginPath(); ctx.moveTo(cx + c * (R - 4), cy + s * (R - 4)); ctx.lineTo(cx + c * (R + 4), cy + s * (R + 4)); ctx.stroke();
     ctx.fillStyle = 'rgba(234,220,198,0.38)'; ctx.fillText(M.key === 'gamelan' ? GD[k] : String(k), cx + c * (R + 15), cy + s * (R + 15) + 3);
   }
   if (M.key === 'bp') { ctx.fillStyle = 'rgba(246,195,95,0.55)'; for (const r of BP9) { if (r.h > 63 || r.c <= 0 || r.c >= M.eqC - 1e-6) continue; const a = -Math.PI / 2 + TAU * (r.c / M.eqC); ctx.beginPath(); ctx.arc(cx + Math.cos(a) * (R - 10), cy + Math.sin(a) * (R - 10), 1.8, 0, TAU); ctx.fill(); } }
@@ -244,7 +244,7 @@ function drawRing() {
     ctx.fillStyle = rgba(v.col, 0.95 * v.w); ctx.beginPath(); ctx.arc(px, py, (v.locked ? 5 : 3.5) + 2 * v.flash, 0, TAU); ctx.fill();
   }
   const x0 = 214, x1 = 322, yb = 214, top = 84, rmax = Math.log2(PR[PK - 1] * 1.08);
-  ctx.strokeStyle = 'rgba(234,220,198,0.08)'; ctx.lineWidth = 1; ctx.beginPath();
+  ctx.strokeStyle = `rgba(234,220,198,${inkA(0.08)})`; ctx.lineWidth = 1; ctx.beginPath();
   if (M.n) { for (let m = 0; m / M.n <= rmax; m++) { const X = x0 + (m / M.n / rmax) * (x1 - x0); ctx.moveTo(X, top); ctx.lineTo(X, yb); } }
   else { for (let hh = 1; Math.log2(hh) <= rmax; hh += 2) { const X = x0 + (Math.log2(hh) / rmax) * (x1 - x0); ctx.moveTo(X, top); ctx.lineTo(X, yb); } }
   ctx.stroke();
@@ -259,7 +259,7 @@ function drawEasyPanel() {
   P.ch.forEach(([deg, q], j) => {
     const x = 22 + j * 74, y = 82, isOn = j === cur, pc = ((Math.round(12 * Math.log2((easyS.key * Math.pow(2, deg / 12)) / 130.8128)) % 12) + 12) % 12;
     roundRect(ctx, x, y, 66, 46, 8); if (isOn) { ctx.fillStyle = rgba(acc, 0.12 + 0.15 * beatPulse); ctx.fill(); }
-    ctx.strokeStyle = isOn ? rgba(acc, 0.9) : 'rgba(234,220,198,0.18)'; ctx.lineWidth = isOn ? 1.6 : 1; ctx.stroke();
+    ctx.strokeStyle = isOn ? rgba(acc, 0.9) : `rgba(234,220,198,${INK.on ? 0.55 : 0.18})`; ctx.lineWidth = isOn ? 1.6 : 1; ctx.stroke();   // on paper an unlit card still needs an edge you can see
     ctx.fillStyle = isOn ? '#f8e8c8' : 'rgba(234,220,198,0.55)'; ctx.font = fnt(16, 's', 'italic'); ctx.fillText(ETN[pc] + QN[q], x + 8, y + 22);
     ctx.fillStyle = 'rgba(234,220,198,0.42)'; ctx.font = fnt(9.5, 'm'); ctx.fillText(names[j] || '', x + 8, y + 37);
   });
@@ -369,7 +369,7 @@ function drawBird() {
   if (bird.alpha < 0.02 || bird.x < -50) return;
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
   for (let i = 1; i < bird.trail.length; i++) { ctx.strokeStyle = `rgba(255,236,190,${(i / bird.trail.length) * 0.35 * bird.alpha})`; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(bird.trail[i - 1][0], bird.trail[i - 1][1]); ctx.lineTo(bird.trail[i][0], bird.trail[i][1]); ctx.stroke(); }
-  const r = (5 + 4 * bird.flash) * S, g = ctx.createRadialGradient(bird.x, bird.y, 0, bird.x, bird.y, r * 4), pk = paperLook() ? 0.3 : 1;
+  const r = (5 + 4 * bird.flash) * S, g = ctx.createRadialGradient(bird.x, bird.y, 0, bird.x, bird.y, r * 4), pk = INK.on ? 0.3 : 1;   // every light look, or its glow prints as a dark smudge
   g.addColorStop(0, `rgba(255,240,200,${0.8 * bird.alpha * pk})`); g.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = g; ctx.fillRect(bird.x - r * 4, bird.y - r * 4, r * 8, r * 8);
   const fl = reduceMotion ? 0.3 : Math.sin(t * 14) * 0.6;
   ctx.strokeStyle = `rgba(255,236,200,${0.75 * bird.alpha})`; ctx.lineWidth = 1.4; ctx.beginPath();

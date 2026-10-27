@@ -2,7 +2,7 @@
 (() => {
   const SB = window.Storeybrook; if (!SB) return;
   try { SB.ensureDefs(); } catch (e) {}
-  document.querySelectorAll('[data-creature]').forEach(el => SB.creature(el, { form: 'saelion', stage: 4, mood: 'happy' }));
+  document.querySelectorAll('[data-creature]').forEach(el => SB.creature(el, { form: 'saelion', stage: 4, mood: 'happy', hide: 'chimera' }));
   document.querySelectorAll('[data-nougat]').forEach(el => { el.innerHTML = SB.nougatSVG(+el.dataset.nougat || 4); });
   let tv = false;
   try { tv = /[?&]tv=1\b/.test(location.search) || SB.density.isTV(); } catch (e) {}

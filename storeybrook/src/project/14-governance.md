@@ -2,11 +2,16 @@
 
 ## Versions
 
-Storeybrook is versioned as a whole: `tokens.json` carries the major version (1), `Storeybrook.version` the full one (1.0.0).
+Storeybrook is versioned as a whole: `tokens.json` carries the major version (1), `Storeybrook.version` the full one (1.1.0).
 
 - **Major**: a token, class, data attribute or API renamed or removed; a behavior that changes what a page does; a look removed.
 - **Minor**: new tokens, components, icons, looks, densities or options.
 - **Patch**: values tuned, bugs fixed, wording.
+
+## 1.1.0
+
+- Creature: a `hide` option. `chimera` gives Saelion a coat split down her middle, warm on the left and cool on the right like her eyes, with patches in the tag colors that drift slowly; ink blots in Ink Blot; none in Knight Night, where she glows instead. Shipped first in AND SO 7's light looks (the pet in the game and on the landing), then on the 99¢ Shelf's AND SO cover.
+- Brook: a locked stone dims its face (paler, dashed) instead of fading as a whole, so its label and its reason stay readable in every look. `op-disabled` is for disabled controls only.
 
 ## 1.0.0
 

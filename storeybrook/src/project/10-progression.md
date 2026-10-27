@@ -22,7 +22,7 @@ A brook of stones is the map of a game: each stone is a place, a chapter, a mini
 | `open` | a plain stone with its number or mark | its name |
 | `current` | rose halo, a slow bob | "you are here" |
 | `done` | sap stone with a check | "walked" |
-| `locked` | dimmed, a lock | "locked", and on press its `why` as a toast |
+| `locked` | a paler dashed face and a lock; the label stays in ink | "locked", and on press its `why` as a toast |
 
 - A stone with `href` is a link; without one it is a button that calls `onStep(stone, index)` and fires `sb:step`.
 - The trail behind the last `current` or `done` stone is drawn as the walked path (`sb-brook__walked`, in `cue`).

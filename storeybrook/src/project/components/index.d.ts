@@ -8,6 +8,7 @@ export type StoneState = 'open' | 'current' | 'done' | 'locked';
 export type CreatureForm = 'saelion' | 'bunny' | 'octopus' | 'pixie';
 export type CreatureStage = 0 | 1 | 2 | 3 | 4; /* egg, kit, bun, sprite, saelion */
 export type CreatureMood = 'happy' | 'sleepy' | 'surprised';
+export type CreatureHide = 'plain' | 'chimera'; /* chimera: the two-toned coat with drifting patches, on paper looks */
 export type PaperSound = 'stone' | 'nougat' | 'sticker' | 'page';
 export type IconName = 'play' | 'pause' | 'stop' | 'voice' | 'book' | 'next' | 'prev' | 'up' | 'down' | 'close' | 'menu' | 'home' | 'lock' | 'key' | 'check' | 'star' | 'sparkle' | 'nougat' | 'jar' | 'sticker' | 'stone' | 'brook' | 'sun' | 'moon' | 'ink' | 'comix' | 'origami' | 'skein' | 'gamepad' | 'tv' | 'tap' | 'drag' | 'hum' | 'heart' | 'map' | 'gift' | 'leaf' | 'eye' | 'info' | 'alert' | 'music' | 'egg' | 'bunny' | 'look';
 
@@ -38,7 +39,7 @@ export interface ReaderProps { title: string; target: string; fixed?: boolean; v
 export interface Stone { id?: string; label?: string; sub?: string; state?: StoneState; mark?: string; href?: string; why?: string }
 export interface BrookOptions { stones: Stone[]; seed?: number; direction?: 'across' | 'down'; onStep?(stone: Stone, index: number, event: Event): void }
 export interface BrookProps extends BrookOptions { height: string }
-export interface CreatureOptions { form?: CreatureForm; stage?: CreatureStage; mood?: CreatureMood; blink?: boolean; idle?: boolean; shut?: boolean; label?: string }
+export interface CreatureOptions { form?: CreatureForm; stage?: CreatureStage; mood?: CreatureMood; hide?: CreatureHide; blink?: boolean; idle?: boolean; shut?: boolean; label?: string }
 export interface CreatureProps extends CreatureOptions { width?: string }
 
 /** Rewards */

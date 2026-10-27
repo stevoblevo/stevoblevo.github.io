@@ -35,7 +35,7 @@ css = css.replace('[data-theme="', '[data-sb="')
 css = re.sub(r"/\* the type styles from tokens\.css follow the look \*/.*?(?=/\* ---------- the page)", "", css, flags=re.S)
 # :root hooks become html[data-sb] hooks, so nothing leaks into the host's dark looks
 css = css.replace(":root {\n  --sb-display", "[data-sb] {\n  --sb-display")
-(dest / "storeybrook.css").write_text("/* Storeybrook 1.0 components, embedded (looks keyed on [data-sb], on the page or on one panel) */\n" + css)
+(dest / "storeybrook.css").write_text("/* Storeybrook 1.1 components, embedded (looks keyed on [data-sb], on the page or on one panel) */\n" + css)
 js = (P / "components" / "bundle.js").read_text()
 (dest / "storeybrook.js").write_text(js)
 print("exported", [p.name for p in dest.iterdir()], len(css), len(js))

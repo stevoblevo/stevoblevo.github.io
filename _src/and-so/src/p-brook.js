@@ -206,7 +206,7 @@ function closeStory() { try { if (window.Storeybrook) Storeybrook.read.stop(true
 // ---------- the landing: Saelion, the title, and the brook you are about to walk ----------
 function landing() {
   if (!window.Storeybrook) return;
-  const c = $('ovCreature'); if (c && !c.firstChild) Storeybrook.creature(c, { form: 'saelion', stage: 4, mood: 'happy' });
+  const c = $('ovCreature'); if (c && !c.firstChild) Storeybrook.creature(c, { form: 'saelion', stage: 4, mood: 'happy', hide: 'chimera' });   // her chimera hide on paper, as in the game
   const host = $('ovBrook'); if (!host) return;
   host.textContent = '';
   const shown = STONES.slice(0, W < 700 ? 4 : W < 1100 ? 6 : 8);

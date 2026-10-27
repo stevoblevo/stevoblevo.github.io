@@ -220,7 +220,8 @@ html.sb-root { font-size: var(--size-root); }
 .sb-stone:hover { transform: translateY(-3px) rotate(-3deg); }
 .sb-stone[data-state="done"] { background: radial-gradient(90% 80% at 40% 30%, var(--art-light), var(--sap-soft) 70%); color: var(--sap); }
 .sb-stone[data-state="current"] { background: radial-gradient(90% 80% at 40% 30%, var(--art-light), var(--accent-soft) 65%); color: var(--accent); box-shadow: 0 6px 0 -1px var(--art-shade), 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); animation: sb-bob 2.8s var(--ease-paper) infinite; }
-.sb-stone[data-state="locked"] { opacity: var(--op-disabled); cursor: not-allowed; }
+/* locked: a paler, dashed face; the label stays ink, so its name and reason stay readable */
+.sb-stone[data-state="locked"] { cursor: not-allowed; border-style: dashed; color: var(--ink-muted); background: color-mix(in srgb, var(--art-stone) 40%, var(--paper)); box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--art-shade) 45%, transparent); }
 .sb-stone svg { width: 22px; height: 22px; }
 .sb-stone__label { position: absolute; top: calc(100% + 10px); left: 50%; translate: -50% 0; white-space: nowrap; font: 700 0.95rem/1.2 var(--sb-ui); color: var(--ink); text-shadow: var(--shadow-ink); pointer-events: none; }
 .sb-stone__label small { display: block; font-weight: 400; color: var(--ink-muted); }
@@ -230,6 +231,7 @@ html.sb-root { font-size: var(--size-root); }
 [data-theme="origami"] .sb-stone::before { content: ""; position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; z-index: -1; transform: translate(-50%, -50%) rotate(45deg); border: var(--border-ink) solid var(--art-line); border-radius: 4px;
   background: radial-gradient(90% 80% at 40% 30%, var(--art-light), var(--art-stone) 60%); box-shadow: 4px 4px 0 -1px var(--art-shade), 6px 6px 12px -6px var(--sb-shadow-c); }
 [data-theme="origami"] .sb-stone[data-state="done"] { background: none; } [data-theme="origami"] .sb-stone[data-state="done"]::before { background: radial-gradient(90% 80% at 40% 30%, var(--art-light), var(--sap-soft) 70%); }
+[data-theme="origami"] .sb-stone[data-state="locked"]::before { border-style: dashed; background: color-mix(in srgb, var(--art-stone) 40%, var(--paper)); box-shadow: none; }
 [data-theme="origami"] .sb-stone[data-state="current"] { background: none; box-shadow: none; } [data-theme="origami"] .sb-stone[data-state="current"]::before { background: radial-gradient(90% 80% at 40% 30%, var(--art-light), var(--accent-soft) 65%); box-shadow: 4px 4px 0 -1px var(--art-shade), 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
 [data-theme="comix"] .sb-stone { border-width: var(--border-comix); box-shadow: 3px 3px 0 var(--line); }
 
@@ -350,6 +352,22 @@ a.sb-cover:hover, a.sb-cover:focus-visible, .sb-cover.is-focus { transform: rota
 [data-theme="inkblot"] .sb-creature .sbc-eye-a, [data-theme="inkblot"] .sb-creature .sbc-eye-b { fill: #fff; stroke: #000; stroke-width: 1.5; }
 [data-theme="inkblot"] .sb-creature { --sbc-fur: #ffffff; --sbc-arm: #000000; }
 [data-theme="knight"] .sb-creature { --sbc-fur: #f4efe6; }
+/* hide: "chimera": two off-whites split warm and cool like her eyes, drifting tag-color patches; ink blots in Ink Blot, none at night */
+.sb-creature { --sbc-fur-w: color-mix(in srgb, var(--sbc-fur, #fff4f1) 88%, var(--tag-sun)); --sbc-fur-c: color-mix(in srgb, #f3f7fa 86%, var(--tag-sky)); }
+.sb-creature .sbc-fur-w { fill: var(--sbc-fur-w); }
+.sb-creature .sbc-fur-c { fill: var(--sbc-fur-c); }
+.sb-creature .sbc-rim { fill: none; stroke: var(--art-line); stroke-width: 3; }
+.sb-creature .sbc-patch--w { fill: color-mix(in srgb, var(--tag-rose) 74%, var(--sbc-fur-w)); animation: sbc-warm 46s ease-in-out infinite alternate; }
+.sb-creature .sbc-patch--c { fill: color-mix(in srgb, var(--tag-sea) 74%, var(--sbc-fur-c)); animation: sbc-cool 61s ease-in-out infinite alternate; }
+.sb-creature .sbc-ear-in--w { fill: color-mix(in srgb, var(--tag-rose) 55%, var(--wash-rose)); }
+.sb-creature .sbc-ear-in--c { fill: color-mix(in srgb, var(--tag-sea) 50%, var(--wash-sky)); }
+@keyframes sbc-warm { 0% { fill: color-mix(in srgb, var(--tag-rose) 74%, var(--sbc-fur-w)); } 33% { fill: color-mix(in srgb, var(--tag-sun) 74%, var(--sbc-fur-w)); } 67% { fill: color-mix(in srgb, var(--copper) 74%, var(--sbc-fur-w)); } 100% { fill: color-mix(in srgb, var(--wrapper) 74%, var(--sbc-fur-w)); } }
+@keyframes sbc-cool { 0% { fill: color-mix(in srgb, var(--tag-sea) 74%, var(--sbc-fur-c)); } 33% { fill: color-mix(in srgb, var(--tag-lilac) 74%, var(--sbc-fur-c)); } 67% { fill: color-mix(in srgb, var(--tag-sky) 74%, var(--sbc-fur-c)); } 100% { fill: color-mix(in srgb, var(--sap) 74%, var(--sbc-fur-c)); } }
+[data-theme="inkblot"] .sb-creature { --sbc-fur-w: #ffffff; --sbc-fur-c: #ffffff; }
+[data-theme="inkblot"] .sb-creature :is(.sbc-patch--w, .sbc-patch--c, .sbc-ear-in--w, .sbc-ear-in--c) { fill: #000000; animation: none; }
+[data-theme="knight"] .sb-creature .sbc-hide { display: none; }
+[data-theme="knight"] .sb-creature :is(.sbc-fur-w, .sbc-fur-c) { fill: var(--sbc-fur); }
+[data-theme="knight"] .sb-creature :is(.sbc-ear-in--w, .sbc-ear-in--c) { fill: var(--wash-rose); }
 
 /* ---------- inputs ---------- */
 .sb-toggle { display: inline-flex; align-items: center; gap: 0.75rem; min-height: var(--sb-target); cursor: pointer; font: 400 1.05rem/1.3 var(--sb-ui); color: var(--ink); }
@@ -427,7 +445,7 @@ dialog.sb-dialog[open] { animation: sb-arrive var(--dur-base) var(--ease-out); }
 
 /* ---------- reduced motion and e-ink ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .sb-bloom, .sb-stone[data-state="current"], .sb-brook__glint, .sb-creature.is-idle svg, .sb-sticker.is-new .sb-sticker__art, dialog.sb-dialog[open], .sb-toast, .sb-jar.is-bump { animation: none !important; }
+  .sb-bloom, .sb-stone[data-state="current"], .sb-brook__glint, .sb-creature.is-idle svg, .sb-creature .sbc-patch, .sb-sticker.is-new .sb-sticker__art, dialog.sb-dialog[open], .sb-toast, .sb-jar.is-bump { animation: none !important; }
   .sb-btn, .sb-stone, .sb-cover, .sb-seal, .sb-drawer, .sb-toggle__thumb { transition: none !important; }
   .sb-btn:hover, .sb-btn:active, .sb-stone:hover, a.sb-cover:hover, .sb-seal:hover { transform: none; }
 }

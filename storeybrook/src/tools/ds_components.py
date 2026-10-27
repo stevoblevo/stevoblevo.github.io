@@ -388,7 +388,7 @@ The map of a game: a meandering watercolor brook with stepping stones that are s
 A stone: `id`, `label`, `sub` (a second line), `state` (`open`, `current`, `done`, `locked`), `mark` (one character on the stone, default its number), `href` (makes it a link), `why` (the toast for a locked stone). Options: `seed` (the brook's meander), `direction` (`"down"` for a vertical brook; by default it turns vertical when the host is taller than it is wide), `onStep(stone, index, event)`.
 
 - The brook is drawn in four strokes: a broad `wash-brook` wash, a deeper core, drifting `art-light` glints, and a dotted `cue` trail; the trail behind the last current or walked stone is drawn solid as the walked path.
-- Stones are buttons (or links) with names that include their state ("Wake the doll, you are here"). A locked stone shows the lock and toasts its `why`; a walked stone shows a check in `sap`; the current stone has an `accent` halo and bobs.
+- Stones are buttons (or links) with names that include their state ("Wake the doll, you are here"). A locked stone shows the lock on a paler, dashed face and toasts its `why`; its label never dims, so its name and reason stay readable; a walked stone shows a check in `sap`; the current stone has an `accent` halo and bobs.
 - It redraws itself when its host changes size. `brook.set(id, state)` changes one stone.
 
 **Do / Don't**
@@ -403,7 +403,9 @@ creatures = "".join(f'<figure style="margin:0;text-align:center"><div data-c=\'{
                     for s, n in enumerate(["egg", "kit", "bun", "sprite", "saelion"]))
 creatures += "".join(f'<figure style="margin:0;text-align:center"><div data-c=\'{{"form":"{f}","mood":"{m}"}}\' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">{f}{", " + m if m != "happy" else ""}</figcaption></figure>'
                      for f, m in [("bunny", "happy"), ("octopus", "surprised"), ("pixie", "sleepy")])
-comp("Creature", "Play", 360, r"""
+creatures += "".join(f'<figure style="margin:0;text-align:center"><div data-c=\'{{"form":"saelion","stage":{s},"hide":"chimera"}}\' style="--cw:120px"></div><figcaption class="small" style="color:var(--ink-muted)">{n}, chimera</figcaption></figure>'
+                     for s, n in [(0, "egg"), (4, "saelion")])
+comp("Creature", "Play", 380, r"""
 # Creature
 
 Saelion: a bunny, a tree octopus and a butterfly pixie at once, which grows from an egg. It breathes and blinks; it can be sleepy or surprised.
@@ -416,16 +418,18 @@ Saelion: a bunny, a tree octopus and a butterfly pixie at once, which grows from
 | `stage` | 0 `egg`, 1 `kit`, 2 `bun`, 3 `sprite`, 4 `saelion` (Saelion only) | 4 |
 | `mood` | `happy`, `sleepy` (eyes shut), `surprised` (round mouth) | `happy` |
 | `blink`, `idle` | blink every few seconds; breathe | `true`, `true` |
+| `hide` | `plain`, or `chimera`: on paper a coat split down her middle, warm on the left and cool on the right like her eyes, with patches in the tag colors that drift slowly (ink blots in Ink Blot; none in Knight Night, where she glows instead) | `plain` |
 
 - It returns `{set(options), get(), stop(), stages}`; `set` redraws and fires `sb:creature`. `Storeybrook.creatureSVG(options)` returns the drawing as a string.
 - The drawing is `role="img"` with a label ("Saelion as a sprite"). Its outline is `art-line`, its cheeks `wash-rose`, its wings `wash-sky`, its stars `gamboge`; one eye amber, one blue. Fur warms in Knight Night and turns white in Ink Blot.
-- Breathing and blinking stop under reduced motion and in Ink Blot.
+- Breathing and blinking stop under reduced motion and in Ink Blot; so does the chimera's drift.
+- Use `chimera` where she has to stand out on a light page: the outline and the two-toned coat keep her from vanishing into white paper.
 
 **Do / Don't**
 - Do keep one creature per screen, 120–220px, near the title or the brook.
 - Do let it grow with progress, never shrink back.
 - Don't let it talk over the story: its lines go in a Balloon beside it, briefly.
-""", f'<div class="pv" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px">{creatures}</div>',
+""", f'<div class="pv" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px 12px">{creatures}</div>',
      PRE + "if(S)document.querySelectorAll('[data-c]').forEach(function(h){S.creature(h,JSON.parse(h.getAttribute('data-c')));});")
 
 # ---------------------------------------------------------------- Rewards

@@ -105,7 +105,7 @@ function setSkin(s, force) {
   if (!force && entered && !lookOpen(s)) { const st = STONE.get(LOOK_STONE[s]); caption(`${SB_NAMES[s]} opens with its stone on the brook, at ${st.need} nougats.`, 2800); return; }
   const was = skin; skin = s; document.body.dataset.skin = s;
   applyLook();
-  if (s === 'story' && entered) $('story').classList.add('on');
+  if (s === 'story' && entered) openStory(storyCur);   // the story look opens a story, with its words in it
   if (entered && s !== was && (s === 'bw2' || s === 'fieldstone' || s === 'glasshouse' || s === 'peachfall')) discover('x-' + s);
   if (entered && s !== was && SB_LOOK[s] && s !== 'sb-daylight') discover('x-look');
   resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || s}`);

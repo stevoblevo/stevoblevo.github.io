@@ -89,6 +89,6 @@ Put `data-sb="daylight"` (or another look) on any panel and it becomes a Storeyb
 
 ## Budgets
 
-- `bundle.js` under 60 KB and `bundle.css` under 56 KB before compression (1.0.0: 56.9 KB and 51.8 KB).
+- `bundle.js` under 60 KB and `bundle.css` under 56 KB before compression (1.1.0: 59.8 KB and 55.8 KB).
 - No network from the bundle; fonts are the largest cost: load only the families a page uses.
 - One canvas at most per page belongs to a game, not the kit; the kit draws with SVG and CSS.

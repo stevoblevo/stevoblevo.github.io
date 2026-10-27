@@ -27,14 +27,14 @@
 <p>A stone: <code>id</code>, <code>label</code>, <code>sub</code> (a second line), <code>state</code> (<code>open</code>, <code>current</code>, <code>done</code>, <code>locked</code>), <code>mark</code> (one character on the stone, default its number), <code>href</code> (makes it a link), <code>why</code> (the toast for a locked stone). Options: <code>seed</code> (the brook's meander), <code>direction</code> (<code>"down"</code> for a vertical brook; by default it turns vertical when the host is taller than it is wide), <code>onStep(stone, index, event)</code>.</p>
 <ul>
 <li>The brook is drawn in four strokes: a broad <code>wash-brook</code> wash, a deeper core, drifting <code>art-light</code> glints, and a dotted <code>cue</code> trail; the trail behind the last current or walked stone is drawn solid as the walked path.</li>
-<li>Stones are buttons (or links) with names that include their state ("Wake the doll, you are here"). A locked stone shows the lock and toasts its <code>why</code>; a walked stone shows a check in <code>sap</code>; the current stone has an <code>accent</code> halo and bobs.</li>
+<li>Stones are buttons (or links) with names that include their state ("Wake the doll, you are here"). A locked stone shows the lock on a paler, dashed face and toasts its <code>why</code>; its label never dims, so its name and reason stay readable; a walked stone shows a check in <code>sap</code>; the current stone has an <code>accent</code> halo and bobs.</li>
 <li>It redraws itself when its host changes size. <code>brook.set(id, state)</code> changes one stone.</li>
 </ul>
 <p><strong>Do / Don't</strong>
 - Do keep labels to two or three words, with the detail in <code>sub</code>.
 - Do keep four to eight stones in view; a longer journey scrolls or pages.
 - Don't make the brook the only way to a chapter: keep a plain list of links for no-JS and for screen readers who prefer it.</p></div></article></main>
-<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<footer class="site-foot"><p>Storeybrook 1.1.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
 <script src="../dist/components/bundle.js"></script>
 <script src="../site.js"></script>
 <script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S)S.brook(document.getElementById('bk'),{seed:5,stones:[{id:'porch',label:'The porch',sub:'walked',state:'done'},{id:'doll',label:'Wake the doll',sub:'you are here',state:'current',mark:'2'},{id:'far',label:'The far stone',state:'open',mark:'3'},{id:'origami',label:'Origami',sub:'2 more',state:'locked',why:'Origami opens at 18 nougats.'},{id:'home',label:'Home',state:'open',mark:'5'}]});</script>

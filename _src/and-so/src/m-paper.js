@@ -36,6 +36,7 @@ function applyLook() {
   if (L) root.dataset.sb = L; else delete root.dataset.sb;
   [F_SERIF, F_MONO, F_UI] = L ? FONTS_SB[L] : FONTS0;
   PAPER.key = ''; PAPER.dotsKey = '';
+  inkSync();
   try { if (window.Storeybrook) window.Storeybrook.ensureDefs(); } catch (e) {}
   // the Storeybrook panels keep paper even in the old looks: Knight Night after dark, Meta Daylight in the light ones
   const il = L || (LIGHT_LOOKS.includes(skin) ? 'daylight' : 'knight');
@@ -93,6 +94,43 @@ function quietCanvas(c) {
   const orig = c.fillText;
   c.fillText = function () { if (QUIET() && !MUSIC_TEXT) return; return orig.apply(this, arguments); };
 }
+// ---------- ink: the light looks print the night canvas through invert(), so its words take a heavier hand ----------
+// A cream word at 40% reads about 3.5:1 against the night sky and 2.4:1 once inverted onto paper: the same alpha,
+// but light on dark and dark on light are not symmetric in luminance (measured through each look's own filter), and
+// thin glyphs that glow at night look grey and spindly in ink. So on paper every word on the world canvas has its
+// opacity lifted along 1 - (1 - a)^3.5 (the quietest labels, a = 0.36, come out near 0.8, past 4.5:1; full-strength
+// words stay put), is drawn a hair heavier, and sits on a halo in the paper's own color, so it stays readable over
+// the terrain, the halftone and the web. Marks that carry meaning (ticks, curves, card edges) use inkA() for a
+// gentler lift; the soft glows stay as they are. The dark looks are untouched.
+const INK = { on: false, k: 2.6, kText: 3.5, halo: [0, 0, 0] };
+const inkA = (a, k) => (INK.on ? 1 - Math.pow(1 - clamp(a, 0, 1), k || INK.k) : a);
+const NIGHT_BG = { daybreak: [16, 10, 22], story: [20, 14, 9], eink: [14, 14, 14], bw2: [0, 0, 0] };   // the old light looks paint a dark sky that CSS inverts
+function inkSync() {
+  INK.on = LIGHT_LOOKS.includes(skin);
+  INK.halo = NIGHT_BG[skin] || paperPal().paper.map(v => 255 - v);   // drawn in night colors, printed as the paper
+}
+function inkCanvas(c) {
+  const fill = c.fillText, RE = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/;
+  c.fillText = function (s, x, y, mw) {
+    if (!INK.on) return fill.apply(this, arguments);
+    const fs = this.fillStyle, m = typeof fs === 'string' ? RE.exec(fs) : null, a = m && m[4] != null ? +m[4] : 1, A = inkA(this.globalAlpha * a, INK.kText);
+    if (A < 0.004) return;
+    const four = arguments.length > 3, plain = this.globalCompositeOperation === 'source-over', px = +((/(\d+(?:\.\d+)?)px/.exec(this.font) || [0, 12])[1]);
+    this.save(); this.lineJoin = 'round';
+    if (plain) {   // the halo: night colors that print as the paper itself
+      this.globalAlpha = A * 0.85; this.strokeStyle = rgba(INK.halo, 1); this.lineWidth = Math.max(2, px * 0.2); this.shadowColor = 'rgba(0,0,0,0)';
+      if (four) this.strokeText(s, x, y, mw); else this.strokeText(s, x, y);
+    }
+    this.globalAlpha = A; if (m) this.fillStyle = `rgb(${m[1]},${m[2]},${m[3]})`;
+    if (four) fill.call(this, s, x, y, mw); else fill.call(this, s, x, y);
+    if (plain && px <= 20) {   // a hair of weight, so thin glyphs read as ink rather than pencil
+      this.strokeStyle = this.fillStyle; this.lineWidth = clamp(px * 0.05, 0.45, 0.9);
+      if (four) this.strokeText(s, x, y, mw); else this.strokeText(s, x, y);
+    }
+    this.restore();
+  };
+}
+
 function setQuiet(on, quiet) {
   SET.quiet = !!on; document.body.classList.toggle('quiet', SET.quiet);
   if (!quiet) { if (SET.quiet) { caption('quiet: the words go away. the music still says its name.', 2600, 'music'); discover('x-quiet'); } else caption('the words are back.', 1800); }

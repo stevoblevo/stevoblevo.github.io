@@ -5,7 +5,7 @@
 (function (w, d) {
   'use strict';
   if (w.Storeybrook && w.Storeybrook.version) return;
-  var VERSION = '1.0.0';
+  var VERSION = '1.1.0';
   var THEMES = [
     { id: 'daylight', name: 'Meta Daylight', line: 'Watercolor on north-light paper' },
     { id: 'knight', name: 'Knight Night', line: 'A cobalt paper theatre by candle' },
@@ -366,16 +366,35 @@
   }
 
   /* ---------- the creature: bunny, tree octopus and butterfly pixie at once; it grows ---------- */
-  var STAGES = ['egg', 'kit', 'bun', 'sprite', 'saelion'];
+  var STAGES = ['egg', 'kit', 'bun', 'sprite', 'saelion'], hideN = 0;
+  /* the chimera hide (hide: 'chimera'): a coat that is two animals at once, split down her middle like a chimera cat,
+     warm on the left and cool on the right to match her eyes, with patches in the tag colors. CSS shows it on paper,
+     turns the patches to ink blots in Ink Blot, and hides it in Knight Night, where she glows instead. */
+  function hideBlob(x, y, rx, ry, rot, seed) {
+    var n = 7, pts = [], d = '', k, a, r;
+    for (k = 0; k < n; k++) { a = (k / n) * Math.PI * 2; r = 0.86 + 0.22 * Math.abs(Math.sin(seed * 12.9 + k * 4.1)); pts.push([Math.cos(a) * rx * r, Math.sin(a) * ry * r]); }
+    var c = Math.cos(rot), s = Math.sin(rot), P = function (p) { return [x + p[0] * c - p[1] * s, y + p[0] * s + p[1] * c]; }, mid = function (p, q) { return P([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]); };
+    var m0 = mid(pts[n - 1], pts[0]); d = 'M' + m0[0].toFixed(1) + ' ' + m0[1].toFixed(1);
+    for (k = 0; k < n; k++) { var p = P(pts[k]), m = mid(pts[k], pts[(k + 1) % n]); d += ' Q' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ' ' + m[0].toFixed(1) + ' ' + m[1].toFixed(1); }
+    return d + ' Z';
+  }
+  function hideLayer(shape, top, bot, spots) {
+    var id = 'sbc-hide-' + (++hideN), h = bot - top, g = '<defs><clipPath id="' + id + '">' + shape + '</clipPath></defs><g class="sbc-hide" clip-path="url(#' + id + ')">';
+    g += '<path class="sbc-fur-c" d="M100 ' + top + ' C95 ' + (top + h * 0.32).toFixed(1) + ' 105 ' + (top + h * 0.64).toFixed(1) + ' 100 ' + bot + ' L210 ' + bot + ' L210 ' + top + ' Z"/>';
+    spots.forEach(function (p, i) { g += '<path class="sbc-patch sbc-patch--' + p[0] + '" style="animation-delay:-' + (i * 9) + 's" d="' + hideBlob(p[1], p[2], p[3], p[4], p[5], i + 1) + '"/>'; });
+    return g + '</g>';
+  }
   function creatureSVG(o) {
-    var form = o.form || 'saelion', stage = Math.max(0, Math.min(4, o.stage == null ? 4 : o.stage)), mood = o.mood || 'happy', shut = !!o.shut;
+    var form = o.form || 'saelion', stage = Math.max(0, Math.min(4, o.stage == null ? 4 : o.stage)), mood = o.mood || 'happy', shut = !!o.shut, chim = o.hide === 'chimera';
     var ears = form === 'bunny' || (form === 'saelion' && stage >= 1), arms = form === 'octopus' ? 5 : form === 'saelion' ? [0, 0, 2, 3, 5][stage] : 0, wings = form === 'pixie' || (form === 'saelion' && stage >= 3);
-    var sc = [0.62, 0.72, 0.86, 0.94, 1][stage], s = '';
+    var sc = [0.62, 0.72, 0.86, 0.94, 1][stage], s = '', fw = chim ? ' sbc-fur-w' : '';
     s += '<ellipse class="sbc-shadow" cx="100" cy="178" rx="' + (54 * sc).toFixed(1) + '" ry="9"/>';
     if (stage === 0 && form === 'saelion') {
+      var egg = 'M100 46 C140 46 152 104 152 128 C152 160 128 176 100 176 C72 176 48 160 48 128 C48 104 60 46 100 46 Z';
       return '<svg viewBox="0 0 200 200" role="img" aria-label="Saelion, still an egg">' + s +
-        '<path class="sbc-body" d="M100 46 C140 46 152 104 152 128 C152 160 128 176 100 176 C72 176 48 160 48 128 C48 104 60 46 100 46 Z"/>' +
-        '<circle cx="82" cy="96" r="7" class="sbc-ear-in"/><circle cx="120" cy="120" r="9" class="sbc-ear-in"/><circle cx="92" cy="146" r="6" class="sbc-ear-in"/>' +
+        '<path class="sbc-body' + fw + '" d="' + egg + '"/>' +
+        (chim ? hideLayer('<path d="' + egg + '"/>', 42, 180, [['w', 70, 82, 9, 7, 0.4], ['c', 134, 140, 10, 8, -0.3], ['w', 66, 150, 7, 9, 0.2]]) + '<path class="sbc-rim" d="' + egg + '"/>' : '') +
+        '<circle cx="82" cy="96" r="7" class="sbc-ear-in' + (chim ? ' sbc-ear-in--w' : '') + '"/><circle cx="120" cy="120" r="9" class="sbc-ear-in' + (chim ? ' sbc-ear-in--c' : '') + '"/><circle cx="92" cy="146" r="6" class="sbc-ear-in' + (chim ? ' sbc-ear-in--w' : '') + '"/>' +
         '<path d="M70 116 l12 -8 l9 10 l11 -9 l10 9 l12 -8" fill="none" stroke="var(--art-line)" stroke-width="2.6" stroke-linejoin="round"/>' +
         '<path d="M80 64 Q86 58 94 58" stroke="var(--art-light)" stroke-width="5" stroke-linecap="round" fill="none"/></svg>';
     }
@@ -389,10 +408,10 @@
     }
     if (ears) {
       var eh = [0, 42, 54, 60, 64][stage] || 60;
-      s += '<g><path class="sbc-body" d="M' + (cx - 26 * sc) + ' ' + (cy - ry + 10) + ' C' + (cx - 46 * sc) + ' ' + (cy - ry - eh) + ' ' + (cx - 14 * sc) + ' ' + (cy - ry - eh - 12) + ' ' + (cx - 8 * sc) + ' ' + (cy - ry + 4) + ' Z"/>' +
-        '<path class="sbc-ear-in" d="M' + (cx - 24 * sc) + ' ' + (cy - ry + 2) + ' C' + (cx - 36 * sc) + ' ' + (cy - ry - eh + 14) + ' ' + (cx - 18 * sc) + ' ' + (cy - ry - eh + 4) + ' ' + (cx - 14 * sc) + ' ' + (cy - ry + 2) + ' Z"/>' +
-        '<path class="sbc-body" d="M' + (cx + 26 * sc) + ' ' + (cy - ry + 10) + ' C' + (cx + 52 * sc) + ' ' + (cy - ry - eh + 6) + ' ' + (cx + 20 * sc) + ' ' + (cy - ry - eh - 6) + ' ' + (cx + 8 * sc) + ' ' + (cy - ry + 4) + ' Z"/>' +
-        '<path class="sbc-ear-in" d="M' + (cx + 24 * sc) + ' ' + (cy - ry + 2) + ' C' + (cx + 40 * sc) + ' ' + (cy - ry - eh + 18) + ' ' + (cx + 22 * sc) + ' ' + (cy - ry - eh + 8) + ' ' + (cx + 14 * sc) + ' ' + (cy - ry + 2) + ' Z"/></g>';
+      s += '<g><path class="sbc-body' + fw + '" d="M' + (cx - 26 * sc) + ' ' + (cy - ry + 10) + ' C' + (cx - 46 * sc) + ' ' + (cy - ry - eh) + ' ' + (cx - 14 * sc) + ' ' + (cy - ry - eh - 12) + ' ' + (cx - 8 * sc) + ' ' + (cy - ry + 4) + ' Z"/>' +
+        '<path class="sbc-ear-in' + (chim ? ' sbc-ear-in--w' : '') + '" d="M' + (cx - 24 * sc) + ' ' + (cy - ry + 2) + ' C' + (cx - 36 * sc) + ' ' + (cy - ry - eh + 14) + ' ' + (cx - 18 * sc) + ' ' + (cy - ry - eh + 4) + ' ' + (cx - 14 * sc) + ' ' + (cy - ry + 2) + ' Z"/>' +
+        '<path class="sbc-body' + (chim ? ' sbc-fur-c' : '') + '" d="M' + (cx + 26 * sc) + ' ' + (cy - ry + 10) + ' C' + (cx + 52 * sc) + ' ' + (cy - ry - eh + 6) + ' ' + (cx + 20 * sc) + ' ' + (cy - ry - eh - 6) + ' ' + (cx + 8 * sc) + ' ' + (cy - ry + 4) + ' Z"/>' +
+        '<path class="sbc-ear-in' + (chim ? ' sbc-ear-in--c' : '') + '" d="M' + (cx + 24 * sc) + ' ' + (cy - ry + 2) + ' C' + (cx + 40 * sc) + ' ' + (cy - ry - eh + 18) + ' ' + (cx + 22 * sc) + ' ' + (cy - ry - eh + 8) + ' ' + (cx + 14 * sc) + ' ' + (cy - ry + 2) + ' Z"/></g>';
     }
     if (arms) {
       var a = '';
@@ -403,7 +422,12 @@
       }
       s += '<g>' + a + '</g>';
     }
-    s += '<ellipse class="sbc-body" cx="' + cx + '" cy="' + cy + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '"/>';
+    var head = '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '"/>';
+    s += '<ellipse class="sbc-body' + fw + '" cx="' + cx + '" cy="' + cy + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '"/>';
+    if (chim) s += hideLayer(head, Math.round(cy - ry - 4), Math.round(cy + ry + 4), [
+      ['w', cx - 0.42 * rx, cy - 0.62 * ry, 0.21 * rx, 0.17 * ry, 0.5], ['w', cx - 0.8 * rx, cy + 0.3 * ry, 0.16 * rx, 0.26 * ry, 0.35],
+      ['c', cx + 0.8 * rx, cy - 0.24 * ry, 0.14 * rx, 0.25 * ry, -0.25], ['c', cx + 0.38 * rx, cy + 0.72 * ry, 0.25 * rx, 0.15 * ry, -0.15],
+      ['w', cx - 0.2 * rx, cy + 0.84 * ry, 0.12 * rx, 0.1 * ry, 0]]) + head.replace('<ellipse ', '<ellipse class="sbc-rim" ');
     s += '<path d="M' + (cx - rx * 0.55).toFixed(1) + ' ' + (cy - ry * 0.55).toFixed(1) + ' Q' + (cx - rx * 0.35).toFixed(1) + ' ' + (cy - ry * 0.8).toFixed(1) + ' ' + (cx - rx * 0.05).toFixed(1) + ' ' + (cy - ry * 0.82).toFixed(1) + '" stroke="var(--art-light)" stroke-width="5" stroke-linecap="round" fill="none" opacity=".9"/>';
     var ey = cy - ry * 0.08, ex = rx * 0.38, er = Math.max(7, 10.5 * sc);
     if (shut || mood === 'sleepy') {

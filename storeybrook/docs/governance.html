@@ -18,11 +18,16 @@
 <header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
 <div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html" aria-current="page">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Governance</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="governance">Governance</h1>
 <h2 id="versions">Versions</h2>
-<p>Storeybrook is versioned as a whole: <code>tokens.json</code> carries the major version (1), <code>Storeybrook.version</code> the full one (1.0.0).</p>
+<p>Storeybrook is versioned as a whole: <code>tokens.json</code> carries the major version (1), <code>Storeybrook.version</code> the full one (1.1.0).</p>
 <ul>
 <li><strong>Major</strong>: a token, class, data attribute or API renamed or removed; a behavior that changes what a page does; a look removed.</li>
 <li><strong>Minor</strong>: new tokens, components, icons, looks, densities or options.</li>
 <li><strong>Patch</strong>: values tuned, bugs fixed, wording.</li>
+</ul>
+<h2 id="110">1.1.0</h2>
+<ul>
+<li>Creature: a <code>hide</code> option. <code>chimera</code> gives Saelion a coat split down her middle, warm on the left and cool on the right like her eyes, with patches in the tag colors that drift slowly; ink blots in Ink Blot; none in Knight Night, where she glows instead. Shipped first in AND SO 7's light looks (the pet in the game and on the landing), then on the 99¢ Shelf's AND SO cover.</li>
+<li>Brook: a locked stone dims its face (paler, dashed) instead of fading as a whole, so its label and its reason stay readable in every look. <code>op-disabled</code> is for disabled controls only.</li>
 </ul>
 <h2 id="100">1.0.0</h2>
 <ul>
@@ -64,7 +69,7 @@
 <li>Page turns and folds use the Web Animations API; without it they cut.</li>
 <li><code>forced-colors</code> keeps controls usable but drops washes and the brook's paint; a brook in high-contrast mode is its stones and labels only.</li>
 </ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="code.html"><span data-sb-icon="prev"></span>Code</a><a class="sb-btn sb-btn--secondary" href="play.html">Play<span data-sb-icon="next"></span></a></p></main></div>
-<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<footer class="site-foot"><p>Storeybrook 1.1.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
 <script src="../dist/components/bundle.js"></script>
 <script src="../site.js"></script>
 </body>
