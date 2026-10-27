@@ -127,31 +127,30 @@ try{
  const targetInfo=(await visibilitySession.send('Target.getTargetInfo')).targetInfo;
  const browserSession=await browser.newBrowserCDPSession();
  const nextPage=c.waitForEvent('page');
- await browserSession.send('Target.createTarget',{url:'about:blank',browserContextId:targetInfo.browserContextId,newWindow:false,background:false});
+ // A second tab in the same window was observed as the same window id and never
+ // produced document.hidden while focus emulation was active. A real foreground
+ // window is the transition the pause/key-release checks require.
+ await browserSession.send('Target.createTarget',{url:'about:blank',browserContextId:targetInfo.browserContextId,newWindow:true,background:false});
  const other=await nextPage;
  const otherSession=await c.newCDPSession(other);
  report.visibilityWindows={game:await visibilitySession.send('Browser.getWindowForTarget'),other:await otherSession.send('Browser.getWindowForTarget')};
  await otherSession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
  await other.bringToFront();
- check('Goober real blur releases held key',await p.evaluate(()=>!document.hasFocus()&&keys.size===0&&paused));
- let hiddenObserved=false;
  try{
-  // Animation-frame polling cannot observe a page once its frames are suspended.
-  await p.waitForFunction(()=>document.hidden,null,{polling:50,timeout:5000});
-  hiddenObserved=true;
+  // Interval polling: requestAnimationFrame never runs once the background page's frames are suspended,
+  // so the default waiter would time out even after a real hide.
+  await p.waitForFunction(()=>!document.hasFocus()&&document.hidden,null,{polling:50,timeout:5000});
  }catch(error){
   const observed=await p.evaluate(()=>({hidden:document.hidden,focused:document.hasFocus(),events:window.__repairEvents}));
-  if(observed.hidden)throw error;
-  report.blockedChecks.push({name:'true hidden-tab transition',reason:'Runner did not make the background page hidden',observed});
+  throw Error('True hidden-tab transition did not happen: '+JSON.stringify({observed,windows:report.visibilityWindows})+'\n'+(error.stack||error));
  }
- if(hiddenObserved){
-  check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
-  check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
- }
+ check('Goober real blur releases held key',await p.evaluate(()=>!document.hasFocus()&&keys.size===0&&paused));
+ check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
+ check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
  await other.keyboard.up('ArrowRight');
  await p.bringToFront();await p.waitForFunction(()=>!document.hidden,null,{polling:50});
  const resumedYaw=await p.evaluate(()=>window.__controlsTest.getYaw());await delay(250);
- if(hiddenObserved)check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
+ check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
  await p.keyboard.up('ArrowRight');
  await otherSession.detach();await other.close();await visibilitySession.detach();await browserSession.detach();
  await nativeCancel(p,'.touch-controls [data-key="ArrowUp"]');
@@ -164,16 +163,18 @@ try{
  report.historyHeldInput=[];
  for(let n=0;n<3;n++){
   try{
-   await p.evaluate(()=>{window.__repairKeyups=[]});
+   await p.evaluate(()=>{window.__repairKeyups=[];window.__repairPageShows=[]});
    await p.keyboard.down('ArrowRight');await delay(50);
    check('Goober held key reaches application before history departure '+n,await p.evaluate(()=>keys.has('ArrowRight')));
    await p.goto(origin+'/peachfall/play.html');
+   // Back-forward cache restores the document without a load event. Waiting for
+   // load hangs after the URL has already committed; pageshow is the restoration signal.
    await p.goBack({waitUntil:'commit'});
    await p.waitForURL(origin+'/goober/run/',{waitUntil:'commit'});
-   await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest);
+   await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest&&window.__repairPageShows.length>0,{polling:50});
    const state=await p.evaluate(()=>({keys:[...keys],pointer,keyupEvents:window.__repairKeyups,pageShow:window.__repairPageShows.at(-1)||null}));
    report.historyHeldInput.push({roundTrip:n,harnessKeyupSentBeforeAssertion:false,...state});
-   check('Goober history return clears input before automation key release '+n,state.keys.length===0&&state.pointer===null);
+   check('Goober history return clears input before automation key release '+n,state.keys.length===0&&state.pointer===null&&state.pageShow&&state.pageShow.trusted);
   }finally{
    if(!p.isClosed())await p.keyboard.up('ArrowRight');
   }
@@ -184,8 +185,9 @@ try{
   const images=[];
   page.on('response',r=>{if(r.url().includes('/source/images/anchors/'))images.push({url:r.url(),status:r.status()})});
   for(const route of ['/peachfall/','/peachfall/play.html']){
-   // Each entry starts fresh in this disposable test profile; Play intentionally saves its scene.
-   if(route==='/peachfall/play.html')await page.evaluate(()=>localStorage.removeItem('peachfall-playable-v1'));
+   // Play persists the scene under peachfall-playable-v1. Leaving that save in
+   // place makes the other entrance resume mid-scene, so the title gate times out.
+   await page.evaluate(()=>localStorage.removeItem('peachfall-playable-v1')).catch(()=>{});
    await page.goto(origin+route);await page.waitForFunction(()=>document.body.dataset.scene==='title');
    await page.waitForFunction(()=>performance.getEntriesByType('resource').filter(e=>e.name.includes('/source/images/anchors/')).length>=3);
    check('Peachfall three nested image requests succeed '+width+' '+route,images.slice(-3).length===3&&images.slice(-3).every(x=>x.status===200&&x.url.includes('/peachfall/source/images/')));
