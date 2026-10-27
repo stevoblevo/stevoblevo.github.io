@@ -127,10 +127,11 @@ try{
  const targetInfo=(await visibilitySession.send('Target.getTargetInfo')).targetInfo;
  const browserSession=await browser.newBrowserCDPSession();
  const nextPage=c.waitForEvent('page');
- // A second tab in the same window was observed as the same window id and never
- // produced document.hidden while focus emulation was active. A real foreground
- // window is the transition the pause/key-release checks require.
- await browserSession.send('Target.createTarget',{url:'about:blank',browserContextId:targetInfo.browserContextId,newWindow:true,background:false});
+ // A second OS window on the CI display loses focus but stays document.hidden=false,
+ // because nothing occludes it. A foreground tab in the same window is the transition
+ // that actually hides the page. Playwright focus emulation must stay off, or the
+ // background tab is reported visible and this wait never completes.
+ await browserSession.send('Target.createTarget',{url:'about:blank',browserContextId:targetInfo.browserContextId,newWindow:false,background:false});
  const other=await nextPage;
  const otherSession=await c.newCDPSession(other);
  report.visibilityWindows={game:await visibilitySession.send('Browser.getWindowForTarget'),other:await otherSession.send('Browser.getWindowForTarget')};
@@ -139,7 +140,7 @@ try{
  try{
   // Interval polling: requestAnimationFrame never runs once the background page's frames are suspended,
   // so the default waiter would time out even after a real hide.
-  await p.waitForFunction(()=>!document.hasFocus()&&document.hidden,null,{polling:50,timeout:5000});
+  await p.waitForFunction(()=>document.hidden,null,{polling:50,timeout:5000});
  }catch(error){
   const observed=await p.evaluate(()=>({hidden:document.hidden,focused:document.hasFocus(),events:window.__repairEvents}));
   throw Error('True hidden-tab transition did not happen: '+JSON.stringify({observed,windows:report.visibilityWindows})+'\n'+(error.stack||error));
