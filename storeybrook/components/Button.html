@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Button · Storeybrook</title>
+<meta name="description" content="Pill-shaped actions in the interface face; one primary per view, in `accent`.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Actions</p><section class="site-live" aria-label="Button, live"><div class="pv stack">
+<div class="row"><button class="sb-btn sb-btn--primary sb-btn--lg">Play this one</button>
+<button class="sb-btn sb-btn--secondary"><span data-sb-icon="voice"></span>Read it to me</button>
+<button class="sb-btn sb-btn--quiet">Skip the story</button>
+<button class="sb-btn sb-btn--sticker">New look</button></div>
+<div class="row"><button class="sb-btn sb-btn--primary sb-btn--icon" aria-label="Read it to me"><span data-sb-icon="play" data-size="26"></span></button>
+<button class="sb-btn sb-btn--secondary sb-btn--sm"><span data-sb-icon="map"></span>The brook</button>
+<button class="sb-btn sb-btn--primary" disabled>Opens at 6 nougats</button>
+<button class="sb-btn sb-btn--secondary" aria-busy="true">Saving the page</button></div>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="button">Button</h1>
+<p>Pill-shaped actions in the interface face; one primary per view, in <code>accent</code>.</p>
+<p><strong>Provide</strong> a <code>&lt;button&gt;</code> (or <code>&lt;a&gt;</code> for navigation) with <code>sb-btn</code> and one variant, and a label that says what happens: "Play this one", "Read it to me", "Skip the story".</p>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Variant</th>
+<th>Use</th>
+<th>Paint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sb-btn--primary</code></td>
+<td>the one thing to do now</td>
+<td><code>accent</code> fill, <code>on-accent</code> label, a wax gloss and <code>shadow-seal</code></td>
+</tr>
+<tr>
+<td><code>sb-btn--secondary</code></td>
+<td>the second choice</td>
+<td><code>ink</code> border on a page tint; <code>cue-soft</code> on hover</td>
+</tr>
+<tr>
+<td><code>sb-btn--quiet</code></td>
+<td>escape hatches: skip, back, not now</td>
+<td><code>ink-muted</code> label, no box; a wavy <code>cue</code> underline on hover; keeps the 48px target</td>
+</tr>
+<tr>
+<td><code>sb-btn--sticker</code></td>
+<td>playful extras: a new look, a surprise</td>
+<td>a <code>page</code> sticker on a blob, tilted 2°, <code>shadow-sticker</code></td>
+</tr>
+</tbody>
+</table>
+<p>Sizes: default (<code>size-target</code>, 48px; 56px kid, 64px TV), <code>sb-btn--lg</code> (+16px, for the landing's Play), <code>sb-btn--sm</code> (40px, dense rows only), <code>sb-btn--icon</code> (a circle; give it an <code>aria-label</code>). An icon goes first inside the label (<code>data-sb-icon</code>, 1.25em).</p>
+<p><strong>States</strong>
+- Hover lifts 1px; pressed sinks 1px (<code>dur-tap</code>). Focus shows the <code>focus</code> ring.
+- Disabled: <code>disabled</code> (or <code>aria-disabled="true"</code> on a link) dims to <code>op-disabled</code>; say why nearby.
+- Busy: <code>aria-busy="true"</code> adds a turning ring after the label; keep the label.</p>
+<p><strong>Looks</strong>: Comix gives every button a 3px ink border and a 4px offset shadow that presses flat; Origami squares the primary and folds its corner; Skein silk stitches a dashed thread inside the primary; Ink Blot is flat black with no gloss.</p>
+<p><strong>Do / Don't</strong>
+- Do keep one primary per view; the landing's is "Play this one".
+- Don't use a primary for skipping: skipping is <code>--quiet</code>.
+- Don't put <code>cue</code> on a button: blue means the brook, links and reading, not actions.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>

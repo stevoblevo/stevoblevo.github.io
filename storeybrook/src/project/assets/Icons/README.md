@@ -1,0 +1,1 @@
+The Storeybrook icon set: 44 icons on a 24px grid, 2px round strokes, almost no fills. These files are drawn in #5f6f7c so they read on light and dark grounds here; in pages, use `Storeybrook.icon(name)` or `data-sb-icon`, which draw in `currentColor` (see Iconography).

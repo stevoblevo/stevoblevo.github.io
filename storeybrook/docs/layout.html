@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Layout · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Layout.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html" aria-current="page">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Layout</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="layout">Layout</h1>
+<p>A Storeybrook screen is a table with a book on it. The paper fills the screen; content sits on sheets and pages laid on the paper; the brook and the shelf run across it.</p>
+<h2 id="sizes">Sizes</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size-page</code></td>
+<td>680px</td>
+<td>one book page</td>
+</tr>
+<tr>
+<td><code>size-measure</code></td>
+<td>60ch</td>
+<td>the longest line of story text</td>
+</tr>
+<tr>
+<td><code>size-reader</code></td>
+<td>560px</td>
+<td>the read-aloud bar</td>
+</tr>
+<tr>
+<td><code>size-container</code></td>
+<td>1280px</td>
+<td>the shelf, the brook, a landing's grid</td>
+</tr>
+<tr>
+<td><code>size-cover</code></td>
+<td>260px</td>
+<td>a cover on the shelf (the shelf's columns run 200px to this)</td>
+</tr>
+<tr>
+<td><code>size-stone</code></td>
+<td>56px</td>
+<td>a stepping stone</td>
+</tr>
+<tr>
+<td><code>size-jar</code></td>
+<td>72px</td>
+<td>the nougat jar</td>
+</tr>
+<tr>
+<td><code>size-target</code></td>
+<td>48px</td>
+<td>the smallest thing a finger presses</td>
+</tr>
+<tr>
+<td><code>size-root</code></td>
+<td><code>clamp(16px, 0.42vw + 10px, 28px)</code></td>
+<td>the root size; everything in rem follows it</td>
+</tr>
+</tbody>
+</table>
+<p><code>size-root</code> is 16px on a phone and a laptop, about 18px at 1920 CSS pixels (most TVs, including 4K ones, report this), about 21px at 2560 (a 5K display at its default scaling), and 28px, the cap, on a screen running unscaled at 4K or 5K. Put <code>class="sb-root"</code> on <code>&lt;html&gt;</code> to use it.</p>
+<h2 id="spacing">Spacing</h2>
+<p><code>space-1</code> 4px · <code>space-2</code> 8px · <code>space-3</code> 12px · <code>space-4</code> 16px · <code>space-5</code> 24px · <code>space-6</code> 32px · <code>space-7</code> 48px · <code>space-8</code> 72px · <code>space-9</code> 112px · <code>space-10</code> 168px.</p>
+<ul>
+<li>Inside a sheet or a dialog: <code>space-5</code>, growing to <code>space-6</code> above 1024px (the components use <code>clamp()</code> for this).</li>
+<li>Between blocks on a page: <code>space-7</code>. Between chapters or shelf rows: <code>space-9</code>.</li>
+<li>Around the brook: at least <code>space-7</code> above and <code>space-8</code> below (stone labels hang under the stones).</li>
+</ul>
+<h2 id="the-page-and-the-spread">The page and the spread</h2>
+<ul>
+<li>A single page (<code>sb-page</code>) is <code>size-page</code> wide with padding from <code>clamp(1.5rem, 4vw, 3.5rem)</code>; its folio (<code>sb-page__folio</code>) sits at the bottom outer corner.</li>
+<li>A spread (<code>sb-spread</code>) sets two pages side by side with a gutter shadow down the middle, and shows one page at a time below <code>bp-expanded</code> (1024px).</li>
+<li>Text on a page aligns left. Display titles on a landing may sit to one side of the art; never center long text.</li>
+</ul>
+<h2 id="breakpoints">Breakpoints</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Token</th>
+<th>Width</th>
+<th>Use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bp-medium</code></td>
+<td>640px</td>
+<td>the end of phones: two-column grids start, the reader bar stops spanning the screen</td>
+</tr>
+<tr>
+<td><code>bp-expanded</code></td>
+<td>1024px</td>
+<td>spreads show two pages (built into <code>sb-spread</code> and <code>Storeybrook.spread</code>); landings go to two columns, story beside art</td>
+</tr>
+<tr>
+<td><code>bp-wide</code></td>
+<td>1600px</td>
+<td>big laptops and desktop displays: more covers in view, wider margins</td>
+</tr>
+<tr>
+<td><code>bp-tv</code></td>
+<td>1800px</td>
+<td>big screens; pair it with the TV density</td>
+</tr>
+</tbody>
+</table>
+<p>Custom properties cannot drive media queries, so write the width in the query and name the token in a comment: <code>@media (min-width: 1024px) /* bp-expanded */</code>.</p>
+<h2 id="layers">Layers</h2>
+<p><code>z-art</code> (0, washes and drawings) → <code>z-content</code> (10) → <code>z-stone</code> (20) → <code>z-sticky</code> (40) → <code>z-reader</code> (50, the reader bar and the jar) → <code>z-drawer</code> (60) → <code>z-overlay</code> (1000, dialogs, toasts) → <code>z-drop</code> (2000, a nougat in flight passes over everything).</p>
+<h2 id="landing-pattern">Landing pattern</h2>
+<p>The landing of a Storeybrook site or game is one screen, no scrolling needed on a laptop:</p>
+<pre class="sb-noread"><code>+------------------------------------------------------------+
+|  sky band (wash)                                   sun      |
+|  display-xl title                       the creature (art)  |
+|  story-lede, two lines                                      |
+|  [Play this one]  (Read it to me)  Skip the story           |
+|                                                             |
+|  ~~~~~ the brook, 4 to 8 stones, labels under them ~~~~~    |
+|  meadow band (wash)                                  jar    |
++------------------------------------------------------------+
+</code></pre>
+<p>On a phone the art moves above the title and the brook turns vertical (it does this itself when the host is taller than it is wide). On a TV it is the same layout at the TV density.</p></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="type.html"><span data-sb-icon="prev"></span>Type</a><a class="sb-btn sb-btn--secondary" href="motion.html">Motion<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

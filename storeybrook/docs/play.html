@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Play · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Play.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html" aria-current="page">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Play</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="play">Play</h1>
+<p>Storeybrook is for little games as much as for stories. A game keeps its own engine and its own canvas; Storeybrook gives it a cover, a front page, a map, a jar, a book and a look. These patterns come from AND SO 7 and the 99¢ Shelf.</p>
+<h2 id="the-cover-and-the-shelf">The cover and the shelf</h2>
+<p>Every game has a cover (<code>sb-cover</code> inside <code>sb-shelf</code>): 4:3 art on <code>surface</code>, a <code>display-s</code> title in the look's display face, one line in the story face, two or three tags, and a price tag hanging from a copper string.</p>
+<ul>
+<li>The shelf scrolls sideways with snap points and sits on a copper board; it never wraps into a grid of identical cards.</li>
+<li>Covers tilt a degree or two (<code>--tilt</code>), lift on hover and focus, and scale up 7% when focused at the TV density.</li>
+<li>A new game wears the <code>sb-cover--new</code> ribbon (<code>sap</code>), one at a time.</li>
+<li>Price tags say "99¢ each". Until a shop exists, the page says "Free to play now" and the cover links straight to the game.</li>
+</ul>
+<h2 id="the-front-page">The front page</h2>
+<p>A game opens on a page, not a loading screen: the title in <code>display-xl</code>, the creature beside it, a one-sentence lede, a primary "Play this one", a secondary "Read it to me", a quiet "Skip the story", and the brook along the bottom showing where a person can go. The game's canvas waits behind the page and is uncovered when they press Play.</p>
+<h2 id="the-brook-as-the-map">The brook as the map</h2>
+<p>The brook is the game's level select and its progress bar at once: stones are scenes, modes or mini-games; locked stones say how many nougats open them; the walked trail shows how far a person has come. Open it from a "brook" button or a key, close it with Escape or the same button. A stone walked for the first time drops a nougat.</p>
+<h2 id="the-jar-as-the-score">The jar as the score</h2>
+<p>The jar sits in a corner (<code>sb-jar--fixed</code>, or the game's own placement) and is the score a person keeps. Nougats fly into it from the thing that earned them, so a person sees what each one was for.</p>
+<h2 id="the-book-inside-the-game">The book inside the game</h2>
+<p>Stories open in a reader over the game (<code>sb-dialog</code> or a side sheet), with the read-aloud bar. New stories appear in the book as stones are walked ("a new story in the book: The window"). While a story is read aloud, keep the game's music low enough to hear every word.</p>
+<h2 id="looks-on-a-canvas">Looks on a canvas</h2>
+<p>A canvas game drawn for a dark night can wear the paper looks without redrawing:</p>
+<ul>
+<li>Draw the world dark; on a paper look, invert its canvas with a CSS filter (<code>invert(1) hue-rotate(180deg)</code>), so light becomes ink on paper and colors keep their hue. Ink Blot adds <code>grayscale(1) contrast(1.6)</code>; Comix adds saturation.</li>
+<li>Draw paper effects (washes, grain, shadows) on a second canvas over the world, blended <code>multiply</code>, so they read as pigment on the page.</li>
+<li>Keep characters on their own canvas, never inverted, so the creature looks the same in every look.</li>
+<li>Turn every panel the game shows (menus, the brook, the book, the jar) into a <code>data-sb</code> island in the current look.</li>
+</ul>
+<h2 id="quiet-and-loud">Quiet and loud</h2>
+<ul>
+<li>A game should have a quiet mode: every word hidden except music and what someone needs right now. Hints come back for a few seconds when they matter, then fade.</li>
+<li>Loud moments (a chorus finished, a stone opened) are one balloon or one toast, never both.</li>
+</ul>
+<h2 id="candidate-patterns">Candidate patterns</h2>
+<p>Shipped once in AND SO 7 and waiting for a second use (see Governance):</p>
+<ul>
+<li><strong>Guardians.</strong> Small drawn objects, with no labels, that float near the creature and switch a real feature when tapped (an ice cube freezes the chord, a heart turns on the light mood). They arrive from words the game overheard and playfully misheard, can be dragged anywhere, and are flicked off the screen to sleep.</li>
+<li><strong>Mirror windows.</strong> The game opened inside itself in sandboxed frames shaped like real devices (a phone, a folding phone, a tablet, an e-ink slate, a TV), to show one state in many skins at once.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="governance.html"><span data-sb-icon="prev"></span>Governance</a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

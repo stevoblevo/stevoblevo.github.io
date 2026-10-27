@@ -1,0 +1,59 @@
+/* The 99¢ Shelf · one look on purpose (Storeybrook Meta Daylight): a shop window of covers with paper price tags.
+   layout: a hero (title, a lede, two actions | Saelion with a hanging 99¢ tag), then a 4-column shelf with one wide feature */
+:root { --shelf-bg: #f4f6f2; --shelf-ink: #26323f; color-scheme: light }
+html { font-size: clamp(16px, 0.42vw + 10px, 28px); background: var(--shelf-bg); color: var(--shelf-ink) }
+body { margin: 0; background: var(--shelf-bg); color: var(--shelf-ink) }
+.shelf { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; background: var(--paper); color: var(--ink); font-family: var(--sb-story);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.shelf-washes { position: absolute; inset: 0; z-index: -1; pointer-events: none }
+.shelf-washes::after { content: ""; position: absolute; inset: 0; background-image: var(--sb-grain-img); background-size: var(--tex-grain-size); opacity: var(--sb-grain-op); mix-blend-mode: var(--sb-grain-blend) }
+.top, .hero, .shelf-sec, .foot { max-width: 1520px; margin-inline: auto }
+.top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; padding-block: 22px 0 }
+.brand { font: var(--sb-display-weight) 1.5rem/1 var(--sb-display); color: var(--ink); text-decoration: none }
+.brand:focus-visible, .cv:focus-visible, .sb-btn:focus-visible, .sb-ink-link:focus-visible { outline: var(--border-focus) solid var(--focus); outline-offset: 6px; border-radius: 8px }
+.hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; gap: 28px 64px; padding-block: clamp(26px, 6vh, 130px) clamp(26px, 5vh, 110px) }
+.hero-copy { min-width: 0 }
+.hero-title { margin: 0 0 .32em; font: var(--sb-display-weight) clamp(3rem, 6.2vw, 9.5rem)/.92 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth); letter-spacing: -.012em; color: var(--ink); text-wrap: balance }
+.hero-copy .sb-lede { max-width: 30em }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 1.7rem }
+.hero-note { margin: 1.1rem 0 0; max-width: 34em; font: 400 1rem/1.5 var(--sb-ui); color: var(--ink-muted) }
+.hero-art { position: relative; min-height: clamp(280px, 31vw, 700px) }
+.hero-creature { position: absolute; left: 0; bottom: 0; width: 60% }
+.hero-creature svg { width: 100%; height: auto; display: block }
+.hero-tag { position: absolute; right: 3%; top: 16%; width: 42%; aspect-ratio: 3 / 4; display: grid; place-content: center; text-align: center; gap: .1em;
+  background: var(--page); border: 3px solid var(--art-line); border-radius: 26px 26px 30px 30px; box-shadow: var(--shadow-sticker); transform: rotate(8deg); transform-origin: 50% 0 }
+.hero-tag b { font: var(--sb-display-weight) clamp(2.8rem, 5.6vw, 8.5rem)/1 var(--sb-display); color: var(--accent); font-variant-numeric: tabular-nums }
+.hero-tag > span:last-child { font: 700 1.15rem/1 var(--sb-ui); color: var(--ink-muted) }
+.ht-hole { position: absolute; top: 8%; left: 50%; width: 13%; aspect-ratio: 1; translate: -50% 0; border-radius: 50%; background: var(--paper); border: 3px solid var(--art-line) }
+.ht-string { position: absolute; top: -34%; left: 50%; width: 3px; height: 44%; background: var(--copper); border-radius: 2px; transform: rotate(-12deg); transform-origin: 50% 100% }
+.hero-nougat { position: absolute; left: 4%; top: 6%; --n: clamp(64px, 7vw, 160px); transform: rotate(-14deg) }
+.shelf-sec { padding-block: 8px clamp(40px, 7vh, 120px); scroll-margin-top: 16px }
+.shelf-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 20px; margin-bottom: clamp(20px, 2.4vw, 48px) }
+.shelf-head h2 { margin: 0; font: var(--sb-display-weight) clamp(1.9rem, 2.6vw, 4rem)/1 var(--sb-display); color: var(--ink) }
+.shelf-head p { margin: 0; font: 400 1.05rem/1.4 var(--sb-ui); color: var(--ink-muted) }
+.covers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(26px, 2.8vw, 64px) clamp(20px, 2.2vw, 52px) }
+.cv { color: inherit; text-decoration: none; background: var(--page); box-shadow: var(--shadow-page); transform: rotate(var(--tilt)); transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) }
+.cv--feature { grid-column: span 2 }
+.cv .sb-cover__art { aspect-ratio: auto; height: clamp(160px, 12.5vw, 340px) }
+.cv-art svg { position: absolute; inset: 0 }
+.cv-creature { position: absolute; right: 2%; bottom: -8%; width: 30% }
+.cv-creature svg { position: static; width: 100%; height: auto }
+.cv .sb-cover__title { font-size: clamp(1.35rem, 1.2vw + .6rem, 2.2rem) }
+.cv-sub { display: block; margin-top: .12em; font: italic 400 .62em/1.2 var(--sb-story); color: var(--ink-muted) }
+.cv .sb-cover__meta { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px 12px; margin-top: auto; padding-top: .3rem }
+.cv .sb-cover__body { grid-template-rows: auto auto 1fr }
+.cv-chips { display: flex; flex-wrap: wrap; gap: .4rem }
+.cv-play { padding-bottom: .35em; font: 700 .95rem/1 var(--sb-ui); color: var(--cue); text-decoration: underline wavy color-mix(in srgb, var(--cue) 60%, transparent); text-underline-offset: .32em }
+.cv .sb-price { z-index: 5 }
+.foot { padding-block: 22px 52px; border-top: 2px dashed var(--line) }
+.foot p { margin: 0; max-width: 46em; font: 400 1.05rem/1.6 var(--sb-story); color: var(--ink-muted) }
+[data-density="tv"] .covers { gap: 64px 52px }
+[data-density="tv"] .cv:focus-visible { outline-width: 6px; outline-offset: 10px }
+@media (max-width: 1100px) { .covers { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 680px) {
+  .hero { grid-template-columns: minmax(0, 1fr); padding-block: 18px 28px }
+  .hero-art { order: -1; min-height: 250px }
+  .hero-creature { width: 54% } .hero-tag { width: 38% }
+  .covers { grid-template-columns: minmax(0, 1fr) } .cv--feature { grid-column: auto }
+}
+@media (prefers-reduced-motion: reduce) { .cv { transition: none } }

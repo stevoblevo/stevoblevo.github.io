@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Type · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Type.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html" aria-current="page">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Type</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="type">Type</h1>
+<p>Storeybrook reads like a picture book: a round, friendly display face for titles, a warm old-style serif for the story, and a typeface drawn for early readers for every control. Each look swaps the display face; the story and the controls stay put unless the look is Comix or Origami.</p>
+<h2 id="families">Families</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Key (<code>--font-…</code>)</th>
+<th>Face</th>
+<th>Weights</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>display</code></td>
+<td>DynaPuff (variable, <code>wdth</code> 75–100, <code>wght</code> 400–700)</td>
+<td>500, 600</td>
+<td>titles in Meta Daylight; covers; dialog titles</td>
+</tr>
+<tr>
+<td><code>story</code></td>
+<td>Alegreya (variable, roman and italic)</td>
+<td>400, 700</td>
+<td>stories, ledes, the drop cap's look in the old looks</td>
+</tr>
+<tr>
+<td><code>ui</code></td>
+<td>Andika</td>
+<td>400, 700</td>
+<td>buttons, labels, tabs, counts, the kid density's story text</td>
+</tr>
+<tr>
+<td><code>hand</code></td>
+<td>Caveat</td>
+<td>500, 600</td>
+<td>margin notes, sticker names, Skein silk's display</td>
+</tr>
+<tr>
+<td><code>old</code></td>
+<td>IM Fell English</td>
+<td>400, italic</td>
+<td>display in Knight Night and Ink Blot</td>
+</tr>
+<tr>
+<td><code>comic</code></td>
+<td>Bangers</td>
+<td>400</td>
+<td>display and shouts in Comix</td>
+</tr>
+<tr>
+<td><code>comic-text</code></td>
+<td>Comic Neue</td>
+<td>400, 700</td>
+<td>balloons; all text in Comix</td>
+</tr>
+<tr>
+<td><code>fold</code></td>
+<td>Zen Maru Gothic</td>
+<td>400, 500, 700</td>
+<td>display and controls in Origami</td>
+</tr>
+</tbody>
+</table>
+<p>All eight are on Google Fonts; <code>components/bundle.css</code> imports them in one request. A page that uses one look can load only that look's faces (Meta Daylight needs DynaPuff, Alegreya, Andika and Caveat). Every stack falls back to a system face of the same kind.</p>
+<h2 id="styles">Styles</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Style</th>
+<th>Size / leading</th>
+<th>Weight</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>display-xl</code></td>
+<td>112px / 0.92</td>
+<td>600</td>
+<td>the page's title, once; scale it with <code>clamp(3rem, 9vw, 7rem)</code></td>
+</tr>
+<tr>
+<td><code>display-l</code></td>
+<td>72px / 0.95</td>
+<td>600</td>
+<td>chapter titles; <code>clamp(2.4rem, 6vw, 4.5rem)</code></td>
+</tr>
+<tr>
+<td><code>display-m</code></td>
+<td>44px / 1.05</td>
+<td>500</td>
+<td>section titles, a big cover</td>
+</tr>
+<tr>
+<td><code>display-s</code></td>
+<td>28px / 1.1</td>
+<td>500</td>
+<td>cover titles, dialog titles, the drawer's head</td>
+</tr>
+<tr>
+<td><code>story-lede</code></td>
+<td>26px / 1.45</td>
+<td>400</td>
+<td>the first paragraph of a page (<code>sb-lede</code>)</td>
+</tr>
+<tr>
+<td><code>story-body</code></td>
+<td>20px / 1.6</td>
+<td>400</td>
+<td>the story (<code>sb-prose</code>)</td>
+</tr>
+<tr>
+<td><code>story-italic</code></td>
+<td>20px / 1.6</td>
+<td>400 italic</td>
+<td>thoughts, asides, the think balloon</td>
+</tr>
+<tr>
+<td><code>dropcap</code></td>
+<td>96px / 0.8</td>
+<td>700</td>
+<td>the first letter of a chapter, in <code>accent</code>, once</td>
+</tr>
+<tr>
+<td><code>title</code></td>
+<td>22px / 1.3</td>
+<td>700</td>
+<td>a sheet's heading, a setting's name</td>
+</tr>
+<tr>
+<td><code>button</code></td>
+<td>18px / 1.2</td>
+<td>700</td>
+<td>buttons and stones</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>16px / 1.4</td>
+<td>400</td>
+<td>form labels, toggles, slider names</td>
+</tr>
+<tr>
+<td><code>small</code></td>
+<td>14px / 1.4</td>
+<td>400</td>
+<td>credits, footnotes; never for anything a person must act on</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>20px / 1</td>
+<td>700</td>
+<td>numbers that change: the jar, a score; tabular figures</td>
+</tr>
+<tr>
+<td><code>note</code></td>
+<td>26px / 1.15</td>
+<td>500</td>
+<td>the book owner's handwriting</td>
+</tr>
+<tr>
+<td><code>comic-shout</code></td>
+<td>64px / 0.95</td>
+<td>400</td>
+<td>a Comix sound effect</td>
+</tr>
+<tr>
+<td><code>balloon</code></td>
+<td>19px / 1.35</td>
+<td>700</td>
+<td>speech balloons</td>
+</tr>
+</tbody>
+</table>
+<p>The display styles follow the look: a <code>display-*</code> class reads <code>--sb-display</code>, so <code>display-xl</code> is DynaPuff in Meta Daylight, IM Fell English in Knight Night and Bangers in Comix, at the same size.</p>
+<h2 id="rules">Rules</h2>
+<ul>
+<li>One <code>display-xl</code> per page. Display lines are short (three to five words) and never wrap to more than two lines.</li>
+<li>Story text sits at <code>size-measure</code> (60ch) or narrower. Never justify; never set story text in capitals.</li>
+<li>Use <code>story-italic</code> for one thought or one aside per page, not for emphasis inside a sentence.</li>
+<li>No all-caps labels and no letter-spaced eyebrows. Comix display is already capitals; nothing else is.</li>
+<li>Numbers that count up (nougats, scores, the reading meter) use <code>count</code> or <code>font-variant-numeric: tabular-nums</code> so they do not jitter.</li>
+<li>At the kid density (<code>data-density="kid"</code>) story text switches to Andika at 1.3–1.6rem: letter shapes drawn for early readers, a single-storey a and g.</li>
+<li>At the TV density the root size grows (see Layout); type is set in rem so it follows.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="color.html"><span data-sb-icon="prev"></span>Color</a><a class="sb-btn sb-btn--secondary" href="layout.html">Layout<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

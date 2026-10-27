@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lock · Storeybrook</title>
+<meta name="description" content="A striped cover over something that is not open yet.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Rewards</p><section class="site-live" aria-label="Lock, live"><div class="pv"><div class="sb-sheet" style="position:relative;max-width:440px;min-height:150px">
+<h3 class="display-s" style="margin:0 0 6px">Origami</h3><p class="label" style="margin:0">Folded paper on a cutting mat, ten steps to the octave.</p>
+<div class="sb-lock" id="lk"><span class="sb-lock__keyhole"><span data-sb-icon="lock"></span></span><span class="sb-lock__why">Origami is still folded.</span><span class="sb-lock__how">Walk two more stones to open it.</span></div></div>
+<p class="row" style="margin-top:16px"><button class="sb-btn sb-btn--secondary sb-btn--sm" id="op"><span data-sb-icon="key"></span>Open it</button><button class="sb-btn sb-btn--quiet sb-btn--sm" id="rs">Fold it again</button></p></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="lock">Lock</h1>
+<p>A striped cover over something that is not open yet. It says why it is shut and how to open it, and unfolds when it opens.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-lock" data-sb-lock="&lt;id&gt;"&gt;</code> as the last child of a positioned element (a cover, a panel, a sheet), holding <code>&lt;span class="sb-lock__keyhole"&gt;&lt;span data-sb-icon="lock"&gt;&lt;/span&gt;&lt;/span&gt;</code>, <code>&lt;span class="sb-lock__why"&gt;</code> (what is shut) and <code>&lt;span class="sb-lock__how"&gt;</code> (how to open it).</p>
+<ul>
+<li><code>Storeybrook.unlock(id)</code> unfolds the lock upward over <code>dur-turn</code> (<code>is-opening</code>) and hides it; locks for ids already unlocked are hidden when the page loads. Reduced motion simply hides it.</li>
+<li>The cover is diagonal stripes of <code>page</code> and <code>surface</code> at 92%, so the thing underneath shows faintly through.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do always fill in both lines: "Origami is still folded." "Walk two more stones to open it."
+- Don't lock anything a person needs to read or to leave.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}var lk=document.getElementById('lk');document.getElementById('op').addEventListener('click',function(){if(lk.hidden)return;var rm=S&&S.reducedMotion();if(rm){lk.hidden=true;return;}lk.classList.add('is-opening');setTimeout(function(){lk.hidden=true;lk.classList.remove('is-opening');},700);});document.getElementById('rs').addEventListener('click',function(){lk.hidden=false;});</script>
+</body>
+</html>

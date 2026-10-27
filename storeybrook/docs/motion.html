@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Motion · Storeybrook</title>
+<meta name="description" content="Storeybrook rules: Motion.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body class="sb-body sb-no-js">
+<div class="sb-washes site-washes" aria-hidden="true"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-8rem;--h:16rem"></i><i class="sb-sun" style="--w:7rem;right:4%;top:0.5rem"></i></div>
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" aria-current="page" href="../docs/index.html">Rules</a><a class="site-top__link" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<div class="site-doc"><nav class="site-toc" aria-label="Chapters"><p class="site-toc__head">Chapters</p><ol><li><a href="index.html">The short version</a></li><li><a href="paper.html">Paper</a></li><li><a href="looks.html">Looks</a></li><li><a href="color.html">Color</a></li><li><a href="type.html">Type</a></li><li><a href="layout.html">Layout</a></li><li><a href="motion.html" aria-current="page">Motion</a></li><li><a href="iconography.html">Iconography</a></li><li><a href="writing.html">Writing</a></li><li><a href="sound.html">Sound and reading aloud</a></li><li><a href="progression.html">Rewards and progression</a></li><li><a href="devices.html">Devices</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="code.html">Code</a></li><li><a href="governance.html">Governance</a></li><li><a href="play.html">Play</a></li></ol></nav><main class="site-doc__main"><div class="sb-reader site-reader" data-sb-read="#doc"><button class="sb-btn sb-btn--primary sb-btn--icon sb-reader__play" aria-label="Read it to me"></button><div class="sb-reader__info"><span class="sb-reader__title">Motion</span><span class="sb-reader__voice"></span><span class="sb-reader__meter"><i></i></span></div></div><article class="sb-page site-page" id="doc"><div class="sb-prose site-prose"><h1 id="motion">Motion</h1>
+<p>Paper moves the way paper moves: it turns, folds, peels, drops and settles. Motion in Storeybrook answers something a person did, and shows what changed. Almost nothing moves on its own.</p>
+<h2 id="durations-and-easings">Durations and easings</h2>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dur-tap</code></td>
+<td>120ms</td>
+<td>a press: buttons sink, stones dip</td>
+</tr>
+<tr>
+<td><code>dur-quick</code></td>
+<td>220ms</td>
+<td>hover, a toggle's thumb, a cover lifting</td>
+</tr>
+<tr>
+<td><code>dur-base</code></td>
+<td>420ms</td>
+<td>a dialog or toast arriving, a sticker peeling on, the drawer sliding</td>
+</tr>
+<tr>
+<td><code>dur-turn</code></td>
+<td>700ms</td>
+<td>a page turning, a view folding away, a lock unfolding</td>
+</tr>
+<tr>
+<td><code>dur-drop</code></td>
+<td>900ms</td>
+<td>a nougat flying to the jar</td>
+</tr>
+<tr>
+<td><code>dur-bleed</code></td>
+<td>1600ms</td>
+<td>a wash blooming, an ink blot opening</td>
+</tr>
+</tbody>
+</table>
+<table class="sb-noread">
+<thead>
+<tr>
+<th>Easing</th>
+<th>Curve</th>
+<th>For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ease-out</code></td>
+<td><code>cubic-bezier(0.2, 0.9, 0.3, 1)</code></td>
+<td>anything arriving</td>
+</tr>
+<tr>
+<td><code>ease-paper</code></td>
+<td><code>cubic-bezier(0.45, 0.05, 0.25, 1)</code></td>
+<td>anything paper does: turns, folds, the drawer, the bob of the current stone</td>
+</tr>
+<tr>
+<td><code>ease-bounce</code></td>
+<td><code>cubic-bezier(0.34, 1.56, 0.64, 1)</code></td>
+<td>small objects landing: stones, seals, a toggle's thumb, the jar's bump</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-moments">The moments</h2>
+<ul>
+<li><strong>Page turn</strong> (<code>Storeybrook.spread</code>): a leaf rotates over <code>dur-turn</code> with <code>ease-paper</code>; the new pages appear at the half-way point; a paper rustle plays if sound is on.</li>
+<li><strong>Fold</strong> (<code>Storeybrook.fold(host, swap)</code>): the old view is cut into two halves; the top folds down over the bottom, then the folded sheet drops away, revealing the new view already underneath.</li>
+<li><strong>Blot</strong> (<code>Storeybrook.blot(host)</code>): an ink-blot mask grows from nothing to cover the element over <code>dur-bleed</code>. Use it to reveal a new look or a found thing.</li>
+<li><strong>Nougat drop</strong> (<code>Storeybrook.rewards.drop(n, {from})</code>): each nougat arcs from the thing that earned it to the jar, spinning, 140ms apart; the jar bumps as each lands.</li>
+<li><strong>Unlock</strong>: the lock's striped cover unfolds upward (<code>dur-turn</code>), then the sticker peels on (<code>dur-base</code>, <code>ease-bounce</code>).</li>
+<li><strong>Bloom</strong>: a wash arrives once, scaling up from 0.82 over <code>dur-bleed</code>.</li>
+</ul>
+<h2 id="what-moves-by-itself">What moves by itself</h2>
+<p>Only three things, all slow and small: the current stone bobs 4px over 2.8s, the creature breathes (2.5% over 4.2s) and blinks every 2.6–5.2s, and the brook's glints drift. Nothing else loops. No parallax, no autoplaying carousels, no marquee.</p>
+<h2 id="reduced-motion-and-ink-blot">Reduced motion and Ink Blot</h2>
+<ul>
+<li>Under <code>prefers-reduced-motion: reduce</code> every animation and transition in the bundle stops: pages cut, folds and blots swap at once, nougats land without flying, locks simply open, the stone and the creature hold still. Hover lifts stop too.</li>
+<li>Every behavior in <code>bundle.js</code> checks <code>Storeybrook.reducedMotion()</code> when it runs, not once at load, so a person can change the setting mid-visit.</li>
+<li>Ink Blot counts as reduced motion for everyone: e-ink screens cannot show it, and the look is also for people who want none.</li>
+</ul>
+<h2 id="rules">Rules</h2>
+<ul>
+<li>One orchestrated moment per screen. If a page turn and a nougat drop would happen together, start the drop when the turn ends (<code>sb:page</code> fires then).</li>
+<li>Motion never carries meaning alone: the jar's count changes as each nougat lands, and an unlock's toast names what opened.</li>
+<li>No motion over <code>dur-bleed</code>. Anything longer is a scene, and belongs to the game, not the kit.</li>
+</ul></div></article><p class="site-pn"><a class="sb-btn sb-btn--quiet" href="layout.html"><span data-sb-icon="prev"></span>Layout</a><a class="sb-btn sb-btn--secondary" href="iconography.html">Iconography<span data-sb-icon="next"></span></a></p></main></div>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+</body>
+</html>

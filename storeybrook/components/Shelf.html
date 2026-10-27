@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shelf · Storeybrook</title>
+<meta name="description" content="The 99¢ Shelf: game covers standing on a copper board, scrolling sideways, each with a price tag on a string.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Shelf</p><section class="site-live" aria-label="Shelf, live"><div class="pv" style="padding-top:8px"><div class="sb-shelf"><a class="sb-cover sb-cover--new" href="#" style="--tilt:-1deg"><span class="sb-price__string" aria-hidden="true"></span><span class="sb-price"><span class="sb-price__amount">99¢</span><span class="sb-price__each">each</span></span><span class="sb-cover__art"><span class="sb-washes"><i class="sb-wash sb-wash--sky sb-wash--band" style="top:-20%;--h:70%"></i><i class="sb-wash sb-wash--rose" style="--w:60%;left:30%;top:40%"></i></span><span id="c1" style="position:absolute;left:50%;top:52%;translate:-50% -50%;--cw:120px"></span></span><span class="sb-cover__body"><span class="sb-cover__title">AND SO</span><span class="sb-cover__line">Hold a chord until it sings back.</span><span class="sb-cover__meta"><span class="sb-chip sb-chip--sky">Music</span><span class="sb-chip sb-chip--rose">Story</span></span></span></a><a class="sb-cover" href="#" style="--tilt:1deg"><span class="sb-price__string" aria-hidden="true"></span><span class="sb-price"><span class="sb-price__amount">99¢</span><span class="sb-price__each">each</span></span><span class="sb-cover__art"><span class="sb-washes"><i class="sb-wash sb-wash--sun sb-wash--band" style="top:-10%;--h:70%"></i><i class="sb-wash sb-wash--meadow sb-wash--band" style="bottom:-20%;--h:60%"></i></span></span><span class="sb-cover__body"><span class="sb-cover__title">Everfallen</span><span class="sb-cover__line">A night garden, falling into other ground.</span><span class="sb-cover__meta"><span class="sb-chip sb-chip--sun">Faller</span></span></span></a><a class="sb-cover" href="#" style="--tilt:-0.5deg"><span class="sb-price__string" aria-hidden="true"></span><span class="sb-price sb-price--free"><span class="sb-price__amount">Free</span><span class="sb-price__each">to play</span></span><span class="sb-cover__art"><span class="sb-washes"><i class="sb-wash sb-wash--brook" style="--w:70%;left:15%;top:20%"></i></span></span><span class="sb-cover__body"><span class="sb-cover__title">The well</span><span class="sb-cover__line">Drop a word in and wait.</span><span class="sb-cover__meta"><span class="sb-chip sb-chip--lilac">Quiet</span><span class="sb-chip sb-chip--sea">Short</span></span></span></a></div></div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="shelf">Shelf</h1>
+<p>The 99¢ Shelf: game covers standing on a copper board, scrolling sideways, each with a price tag on a string.</p>
+<p><strong>Provide</strong> <code>&lt;div class="sb-shelf"&gt;</code> holding covers. A cover is <code>&lt;a class="sb-cover" href="…"&gt;</code> with:
+- <code>&lt;span class="sb-price__string" aria-hidden="true"&gt;&lt;/span&gt;&lt;span class="sb-price"&gt;&lt;span class="sb-price__amount"&gt;99¢&lt;/span&gt;&lt;span class="sb-price__each"&gt;each&lt;/span&gt;&lt;/span&gt;</code> (<code>sb-price--free</code> turns the amount <code>sap</code>),
+- <code>&lt;span class="sb-cover__art"&gt;</code> (4:3, on <code>surface</code>: washes, the creature, or the game's own art as an image or canvas),
+- <code>&lt;span class="sb-cover__body"&gt;</code> with <code>sb-cover__title</code> (display face), <code>sb-cover__line</code> (one sentence) and <code>sb-cover__meta</code> (two or three Chips).</p>
+<p>Options: <code>sb-cover--new</code> hangs a <code>sap</code> "New" ribbon; <code>--tilt</code> turns a cover a degree or two.</p>
+<ul>
+<li>Covers are <code>page</code> with a spine shadow on the left edge, <code>shadow-page</code>, lifting 6px with <code>shadow-lift</code> on hover and focus; at the TV density the focused cover scales up 7% instead.</li>
+<li>The shelf scrolls sideways with snap points (<code>grid-auto-columns</code> from 200px to <code>size-cover</code>) and sits on a copper board.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do write the price honestly; until a shop exists the page also says "Free to play now".
+- Do mark only one cover as new at a time.
+- Don't wrap the shelf into a grid of identical cards, and never put a countdown or a crossed-out price on a tag.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}if(S)S.creature(document.getElementById('c1'),{stage:2});</script>
+</body>
+</html>

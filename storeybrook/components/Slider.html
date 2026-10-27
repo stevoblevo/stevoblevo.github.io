@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Slider · Storeybrook</title>
+<meta name="description" content="A range on a copper thread with an `accent` bead, for one continuous setting: reading speed, space, volume.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Inputs</p><section class="site-live" aria-label="Slider, live"><div class="pv" style="max-width:420px">
+<label class="sb-slider"><span class="sb-slider__row"><span>Reading speed</span><output id="o">0.96×</output></span>
+<input id="r" type="range" min="0.7" max="1.3" step="0.01" value="0.96"></label>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="slider">Slider</h1>
+<p>A range on a copper thread with an <code>accent</code> bead, for one continuous setting: reading speed, space, volume.</p>
+<p><strong>Provide</strong> <code>&lt;label class="sb-slider"&gt;</code> holding <code>&lt;span class="sb-slider__row"&gt;&lt;span&gt;Reading speed&lt;/span&gt;&lt;output&gt;0.96&lt;/output&gt;&lt;/span&gt;</code> and <code>&lt;input type="range"&gt;</code>. Keep the <code>&lt;output&gt;</code> in step with the value, and set <code>--p</code> on the input to the filled percentage so WebKit draws the copper part of the track (Firefox draws it itself).</p>
+<ul>
+<li>The track is 4px: <code>copper</code> up to the bead, <code>line</code> after it. The bead is 26px with an <code>art-line</code> rim.</li>
+<li>The value in the <code>&lt;output&gt;</code> is tabular so it does not jitter.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do show the value in words or numbers a person understands ("0.96×", "story pace").
+- Don't use a slider for fewer than five steps: use a Choice.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.0.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}var r=document.getElementById('r'),o=document.getElementById('o');function f(){var p=(r.value-r.min)/(r.max-r.min)*100;r.style.setProperty('--p',p+'%');o.textContent=(+r.value).toFixed(2)+'×';}r.addEventListener('input',f);f();</script>
+</body>
+</html>

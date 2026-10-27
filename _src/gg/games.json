@@ -1,0 +1,9 @@
+[
+  {"id": "and-so", "title": "AND SO 7", "sub": "Everfallen", "href": "https://stevoblevo.github.io/and-so/", "line": "Drag a voice into a valley where the notes agree, then jam over a blues in 7-limit tuning.", "chips": [["Music", "sky"], ["Touch", "rose"], ["TV", "sea"]], "art": "andso", "feature": true},
+  {"id": "peachfall", "title": "The Peachfall", "href": "https://stevoblevo.github.io/peachfall/", "line": "Princess Sae falls from the tower, and the world answers with mercy.", "chips": [["Story", "rose"], ["Dream", "lilac"]], "art": "peach"},
+  {"id": "knight-side", "title": "Knight Side", "href": "https://stevoblevo.github.io/knight-side/", "line": "An isometric knight in a lantern-lit world. Every version is a doorway that stays open.", "chips": [["Action RPG", "sun"], ["Isometric", "sky"]], "art": "knight"},
+  {"id": "goober", "title": "Goober", "sub": "The Crossing", "href": "https://stevoblevo.github.io/goober/", "line": "Find your line and make it yours: one world, a field log, and your next good run.", "chips": [["Run", "sea"], ["Field log", "sun"]], "art": "goober"},
+  {"id": "skyknight-raven", "title": "Skyknight Raven", "href": "https://stevoblevo.github.io/skyknight-raven/", "line": "Oasis Dream, from the knight's side. Meet the pieces of Sae; don't collect them.", "chips": [["Dream", "lilac"], ["Night", "sky"]], "art": "raven"},
+  {"id": "well", "title": "The well", "href": "https://stevoblevo.github.io/well/", "line": "One room at cobalt dusk: red rain, peach light, and the water remembers.", "chips": [["Room", "sea"], ["Ambient", "lilac"]], "art": "well"},
+  {"id": "red-reign", "title": "Red Reign", "href": "https://stevoblevo.github.io/red-reign/", "line": "The garden under red rain, in six beats. The way home stays open.", "chips": [["Garden", "rose"], ["Six beats", "sun"]], "art": "garden"}
+]

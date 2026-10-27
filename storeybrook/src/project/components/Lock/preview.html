@@ -1,0 +1,11 @@
+<!-- @dsCard group="Rewards" height=340 -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Lock</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>html,body{margin:0}body.sb-body{min-height:0;background:var(--paper);color:var(--ink);font-family:var(--sb-story)}.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style></head>
+<body class="sb-body">
+<div class="pv"><div class="sb-sheet" style="position:relative;max-width:440px;min-height:150px">
+<h3 class="display-s" style="margin:0 0 6px">Origami</h3><p class="label" style="margin:0">Folded paper on a cutting mat, ten steps to the octave.</p>
+<div class="sb-lock" id="lk"><span class="sb-lock__keyhole"><span data-sb-icon="lock"></span></span><span class="sb-lock__why">Origami is still folded.</span><span class="sb-lock__how">Walk two more stones to open it.</span></div></div>
+<p class="row" style="margin-top:16px"><button class="sb-btn sb-btn--secondary sb-btn--sm" id="op"><span data-sb-icon="key"></span>Open it</button><button class="sb-btn sb-btn--quiet sb-btn--sm" id="rs">Fold it again</button></p></div>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}var lk=document.getElementById('lk');document.getElementById('op').addEventListener('click',function(){if(lk.hidden)return;var rm=S&&S.reducedMotion();if(rm){lk.hidden=true;return;}lk.classList.add('is-opening');setTimeout(function(){lk.hidden=true;lk.classList.remove('is-opening');},700);});document.getElementById('rs').addEventListener('click',function(){lk.hidden=false;});</script></body></html>
