@@ -12,8 +12,8 @@ assert(evidence&&process.env.PLAYWRIGHT_MODULE&&process.env.CHROME_PATH,'Existin
 await mkdir(evidence,{recursive:true});
 const {chromium}=await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE).href);
 const sha=b=>createHash('sha256').update(b).digest('hex');
-const checks=[],pageErrors=[],consoleErrors=[],failedRequests=[];
-const report={kind:'native Chrome pageerror and public-door acceptance',origin,sourceCommit:process.env.SOURCE_COMMIT,testCommit:process.env.GITHUB_SHA,node:process.version,checks,pageErrors,consoleErrors,failedRequests,deployedFiles:[],cases:[]};
+const checks=[],pageErrors=[],consoleErrors=[],failedRequests=[],httpErrors=[];
+const report={kind:'native Chrome pageerror and public-door acceptance',origin,sourceCommit:process.env.SOURCE_COMMIT,testCommit:process.env.GITHUB_SHA,node:process.version,checks,pageErrors,consoleErrors,failedRequests,httpErrors,deployedFiles:[],cases:[]};
 const check=(name,ok)=>{assert(ok,name);checks.push(name);console.log('PASS '+name)};
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 const targets=['cobalt/index.html','goober/play/index.html','peachfall/index.html',
@@ -35,9 +35,10 @@ async function trackedPage(width,height,label){
  const current={label,viewport:{width,height},listenerBeforeNavigation:true,states:[],responses:[]};
  const pending=[];
  page.on('pageerror',error=>pageErrors.push({label,url:page.url(),name:error.name,message:error.message,stack:error.stack}));
- page.on('console',message=>{if(message.type()==='error')consoleErrors.push({label,url:page.url(),text:message.text()})});
+ page.on('console',message=>{if(message.type()==='error')consoleErrors.push({label,url:page.url(),text:message.text(),location:message.location()})});
  page.on('requestfailed',request=>failedRequests.push({label,url:request.url(),error:request.failure()?.errorText}));
  page.on('response',response=>{
+  if(response.status()>=400)httpErrors.push({label,url:response.url(),status:response.status(),resourceType:response.request().resourceType()});
   const u=new URL(response.url());
   if(u.origin!==origin)return;
   const name=u.pathname.endsWith('/')?u.pathname.slice(1)+'index.html':u.pathname.slice(1);
