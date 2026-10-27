@@ -99,16 +99,30 @@ try{
  }
  // A fresh, owned Chrome profile; never attach to a user's existing browser.
  // Official noDefaults avoids Playwright's primary-session focus override.
- const profile=await mkdtemp(path.join(process.env.RUNNER_TEMP||tmpdir(),'saelion-visibility-'));
- chromeProcess=spawn(process.env.CHROME_PATH,['--user-data-dir='+profile,'--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--mute-audio','about:blank'],{stdio:['ignore','ignore','pipe']});
- chromeProcess.stderr.on('data',data=>{chromeStartupLog=(chromeStartupLog+data).slice(-6000)});
- const deadline=Date.now()+15000;let port;
- while(Date.now()<deadline){
-  if(chromeProcess.exitCode!==null)throw Error('Owned Chrome exited before connection: '+chromeStartupLog);
-  try{port=Number((await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);if(port>0)break}catch{}
-  await delay(100);
+ // Some runners export a DBUS_SESSION_BUS_ADDRESS Chrome cannot parse. Chrome
+ // then stays alive and never writes DevToolsActivePort, so drop that address
+ // and try one fresh profile if the first launch does not publish a port.
+ const chromeEnv={...process.env};
+ if(chromeEnv.DBUS_SESSION_BUS_ADDRESS && !/^(unix|tcp):/.test(chromeEnv.DBUS_SESSION_BUS_ADDRESS)) delete chromeEnv.DBUS_SESSION_BUS_ADDRESS;
+ const chromeArgs=['--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--mute-audio','about:blank'];
+ let port=0;
+ for(let attempt=1;attempt<=2 && !(port>0);attempt++){
+  if(chromeProcess && chromeProcess.exitCode===null)chromeProcess.kill('SIGTERM');
+  const profile=await mkdtemp(path.join(process.env.RUNNER_TEMP||tmpdir(),'saelion-visibility-'));
+  chromeStartupLog='';
+  chromeProcess=spawn(process.env.CHROME_PATH,['--user-data-dir='+profile,...chromeArgs],{stdio:['ignore','ignore','pipe'],env:chromeEnv});
+  chromeProcess.stderr.on('data',data=>{chromeStartupLog=(chromeStartupLog+data).slice(-6000)});
+  const deadline=Date.now()+20000;
+  while(Date.now()<deadline){
+   if(chromeProcess.exitCode!==null)break;
+   try{port=Number((await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);if(port>0)break}catch{}
+   await delay(100);
+  }
+  if(!(port>0) && attempt===2){
+   const dbus=process.env.DBUS_SESSION_BUS_ADDRESS?'dbus='+(process.env.DBUS_SESSION_BUS_ADDRESS.split(':')[0]||'empty'):'dbus=unset';
+   assert(port>0,'Owned Chrome did not publish its loopback debugging port ('+dbus+'): '+chromeStartupLog);
+  }
  }
- assert(port>0,'Owned Chrome did not publish its loopback debugging port: '+chromeStartupLog);
  browser=await chromium.connectOverCDP('http://127.0.0.1:'+port,{noDefaults:true});
  report.visibilityEnvironment='fresh owned default Chrome context; Playwright noDefaults=true';
  report.browser=browser.version();
