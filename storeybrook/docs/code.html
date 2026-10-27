@@ -172,7 +172,7 @@
 <li><code>rewards</code>: <code>count()</code>, <code>set(n)</code>, <code>drop(n, {from, to, reason})</code>, <code>paint()</code></li>
 <li><code>unlocks</code>: <code>list()</code>, <code>has(id)</code>, <code>unlock(id, {name, line, toast})</code>, <code>lock(id)</code>, <code>paint()</code>; <code>unlock(id, o)</code> is also on the root</li>
 <li><code>brook(host, {stones, seed, direction, onStep})</code> → <code>{set(id, state), layout(), path, length, vertical}</code></li>
-<li><code>creature(host, {form, stage, mood, blink, idle})</code> → <code>{set(o), get(), stop(), stages}</code>; <code>creatureSVG(o)</code> → string</li>
+<li><code>creature(host, {form, stage, mood, hide, blink, idle})</code> → <code>{set(o), get(), stop(), stages}</code>; <code>creatureSVG(o)</code> → string</li>
 <li><code>spread(host)</code> → <code>{next(), prev(), index(), count}</code></li>
 <li><code>fold(host, swap)</code> and <code>blot(host, {duration})</code> → Promises that settle when the motion ends</li>
 <li><code>drawer.open/close(el)</code>, <code>dialog.open/close(el)</code>, <code>toast(html, {ms})</code></li>

@@ -48,7 +48,7 @@ Load them in that order, set `data-theme` on `<html>` (and `class="sb-root"` for
 - `rewards`: `count()`, `set(n)`, `drop(n, {from, to, reason})`, `paint()`
 - `unlocks`: `list()`, `has(id)`, `unlock(id, {name, line, toast})`, `lock(id)`, `paint()`; `unlock(id, o)` is also on the root
 - `brook(host, {stones, seed, direction, onStep})` → `{set(id, state), layout(), path, length, vertical}`
-- `creature(host, {form, stage, mood, blink, idle})` → `{set(o), get(), stop(), stages}`; `creatureSVG(o)` → string
+- `creature(host, {form, stage, mood, hide, blink, idle})` → `{set(o), get(), stop(), stages}`; `creatureSVG(o)` → string
 - `spread(host)` → `{next(), prev(), index(), count}`
 - `fold(host, swap)` and `blot(host, {duration})` → Promises that settle when the motion ends
 - `drawer.open/close(el)`, `dialog.open/close(el)`, `toast(html, {ms})`
