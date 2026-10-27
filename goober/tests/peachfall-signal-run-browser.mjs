@@ -75,7 +75,12 @@ try{
  await p.keyboard.down('ArrowRight');await delay(150);
  const firstYaw=await p.evaluate(()=>window.__controlsTest.getYaw());
  check('Goober real keyboard turns ship',Math.abs(firstYaw)>.05);
- const other=await c.newPage();await other.goto('about:blank');await other.bringToFront();
+ const visibilitySession=await c.newCDPSession(p);
+ await visibilitySession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
+ const other=await c.newPage();await other.goto('about:blank');
+ const otherSession=await c.newCDPSession(other);
+ await otherSession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
+ await other.bringToFront();
  await p.waitForFunction(()=>document.hidden);
  check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
  check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
@@ -83,7 +88,7 @@ try{
  await p.bringToFront();await p.waitForFunction(()=>!document.hidden);
  const resumedYaw=await p.evaluate(()=>window.__controlsTest.getYaw());await delay(250);
  check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
- await other.close();
+ await otherSession.detach();await other.close();await visibilitySession.detach();
  await nativeCancel(p,'.touch-controls [data-key="ArrowUp"]');
  check('Goober native pointercancel is trusted',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='pointercancel'&&e.trusted&&e.target==='ArrowUp')));
  check('Goober native cancellation releases thrust',await p.evaluate(()=>!keys.has('ArrowUp')));

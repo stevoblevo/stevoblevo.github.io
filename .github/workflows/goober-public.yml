@@ -31,6 +31,8 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Verify public catalog, routes, story contract, and offline shell
         run: node goober/tests/public-contracts.mjs
       - name: Verify image and input regressions
