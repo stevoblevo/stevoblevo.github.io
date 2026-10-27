@@ -32,7 +32,7 @@ const peachCheck = function(source){
 };
 const gooberCheck = async function(source,html){
 const checks=[];function ok(v,n){if(!v)throw Error(n);checks.push(n)}
-const els={},queue=[],events={},window={};let time=100;
+const els={},queue=[],events={},window={addEventListener(){}};let time=100;
 function node(id){return els[id]??={style:{},textContent:"",className:"",events:{},addEventListener(k,f){this.events[k]=f},emit(k,v={}){this.events[k]?.({preventDefault(){},pointerId:1,...v})},focus(){this.focused=true},setPointerCapture(){},getBoundingClientRect(){return {left:0,top:0,width:360,height:210}},getAttribute(k){return k==="data-key"?id:null}}}
 const gradient={addColorStop(){}};
 const ctx=new Proxy({createRadialGradient(){return gradient}}, {get(o,k){return o[k]??(()=>{})},set(o,k,v){o[k]=v;return true}});

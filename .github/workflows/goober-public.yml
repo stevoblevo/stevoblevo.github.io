@@ -33,6 +33,26 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify public catalog, routes, story contract, and offline shell
         run: node goober/tests/public-contracts.mjs
+      - name: Verify image and input regressions
+        run: |
+          node --experimental-vm-modules goober/tests/peachfall-signal-run-model.mjs
+          node goober/tests/peachfall-signal-run-interruptions.mjs
+      - name: Install pinned browser test client without downloading browsers
+        run: npm install --prefix "$RUNNER_TEMP/saelion-browser" --no-save --ignore-scripts --no-audit --no-fund playwright-core@1.64.1
+      - name: Verify real Chrome interruptions and image failures
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/saelion-browser/node_modules/playwright-core/index.mjs
+          EVIDENCE_DIR: ${{ runner.temp }}/public-game-evidence
+        run: |
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium)"
+          xvfb-run -a node goober/tests/peachfall-signal-run-browser.mjs
+      - name: Preserve browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-game-browser-evidence
+          path: ${{ runner.temp }}/public-game-evidence/
+          if-no-files-found: warn
 
 # GitHub Pages publishes the checked-in master branch through its native
 # "pages build and deployment" workflow. This verifier never rewrites goober/,

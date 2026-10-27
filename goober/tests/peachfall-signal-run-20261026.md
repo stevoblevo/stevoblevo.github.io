@@ -76,3 +76,21 @@ Retain the reported passes above; do not count this checklist as newly executed.
 ## Recovery
 
 No live deployment occurs from this candidate. The original repair is commit `6a12a39203c14ec47e9c72ad9b76dc833bc900db`, based on `fa66436579bd80ac775b3c6b9d6edd2a67ecf9a7`. Reverting only the responsive follow-up returns to the original repair candidate; its parent preserves the exact pre-CSS-fix bytes. Each commit's GitHub `.patch` URL is a portable forward patch; `git apply -R` reverses it in a clean matching checkout. Prefer `git revert <follow-up-commit>` on the review branch if recovery is needed. Do not reset a dirty checkout or overwrite newer live work.
+
+## Interrupted-input follow-up — 2026-10-27
+
+The repair branch was reconciled at `79708a3b0cca45c41ea7c10c0bb205dd8fad2e86`, with live master still at `fa66436579bd80ac775b3c6b9d6edd2a67ecf9a7` and no existing PR or workflow run for the candidate.
+
+New source regressions reproduced 11 failing interrupted-input cases on that preimage (one existing canvas-cancel case already passed). The corrected source passes all 12 model cases. These are simulated event targets, not native browser evidence.
+
+- Signal Run clears keyboard, pointer and test steering on blur, hidden-tab/pagehide transitions and restart. Existing visible-tab resume behavior remains; stale input does not resume. Capture loss also releases held controls.
+- Peachfall clears keyboard, touch and queued commands on blur, hidden-tab/pagehide transitions, handles pointer cancellation and capture loss, and captures touch pointers. Normal taps retain their queued action. No saves, art or reviewed CSS bytes change.
+- The original 38-check model entry point remains, with its mock window updated for the added event subscriptions.
+
+The existing read-only verification workflow now also runs these source tests and a bounded real Chrome suite on a clean runner checkout. It uses the runner's installed Chrome under Xvfb and a pinned Playwright client, with no browser download, secret, deployment or write permission. Only the draft PR triggers the candidate workflow; master publication is unchanged.
+
+`goober/tests/peachfall-signal-run-browser.mjs` tests true browser visibility transitions, browser-generated CDP touch cancellation, three history round trips, both Peachfall entries at 390px/desktop, image decode, narrow layout, literal image-request aborts and recovery. App responses are served unchanged from the checkout; only deliberate image aborts are intercepted. Browser audio output is muted. Each run records source hashes, browser version, assertions, failures and screenshots in the `public-game-browser-evidence` Actions artifact.
+
+Browser status is determined by the matching workflow run and its artifact, not by this test plan. Until a passing artifact exists, the new browser suite remains unaccepted. Even a pass does not prove physical touch/notch hardware, full accessibility or cross-browser behavior. Peachfall native cancellation delivery is checked in the browser; controller release semantics also have separate source/model coverage.
+
+Recovery: revert this follow-up to restore the reviewed responsive candidate `79708a3b`. Do not merge or deploy as part of this continuation.

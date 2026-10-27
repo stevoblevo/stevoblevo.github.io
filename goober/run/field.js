@@ -142,7 +142,9 @@ function tick(now){
   draw(thrusting);
   raf=requestAnimationFrame(tick);
 }
+function releaseInput(){keys.clear();pointer=null;steer=0;}
 function reset(){
+  releaseInput();
   x=180;y=230;vx=0;vy=0;heading=0;elapsed=0;last=0;score=0;combo=0;comboMax=0;clean=0;hits=0;lanterns=0;steer=0;
   trail.length=0;crumbs.length=0;ghostPath.length=0;target={x:520,y:210,kind:'spark'};
   if($('line'))$('line').textContent='Collect gold signals. Arrows or WASD. Left and right turn. Up goes.';
@@ -155,7 +157,7 @@ function start(){
   $('start').style.display='none';
 }
 async function finish(){
-  running=false;
+  running=false;releaseInput();
   $('start').style.display='inline-block';
   $('start').textContent='Run it back \u2197';
   $('line').textContent=score+' signals \u00b7 clean '+clean+' \u00b7 combo '+comboMax+' \u00b7 lanterns '+lanterns+'. Local report only.';
@@ -225,19 +227,29 @@ document.addEventListener('keydown',e=>{
   }
 });
 document.addEventListener('keyup',e=>{keys.delete(e.key);if(e.code)keys.delete(e.code);});
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden&&running){paused=true;$('line').textContent='Paused while this tab is hidden.';}
-  else if(running){paused=false;last=performance.now();$('line').textContent='Collect gold signals. Arrows or WASD. Left and right turn. Up goes.';}
-});
+function interruptInput(){
+  releaseInput();
+  if(running){paused=true;$('line').textContent='Paused while this tab is inactive.';}
+}
+function resumeInput(){
+  if(!document.hidden&&running){paused=false;last=performance.now();$('line').textContent='Collect gold signals. Arrows or WASD. Left and right turn. Up goes.';}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)interruptInput();else resumeInput();});
+window.addEventListener('blur',interruptInput);
+window.addEventListener('focus',resumeInput);
+window.addEventListener('pagehide',interruptInput);
+window.addEventListener('pageshow',()=>{releaseInput();resumeInput();});
 canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pointer=toLocal(e);});
 canvas.addEventListener('pointermove',e=>{if(pointer)pointer=toLocal(e);});
 canvas.addEventListener('pointerup',()=>{pointer=null;});
 canvas.addEventListener('pointercancel',()=>{pointer=null;});
+canvas.addEventListener('lostpointercapture',()=>{pointer=null;});
 document.querySelectorAll('.touch-controls button').forEach(btn=>{
   const key=btn.getAttribute('data-key');
   btn.addEventListener('pointerdown',e=>{e.preventDefault();btn.setPointerCapture(e.pointerId);keys.add(key);});
   btn.addEventListener('pointerup',()=>keys.delete(key));
   btn.addEventListener('pointercancel',()=>keys.delete(key));
+  btn.addEventListener('lostpointercapture',()=>keys.delete(key));
 });
 if($('start'))$('start').addEventListener('click',start);
 window.__controlsTest={
