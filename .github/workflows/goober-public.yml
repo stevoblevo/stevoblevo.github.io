@@ -2,7 +2,7 @@ name: Verify checked-in Goober
 
 on:
   push:
-    branches: [master]
+    branches: [master, test/public-door-acceptance-20261027]
     paths:
       - 'goober/**'
       - 'peachfall/**'
@@ -27,6 +27,7 @@ concurrency:
 
 jobs:
   verify:
+    if: github.ref != 'refs/heads/test/public-door-acceptance-20261027'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -75,3 +76,27 @@ jobs:
 # GitHub Pages publishes the checked-in master branch through its native
 # "pages build and deployment" workflow. This verifier never rewrites goober/,
 # commits generated files, pushes to master, or installs the historical archive.
+
+  public-door-acceptance:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/test/public-door-acceptance-20261027'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install existing pinned browser client
+        run: npm install --prefix "$RUNNER_TEMP/saelion-browser" --no-save --ignore-scripts --no-audit --no-fund playwright-core@1.64.1
+      - name: Verify exact public Cobalt and Goober entrance with native pageerror
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/saelion-browser/node_modules/playwright-core/index.mjs
+          EVIDENCE_DIR: ${{ runner.temp }}/public-door-acceptance
+          SOURCE_COMMIT: a6ac2d239863d5c7c1087f52e5e297d059c33cc0
+        run: |
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium)"
+          node goober/tests/public-door-acceptance.mjs
+      - name: Preserve exact acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-door-acceptance
+          path: ${{ runner.temp }}/public-door-acceptance/
+          if-no-files-found: error
