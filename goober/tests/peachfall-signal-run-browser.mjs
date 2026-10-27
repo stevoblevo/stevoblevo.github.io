@@ -135,7 +135,9 @@ try{
  for(let n=0;n<3;n++){
   await p.keyboard.down('ArrowRight');await delay(50);
   await p.goto(origin+'/peachfall/play.html');
-  await p.goBack();await p.waitForFunction(()=>!!window.__controlsTest);
+  await p.goBack({waitUntil:'commit'});
+  await p.waitForURL(origin+'/goober/run/',{waitUntil:'commit'});
+  await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest);
   await p.keyboard.up('ArrowRight');
   check('Goober history return clears input '+n,await p.evaluate(()=>keys.size===0&&pointer===null));
  }
