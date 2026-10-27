@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-26",
+  "repository": "stevoblevo/stevoblevo.github.io",
+  "base_commit": "fa66436579bd80ac775b3c6b9d6edd2a67ecf9a7",
+  "source_pins": {
+    "peachfall/assets/main-BPeuWIE_.js": "a19329a8cd7c91a1c412107007a45eef7d3559ed",
+    "goober/run/index.html": "a708756cd94ee24da7e4ec6917bacda597b4f206",
+    "goober/run/field.js": "2c4546e0a2f67bcf86d8a3ba85be17bbc1440a76",
+    "cobalt/index.html": "27e38e2c7b21e31df8e51dc8ef571d86dea8c6d4"
+  },
+  "checks_executed": {
+    "environment": "JavaScript isolate, explicit DOM/canvas/storage stand-ins; no browser",
+    "peachfall": [
+      "draw helper boundary exists",
+      "missing image safely skipped",
+      "loading image safely skipped",
+      "broken image safely skipped",
+      "zero-height image safely skipped",
+      "missing-dimensions image safely skipped",
+      "decoded image draws even when layout dimensions are zero",
+      "draw coordinates are finite",
+      "natural dimensions preserve cover scale",
+      "normal drawing restores canvas stack",
+      "unexpected drawing error restores canvas state and remains visible",
+      "wrong root image literals removed",
+      "all three anchors resolved relative to module",
+      "bundle parse with import.meta URL substituted for function parser"
+    ],
+    "goober": [
+      "load renders idle; no run starts automatically",
+      "runtime DOM contract: field",
+      "runtime DOM contract: hud-score",
+      "runtime DOM contract: hud-time",
+      "runtime DOM contract: hud-combo",
+      "runtime DOM contract: line",
+      "runtime DOM contract: start",
+      "runtime DOM contract: status",
+      "Start focuses canvas and starts run",
+      "right handler turns",
+      "keyup releases turning",
+      "touch thrust handler moves",
+      "touch cancellation releases thrust",
+      "360px canvas pointer maps to logical coordinates",
+      "canvas pointer cancellation clears target",
+      "hidden running tab pauses movement",
+      "current authored resume behavior retained",
+      "45-second finish restores restart",
+      "storage denial is visible without stopping finish",
+      "restart resets run state"
+    ]
+  },
+  "not_executed": [
+    "Node filesystem/module parser test entry point",
+    "existing goober/tests/public-contracts.mjs",
+    "real-browser gameplay/image decode/responsive acceptance",
+    "screenshots"
+  ],
+  "deployment": "not deployed; candidate branch only"
+}
