@@ -126,10 +126,10 @@ a.door span{display:block;font-size:.82rem;opacity:.78;margin-top:.25rem}
 <p class="note">Everything here is local. No audio, no mic, no upload. The fruit is a choice, not a score. · <a href="/">ways list</a></p>
 </main>
 <script>
-const sky = document.getElementById('sky);
-const line = document.getElementById('line);
-const log = document.getElementById('log);
-const rainCv = document.getElementById('rain);
+const sky = document.getElementById('sky');
+const line = document.getElementById('line');
+const log = document.getElementById('log');
+const rainCv = document.getElementById('rain');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const BEATS = [
   {w:'rain', line:'the water remembers.', log:'Red rain on the cobalt well. The fruit is still.'},
@@ -145,12 +145,12 @@ function paint(){
   line.textContent = b.line;
   log.textContent = b.log;
   ['w-rain','w-peach','w-quiet'].forEach(id => document.getElementById(id).classList.remove('on'));
-  document.getElementById('w-'+weather).classList.add('on);
-  rain(weather === 'rain);
+  document.getElementById('w-'+weather).classList.add('on');
+  rain(weather === 'rain');
   try { localStorage.setItem('wellPos', String(i)); } catch(e){} }
 function rain(on){
   if(!rainCv) return;
-  const ctx = rainCv.getContext('2d);
+  const ctx = rainCv.getContext('2d');
   if(!on || reduce){ ctx.clearRect(0,0,rainCv.width,rainCv.height); rainCv._stop = true; return; }
   rainCv._stop = false;
   const drops = Array.from({length:40}, () => ({x:Math.random(), y:Math.random(), v:0.004+Math.random()*0.008, len:0.04+Math.random()*0.05}));
@@ -173,10 +173,10 @@ sky.addEventListener('click', () => { i = (i+1) % BEATS.length; paint(); });
 document.querySelectorAll('.fruit').forEach(f => f.addEventListener('click', e => {
   e.stopPropagation();
   log.textContent = 'you chose the ' + f.dataset.fruit + '. the world grows a little.';
-  f.classList.add('on);
+  f.classList.add('on');
   setTimeout(() => f.classList.remove('on'), 1600); }));
 try {
-  const s = localStorage.getItem('wellPos);
+  const s = localStorage.getItem('wellPos');
   const n = s === null || s.trim() === '' ? NaN : Number(s);
   if(Number.isInteger(n) && n >= 0 && n < BEATS.length) i = n;
 } catch(e){} 
