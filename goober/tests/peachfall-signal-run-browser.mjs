@@ -12,7 +12,7 @@ assert(process.env.PLAYWRIGHT_MODULE&&process.env.CHROME_PATH,'Use existing Play
 const {chromium}=await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE).href);
 await mkdir(evidence,{recursive:true});
 const checks=[],pageErrors=[],failedRequests=[];
-const report={kind:'real Chrome, isolated guest profiles, unchanged served source',checks,pageErrors,failedRequests,sourceHashes:{}};
+const report={kind:'real Chrome, isolated guest profiles, unchanged served source',checks,pageErrors,failedRequests,sourceHashes:{},blockedChecks:[]};
 for(const p of ['peachfall/assets/main-BPeuWIE_.js','peachfall/assets/main-CVicfXhU.css','goober/run/index.html','goober/run/field.js']){
  report.sourceHashes[p]=createHash('sha256').update(await readFile(path.join(root,p))).digest('hex');
 }
@@ -81,13 +81,25 @@ try{
  const otherSession=await c.newCDPSession(other);
  await otherSession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
  await other.bringToFront();
- await p.waitForFunction(()=>document.hidden);
- check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
- check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
+ let hiddenObserved=false;
+ try{
+  // Animation-frame polling cannot observe a page once its frames are suspended.
+  await p.waitForFunction(()=>document.hidden,null,{polling:50,timeout:5000});
+  hiddenObserved=true;
+ }catch(error){
+  const observed=await p.evaluate(()=>({hidden:document.hidden,focused:document.hasFocus(),events:window.__repairEvents}));
+  if(observed.hidden)throw error;
+  report.blockedChecks.push({name:'true hidden-tab transition',reason:'Runner did not make the background page hidden',observed});
+ }
+ if(hiddenObserved){
+  check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
+  check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
+ }
  await other.keyboard.up('ArrowRight');
- await p.bringToFront();await p.waitForFunction(()=>!document.hidden);
+ await p.bringToFront();await p.waitForFunction(()=>!document.hidden,null,{polling:50});
  const resumedYaw=await p.evaluate(()=>window.__controlsTest.getYaw());await delay(250);
- check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
+ if(hiddenObserved)check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
+ await p.keyboard.up('ArrowRight');
  await otherSession.detach();await other.close();await visibilitySession.detach();
  await nativeCancel(p,'.touch-controls [data-key="ArrowUp"]');
  check('Goober native pointercancel is trusted',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='pointercancel'&&e.trusted&&e.target==='ArrowUp')));
@@ -155,7 +167,8 @@ try{
  await delay(500);check('Normal reload recovers after request abort',recovered.length===3&&recovered.every(s=>s===200));
  await failed.close();
  check('No uncaught page errors across tested routes',pageErrors.length===0);
- report.status='passed';
+ report.status=report.blockedChecks.length?'partial':'passed';
+ if(report.blockedChecks.length)process.exitCode=1;
 }catch(error){report.status='failed';report.error=String(error.stack||error);process.exitCode=1}
 finally{
  if(browser)await browser.close();
