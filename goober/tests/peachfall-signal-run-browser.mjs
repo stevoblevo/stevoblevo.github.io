@@ -47,6 +47,10 @@ async function context(options={},existing){
  await c.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort('blockedbyclient'));
  await c.addInitScript(()=>{
   window.__repairEvents=[];
+  window.__repairKeyups=[];
+  window.__repairPageShows=[];
+  document.addEventListener('keyup',e=>window.__repairKeyups.push({key:e.key,trusted:e.isTrusted}));
+  window.addEventListener('pageshow',e=>window.__repairPageShows.push({persisted:e.persisted,trusted:e.isTrusted}));
   document.addEventListener('visibilitychange',e=>window.__repairEvents.push({type:e.type,hidden:document.hidden,trusted:e.isTrusted}));
   document.addEventListener('pointercancel',e=>window.__repairEvents.push({type:e.type,trusted:e.isTrusted,target:e.target.id||e.target.getAttribute('data-key')||e.target.getAttribute('data-dir')}));
  });
@@ -131,15 +135,23 @@ try{
  await nativeCancel(p,'#field');
  check('Goober native canvas cancellation clears target',await p.evaluate(()=>pointer===null&&window.__repairEvents.some(e=>e.type==='pointercancel'&&e.trusted&&e.target==='field')));
  await p.screenshot({path:path.join(evidence,'goober-desktop.png'),fullPage:true});
- // Browser history navigation while input is held: no old control state on return.
+ // Hold the automation key across departure/return; release only after inspecting app state.
+ report.historyHeldInput=[];
  for(let n=0;n<3;n++){
-  await p.keyboard.down('ArrowRight');await delay(50);
-  await p.goto(origin+'/peachfall/play.html');
-  await p.goBack({waitUntil:'commit'});
-  await p.waitForURL(origin+'/goober/run/',{waitUntil:'commit'});
-  await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest);
-  await p.keyboard.up('ArrowRight');
-  check('Goober history return clears input '+n,await p.evaluate(()=>keys.size===0&&pointer===null));
+  try{
+   await p.evaluate(()=>{window.__repairKeyups=[]});
+   await p.keyboard.down('ArrowRight');await delay(50);
+   check('Goober held key reaches application before history departure '+n,await p.evaluate(()=>keys.has('ArrowRight')));
+   await p.goto(origin+'/peachfall/play.html');
+   await p.goBack({waitUntil:'commit'});
+   await p.waitForURL(origin+'/goober/run/',{waitUntil:'commit'});
+   await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest);
+   const state=await p.evaluate(()=>({keys:[...keys],pointer,keyupEvents:window.__repairKeyups,pageShow:window.__repairPageShows.at(-1)||null}));
+   report.historyHeldInput.push({roundTrip:n,harnessKeyupSentBeforeAssertion:false,...state});
+   check('Goober history return clears input before automation key release '+n,state.keys.length===0&&state.pointer===null);
+  }finally{
+   if(!p.isClosed())await p.keyboard.up('ArrowRight');
+  }
  }
  await p.close();
  for(const width of [390,1280]){

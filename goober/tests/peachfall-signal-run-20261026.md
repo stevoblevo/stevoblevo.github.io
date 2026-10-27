@@ -94,3 +94,13 @@ The existing read-only verification workflow now also runs these source tests an
 Browser status is determined by the matching workflow run and its artifact, not by this test plan. Until a passing artifact exists, the new browser suite remains unaccepted. Even a pass does not prove physical touch/notch hardware, full accessibility or cross-browser behavior. Peachfall native cancellation delivery is checked in the browser; controller release semantics also have separate source/model coverage.
 
 Recovery: revert this follow-up to restore the reviewed responsive candidate `79708a3b`. Do not merge or deploy as part of this continuation.
+
+## Stronger held-key history evidence — 2026-10-27
+
+The prior browser run on `851c995729522f0750de9092f98b154919638c1f` verified navigation, but released the automation key before checking the application's held-input state. It therefore did not independently establish held-key release through history navigation.
+
+The follow-up changes only this test and its evidence notes. For each of three round trips, the test now confirms ArrowRight reaches the game's input set, navigates away and back without sending keyup, and asserts the returned input set is empty and pointer target is null **before** releasing the automation key. Keyup cleanup remains in `finally`.
+
+The browser report records each pre-release state, observed keyup events, and whether the returned `pageshow` was a trusted back/forward-cache restoration. This separates cached-page recovery from a fresh document and exposes browser-generated release behavior rather than assuming it.
+
+This is a held browser-automation key, not a physical keyboard measurement. Any keyup synthesized by the browser is recorded; physical input hardware remains outside this evidence. A matching passing CI run is required before claiming the stronger test passed. Application source, reviewed CSS and save behavior are unchanged.
