@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="AND SO 7 before and after the light-look fix, both builds running live: wipe across them, see them side by side, or flip between them.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>Light Looks Diff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=DynaPuff:wdth,wght@75..100,500..700&display=swap">
+<style>
+/* layout: a control strip over one stage that holds the two live builds: wiped across each other, side by side, or one at a time.
+   Storeybrook paper by day, Knight Night after dark; copper marks the old build, cerulean the new one */
+:root {
+  --paper: #f4f6f2; --page: #ffffff; --ink: #26323f; --muted: #55616c; --line: #cdd5ca; --focus: #2a6a9c; --press: #e2e9ea;
+  --before: #8c5a2b; --after: #2a6a9c;
+  --f-ui: "Andika", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-display: "DynaPuff", "Arial Rounded MT Bold", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #1c2838; --page: #24334a; --ink: #f4efe6; --muted: #b7c2d2; --line: #3d4f6b; --focus: #f0c75e; --press: #35475f; --before: #e3b27a; --after: #8fb4e8; color-scheme: dark } }
+:root[data-theme="dark"] { --paper: #1c2838; --page: #24334a; --ink: #f4efe6; --muted: #b7c2d2; --line: #3d4f6b; --focus: #f0c75e; --press: #35475f; --before: #e3b27a; --after: #8fb4e8; color-scheme: dark }
+html, body { height: 100% }
+body { display: flex; flex-direction: column; gap: 10px; background: var(--paper); color: var(--ink); font: 15px/1.4 var(--f-ui); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px }
+h1 { margin: 0; font: 600 22px/1.15 var(--f-display); font-variation-settings: "wdth" 85; text-wrap: balance }
+.lede { margin: 0; color: var(--muted); max-width: 76ch }
+.lede b { font-weight: 700 }
+.lede .b { color: var(--before) } .lede .a { color: var(--after) }
+.bar { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px }
+.field { display: grid; gap: 3px; min-width: 0 }
+.field > span { font-size: 12px; color: var(--muted) }
+select { font: inherit; font-size: 14px; color: var(--ink); background: var(--page); border: 1.5px solid var(--line); border-radius: 10px; padding: 6px 10px; min-height: 38px; max-width: 100% }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--page) }
+.seg button { font: inherit; font-size: 14px; color: var(--ink); background: none; border: 0; padding: 7px 12px; min-height: 38px; cursor: pointer; white-space: nowrap }
+.seg button + button { border-left: 1.5px solid var(--line) }
+.seg button[aria-pressed="true"] { background: var(--press); font-weight: 700 }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: var(--c) }
+:is(button, select, [role="slider"]):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px }
+.note { margin: 0; font-size: 13px; color: var(--muted) }
+.stage { position: relative; flex: 1; min-height: 360px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+body:is([data-mode="before"], [data-mode="after"], [data-mode="wipe"]) .stage { grid-template-columns: 1fr }
+.pane { position: relative; display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0 }
+.pane.is-off { position: absolute; inset: 0; visibility: hidden; pointer-events: none }
+.tag { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; font-size: 13px; color: var(--muted) }
+.tag b { font-size: 15px; color: var(--ink) }
+.zoom { margin-left: auto; font-variant-numeric: tabular-nums }
+.screen { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; border-radius: 12px; background: color-mix(in srgb, var(--c) 10%, var(--paper)); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c) 50%, transparent); overflow: hidden }
+.fit { position: relative; overflow: hidden; border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, .18) }
+.fit iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: #fff }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px; pointer-events: none }
+.pane:not(.is-loading) .loading { display: none }
+body[data-screen="fill"] .screen { place-items: stretch }
+body[data-screen="fill"] .fit { border-radius: 0; box-shadow: none }
+/* wipe: both builds in one place, the new one cut away left of the line you drag */
+body[data-mode="wipe"] .pane { position: absolute; inset: 0 }
+body[data-mode="wipe"] .pane .tag { visibility: hidden }
+body[data-mode="wipe"] .screen { background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--line) }
+body[data-mode="wipe"] #pAfter .screen { clip-path: inset(0 0 0 var(--cut, 50%)); background: transparent; box-shadow: none }
+body[data-mode="wipe"] #pAfter { pointer-events: none }   /* clicks left of the line reach the before build */
+body[data-mode="wipe"] #pAfter .screen { pointer-events: auto }
+body.dragging iframe { pointer-events: none }
+.wipe { display: none; position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 0; z-index: 3 }
+body[data-mode="wipe"] .wipe { display: block }
+.wipe::before { content: ""; position: absolute; top: 26px; bottom: 0; left: -1.5px; width: 3px; background: var(--ink); opacity: .85 }
+.wipe .grip { position: absolute; top: 50%; left: 0; translate: -50% -50%; width: 46px; height: 46px; border-radius: 50%; background: var(--page); border: 2px solid var(--ink); display: grid; place-items: center; cursor: ew-resize; touch-action: none; box-shadow: 0 3px 10px rgba(0, 0, 0, .25); color: var(--ink); font-size: 18px; line-height: 1 }
+.wipe .lab { position: absolute; top: 0; white-space: nowrap; font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--page); border: 1.5px solid var(--c); color: var(--ink) }
+.wipe .lab.l { right: 8px } .wipe .lab.r { left: 8px }
+.flip { display: none }
+footer { font-size: 12.5px; color: var(--muted) }
+kbd { font: inherit; font-weight: 700; color: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; background: var(--page) }
+@media (max-width: 900px) { body[data-mode="side"] .stage { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr } }
+@media (max-width: 700px) {
+  html, body { height: auto }
+  .bar { display: grid; grid-template-columns: 1fr 1fr; align-items: end }
+  .bar .field.wide { grid-column: 1 / -1 }
+  .bar select { width: 100% }
+  .seg { display: flex } .seg button { flex: 1; padding-inline: 6px }
+  .stage { flex: none; height: 78vh; min-height: 420px }
+  body:is([data-mode="before"], [data-mode="after"]) .flip { display: inline-block }
+  footer .keys { display: none }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Light looks, before and after</h1>
+  <p class="lede">Both builds of AND SO 7 run live here, on your own screen. <b class="b">Before</b> is what github.io served until 1:44 pm today (build a6ac2d2). <b class="a">After</b> is what it serves now (a9888b5).</p>
+</header>
+
+<div class="bar" role="toolbar" aria-label="Compare the builds">
+  <div class="field wide"><span id="lCmp">Compare</span>
+    <div class="seg" role="group" aria-labelledby="lCmp">
+      <button type="button" data-mode="wipe" aria-pressed="false">Wipe</button>
+      <button type="button" data-mode="side" aria-pressed="false">Side by side</button>
+      <button type="button" data-mode="before" aria-pressed="false" style="--c: var(--before)"><span class="dot"></span>Before</button>
+      <button type="button" data-mode="after" aria-pressed="false" style="--c: var(--after)"><span class="dot"></span>After</button>
+    </div>
+  </div>
+  <label class="field"><span>Look</span>
+    <select id="sLook">
+      <option value="sb-daylight">Meta Daylight</option><option value="sb-inkblot">Ink Blot</option><option value="sb-comix">Comix</option>
+      <option value="sb-origami">Origami</option><option value="sb-skein">Skein silk</option><option value="daybreak">Daybreak (6.x)</option>
+      <option value="story">Story (6.x)</option><option value="eink">E-ink (6.x)</option><option value="bw2">Two colors (6.x)</option>
+      <option value="sb-knight">Knight Night (dark, unchanged)</option>
+    </select></label>
+  <label class="field"><span>Screen</span><select id="sScreen"></select></label>
+  <div class="field"><span id="lPlace">Where</span>
+    <div class="seg" role="group" aria-labelledby="lPlace">
+      <button type="button" data-place="title" aria-pressed="false">Title page</button>
+      <button type="button" data-place="game" aria-pressed="true">In the game</button>
+    </div>
+  </div>
+  <label class="field"><span>View</span>
+    <select id="sView"><option value="mandala">Mandala</option><option value="cymatics">Cymatics</option><option value="cube">Lattice cube</option></select></label>
+  <label class="field"><span>Tuning</span>
+    <select id="sTuning"><option value="easy">Easy listening</option><option value="just">Just (7-limit)</option><option value="bp">Bohlen–Pierce</option><option value="tet31">31-EDO</option><option value="gamelan">Gamelan</option></select></label>
+  <label class="field"><span>Sound</span>
+    <select id="sSound"><option value="off">Off</option><option value="before">From before</option><option value="after">From after</option></select></label>
+  <div class="field flip"><span>&nbsp;</span><button type="button" class="seg" id="bFlip" style="padding: 7px 14px; min-height: 38px; font: inherit; font-weight: 700; color: var(--ink)">Flip</button></div>
+</div>
+<p class="note" id="note"></p>
+
+<main class="stage" id="stage">
+  <section class="pane is-loading" id="pBefore" style="--c: var(--before)" aria-label="Before">
+    <div class="tag"><b><span class="dot"></span>Before</b><span>github.io until 1:44 pm today · a6ac2d2</span><span class="zoom"></span></div>
+    <div class="screen"><div class="fit"><iframe id="fBefore" title="AND SO 7 before the fix" allow="autoplay"></iframe></div><div class="loading">Loading the before build…</div></div>
+  </section>
+  <section class="pane is-loading" id="pAfter" style="--c: var(--after)" aria-label="After">
+    <div class="tag"><b><span class="dot"></span>After</b><span>github.io now · a9888b5</span><span class="zoom"></span></div>
+    <div class="screen"><div class="fit"><iframe id="fAfter" title="AND SO 7 after the fix" allow="autoplay"></iframe></div><div class="loading">Loading the after build…</div></div>
+  </section>
+  <div class="wipe" id="wipe">
+    <span class="lab l" style="--c: var(--before)">Before</span><span class="lab r" style="--c: var(--after)">After</span>
+    <div class="grip" id="grip" role="slider" tabindex="0" aria-label="Where the two builds meet" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">⇔</div>
+  </div>
+</main>
+
+<footer id="foot"><span class="keys">Keys: <kbd>W</kbd> wipe (<kbd>←</kbd> <kbd>→</kbd> move the line), <kbd>S</kbd> side by side, <kbd>B</kbd> before, <kbd>A</kbd> after, <kbd>Space</kbd> flips between them. </span><span id="start">Click inside either build to play it. Both start as a first visit; nothing they do is saved.</span></footer>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const KEYS = ['before', 'after'];
+  const FILE = { before: 'before.html', after: 'after.html' };
+  const PANE = { before: $('#pBefore'), after: $('#pAfter') };
+  const FRAME = { before: $('#fBefore'), after: $('#fAfter') };
+  const HTML = {};
+  const small = Math.min(screen.width || innerWidth, innerWidth) < 700;
+  // the look you last played in this browser (AND SO's own save), so both builds open the way you saw them
+  const LOOKS = [...document.querySelectorAll('#sLook option')].map(o => o.value);
+  const saved = (() => { for (const key of ['andso:v7', 'andso:v2']) { try { const s = JSON.parse(localStorage.getItem(key) || 'null'); if (s && typeof s === 'object') return s; } catch (e) {} } return null; })();
+  const S = { mode: small ? 'before' : 'wipe', look: saved && LOOKS.includes(saved.skin) ? saved.skin : 'sb-daylight', screen: small ? 'fill' : 'yours', place: 'game', view: 'mandala', tuning: 'easy', sound: 'off', cut: 0.5 };
+  const NOTES = {
+    wipe: 'Drag the line across: left of it is before, right of it is after. Both copies share this tab, so each may draw a little softer than github.io does on its own.',
+    side: 'Both copies share this tab, so each may draw a little softer than github.io does on its own. Before or After alone runs one copy at full speed and pauses the other.',
+    before: 'One copy at a time, at full speed; the other waits paused. Flip to compare.',
+    after: 'One copy at a time, at full speed; the other waits paused. Flip to compare.'
+  };
+
+  // ---- the screen sizes the builds are laid out at, then scaled to fit ----
+  const yours = () => [Math.round(Math.max(320, screen.availWidth || innerWidth)), Math.round(Math.max(320, (screen.availHeight || innerHeight) - 96))];
+  const SCREENS = [
+    ['yours', () => { const [w, h] = yours(); return `Your screen · ${w} × ${h}`; }], ['fill', () => 'Fill this page, full size'],
+    ['laptop', () => 'Laptop · 1440 × 900'], ['k5', () => '5K display · 2560 × 1440'], ['tv', () => 'TV · 1920 × 1080'], ['phone', () => 'Phone · 390 × 844']
+  ];
+  const sizeOf = (key, box) => ({ yours: yours(), laptop: [1440, 900], k5: [2560, 1440], tv: [1920, 1080], phone: [390, 844] }[key] || [Math.max(320, Math.floor(box.width)), Math.max(240, Math.floor(box.height))]);
+  $('#sScreen').innerHTML = SCREENS.map(([v, f]) => `<option value="${v}">${f()}</option>`).join('');
+
+  // ---- the two builds, byte for byte what github.io served; only their test hooks are switched on, as ?debug does there ----
+  async function build(k) {
+    if (HTML[k]) return HTML[k];
+    const r = await fetch(FILE[k]); if (!r.ok) throw new Error(`Couldn't load ${FILE[k]} (${r.status}). Reload the page to try again.`);
+    let h = await r.text(); const gate = '/[?&]debug\\b/.test(location.search)) window.__andso';
+    if (h.includes(gate)) h = h.replace(gate, 'true) window.__andso');
+    return (HTML[k] = h.replace('<head>', '<head>' + SHIM));
+  }
+  // each build gets a copy of this browser's storage to read, and nothing it writes goes back: your own save stays as it was
+  const SHIM = '<script>(function(){try{var real=null;try{real=window.parent.localStorage}catch(e){}var mem={},o=Object.prototype.hasOwnProperty;if(real){for(var i=0;i<real.length;i++){var k=real.key(i);if(k)mem[k]=real.getItem(k)}}var s={getItem:function(k){return o.call(mem,k)?mem[k]:null},setItem:function(k,v){mem[k]=String(v)},removeItem:function(k){delete mem[k]},clear:function(){mem={}},key:function(i){return Object.keys(mem)[i]||null}};Object.defineProperty(s,"length",{get:function(){return Object.keys(mem).length}});Object.defineProperty(window,"localStorage",{value:s,configurable:true})}catch(e){}})();<\/script>';
+  const api = k => { try { return FRAME[k].contentWindow.__andso || null; } catch (e) { return null; } };
+  const doc = k => { try { return FRAME[k].contentDocument; } catch (e) { return null; } };
+  const inGame = k => { const d = doc(k); return !!(d && d.body && !d.body.classList.contains('landing')); };
+  const each = fn => KEYS.forEach(k => { const a = api(k); if (a) try { fn(a, k); } catch (e) {} });
+
+  // the build out of view waits: its animation frames are held, and the time it waited is taken out, so it resumes without a jump
+  function wrapFrames(f) {
+    const w = f.contentWindow; if (!w || w.__wrapped) return;
+    const raf = w.requestAnimationFrame.bind(w), st = { frozen: false, queued: null, offset: 0, at: 0 };
+    w.requestAnimationFrame = cb => (st.frozen ? ((st.queued = cb), 0) : raf(ts => cb(ts - st.offset)));
+    w.__wrapped = true; f.__st = st; f.__raf = raf;
+  }
+  function pause(k, on) {
+    const f = FRAME[k], st = f.__st; if (!st || st.frozen === on) return;
+    if (on) { st.frozen = true; st.at = performance.now(); return; }
+    st.offset += performance.now() - st.at; st.frozen = false;
+    if (st.queued) { const cb = st.queued; st.queued = null; f.__raf(ts => cb(ts - st.offset)); }
+  }
+  const shows = k => S.mode === 'side' || S.mode === 'wipe' || S.mode === k;
+
+  function sound(k) { const d = doc(k), b = d && d.getElementById('bSnd'); if (!b) return; const on = /\bon\b/.test(b.textContent), want = S.sound === k; if (on !== want) b.click(); }
+  function settle(k) {   // once a build is in: the chosen look, view and tuning, and whether it may make sound
+    const a = api(k); if (!a) return;
+    try { a.setSkin(S.look, true); } catch (e) {}
+    try { a.setViewMode(S.view); } catch (e) {}
+    try { if (S.tuning !== 'easy') a.setMode(S.tuning); } catch (e) {}
+    sound(k);
+  }
+  function enter(k) {
+    const d = doc(k), b = d && d.getElementById('enter'); if (!b) return;
+    if (!inGame(k)) b.click();
+    setTimeout(() => settle(k), 2200);   // the game turns on easy listening 1.6 s in; settle after it
+  }
+  async function load(k) {
+    const f = FRAME[k], pane = PANE[k]; pane.classList.add('is-loading');
+    let html; try { html = await build(k); } catch (e) { pane.querySelector('.loading').textContent = e.message; return; }
+    f.onload = () => {
+      wrapFrames(f); pane.classList.remove('is-loading');
+      const a = api(k); if (a) try { a.setSkin(S.look, true); } catch (e) {}
+      sound(k);
+      if (S.place === 'game') setTimeout(() => enter(k), 600);
+      if (!shows(k)) setTimeout(() => { if (!shows(k)) pause(k, true); }, 3200);
+      layout();
+    };
+    f.srcdoc = html;
+  }
+
+  // ---- layout: each build at its screen size, scaled into the stage ----
+  function layout() {
+    document.body.dataset.screen = S.screen;
+    const shown = KEYS.find(k => !PANE[k].classList.contains('is-off')), shownBox = shown && PANE[shown].querySelector('.screen').getBoundingClientRect();
+    KEYS.forEach(k => {
+      const pane = PANE[k], off = pane.classList.contains('is-off');
+      if (off && FRAME[k].style.width) return;   // the paused one keeps its size, so it never re-lays itself out
+      const box = off ? shownBox : pane.querySelector('.screen').getBoundingClientRect(); if (!box || box.width < 20 || box.height < 20) return;
+      const [w, h] = sizeOf(S.screen, box), z = S.screen === 'fill' ? 1 : Math.min(box.width / w, box.height / h);
+      const f = FRAME[k], fit = pane.querySelector('.fit');
+      f.style.width = w + 'px'; f.style.height = h + 'px'; f.style.transform = z === 1 ? 'none' : `scale(${z})`;
+      fit.style.width = Math.floor(w * z) + 'px'; fit.style.height = Math.floor(h * z) + 'px';
+      pane.querySelector('.zoom').textContent = z > 0.985 ? `${w} × ${h}, full size` : `${w} × ${h} at ${Math.round(z * 100)}%`;
+    });
+    placeCut();
+  }
+  // the wipe line lives within the picture, not the whole stage
+  function placeCut() {
+    const st = $('#stage').getBoundingClientRect(), fit = PANE.before.querySelector('.fit').getBoundingClientRect();
+    const x = fit.width > 0 ? fit.left - st.left + fit.width * S.cut : st.width * S.cut;
+    $('#stage').style.setProperty('--cut', Math.round(x) + 'px');
+    const g = $('#grip'); g.setAttribute('aria-valuenow', String(Math.round(S.cut * 100))); g.setAttribute('aria-valuetext', `${Math.round(S.cut * 100)}% before, ${100 - Math.round(S.cut * 100)}% after`);
+  }
+  function setMode(m) {
+    S.mode = m; document.body.dataset.mode = m;
+    KEYS.forEach(k => { const on = shows(k); PANE[k].classList.toggle('is-off', !on); pause(k, !on); });
+    document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    $('#note').textContent = NOTES[m];
+    requestAnimationFrame(layout);
+  }
+  function setPlace(p) {
+    S.place = p; document.querySelectorAll('[data-place]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.place === p)));
+    if (p === 'title') KEYS.forEach(load);   // a fresh start, on the title page
+    else KEYS.forEach(k => { pause(k, false); enter(k); if (!shows(k)) setTimeout(() => { if (!shows(k)) pause(k, true); }, 3000); });
+  }
+
+  // ---- the wipe line ----
+  const grip = $('#grip');
+  function cutFrom(clientX) { const fit = PANE.before.querySelector('.fit').getBoundingClientRect(); if (fit.width < 1) return; S.cut = Math.min(1, Math.max(0, (clientX - fit.left) / fit.width)); placeCut(); }
+  grip.addEventListener('pointerdown', e => { e.preventDefault(); grip.setPointerCapture(e.pointerId); document.body.classList.add('dragging'); });
+  grip.addEventListener('pointermove', e => { if (grip.hasPointerCapture(e.pointerId)) cutFrom(e.clientX); });
+  const drop = e => { if (grip.hasPointerCapture(e.pointerId)) grip.releasePointerCapture(e.pointerId); document.body.classList.remove('dragging'); };
+  grip.addEventListener('pointerup', drop); grip.addEventListener('pointercancel', drop);
+  grip.addEventListener('keydown', e => { const d = e.key === 'ArrowLeft' ? -0.04 : e.key === 'ArrowRight' ? 0.04 : 0; if (d) { e.preventDefault(); e.stopPropagation(); S.cut = Math.min(1, Math.max(0, S.cut + d)); placeCut(); } });
+
+  // ---- controls ----
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  document.querySelectorAll('[data-place]').forEach(b => b.addEventListener('click', () => setPlace(b.dataset.place)));
+  $('#bFlip').addEventListener('click', () => setMode(S.mode === 'before' ? 'after' : 'before'));
+  $('#sLook').addEventListener('change', e => { S.look = e.target.value; each(a => a.setSkin(S.look, true)); });
+  $('#sScreen').addEventListener('change', e => { S.screen = e.target.value; KEYS.forEach(k => { FRAME[k].style.width = ''; }); layout(); });
+  $('#sView').addEventListener('change', e => { S.view = e.target.value; each((a, k) => { if (inGame(k)) a.setViewMode(S.view); }); });
+  $('#sTuning').addEventListener('change', e => { S.tuning = e.target.value; each((a, k) => { if (inGame(k)) a.setMode(S.tuning); }); });
+  $('#sSound').addEventListener('change', e => { S.sound = e.target.value; KEYS.forEach(sound); });
+  addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('select, input, textarea')) return;
+    const k = e.key.toLowerCase();
+    if (k === 'w') setMode('wipe'); else if (k === 's') setMode('side'); else if (k === 'b') setMode('before'); else if (k === 'a') setMode('after');
+    else if (k === ' ' && (S.mode === 'before' || S.mode === 'after')) { e.preventDefault(); setMode(S.mode === 'before' ? 'after' : 'before'); }
+    else if ((k === 'arrowleft' || k === 'arrowright') && S.mode === 'wipe') { e.preventDefault(); S.cut = Math.min(1, Math.max(0, S.cut + (k === 'arrowleft' ? -0.04 : 0.04))); placeCut(); }
+  });
+  addEventListener('resize', () => requestAnimationFrame(layout));
+  if (window.ResizeObserver) new ResizeObserver(() => layout()).observe($('#stage'));
+
+  if (saved) $('#start').textContent = 'Click inside either build to play it. Both start from a copy of your AND SO save in this browser, in the look you last used; nothing they do is saved back.';
+  $('#sLook').value = S.look; $('#sScreen').value = S.screen;
+  setMode(S.mode);
+  KEYS.forEach(load);
+})();
+</script>
+</body>
+</html>
