@@ -219,7 +219,7 @@ body.reel #hud, body.reel #quests { opacity: 0 !important; pointer-events: none 
 #reelCard { position: fixed; z-index: 8; left: 50%; top: clamp(76px, 21vh, 250px); width: min(92vw, 30em); transform: translate(-50%, 10px); text-align: center; pointer-events: none; opacity: 0; transition: opacity .7s ease, transform 1.1s cubic-bezier(.2, .9, .3, 1); color: var(--ink); text-shadow: 0 0 22px var(--paper), 0 0 8px var(--paper), 0 0 2px var(--paper) }
 #reelCard.on { opacity: 1; transform: translate(-50%, 0) }
 /* a soft cloud of the paper behind the words, so the mandala and the chord names underneath don't read through them */
-#reelCard::before { content: ''; position: absolute; z-index: -1; inset: -16% -12% -20%; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--paper) 90%, transparent) 62%, color-mix(in srgb, var(--paper) 0%, transparent)) }
+#reelCard::before { content: ''; position: absolute; z-index: -1; inset: -18% -22% -28%; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--paper) 92%, transparent) 68%, color-mix(in srgb, var(--paper) 0%, transparent)) }
 body.reel #hint { opacity: 0 !important }
 #reelCard small { display: block; font: 700 clamp(12px, .3vw + 9px, 16px)/1.3 var(--sb-ui); color: var(--ink-muted) }
 #reelCard b { display: block; margin: .12em 0 .16em; font: 400 clamp(40px, 4.4vw + 14px, 104px)/1 var(--sb-display); letter-spacing: -.01em; text-wrap: balance }
