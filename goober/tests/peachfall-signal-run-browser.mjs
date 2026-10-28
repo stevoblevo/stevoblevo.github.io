@@ -99,16 +99,30 @@ try{
  }
  // A fresh, owned Chrome profile; never attach to a user's existing browser.
  // Official noDefaults avoids Playwright's primary-session focus override.
- const profile=await mkdtemp(path.join(process.env.RUNNER_TEMP||tmpdir(),'saelion-visibility-'));
- chromeProcess=spawn(process.env.CHROME_PATH,['--user-data-dir='+profile,'--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--mute-audio','about:blank'],{stdio:['ignore','ignore','pipe']});
- chromeProcess.stderr.on('data',data=>{chromeStartupLog=(chromeStartupLog+data).slice(-6000)});
- const deadline=Date.now()+15000;let port;
- while(Date.now()<deadline){
-  if(chromeProcess.exitCode!==null)throw Error('Owned Chrome exited before connection: '+chromeStartupLog);
-  try{port=Number((await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);if(port>0)break}catch{}
-  await delay(100);
+ // Some runners export a DBUS_SESSION_BUS_ADDRESS Chrome cannot parse. Chrome
+ // then stays alive and never writes DevToolsActivePort, so drop that address
+ // and try one fresh profile if the first launch does not publish a port.
+ const chromeEnv={...process.env};
+ if(chromeEnv.DBUS_SESSION_BUS_ADDRESS && !/^(unix|tcp):/.test(chromeEnv.DBUS_SESSION_BUS_ADDRESS)) delete chromeEnv.DBUS_SESSION_BUS_ADDRESS;
+ const chromeArgs=['--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--mute-audio','about:blank'];
+ let port=0;
+ for(let attempt=1;attempt<=2 && !(port>0);attempt++){
+  if(chromeProcess && chromeProcess.exitCode===null)chromeProcess.kill('SIGTERM');
+  const profile=await mkdtemp(path.join(process.env.RUNNER_TEMP||tmpdir(),'saelion-visibility-'));
+  chromeStartupLog='';
+  chromeProcess=spawn(process.env.CHROME_PATH,['--user-data-dir='+profile,...chromeArgs],{stdio:['ignore','ignore','pipe'],env:chromeEnv});
+  chromeProcess.stderr.on('data',data=>{chromeStartupLog=(chromeStartupLog+data).slice(-6000)});
+  const deadline=Date.now()+20000;
+  while(Date.now()<deadline){
+   if(chromeProcess.exitCode!==null)break;
+   try{port=Number((await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);if(port>0)break}catch{}
+   await delay(100);
+  }
+  if(!(port>0) && attempt===2){
+   const dbus=process.env.DBUS_SESSION_BUS_ADDRESS?'dbus='+(process.env.DBUS_SESSION_BUS_ADDRESS.split(':')[0]||'empty'):'dbus=unset';
+   assert(port>0,'Owned Chrome did not publish its loopback debugging port ('+dbus+'): '+chromeStartupLog);
+  }
  }
- assert(port>0,'Owned Chrome did not publish its loopback debugging port: '+chromeStartupLog);
  browser=await chromium.connectOverCDP('http://127.0.0.1:'+port,{noDefaults:true});
  report.visibilityEnvironment='fresh owned default Chrome context; Playwright noDefaults=true';
  report.browser=browser.version();
@@ -127,31 +141,31 @@ try{
  const targetInfo=(await visibilitySession.send('Target.getTargetInfo')).targetInfo;
  const browserSession=await browser.newBrowserCDPSession();
  const nextPage=c.waitForEvent('page');
+ // A second OS window on the CI display loses focus but stays document.hidden=false,
+ // because nothing occludes it. A foreground tab in the same window is the transition
+ // that actually hides the page. Playwright focus emulation must stay off, or the
+ // background tab is reported visible and this wait never completes.
  await browserSession.send('Target.createTarget',{url:'about:blank',browserContextId:targetInfo.browserContextId,newWindow:false,background:false});
  const other=await nextPage;
  const otherSession=await c.newCDPSession(other);
  report.visibilityWindows={game:await visibilitySession.send('Browser.getWindowForTarget'),other:await otherSession.send('Browser.getWindowForTarget')};
  await otherSession.send('Emulation.setFocusEmulationEnabled',{enabled:false});
  await other.bringToFront();
- check('Goober real blur releases held key',await p.evaluate(()=>!document.hasFocus()&&keys.size===0&&paused));
- let hiddenObserved=false;
  try{
-  // Animation-frame polling cannot observe a page once its frames are suspended.
+  // Interval polling: requestAnimationFrame never runs once the background page's frames are suspended,
+  // so the default waiter would time out even after a real hide.
   await p.waitForFunction(()=>document.hidden,null,{polling:50,timeout:5000});
-  hiddenObserved=true;
  }catch(error){
   const observed=await p.evaluate(()=>({hidden:document.hidden,focused:document.hasFocus(),events:window.__repairEvents}));
-  if(observed.hidden)throw error;
-  report.blockedChecks.push({name:'true hidden-tab transition',reason:'Runner did not make the background page hidden',observed});
+  throw Error('True hidden-tab transition did not happen: '+JSON.stringify({observed,windows:report.visibilityWindows})+'\n'+(error.stack||error));
  }
- if(hiddenObserved){
-  check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
-  check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
- }
+ check('Goober real blur releases held key',await p.evaluate(()=>!document.hasFocus()&&keys.size===0&&paused));
+ check('Goober receives a true hidden transition',await p.evaluate(()=>window.__repairEvents.some(e=>e.type==='visibilitychange'&&e.hidden&&e.trusted)));
+ check('Hidden Goober clears held key',await p.evaluate(()=>keys.size===0&&paused));
  await other.keyboard.up('ArrowRight');
  await p.bringToFront();await p.waitForFunction(()=>!document.hidden,null,{polling:50});
  const resumedYaw=await p.evaluate(()=>window.__controlsTest.getYaw());await delay(250);
- if(hiddenObserved)check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
+ check('Goober return does not retain turning',Math.abs(await p.evaluate(()=>window.__controlsTest.getYaw())-resumedYaw)<.001);
  await p.keyboard.up('ArrowRight');
  await otherSession.detach();await other.close();await visibilitySession.detach();await browserSession.detach();
  await nativeCancel(p,'.touch-controls [data-key="ArrowUp"]');
@@ -164,16 +178,18 @@ try{
  report.historyHeldInput=[];
  for(let n=0;n<3;n++){
   try{
-   await p.evaluate(()=>{window.__repairKeyups=[]});
+   await p.evaluate(()=>{window.__repairKeyups=[];window.__repairPageShows=[]});
    await p.keyboard.down('ArrowRight');await delay(50);
    check('Goober held key reaches application before history departure '+n,await p.evaluate(()=>keys.has('ArrowRight')));
    await p.goto(origin+'/peachfall/play.html');
+   // Back-forward cache restores the document without a load event. Waiting for
+   // load hangs after the URL has already committed; pageshow is the restoration signal.
    await p.goBack({waitUntil:'commit'});
    await p.waitForURL(origin+'/goober/run/',{waitUntil:'commit'});
-   await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest);
+   await p.waitForFunction(()=>document.readyState==='complete'&&!!window.__controlsTest&&window.__repairPageShows.length>0,{polling:50});
    const state=await p.evaluate(()=>({keys:[...keys],pointer,keyupEvents:window.__repairKeyups,pageShow:window.__repairPageShows.at(-1)||null}));
    report.historyHeldInput.push({roundTrip:n,harnessKeyupSentBeforeAssertion:false,...state});
-   check('Goober history return clears input before automation key release '+n,state.keys.length===0&&state.pointer===null);
+   check('Goober history return clears input before automation key release '+n,state.keys.length===0&&state.pointer===null&&state.pageShow&&state.pageShow.trusted);
   }finally{
    if(!p.isClosed())await p.keyboard.up('ArrowRight');
   }
@@ -184,8 +200,9 @@ try{
   const images=[];
   page.on('response',r=>{if(r.url().includes('/source/images/anchors/'))images.push({url:r.url(),status:r.status()})});
   for(const route of ['/peachfall/','/peachfall/play.html']){
-   // Each entry starts fresh in this disposable test profile; Play intentionally saves its scene.
-   if(route==='/peachfall/play.html')await page.evaluate(()=>localStorage.removeItem('peachfall-playable-v1'));
+   // Play persists the scene under peachfall-playable-v1. Leaving that save in
+   // place makes the other entrance resume mid-scene, so the title gate times out.
+   await page.evaluate(()=>localStorage.removeItem('peachfall-playable-v1')).catch(()=>{});
    await page.goto(origin+route);await page.waitForFunction(()=>document.body.dataset.scene==='title');
    await page.waitForFunction(()=>performance.getEntriesByType('resource').filter(e=>e.name.includes('/source/images/anchors/')).length>=3);
    check('Peachfall three nested image requests succeed '+width+' '+route,images.slice(-3).length===3&&images.slice(-3).every(x=>x.status===200&&x.url.includes('/peachfall/source/images/')));
