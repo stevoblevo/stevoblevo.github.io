@@ -53,8 +53,9 @@ function jarPaint(bump) {
   if (bump) { jar.classList.remove('is-bump'); void jar.offsetWidth; jar.classList.add('is-bump'); jarBumpT = t; }
 }
 function stoneNews(s) {
-  caption(`a stone opened on the brook: ${s.name}.`, 3200);
   const jar = $('jar'); if (jar) jar.classList.add('news');
+  if (REEL.on) { REEL.news.push(`a stone opened on the brook: ${s.name}.`); jlog(`stone open: ${s.name}`); return; }
+  caption(`a stone opened on the brook: ${s.name}.`, 3200);
   jlog(`stone open: ${s.name}`);
 }
 

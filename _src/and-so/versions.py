@@ -13,7 +13,7 @@ REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
     dict(id="7", short="AND SO 7", name="AND SO 7 · Everfallen", date="2026-10-27", path="/and-so/v7/", latest=True, source="dist",
-         line="Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, and guardians born from misheard words."),
+         line="Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look."),
     dict(id="6.1", short="AND SO 6.1", name="AND SO 6.1", date="2026-10-24", path="/and-so/v6.1/", source="aa8cbe6", corner="bl",
          line="Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks."),
     dict(id="6", short="AND SO 6", name="AND SO 6", date="2026-10-23", path="/and-so/v6/", source="bb58990", corner="bl",

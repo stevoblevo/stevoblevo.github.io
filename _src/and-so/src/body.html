@@ -10,7 +10,7 @@
   <div class="ov-main">
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
-    <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reel first</button></div>
+    <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reels first</button></div>
     <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 7 · Everfallen<span class="ver-more"> · every version</span></button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
   </div>
@@ -29,7 +29,7 @@
   <button class="chip" id="tMode" aria-label="change tuning"><i class="dot"></i><span id="tModeName">just</span></button>
   <button class="chip" id="tQuest" aria-label="quests">◇ <b id="tQuestN">0/3</b></button>
   <button class="chip hidden" id="tTilt" aria-label="spirit level: tap to set level here, hold to switch tilt off"><i></i></button>
-  <button class="chip" id="tReel" aria-label="watch the reel">▶</button>
+  <button class="chip" id="tReel" aria-label="play the reels">▶</button>
   <button class="chip ghost" id="tScore" aria-label="score">✦ <b id="tScoreN">0</b><span id="tCombo"></span></button>
   <button class="chip" id="tSound" aria-label="sound">♪ on</button>
 </div>
@@ -37,7 +37,7 @@
 <div id="hud">
   <button class="ctl" id="bJam" title="J">♪ jam</button>
   <button class="ctl" id="bBrook" title="C">brook</button>
-  <button class="ctl" id="bReel" title="W">▶ reel</button>
+  <button class="ctl" id="bReel" title="W">▶ reels</button>
   <button class="ctl" id="bListen" title="V">◎ listen</button>
   <button class="ctl" id="bLean" title="space">glide</button>
   <button class="ctl" id="bNext" title="N">next chord</button>
@@ -109,7 +109,7 @@
     <div class="sec">looks</div>
     <div class="btns" id="lookBtns"><button class="pill" data-look="sb-daylight">Meta Daylight</button><button class="pill" data-look="sb-knight">Knight Night</button><button class="pill" data-look="sb-inkblot">Ink Blot</button><button class="pill" data-look="sb-comix">Comix</button><button class="pill" data-look="sb-origami">Origami</button><button class="pill" data-look="sb-skein">Skein silk</button></div>
     <div class="btns" id="themeBtns"><button class="pill" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight 6</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook 6</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
-    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one.</div>
+    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one. the older looks last for the visit: AND SO 7 always reopens on paper, in the Storeybrook look you picked last.</div>
 
     <div class="sec">words</div>
     <label class="row"><span>hide the words</span><input type="checkbox" class="sw" id="sQuiet"></label>
@@ -142,9 +142,12 @@
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
     <div class="note">light: consonance first; voices glide from one sweet spot to the next. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
 
-    <div class="sec">the reel</div>
-    <div class="btns"><button class="pill" id="gReel">▶ watch the reel</button></div>
-    <div class="note">every look, every view of the sound box, the 31-step floor, the weather. about two minutes. touch anything to take over.</div>
+    <div class="sec">the reels</div>
+    <div class="btns"><button class="pill" id="gReel">▶ play the reels</button><button class="pill" id="gCut">the cut: every look in one take</button></div>
+    <div class="btns" id="reelBtns" role="group" aria-label="a reel for every look"></div>
+    <label class="row"><span>play the next reel on its own</span><input type="checkbox" class="sw" id="sReelAuto" checked></label>
+    <div class="note" id="gReelNote">a short film for every look, each showing different things. touch anything to take over.</div>
+    <div class="note">W plays and stops them; the right arrow skips to the next one.</div>
 
     <div class="sec">motion</div>
     <label class="row"><span>tilt, shake, twist, flick</span><input type="checkbox" class="sw" id="sMotion" checked></label>
@@ -277,7 +280,8 @@
   </div>
 </div>
 
-<div id="reelHud" role="status" aria-live="polite"><span id="reelId">S01 / 14</span><b id="reelName">Boot</b><span id="reelTune"></span><span class="rbar"><i id="reelBar"></i></span><button id="reelStop" aria-label="stop the reel">■</button></div>
+<div id="reelHud" role="status" aria-live="polite"><span id="reelId"></span><b id="reelName"></b><span id="reelTune"></span><span class="rbar"><i id="reelBar"></i></span><button id="reelNext" aria-label="the next reel" title="the next reel (→)">⏭</button><button id="reelStop" aria-label="stop the reels" title="stop (W)">■</button></div>
+<div id="reelCard" class="sbi" aria-hidden="true"><small id="rcK"></small><b id="rcName"></b><span id="rcLine"></span><em id="rcEarn"></em></div>
 <button id="viewChip" aria-label="change what the sound box shows"><i>◈</i><span id="viewChipName">mandala</span><small>▸</small></button>
 <div id="zc"><button id="zOut" aria-label="zoom out">−</button><span id="zLab">1.0×</span><button id="zIn" aria-label="zoom in">+</button><button id="zReset" aria-label="reset zoom">⟲</button></div>
 <div id="tabs" class="hidden"><button class="tab on" data-tab="resonance">Resonance</button><button class="tab" data-tab="waveform">Waveform</button><button class="tab" data-tab="spectrum">Spectrum</button></div>

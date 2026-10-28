@@ -32,7 +32,7 @@ function stepVoice(v, h) {
   if (v.glide) {
     const g = v.glide, k = clamp((t - g.t0) / g.dur, 0, 1), e = k * k * (3 - 2 * k);
     v.x = g.x0 + (g.x1 - g.x0) * e; v.v = 0; v.n = 0;
-    if (k >= 1) { v.glide = null; v.temp = 0; lockVoice(v); }
+    if (k >= 1) { v.glide = null; v.temp = 0; lockVoice(v, g.exact); }
     return;
   }
   if (targetMode() && v.target != null) {
@@ -76,8 +76,11 @@ function landLabel(v) {
   const st = 1200 / M.n, k = Math.round(v.c / st);
   return Math.abs(v.c - k * st) < 3 ? String(((k % M.n) + M.n) % M.n) : '';
 }
-function lockVoice(v) {
-  v.x = refineMin(v, v.x, 4); v.v = 0; v.n = 0; v.locked = true; v.lockT = t;
+// exact: a reel set this voice down on a ratio or a step on purpose, so it stays there rather than settling into the
+// nearest floor (in 10-TET, say, the floors sit a few cents off the steps once other voices are sounding)
+function lockVoice(v, exact) {
+  if (!exact) v.x = refineMin(v, v.x, 4);
+  v.v = 0; v.n = 0; v.locked = true; v.lockT = t;
   v.c = relCents(fOf(v.x));
   const fresh = Math.abs(v.x - v.lastChimeX) > 3 || t - v.lastChimeT > 6;
   if (fresh) {
@@ -94,7 +97,7 @@ function lockVoice(v) {
   if (M.key === 'just' || M.key === 'bp') { if (lab) discoverIv(lab, v); }
   else if (lab) {
     const kk = +lab;
-    if (M.key === 'gamelan') { discover('g-ombak', v); gDeg.add(kk); if (gDeg.size >= 5) discover('g-all5', v); }
+    if (M.key === 'gamelan') { discover('g-ombak', v); if (!REEL.on) gDeg.add(kk); if (gDeg.size >= 5) discover('g-all5', v); }   // the degrees you visit, not a reel's
     else if (M.key === 'tet10') { discover('t-first', v); if (kk === 5) discover('t-5', v); }
     else if (M.key === 'tet31') { discover('w-first', v); if (kk === 10) discover('w-10', v); if (kk === 25) discover('w-25', v); }
   }

@@ -38,7 +38,10 @@ def main() -> None:
     for bad in ("</style",):
         assert bad not in css + sb_css + css_sb, "a stylesheet would end early"
     # ids on the style, the app markup and both scripts: the mirror reads them back to open a fresh copy of the page
-    styles = f'<style id="andso-css">\n{css}{sb_css}{css_sb}</style>\n'
+    # paper from the first paint: AND SO opens in Meta Daylight, so the page wears its tokens before the script decides
+    # (boot() keeps or swaps the look); without this a slow load shows the night ground for a moment
+    styles = (f'<style id="andso-css">\n{css}{sb_css}{css_sb}</style>\n'
+              "<script>document.documentElement.dataset.sb = 'daylight';</script>\n")
     body = f'<div id="andso-app">\n{body}</div>\n'
     scripts = f"<script id=\"sb-js\">\n{sb_js}\n</script>\n<script id=\"andso-js\">\n(() => {{\n'use strict';\nconst ANDSO_VERSION = '{VERSION}';\n{script}\n}})();\n</script>\n"
     page = (
@@ -61,6 +64,8 @@ def main() -> None:
         '<meta name="description" content="AND SO 7 · Everfallen: a microtonal instrument and storybook game. voices roll into the valleys where notes agree; '
         'jam over a blues in 7-limit tuning, open the game inside itself, and keep the nougats.">\n'
         '<meta name="theme-color" content="#f4f6f2">\n'
+        # the page draws both light and dark looks itself, so a browser's own dark mode has nothing to repaint
+        '<meta name="color-scheme" content="light dark">\n'
         '<title>AND SO 7</title>\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'

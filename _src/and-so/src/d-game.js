@@ -1,7 +1,7 @@
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
 const SAVE_KEY = 'andso:v7';   // AND SO 7 keeps its own save, so playing an older version (they share andso:v2) never takes anything away
 const OLD_SAVE_KEYS = ['andso:v2'];   // read every time and merged in: counts take the larger, found things and stones the union
-const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude'];
+const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude', 'reelAuto'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
@@ -9,13 +9,13 @@ const LIGHT_LOOKS = ['daybreak', 'story', 'eink', 'bw2', 'sb-daylight', 'sb-inkb
 function snapshot() {
   const set = {}; PREF_KEYS.forEach(k => (set[k] = SET[k]));
   let sk = skin;
-  // the reel borrows looks and views for a few seconds each: what gets saved is whatever you had before it started,
-  // so leaving the page mid-reel never brings you back to its paper or daylight shot
-  try { if (REEL.on && REEL.saved) { const r = REEL.saved; sk = r.skin; ['view', 'cymShape', 'cymPowder', 'x5d', 'detect', 'flip', 'light', 'tease'].forEach(k => { if (k in r && k in set) set[k] = r[k]; }); } } catch (e) {}
+  // the reels borrow looks, views, the reference pitch and more for a few seconds each: what gets saved is whatever
+  // you had before they started, so leaving the page mid-reel never brings you back to a reel's settings
+  try { if (REEL.on && REEL.saved) { const r = REEL.saved; sk = r.skin; for (const k in r) if (k in set) set[k] = r[k]; } } catch (e) {}
   return { v: 2, sv: 70, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin: sk, set,
     game: { score: GAME.score, best: GAME.best, rounds: GAME.rounds, stars: GAME.stars, qdone: GAME.qdone, bestTime: GAME.bestTime || 0,
       nougats: GAME.nougats, played: Math.round(GAME.played), stones: GAME.stones.slice(), stories: GAME.stories.slice(), jamBest: GAME.jamBest, lastDay: GAME.lastDay,
-      guards: GAME.guards.slice(0, 12), met: GAME.met.slice(), heard: GAME.heard, guardNougat: GAME.guardNougat }, stamp: Date.now() };
+      guards: GAME.guards.slice(0, 12), met: GAME.met.slice(), heard: GAME.heard, guardNougat: GAME.guardNougat, reels: GAME.reels.slice(), reelFound: GAME.reelFound.slice() }, stamp: Date.now() };
 }
 function applySave(s, preferPrefs) {
   if (!s || typeof s !== 'object') return;
@@ -27,11 +27,13 @@ function applySave(s, preferPrefs) {
     if (Array.isArray(g.stones)) g.stones.forEach(id => { if (typeof id === 'string' && !GAME.stones.includes(id)) GAME.stones.push(id); });
     if (Array.isArray(g.stories)) g.stories.forEach(id => { if (typeof id === 'string' && !GAME.stories.includes(id)) GAME.stories.push(id); });
     if (Array.isArray(g.met)) g.met.forEach(id => { if (typeof id === 'string' && !GAME.met.includes(id)) GAME.met.push(id); });
+    if (Array.isArray(g.reels)) g.reels.forEach(id => { if (typeof id === 'string' && !GAME.reels.includes(id)) GAME.reels.push(id); });
+    if (Array.isArray(g.reelFound)) g.reelFound.forEach(id => { if (typeof id === 'string' && CATI.has(id) && !GAME.reelFound.includes(id)) GAME.reelFound.push(id); });
     if (Array.isArray(g.guards) && !GAME.guards.length) GAME.guards = g.guards.filter(id => typeof id === 'string').slice(0, 12);
     GAME.heard = Math.max(GAME.heard, +g.heard || 0); if (typeof g.guardNougat === 'string' && g.guardNougat > GAME.guardNougat) GAME.guardNougat = g.guardNougat; }
   if (preferPrefs && s.set) PREF_KEYS.forEach(k => { if (s.set[k] !== undefined && typeof s.set[k] === typeof SET[k]) SET[k] = s.set[k]; });
-  // a light look saved before 6.1 (the old light-host default, or a reel cut short) is not kept: those come back dark once
-  // 7 opens in Meta Daylight: a look saved before 7 is not carried over, a look you pick in 7 is kept
+  // 7 opens in Meta Daylight: a look saved before 7 is not carried over, and of the looks picked in 7 only the
+  // Storeybrook ones come back on the next visit (boot() checks); the older looks are for the visit
   if (preferPrefs && s.skin && s.lit && (+s.sv || 0) >= 70) savedSkin = s.skin;
 }
 function loadLocal() {
@@ -113,11 +115,13 @@ function hideHint() { $('hint').classList.remove('on'); hintOffAt = 0; }
 function discover(id, v) {
   if (found.has(id)) return;
   const e = CATI.get(id); if (!e) return;
+  if (REEL.on && !reelMay(id)) return;   // while a reel plays it credits only what it shows; everything else stays yours to find
   found.add(id); persistSoon(); renderGuide(id);
+  if (REEL.on && !GAME.reelFound.includes(id)) GAME.reelFound.push(id);
   if (MIR.depth > 0) mirUp({ andso: 'found', id });
-  else if (found.size % 4 === 0) setTimeout(() => nougat(1, MX, MY - MR, `${found.size} things found`), 900);
-  toastQ.push(e); if (!toastFlush && !toastHideAt) toastFlush = t + 0.7;
-  joyBurst(e, v); pet.cheer = 1; checkUnlocks(false); jlog(`found: ${e.name}`);
+  else if (found.size % 4 === 0 && !REEL.on) setTimeout(() => nougat(1, MX, MY - MR, `${found.size} things found`), 900);   // the reels pay their own way, in halves
+  if (!(REEL.on && phone)) { toastQ.push(e); if (!toastFlush && !toastHideAt) toastFlush = t + 0.7; }
+  joyBurst(e, v); pet.cheer = 1; checkUnlocks(false); jlog(`found: ${e.name}${REEL.on ? ', in a reel' : ''}`);
   const b = v && v.wT !== undefined ? ballPos(v) : null;
   award(50, b ? b.X : MX, b ? b.Y - 40 : MY - MR, 'found');
   haptic([12, 30, 12]);
@@ -151,11 +155,11 @@ function renderGuide(newId) {
     const h = document.createElement('div'); h.className = 'gm'; h.textContent = `${MODE_TITLES[m]} · ${fc}/${items.length}`; list.appendChild(h);
     for (const c of items) {
       const f = found.has(c.id), b = document.createElement('button');
-      b.className = 'gi' + (f ? ' f' : '') + (c.id === newId ? ' new' : '');
+      b.className = 'gi' + (f ? ' f' : '') + (c.id === newId ? ' new' : '') + (f && GAME.reelFound.includes(c.id) ? ' rl' : '');
       const nm = document.createElement('div'); nm.className = 'gn'; nm.textContent = f ? c.name : '???';
       const hh = document.createElement('div'); hh.className = 'gh'; hh.textContent = f ? c.line : c.hint;
       b.appendChild(nm); b.appendChild(hh);
-      if (f) { b.title = c.fact + ' (click to hear it)'; b.addEventListener('click', () => audio.preview(c)); } else b.tabIndex = -1;
+      if (f) { b.title = c.fact + (GAME.reelFound.includes(c.id) ? ' (seen in a reel)' : '') + ' (click to hear it)'; b.addEventListener('click', () => audio.preview(c)); } else b.tabIndex = -1;
       list.appendChild(b);
     }
   }
@@ -171,12 +175,13 @@ function checkUnlocks(quiet) { for (const u of UNLOCKS) if (!UNL[u.id] && (allUn
 function onUnlock(id) {
   if (id === 'pet') { pet.hatch = 1.8; return; }
   const msg = { box: "unlocked: Pandora's box. five dimensions of vibe. please do open it.", hole: 'unlocked: a black hole. it bends pitch and it is hungry.', rail: 'unlocked: the guided rail. sit back.' }[id];
+  if (REEL.on) { REEL.news.push(msg); return; }   // said when the reels hand back, not over a reel's words
   setTimeout(() => caption(msg, 3600), 600);
 }
 
 // ---------- score and combos ----------
 function award(pts, x, y, label) {
-  const p = Math.round(pts); if (!p || !entered) return;
+  const p = Math.round(pts * (REEL.on ? 0.5 : 1)); if (!p || !entered) return;   // a reel's points come at half rate
   GAME.score += p;
   floaters.push({ x: clamp(x, 30, W - 30), y: clamp(y, TOPH + 20, H - 40), txt: `+${p}${label ? ' ' + label : ''}`, life: 1.6, max: 1.6 });
   scoreUI(); persistSoon();
@@ -188,15 +193,15 @@ function scoreUI() {
 }
 function onLand(v, fresh, lab) {
   if (!fresh || !entered) return;
-  GAME.combo = t - GAME.lastLand < 4 ? GAME.combo + 1 : 1; GAME.lastLand = t;
-  if (GAME.combo > GAME.best) GAME.best = GAME.combo;
-  const mult = Math.min(GAME.combo, 8);
+  const reel = REEL.on;   // a reel's landings count, but its combos are not yours
+  if (!reel) { GAME.combo = t - GAME.lastLand < 4 ? GAME.combo + 1 : 1; GAME.lastLand = t; if (GAME.combo > GAME.best) GAME.best = GAME.combo; }
+  const mult = reel ? 1 : Math.min(GAME.combo, 8);
   let base = M.easy ? 8 : 12;
   if (lab && lab.includes('/')) { const pq = lab.split('/').map(Number); base = 8 + Math.round(4 * Math.log2(Math.max(2, pq[0] * pq[1]))); }
   const b = ballPos(v);
   award(base * mult, b.X, b.Y - 30, mult > 1 ? `×${mult}` : '');
-  emit('land', { lab }); emit('combo', { v: GAME.combo });
-  if (GAME.combo >= 5) discover('x-combo5');
+  emit('land', { lab }); if (!reel) emit('combo', { v: GAME.combo });
+  if (!reel && GAME.combo >= 5) discover('x-combo5');
   if (t - v.relT < 2.2 && Math.abs(v.x - v.relX) < 4) { v.relT = -99; award(25, b.X, b.Y - 54, 'perfect'); discover('x-perfect', v); emit('perfect'); }
 }
 
@@ -243,6 +248,7 @@ function emit(ev, e) {
     if (a.done) continue;
     const q = QD.get(a.id);
     if (!q || q.ev !== ev || (q.m !== 'any' && q.m !== M.key) || (q.f && !q.f(e))) continue;
+    if (REEL.on) { if (a.p < q.n / 2) { a.p = Math.min(q.n / 2, a.p + (e.amt || 1)); ch = true; } continue; }   // watching fills a quest halfway; finishing it is yours
     a.p += e.amt || 1; ch = true;
     if (a.p >= q.n) completeQuest(a, q);
   }
@@ -260,7 +266,7 @@ function renderQuests() {
   for (const a of GAME.quests) {
     const q = QD.get(a.id); if (!q) continue;
     const it = document.createElement('div'); it.className = 'qi' + (a.done ? ' done' : '');
-    const tx = document.createElement('div'); tx.className = 'qt'; tx.textContent = (a.done ? '✓ ' : '') + q.txt + (q.n > 1 && !a.done ? ` · ${Math.min(a.p, q.n)}/${q.n}` : '');
+    const tx = document.createElement('div'); tx.className = 'qt'; tx.textContent = (a.done ? '✓ ' : '') + q.txt + (q.n > 1 && !a.done ? ` · ${Math.floor(Math.min(a.p, q.n))}/${q.n}` : '');
     const bar = document.createElement('div'); bar.className = 'qb'; const fill = document.createElement('i'); fill.style.width = `${(100 * Math.min(a.p, q.n)) / q.n}%`; bar.appendChild(fill);
     it.appendChild(tx); it.appendChild(bar); list.appendChild(it);
   }

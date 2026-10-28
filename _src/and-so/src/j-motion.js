@@ -269,7 +269,7 @@ function padTick(dt) {
   if (P(3)) cycleView();
   if (P(4)) gpSelect(-1);
   if (P(5)) gpSelect(1);
-  if (P(8)) { const i = SKINS.indexOf(skin); setSkin(SKINS[(i + 1) % SKINS.length]); }
+  if (P(8)) cycleLook();   // back/select turns the page to the next open Storeybrook look, as E does
   if (P(9)) showGw(true);
   if (P(10)) { if (REEL.on) reelStop(false); else reelStart(); }
   if (P(11)) { if (viewOn() === 'cymatics') cymReset(); else strum(); }

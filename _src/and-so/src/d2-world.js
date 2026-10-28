@@ -19,7 +19,8 @@ function setMode(key, quiet) {
   gam.next = t + 0.4; gam.b = 0; rootFlash = 1; nextAct = t + 7; userIdleUntil = 0;
   if (prev.easy && key === 'just') { discover('x-flip'); if (!quiet) caption('flipped: the 12-TET thirds slide about 14¢ into their valleys.', 3600); }
   else if (!quiet) caption(M.title, 3000);
-  modesSeen.add(key); renderGuide(); fillQuests(); syncUI();
+  if (!REEL.on) modesSeen.add(key);   // the field trip counts the tunings you visit, not the ones a reel visits for you
+  renderGuide(); fillQuests(); syncUI();
   if (modesSeen.size >= MODE_ORDER.length) discover('x-tour');
   if (M.easy) discover('e-first');
   emit('mode'); jlog(`tuning: ${M.title}`);
@@ -105,7 +106,7 @@ function setSkin(s, force) {
   if (!force && entered && !lookOpen(s)) { const st = STONE.get(LOOK_STONE[s]); caption(`${SB_NAMES[s]} opens with its stone on the brook, at ${st.need} nougats.`, 2800); return; }
   const was = skin; skin = s; document.body.dataset.skin = s;
   applyLook();
-  if (s === 'story' && entered) openStory(storyCur);   // the story look opens a story, with its words in it
+  if (s === 'story' && entered && !REEL.on) openStory(storyCur);   // the story look opens a story, with its words in it (not mid-reel)
   if (entered && s !== was && (s === 'bw2' || s === 'fieldstone' || s === 'glasshouse' || s === 'peachfall')) discover('x-' + s);
   if (entered && s !== was && SB_LOOK[s] && s !== 'sb-daylight') discover('x-look');
   resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || s}`);
@@ -334,10 +335,13 @@ function worldTick(dt) {
   const sweet = chordNow && (chordNow.beatless || chordNow.shimmer || M.easy) && Rs < 0.45;
   sweetT = sweet ? sweetT + dt : Math.max(0, sweetT - dt * 0.5);
   if (sweetT > 4) {
-    sweetT = 0; seeds++; discover('x-sweet'); emit('sweet'); jlog(`sweet spot #${seeds}`); award(30, MX, MY - MR * 0.6, 'sweet');
+    sweetT = 0; discover('x-sweet');
     for (let i = 0; i < 12; i++) sparks.push({ x: MX, y: MY, vx: rand(-80, 80), vy: rand(-80, 80), life: rand(0.6, 1.2), max: 1.2, c: [255, 236, 190] });
-    let k = 0, mx = 0; W5.forEach((w, i) => { if (w > mx) { mx = w; k = i; } }); BOX.x += (VERT[k][0] - BOX.x) * 0.08; BOX.y += (VERT[k][1] - BOX.y) * 0.08;
-    if (seeds % 3 === 0 && depth < 5) { depth++; recurse(depth); }
+    if (!REEL.on) {   // a reel's sweet spots are to look at: the lattice only folds for yours
+      seeds++; emit('sweet'); jlog(`sweet spot #${seeds}`); award(30, MX, MY - MR * 0.6, 'sweet');
+      let k = 0, mx = 0; W5.forEach((w, i) => { if (w > mx) { mx = w; k = i; } }); BOX.x += (VERT[k][0] - BOX.x) * 0.08; BOX.y += (VERT[k][1] - BOX.y) * 0.08;
+      if (seeds % 3 === 0 && depth < 5) { depth++; recurse(depth); }
+    }
   }
   for (let i = harpTrail.length - 1; i >= 0; i--) { harpTrail[i].life -= dt; if (harpTrail[i].life <= 0) harpTrail.splice(i, 1); }
   if (harpTrail.length > 200) harpTrail.splice(0, harpTrail.length - 200);
@@ -400,8 +404,8 @@ function syncUI() {
   $('pbPlay').textContent = paused ? '▶' : '❚❚';
   $('viewChipName').textContent = VIEW_NAME[vw];
   $('sMotion').checked = !!SET.motion; $('sRoll').checked = !!SET.roll; $('sTiltK').value = Math.round(SET.tiltK * 100);
-  const rOn = REEL.on; $('bReel').textContent = rOn ? '■ reel' : '▶ reel'; $('gReel').textContent = rOn ? '■ stop the reel' : '▶ watch the reel'; $('tReel').textContent = rOn ? '■' : '▶';
-  document.body.classList.toggle('reel', rOn); motionUI();
+  const rOn = REEL.on; $('bReel').textContent = rOn ? '■ reels' : '▶ reels'; $('gReel').textContent = rOn ? '■ stop the reels' : '▶ play the reels'; $('tReel').textContent = rOn ? '■' : '▶';
+  document.body.classList.toggle('reel', rOn); motionUI(); reelUI();
   placeChrome();
   const hmpDesk = skin === 'hmp' && entered && !phone;
   $('pbar').classList.toggle('hidden', !hmpDesk); $('tabs').classList.toggle('hidden', !hmpDesk);

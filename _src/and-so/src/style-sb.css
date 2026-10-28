@@ -4,7 +4,9 @@
 #andso-app { display: contents }
 
 /* ---------- the page in a Storeybrook look ---------- */
-html[data-sb] { font-size: var(--size-root); background: var(--paper); color-scheme: light }
+/* paper stays paper: "only light" asks browsers that darken pages on their own (a phone's dark mode) to leave it be;
+   the plain "light" before it is what a browser that doesn't know "only" keeps */
+html[data-sb] { font-size: var(--size-root); background: var(--paper); color-scheme: light; color-scheme: only light }
 html[data-sb="knight"] { color-scheme: dark }
 html[data-sb] body { background: transparent; font-family: var(--sb-ui); color: var(--ink) }
 #paper { display: none; position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none }
@@ -95,7 +97,7 @@ html[data-sb] #askOut { color: var(--ink); font-family: var(--sb-story) }
 html[data-sb] :is(#viewChip, #zc, #reelHud) { background: var(--page); border: 1.5px solid var(--line); color: var(--ink); -webkit-backdrop-filter: none; backdrop-filter: none }
 html[data-sb] #viewChip i { color: var(--accent) }
 html[data-sb] :is(#viewChip small, #zLab, #reelTune, #reelId) { color: var(--ink-muted) }
-html[data-sb] #zc button, html[data-sb] #reelStop { color: var(--ink) }
+html[data-sb] #zc button, html[data-sb] :is(#reelStop, #reelNext) { color: var(--ink); border-color: var(--line) }
 html[data-sb] #reelName { color: var(--ink); font-family: var(--sb-story) }
 html[data-sb] #tTilt i { background: var(--line) }
 html[data-sb] #tTilt.on i { background: var(--sap); box-shadow: none }

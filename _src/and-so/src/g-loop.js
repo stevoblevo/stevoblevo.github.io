@@ -63,7 +63,7 @@ function update(dt) {
     if (free) v.temp *= Math.exp(-dt / tau);
     v.hist.push(v.x); v.histT.push(t);
     while (v.histT.length && t - v.histT[0] > 0.4) { v.hist.shift(); v.histT.shift(); }
-    if (v.locked) { if (!tmode) { const d0 = Dv(v, v.x); if (Dv(v, v.x - 0.4) < d0 - 1e-12 || Dv(v, v.x + 0.4) < d0 - 1e-12) { v.locked = false; v.v = 0; v.hist.length = 0; v.histT.length = 0; } } }
+    if (v.locked) { if (!tmode && !(v.hold > t)) { const d0 = Dv(v, v.x); if (Dv(v, v.x - 0.4) < d0 - 1e-12 || Dv(v, v.x + 0.4) < d0 - 1e-12) { v.locked = false; v.v = 0; v.hist.length = 0; v.histT.length = 0; } } }   // a reel's held chord stays put until its shot ends
     else if (tm) { if (!v.dragging && t >= v.approachUntil && Math.abs(v.x - v.target) < 0.7 && Math.abs(v.v) < 6) lockExact(v, v.target); }
     else if (free && v.temp < 0.05 && v.histT.length > 6 && t - v.histT[0] > 0.33) {
       let mn = 1e9, mx = -1e9; for (const x of v.hist) { if (x < mn) mn = x; if (x > mx) mx = x; }
@@ -188,13 +188,14 @@ function boot(hotData) {
   loadLocal();
   if (hotData && hotData.v) applySave(hotData, true);
   REF = SET.ref / 440;
-  // AND SO 7 opens in Meta Daylight, and a look you pick in 7 is kept; a copy in the mirror opens in the look it was handed
-  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SKINS.includes(savedSkin) ? savedSkin : 'sb-daylight';
+  // AND SO 7 opens on paper: a Storeybrook look you pick is kept, while the older looks (a preset, a brook stone, the
+  // older-looks row) last for the visit, so the page never reopens in one of them; a mirror copy opens in the look it was handed
+  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] ? savedSkin : 'sb-daylight';
   document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
   inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
   $('stText').value = STORY;
   $('enterFine').insertAdjacentText('beforeend', ` there are ${CAT.length} things to find.`);
-  checkUnlocks(true); renderGuide(); renderPresets(); scoreUI(); renderQuests(); saveNote();
+  checkUnlocks(true); renderGuide(); renderPresets(); scoreUI(); renderQuests(); saveNote(); reelUI();
   resize();
   if (MIR.depth === 0) initCaps(); else capsUI();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
@@ -240,7 +241,11 @@ try {
     wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),
     hill: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; let bx = v.x, be = -1; for (let x = Math.max(160, v.x - 320); x <= Math.min(XMAX - 160, v.x + 320); x += 4) { const d = Dv(v, x), e = (d - wxFloor(v, x, d)) / D0; if (e > be) { be = e; bx = x; } } return { x: bx, X: xToS(bx), e: +be.toFixed(3) }; },
     pair: (x1, x2) => +(dTones(fOf(x1), fOf(x2)) / D0).toFixed(3), wxForce: f => { WX.force = f || null; }, crack: g => { WX.crack.grow = g; WX.crack.hotT = t; },
-    reel: () => ({ on: REEL.on, i: REEL.i, name: REEL.i >= 0 && REEL.i < SHOTS.length ? SHOTS[REEL.i].n : '', total: REEL.total }),
+    reel: () => ({ on: REEL.on, id: REEL.id, i: REEL.i, done: REEL.done, name: REEL.R && REEL.i >= 0 && REEL.i < REEL.R.shots.length ? REEL.R.shots[REEL.i].n : '', shots: REEL.R ? REEL.R.shots.length : 0, total: REEL.R ? REEL.R.total : 0,
+      watched: GAME.reels.slice(), reelFound: GAME.reelFound.slice(), auto: !!SET.reelAuto, share: REEL_SHARE, gives: [...REEL_GIVES], card: $('reelCard').classList.contains('on'), news: REEL.news.slice() }),
+    reels: () => REELS.concat(CUT).map(r => ({ id: r.id, name: r.name, total: r.total, gives: [...r.gives], shots: r.shots.map(s => ({ n: s.n, d: s.d, gives: s.gives || [] })) })),
+    reelSkip, reelNow: () => { if (REEL.on && !REEL.done && REEL.i >= 0) REEL.next = t; }, reelAuto: on => { SET.reelAuto = !!on; reelUI(); },
+    quests: () => GAME.quests.map(a => ({ id: a.id, p: a.p, done: a.done })), setQuests: ids => { GAME.quests = ids.map(id => ({ id, p: 0, done: false })); renderQuests(); },
     view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
     box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),
     geo: () => ({ W, H, LT, LB, SH, PX0, PW, DPR, phone, TOPH }),

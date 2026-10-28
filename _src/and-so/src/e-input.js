@@ -352,6 +352,7 @@ window.addEventListener('keydown', e => {
   if (k === 'escape' && $('brookMap').classList.contains('on')) { closeBrook(); return; }
   if (k === 'escape' && $('liner').classList.contains('on')) { $('liner').classList.remove('on'); return; }
   if (k === 'escape' && MIR.open) { mirrorTable(false); return; }
+  if (REEL.on && k === 'arrowright') { e.preventDefault(); reelSkip(); return; }   // the next reel; anything else hands it back to you
   if (REEL.on && k !== 'w' && k !== 'shift') { reelStop(false); if (k === 'escape') return; }
   if (k === ' ' || k === 'l') { e.preventDefault(); lean(1); userIdleUntil = t + 10; }
   else if (k === 'n') { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; }
@@ -433,7 +434,7 @@ on('mLean', () => { if (SET.normie) setNormie(false); setMood('lean'); });
 on('mFrol', () => setMood('frolic'));
 on('mNorm', () => setNormie(!SET.normie));
 on('bSkip', () => { allUnlocked = true; persistSoon(); checkUnlocks(false); caption('everything unlocked. the game respects your time.', 3000); });
-on('gReset', () => { found.clear(); gDeg = new Set([0]); modesSeen = new Set([M.key]); bird.sung = false; persistSoon(); renderGuide(); caption('field guide wiped. everything is undiscovered again.', 3000); });
+on('gReset', () => { found.clear(); GAME.reelFound.length = 0; gDeg = new Set([0]); modesSeen = new Set([M.key]); bird.sung = false; persistSoon(); renderGuide(); reelUI(); caption('field guide wiped. everything is undiscovered again.', 3000); });
 const bindRange = (id, key) => { const el = $(id); el.addEventListener('input', () => { SET[key] = el.value / 100; audio.applyMix(); }); el.addEventListener('change', persistSoon); };
 [['sShim', 'shim'], ['sSpace', 'space'], ['sTease', 'tease'], ['sPace', 'pace'], ['sWarm', 'warm'], ['sVol', 'vol'], ['sTune', 'tune']].forEach(([i, k]) => bindRange(i, k));
 const bindSw = (id, key, after) => $(id).addEventListener('change', e => { SET[key] = e.target.checked; audio.applyMix(); if (after) after(); persistSoon(); });

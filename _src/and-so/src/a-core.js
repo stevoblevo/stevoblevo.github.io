@@ -219,7 +219,8 @@ const CAT = [
   ['x-flick', 'any', 'ev', '', 'flick', 'flicked the phone', 'a flick of the wrist strums the chord, like a wand.', 'flick the phone sideways'],
   ['x-level', 'any', 'ev', '', 'spirit level', 'held it dead level', 'flat and still, within half a degree. the bubble is happy.', 'lay the phone flat and still'],
   ['x-pad', 'any', 'ev', '', 'controller', 'played with a gamepad', 'the left stick moves a voice, A glides, B moves the root, Y changes the view. the gamepad lab, put to work.', 'connect a game controller'],
-  ['x-reel', 'any', 'ev', '', 'the reel', 'watched it all', 'fourteen shots, every look and view, one take.', 'watch the reel to the end'],
+  ['x-reel', 'any', 'ev', '', 'the cut', 'watched the original reel', 'fourteen shots, every look and view, one take.', 'watch the cut to the end, under the reels in the gamut'],
+  ['x-reels', 'any', 'ev', '', 'the whole channel', 'watched every reel', 'sixteen looks, sixteen short films: a good part of everything, for watching. the rest was always going to be yours.', 'watch every reel to the end'],
   ['x-crack', 'any', 'ev', '', 'crazing', 'the obsidian cracked', 'hold a dissonance and the glass cracks. let it resolve and the cracks cool, then heal.', 'hold a dissonance on the obsidian look'],
   ['x-wink', 'any', 'ev', '', 'Sae-wink', 'it winked back', 'open 2.6 seconds, closed 0.16, on its own clock. press it and it winks at you.', 'find the eye in the mint clearing'],
   ['x-spores', 'any', 'ev', '', 'three spores', 'found them all', 'three spores were hiding in the glasshouse haze.', 'find three spores in the glasshouse'],
@@ -264,7 +265,9 @@ const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pac
   flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
   view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5,
   // AND SO 7 · Everfallen: notes instead of drones, easy listening first, the hummer only when asked, words only when they matter
-  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true };
+  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true,
+  // the reels run on into each other unless this is off
+  reelAuto: true };
 const LIGHT = () => !!SET.light && !SET.frolic;
 let W = 0, H = 0, S = 1, wide = true, latticeOn = false, LT = 0, LB = 0, SH = 34, PX0 = 0, PW = 1, MX = 0, MY = 0, MR = 100, BR = 8, NS = 0, DPR = 1, qScale = 1;
 let SAT = 0, SAB = 0, TOPH = 0, PEEK = 0, phone = false;
@@ -299,7 +302,8 @@ const stars = Array.from({ length: 200 }, () => ({ x: Math.random(), y: Math.ran
 let lastMk = '', lastChordStr = '', lastRootJ = 0, sweetT = 0, seeds = 0, depth = 0, regHigh = 0, regLow = 0, regState = 'in the middle band', uiT = 0, frolT = 0;
 const journal = [];
 const LAT = [{ k: 'tune', n: 'Tuning', a: -90 }, { k: 'shim', n: 'Shimmer', a: -18 }, { k: 'pace', n: 'Pace', a: 54 }, { k: 'space', n: 'Space', a: 126 }, { k: 'warm', n: 'Warmth', a: 198 }];
-const GAME = { score: 0, best: 0, combo: 0, lastLand: -99, rounds: 0, stars: 0, qdone: 0, quests: [], nougats: 0, played: 0, stones: [], stories: ['valley'], jamBest: 0, lastDay: '', guards: [], met: [], heard: 0, guardNougat: '' };
+const GAME = { score: 0, best: 0, combo: 0, lastLand: -99, rounds: 0, stars: 0, qdone: 0, quests: [], nougats: 0, played: 0, stones: [], stories: ['valley'], jamBest: 0, lastDay: '', guards: [], met: [], heard: 0, guardNougat: '',
+  reels: [], reelFound: [] };   // the reels watched to the end, and the finds they credited
 let round = null, roundN = 0;
 
 const fold = (f, eq, lo) => { const hi = lo * eq; while (f >= hi) f /= eq; while (f < lo) f *= eq; return f; };
