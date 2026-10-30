@@ -92,7 +92,7 @@ const audio = {
       A.useCS = typeof ac.createConstantSource === 'function';
       A.vol = ac.createGain(); A.vol.gain.value = 0; A.vol.connect(ac.destination);
       const lim = ac.createDynamicsCompressor();
-      lim.threshold.value = -14; lim.knee.value = 8; lim.ratio.value = 12; lim.attack.value = 0.005; lim.release.value = 0.3; lim.connect(A.vol);
+      lim.threshold.value = -14; lim.knee.value = 8; lim.ratio.value = 12; lim.attack.value = 0.005; lim.release.value = 0.3; lim.connect(A.vol); A.lim = lim;
       A.lp = ac.createBiquadFilter(); A.lp.type = 'lowpass'; A.lp.Q.value = 0.5; A.lp.frequency.value = 5000; A.lp.connect(lim);
       A.bus = ac.createGain(); A.bus.gain.value = 0.85; A.bus.connect(A.lp);
       const lfo = ac.createOscillator(); lfo.frequency.value = 0.09; const lg = ac.createGain(); lg.gain.value = 0.05; lfo.connect(lg); lg.connect(A.bus.gain); lfo.start();
@@ -132,6 +132,7 @@ const audio = {
     if (!A.ac) return;
     const now = A.ac.currentTime;
     glide(A.vol.gain, muted ? 0 : 0.95 * SET.vol, 0.15);
+    if (typeof ensStage === 'function') ensStage();
     A.lp.frequency.setTargetAtTime(9000 * Math.pow(1800 / 9000, SET.warm), now, 0.2);
     A.chWet.gain.setTargetAtTime((SET.hp ? 0.5 : 0.12) * SET.space, now, 0.3);
     A.ppWet.gain.setTargetAtTime(SET.sparkle ? (SET.hp ? 0.42 : 0.24) : 0, now, 0.2);

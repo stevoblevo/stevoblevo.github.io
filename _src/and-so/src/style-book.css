@@ -1,0 +1,115 @@
+/* ===== AND SO 8: the book, the wing, tune together, dreamwalk, Mag ===== */
+.book-mark { position: fixed; z-index: 47; left: max(14px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #f3e6c8; cursor: pointer }
+.book-mark svg { width: 28px; height: 28px }
+body:not(.landing) .book-mark { color: #6b4e2e }
+.dream-line { margin: 10px 0 0 }
+.dream-line button { all: unset; cursor: pointer; font: italic 400 15px/1 "Newsreader", Georgia, serif; letter-spacing: .08em; color: inherit; opacity: .72; text-decoration: underline wavy; text-underline-offset: .35em }
+.dream-line button:hover, .dream-line button:focus-visible { opacity: 1 }
+#book { position: fixed; inset: 0; z-index: 48; display: none; color: #241c16; font-family: "Newsreader", Georgia, serif }
+#book.on { display: block }
+.book-table { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 40%, #2a211c 0%, #120e0c 70%); overflow: hidden }
+.book-x { position: absolute; z-index: 3; top: 12px; right: 14px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: #f3e6c8; font: 400 28px/1 Georgia, serif; cursor: pointer }
+.book-cover { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; width: min(280px, 74vw); aspect-ratio: 3/4; border: 0; border-radius: 3px 10px 10px 3px; cursor: pointer; color: #f6edd8; background: linear-gradient(90deg, #6e1d2a 0 10px, #7c2432 10px, #8d2d3c 100%); box-shadow: 0 24px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(230,190,110,.55), inset 8px 0 0 rgba(198,161,90,.85) }
+.book-cover b { display: block; margin-top: 28%; font: 500 42px/1 "DynaPuff", "Newsreader", serif; font-weight: 500 }
+.book-cover i, .book-cover em { display: block; font-style: italic; opacity: .8 }
+.book-cover em { margin-top: 18%; letter-spacing: .22em; font-size: 12px; text-transform: lowercase }
+#book:not(.is-closed) .book-cover { display: none }
+#book.is-closed .book-open, #book.is-closed .wing-face { display: none }
+.book-open { position: absolute; inset: 18px 16px 16px; display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 12px; animation: bookIn .55s ease }
+@keyframes bookIn { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+.spines { display: flex; flex-direction: column; gap: 5px; overflow: auto; padding: 8px 0 }
+.spine { flex: 0 0 18px; width: 28px; height: 18px; border: 0; border-radius: 2px 7px 7px 2px; cursor: pointer; background: #c6a15a; box-shadow: inset -3px 0 0 rgba(0,0,0,.18) }
+.spine.is-pd { box-shadow: inset -3px 0 0 rgba(0,0,0,.18), 0 0 0 1px rgba(232,220,180,.7) }
+.spine.is-on { outline: 2px solid #f3e6c8; outline-offset: 1px }
+.hue-sea { background: #3f7f86 } .hue-leaf { background: #6d8f62 } .hue-rose { background: #b76b73 } .hue-gold { background: #c6a15a } .hue-ink { background: #5c5148 }
+.sheet { position: relative; min-width: 0; overflow: auto; padding: clamp(18px, 3vw, 42px) clamp(16px, 3vw, 48px) 24px; border-radius: 2px 14px 14px 2px; background: #f6f1e6; box-shadow: 0 18px 50px rgba(0,0,0,.35); color: #241c16 }
+.sheet-kicker { margin: 0; letter-spacing: .18em; text-transform: lowercase; font: 600 12px/1 "Andika", sans-serif; color: #8a704c }
+.sheet h2 { margin: .15em 0 .1em; font: 500 clamp(32px, 5vw, 64px)/.95 "DynaPuff", "Newsreader", serif; font-weight: 500 }
+.sheet-form { margin: 0; font: italic 400 clamp(16px, 2vw, 22px)/1.3 "Newsreader", serif }
+.sheet-basis { margin: .35em 0 .8em; max-width: 46rem; font: 400 13px/1.35 "Andika", sans-serif; color: #6d5b48 }
+.chart { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 18px 4px 28px; min-height: 132px }
+.stone { position: relative; flex: 0 0 auto; scroll-snap-align: center; min-width: 72px; height: 96px; border: 0; border-radius: 40px 40px 16px 16px; background: transparent; color: #241c16; cursor: pointer; transition: transform .35s ease }
+.stone b { position: absolute; left: 0; right: 0; bottom: 8px; font: 600 15px/1.1 "Andika", sans-serif }
+.stone .dots { position: absolute; inset: 0 0 28px }
+.stone .dots i { position: absolute; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: #8d2d3c }
+.stone.is-now { transform: translateY(-6px) }
+.stone.is-now::before { content: ""; position: absolute; left: 50%; top: 6px; width: 28px; height: 28px; translate: -50% 0; border-radius: 50%; background: radial-gradient(circle at 38% 35%, #fff6d4, #e7b23a 55%, #c6842a); box-shadow: 0 0 18px rgba(231,178,58,.85) }
+.sun-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 6px }
+.sun { width: 54px; height: 54px; border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 38% 35%, #fff6d4, #e7b23a 58%, #b87428); box-shadow: 0 0 0 6px rgba(231,178,58,.18) }
+.sun.is-on { box-shadow: 0 0 0 8px rgba(231,178,58,.35), 0 0 24px rgba(231,178,58,.8) }
+.sun-side { display: inline-flex; align-items: center; gap: 6px }
+.sun-side button { width: 28px; height: 28px; border: 0; background: transparent; color: #6b4e2e; font: 400 22px/1 Georgia, serif; cursor: pointer }
+.sun-side b { min-width: 2.4em; text-align: center; font: 600 18px/1 "Andika", sans-serif }
+.walk { display: inline-flex; align-items: center; gap: 8px; font: 600 12px/1 "Andika", sans-serif; letter-spacing: .08em; text-transform: lowercase; color: #6d5b48 }
+.walk input { width: min(180px, 36vw); accent-color: #c6842a }
+.ring, .voice, .sheet-marks button { border: 0; background: transparent; color: #6b4e2e; cursor: pointer; font: italic 400 15px/1 "Newsreader", serif }
+.ring[aria-pressed="false"] { opacity: .35 }
+.sheet-marks { position: absolute; right: 18px; bottom: 14px; display: flex; gap: 12px }
+.page-pets { position: absolute; left: 18px; bottom: 12px; display: flex; align-items: flex-end; gap: 0 }
+.page-pets[hidden], .wing-face[hidden], .mag-read[hidden], .mag-card[hidden], .mag-paw[hidden], .mag-carrot[hidden], #ensSave[hidden], #dreamKeep[hidden], .book-cover[hidden] { display: none !important }
+.page-pets .slot-bunny { order: 1 } .page-pets .slot-mag { order: 2; margin-left: -6px }
+.pet-slot svg, .pet-slot img { width: 64px; height: auto; display: block }
+.slot-bunny svg, .slot-bunny img { width: 46px }
+.wing-face { position: absolute; inset: 18px 16px 16px; overflow: auto; padding: clamp(20px, 4vw, 48px); border-radius: 14px; background: #f6f1e6; color: #241c16; box-shadow: 0 18px 50px rgba(0,0,0,.35) }
+.wing-path { display: flex; gap: 10px; overflow-x: auto; padding: 8px 2px 18px }
+.wsun { flex: 0 0 auto; width: 36px; height: 36px; border: 0; border-radius: 50%; cursor: pointer; color: #6b4e2e; background: radial-gradient(circle at 40% 35%, #fff, #e7d3a4 60%, #c6a15a); font: 600 14px/1 "Andika", sans-serif }
+.wsun:disabled { opacity: .35; cursor: default }
+.wsun.is-now { box-shadow: 0 0 0 4px rgba(231,178,58,.45); transform: translateY(-3px) }
+.wsun.is-done { box-shadow: inset 0 0 0 2px #f6f1e6 }
+.wkeys { display: flex; gap: 8px; align-items: flex-end; min-height: 92px; margin-top: 12px }
+.wkey { flex: 1; height: 64px; border: 0; border-radius: 30px 30px 10px 10px; background: radial-gradient(circle at 50% 30%, #fff, #f0e2c4); cursor: pointer }
+.wkey:nth-child(odd) { height: 78px }
+.wing-warm { min-height: 28px; position: relative }
+.wing-warm .pdot { position: relative; display: inline-block; width: 8px; height: 8px; margin: 0 6px; border-radius: 50%; background: #c6a15a; vertical-align: bottom }
+.wing-warm .pdot.is-got { background: #8d2d3c } .wing-warm .pdot.is-now { background: #e7b23a; box-shadow: 0 0 8px #e7b23a }
+.ens-clasp { position: fixed; z-index: 49; top: calc(12px + env(safe-area-inset-top)); left: 50%; translate: -50% 0; display: none; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #f3e6c8; cursor: pointer }
+.ens-clasp[hidden] { display: none !important }
+.ens-clasp:not([hidden]) { display: inline-flex }
+.ens-clasp i { width: 14px; height: 10px; border: 1.5px solid currentColor; border-radius: 2px 2px 6px 6px; box-shadow: inset 0 -3px 0 currentColor }
+.ens-clasp.is-on { color: #e7b23a }
+.ens-clasp span { font: 600 12px/1 "Andika", sans-serif }
+.dream-keep, #ensSave { position: fixed; z-index: 70; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); translate: -50% 0; border: 0; background: transparent; color: #f3e6c8; cursor: pointer; font: italic 400 16px/1 "Newsreader", serif; text-decoration: underline wavy; text-underline-offset: .35em }
+body.ens-glow .book-table { box-shadow: inset 0 0 80px rgba(231,178,58,.35) }
+.mag-paw { position: fixed; z-index: 15; left: 18%; top: 46px; width: 22px; height: 22px; pointer-events: none; background: radial-gradient(circle at 30% 70%, #2a211c 0 3px, transparent 4px), radial-gradient(circle at 55% 28%, #2a211c 0 2px, transparent 3px), radial-gradient(circle at 75% 34%, #2a211c 0 2px, transparent 3px), radial-gradient(circle at 40% 32%, #2a211c 0 2px, transparent 3px); opacity: .8 }
+.mag-carrot { position: relative; width: 36px; height: 18px; margin: 8px 0; border: 0; background: transparent; cursor: pointer }
+.mag-carrot::before { content: ""; position: absolute; left: 8px; top: 4px; width: 22px; height: 8px; border-radius: 8px; background: #e07a2f }
+.mag-carrot::after { content: ""; position: absolute; left: 26px; top: 1px; width: 8px; height: 8px; background: #6d8f62; clip-path: polygon(0 60%, 100% 0, 70% 100%) }
+.mag-carrot.is-loose { position: fixed; z-index: 16; margin: 0 }
+.mag-read { position: fixed; z-index: 16; display: flex; gap: 8px; align-items: flex-end; height: 54px }
+.mag-note { width: 16px; border: 0; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff6d4, #e7b23a); cursor: pointer }
+.mag-note:nth-child(1) { height: 16px } .mag-note:nth-child(2) { height: 26px } .mag-note:nth-child(3) { height: 36px } .mag-note:nth-child(4) { height: 18px }
+.mag-note.is-got { box-shadow: 0 0 8px #e7b23a }
+.mag-card { position: fixed; z-index: 60; left: 50%; top: 18%; translate: -50% 0; padding: 12px 18px 16px; border-radius: 18px; background: rgba(246,241,230,.94); color: #241c16; text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,.25) }
+.mag-card p { margin: 4px 0 0; font: italic 400 18px/1.3 "Newsreader", serif }
+.mag-card .pair { display: flex; justify-content: center; align-items: flex-end }
+body.dreaming #hud, body.dreaming #quests, body.dreaming #gw, body.dreaming #top, body.dreaming #hint, body.dreaming #toast, body.dreaming #cap, body.dreaming #viewChip { opacity: 0 !important; pointer-events: none }
+body.booking #hud { opacity: .15 }
+#hud.on { opacity: .32 }
+#hud.on:hover, #hud.on:focus-within { opacity: 1 }
+#brookMap, #versions, #liner, #story, #mirror { transition: opacity .45s ease }
+.vs-item { position: relative; background: transparent; border: 0; padding-left: 28px }
+.vs-item::before { content: ""; position: absolute; left: 4px; top: 18px; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 38% 35%, #fff6d4, #e7b23a 60%, #b87428) }
+.vs-go a, .vs-go button { border: 0; background: transparent; min-height: 0; padding: 0; border-radius: 0; text-decoration: underline wavy; text-underline-offset: .3em }
+.bm-stories .sb-btn { border: 0; background: transparent; box-shadow: none; min-height: 0; padding: 8px 0 8px 22px; position: relative }
+.bm-stories .sb-btn::before { content: ""; position: absolute; left: 0; top: 50%; width: 12px; height: 12px; translate: 0 -50%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, #e7b23a) }
+#bmEA { background: transparent; border: 0; text-decoration: underline wavy; text-underline-offset: .3em }
+.mir-add .mir-b { font-size: 0; width: 34px; height: 30px; padding: 0; position: relative; background: transparent }
+.mir-add .mir-b::before { content: ""; position: absolute; border: 1.6px solid currentColor; border-radius: 3px }
+.mir-add .mir-b[data-mdev="phone"]::before { inset: 5px 12px; border-radius: 4px }
+.mir-add .mir-b[data-mdev="fold"]::before { inset: 4px 8px }
+.mir-add .mir-b[data-mdev="tablet"]::before { inset: 4px 9px }
+.mir-add .mir-b[data-mdev="laptop"]::before { inset: 8px 6px 10px; }
+.mir-add .mir-b[data-mdev="laptop"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 5px; height: 2px; background: currentColor }
+.mir-add .mir-b[data-mdev="eink"]::before { inset: 7px 6px }
+.mir-add .mir-b[data-mdev="tv"]::before { inset: 9px 4px; border-radius: 2px }
+@media (max-width: 720px) {
+  .book-open { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); inset: 8px }
+  .spines { flex-direction: row; overflow-x: auto; height: 28px }
+  .spine { width: 22px; height: 16px; flex-basis: 22px }
+  .sheet h2 { font-size: 34px }
+  .sheet-marks { position: static; margin-top: 10px }
+  .wing-face { inset: 8px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-open, .stone, .wsun { animation: none; transition: none }
+}

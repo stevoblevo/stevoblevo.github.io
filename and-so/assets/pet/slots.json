@@ -1,0 +1,4 @@
+{
+  "mag": { "src": "assets/pet/mag.png", "ready": false },
+  "bunny": { "src": "assets/pet/bunny.png", "ready": false }
+}

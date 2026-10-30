@@ -126,6 +126,7 @@ function update(dt) {
   if (bird.alpha > 0.02) { bird.trail.push([bird.x, bird.y]); if (bird.trail.length > 36) bird.trail.shift(); }
   else { bird.trail.length = 0; if (!singing) { bird.x = bird.tx = -100; bird.y = bird.ty = -100; } }
   petTick(dt); pluckFree(); brookTick(dt); jamTick(); guardTick(dt); heardTick();
+  bookTick(); wingTick(dt); ensTick(); dreamTick(); magTick(dt);
   if (era && era.endAt) {
     if (!era.cap && t > era.endAt + 1.3) { era.cap = true; caption("1955 isn't ready for that yet. its kids will be.", 5200); discover('x-1955'); }
     if (t > era.endAt + 4.2) { const pv = era.prev, pr = era.prevRhy; era = null; for (const v of voices) { v.target = null; v.locked = false; v.temp = 0.2; } if (pv !== M.key) setMode(pv, true); rhy.on = pr; rhy.nextT = 0; syncUI(); }
@@ -183,6 +184,14 @@ function startVoices() {
 }
 
 // ---------- boot ----------
+var wantPlay = false, wantDream = '';
+try {
+  const q = location.search;
+  if (/[?&]play=1/.test(q)) wantPlay = true;
+  if (/[?&]dreamwalk=book/.test(q)) wantDream = 'book';
+  else if (/[?&]dreamwalk=tune/.test(q)) wantDream = 'tune';
+  else if (/[?&]dreamwalk=(?:1|main)(?:&|$)/.test(q)) wantDream = 'main';
+} catch (e) {}
 function boot(hotData) {
   recalibrate();
   loadLocal();
@@ -200,6 +209,7 @@ function boot(hotData) {
   if (MIR.depth === 0) initCaps(); else capsUI();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
   jarPaint(false); landing(); mirBoot();
+  if ((wantDream || wantPlay) && MIR.depth === 0) setTimeout(() => { if (!entered) $('enter').click(); }, 350);
   requestAnimationFrame(frame);
 }
 $('enterReel').addEventListener('click', () => { $('enter').click(); setTimeout(reelStart, 1400); });
@@ -219,6 +229,8 @@ $('enter').addEventListener('click', e => {
   if (!phone && MIR.depth === 0) setTimeout(() => showGw(false), 900);
   setTimeout(() => { if (!draggedOnce) showHint(phone ? 'drag a voice · tap the terrain to add one · drag the scale' : 'drag a voice off its rest · tap the terrain to add one · scroll the scale · tap the sky to ' + (LIGHT() ? 'glide' : 'lean'), 16); }, 1600);
   jlog('entered');
+  if (wantDream) { const tour = wantDream; wantDream = ''; setTimeout(() => dreamStart(tour), 700); }
+  else if (wantPlay) { wantPlay = false; setTimeout(() => bookOpen('st-louis', { play: true }), 800); }
 });
 try {
   const hot = window.claude && window.claude.hot;
@@ -249,6 +261,12 @@ try {
     view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
     box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),
     geo: () => ({ W, H, LT, LB, SH, PX0, PW, DPR, phone, TOPH }),
-    xs: v => xToS(v), ball: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; const b = ballPos(v); return { X: Math.round(b.X), Y: Math.round(b.Y), x: +v.x.toFixed(2), locked: v.locked }; }, dv: (i, x) => { const v = voices.filter(o => o.wT > 0)[i]; return v ? Dv(v, x) : null; }, refine: (i, x) => { const v = voices.filter(o => o.wT > 0)[i]; return v ? refineMin(v, x, 11) : null; }
+    xs: v => xToS(v), ball: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; const b = ballPos(v); return { X: Math.round(b.X), Y: Math.round(b.Y), x: +v.x.toFixed(2), locked: v.locked }; }, dv: (i, x) => { const v = voices.filter(o => o.wT > 0)[i]; return v ? Dv(v, x) : null; }, refine: (i, x) => { const v = voices.filter(o => o.wT > 0)[i]; return v ? refineMin(v, x, 11) : null; },
+    book: () => ({ open: BOOK.open, id: BOOK.id, on: BOOK.onPlay, bar: BOOK.bar, sym: BOOK.sym, bpm: BOOK.bpm, pd: !!(BOOK.tune && BOOK.tune.pd), n: BOOK_DATA.length, pdn: BOOK_DATA.filter(t => t.pd).length, wingN: WING_DATA.length }),
+    wing: () => ({ step: WING.step, played: WING.played.slice(), dream: WING.dream }),
+    ens: () => ({ on: ENS.on, n: ENS.n, role: ENS.role, gain: +ENS.gain.toFixed(3), master: ENS.master, id: ENS.id, born: ENS.born, bpm: BOOK.bpm, abs: BOOK.abs, chord: BOOK.sym, bus: A.bus ? +A.bus.gain.value.toFixed(3) : null, drum: A.drumBus ? +A.drumBus.gain.value.toFixed(3) : null, vol: A.vol ? +A.vol.gain.value.toFixed(3) : null, filter: A.roleF ? A.roleF.type : '', ensFilter: A.ensFilter ? A.ensFilter.type : '', peers: Object.keys(ENS.peers).map(id => ({ id, born: ENS.peers[id].born })) }),
+    dream: () => ({ on: DREAM.on, tour: DREAM.tour, i: DREAM.i, clean: DREAM.clean, cap: (TOURS[DREAM.tour] && TOURS[DREAM.tour][DREAM.i] && TOURS[DREAM.tour][DREAM.i].cap) || '' }),
+    mag: () => ({ found: MAG.found, step: MAG.step, look: MAG.look }),
+    dreamStart, bookOpen, wingShow
   };
 } catch (e) {}

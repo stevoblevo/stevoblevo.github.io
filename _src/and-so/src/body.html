@@ -11,7 +11,8 @@
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
     <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reels first</button></div>
-    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 7 · Everfallen<span class="ver-more"> · every version</span></button></p>
+    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 8 · The Book<span class="ver-more"> · every version</span></button></p>
+    <p class="dream-line"><button type="button" id="dreamMark">dream</button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
   </div>
   <div id="ovBrook" class="ov-brook" role="group" aria-label="the brook: scenes you can walk to"></div>
@@ -136,7 +137,7 @@
 
     <div class="sec">versions</div>
     <div class="btns"><button class="pill" id="gVersions">every version</button></div>
-    <div class="note" id="gVersionsNote">every AND SO stays playable: 6.1, 6, the cymatics build of 22 October, the first one from 12 October, and the Gamut Field Guide. each keeps its own save, so going back never takes anything away from this one.</div>
+    <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 7 is still there, and so are 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
 
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
@@ -199,7 +200,8 @@
     <div id="boxLocked" class="lock">locked. it opens at 3 finds.</div>
     <div id="boxWrap"><canvas id="pad" class="pad" width="480" height="400"></canvas>
       <div class="btns"><button class="pill" id="bOpen">open the box</button><button class="pill" id="bAutoV">auto vibe</button><button class="pill" id="bCenter">center</button></div>
-      <div class="note">drag the puck. five vibes, blended: micro, groove, glow, drift, chaos. the music and Saelion both follow it.</div></div>
+      <div class="note">drag the puck. five vibes, blended: micro, groove, glow, drift, chaos. the music and Saelion both follow it.</div>
+      <button type="button" id="magCarrot" class="mag-carrot" hidden aria-label="a loose carrot"></button></div>
 
     <div class="sec">headphones</div>
     <label class="row"><span>binaural split</span><input type="checkbox" class="sw" id="sHp"></label>
@@ -364,3 +366,11 @@
 
 <div id="turn" class="sbi" aria-hidden="true"></div>
 <div id="heard" class="sbi" aria-live="polite"></div>
+<button id="bookMark" class="book-mark" type="button" aria-label="the book"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 6h13a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 6v20" stroke="currentColor" stroke-width="1.2"/></svg></button>
+<div id="book" aria-hidden="true"></div>
+<button id="ensClasp" class="ens-clasp" type="button" aria-pressed="false" hidden><i></i><span id="ensRead"></span></button>
+<button id="ensSave" type="button" hidden>keep this</button>
+<button id="dreamKeep" class="dream-keep" type="button" hidden>keep dreaming</button>
+<div id="magPaw" class="mag-paw" hidden></div>
+<div id="magRead" class="mag-read" hidden></div>
+<div id="magCard" class="mag-card" hidden></div>

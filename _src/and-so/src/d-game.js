@@ -1,6 +1,6 @@
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
-const SAVE_KEY = 'andso:v7';   // AND SO 7 keeps its own save, so playing an older version (they share andso:v2) never takes anything away
-const OLD_SAVE_KEYS = ['andso:v2'];   // read every time and merged in: counts take the larger, found things and stones the union
+const SAVE_KEY = 'andso:v8';   // AND SO 8 keeps its own save, so playing 7 (andso:v7) or an older one never takes anything away
+const OLD_SAVE_KEYS = ['andso:v7', 'andso:v2'];   // read every time and merged in: counts take the larger, found things and stones the union
 const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude', 'reelAuto'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
@@ -15,7 +15,9 @@ function snapshot() {
   return { v: 2, sv: 70, lit: 1, found: [...found], presets: userP, unlockAll: allUnlocked, skin: sk, set,
     game: { score: GAME.score, best: GAME.best, rounds: GAME.rounds, stars: GAME.stars, qdone: GAME.qdone, bestTime: GAME.bestTime || 0,
       nougats: GAME.nougats, played: Math.round(GAME.played), stones: GAME.stones.slice(), stories: GAME.stories.slice(), jamBest: GAME.jamBest, lastDay: GAME.lastDay,
-      guards: GAME.guards.slice(0, 12), met: GAME.met.slice(), heard: GAME.heard, guardNougat: GAME.guardNougat, reels: GAME.reels.slice(), reelFound: GAME.reelFound.slice() }, stamp: Date.now() };
+      guards: GAME.guards.slice(0, 12), met: GAME.met.slice(), heard: GAME.heard, guardNougat: GAME.guardNougat, reels: GAME.reels.slice(), reelFound: GAME.reelFound.slice(),
+      mag: (typeof MAG !== 'undefined' && MAG.found) ? 1 : 0, magStep: (typeof MAG !== 'undefined') ? MAG.step : 0,
+      wingStep: (typeof WING !== 'undefined') ? WING.step : 1, wingPlayed: (typeof WING !== 'undefined') ? WING.played.slice() : [], wingDream: (typeof WING !== 'undefined' && WING.dream) ? 1 : 0 }, stamp: Date.now() };
 }
 function applySave(s, preferPrefs) {
   if (!s || typeof s !== 'object') return;
@@ -30,7 +32,9 @@ function applySave(s, preferPrefs) {
     if (Array.isArray(g.reels)) g.reels.forEach(id => { if (typeof id === 'string' && !GAME.reels.includes(id)) GAME.reels.push(id); });
     if (Array.isArray(g.reelFound)) g.reelFound.forEach(id => { if (typeof id === 'string' && CATI.has(id) && !GAME.reelFound.includes(id)) GAME.reelFound.push(id); });
     if (Array.isArray(g.guards) && !GAME.guards.length) GAME.guards = g.guards.filter(id => typeof id === 'string').slice(0, 12);
-    GAME.heard = Math.max(GAME.heard, +g.heard || 0); if (typeof g.guardNougat === 'string' && g.guardNougat > GAME.guardNougat) GAME.guardNougat = g.guardNougat; }
+    GAME.heard = Math.max(GAME.heard, +g.heard || 0); if (typeof g.guardNougat === 'string' && g.guardNougat > GAME.guardNougat) GAME.guardNougat = g.guardNougat;
+    if (typeof MAG !== 'undefined') { if (g.mag) MAG.found = true; if (g.magStep) MAG.step = g.magStep; if (MAG.found) document.body.classList.add('mag-home'); }
+    if (typeof WING !== 'undefined') { if (g.wingStep) WING.step = Math.max(WING.step, +g.wingStep || 1); if (Array.isArray(g.wingPlayed)) g.wingPlayed.forEach(id => { if (typeof id === 'string' && !WING.played.includes(id)) WING.played.push(id); }); if (g.wingDream) WING.dream = true; } }
   if (preferPrefs && s.set) PREF_KEYS.forEach(k => { if (s.set[k] !== undefined && typeof s.set[k] === typeof SET[k]) SET[k] = s.set[k]; });
   // 7 opens in Meta Daylight: a look saved before 7 is not carried over, and of the looks picked in 7 only the
   // Storeybrook ones come back on the next visit (boot() checks); the older looks are for the visit

@@ -169,7 +169,12 @@ function drawLight() {
 const PET_EYES = [[0, -8.2, 2.5], [-8.6, -5.4, 2], [8.6, -5.4, 2], [-4.4, -10.8, 1.6], [4.4, -10.8, 1.6], [-11.2, 2.6, 1.7], [11.2, 2.6, 1.7]];
 const EYE_COLS = [[246, 195, 95], [110, 200, 255], [255, 110, 150], [150, 230, 170]];
 function petGaze(cx, cy, k) {
-  const dx = lastPX - cx, dy = lastPY - cy, d = Math.hypot(dx, dy) || 1, m = Math.min(1, d / 160);
+  let dx = lastPX - cx, dy = lastPY - cy;
+  if (typeof MAG !== 'undefined' && MAG && MAG.look) {
+    const hx = hole.placed ? hole.x : W * 0.72, hy = hole.placed ? hole.y : H * 0.42;
+    dx = hx - cx; dy = hy - cy;
+  }
+  const d = Math.hypot(dx, dy) || 1, m = Math.min(1, d / 160);
   return [(dx / d) * k * m, (dy / d) * k * m];
 }
 function petEye(g, X, Y, r, col, gx, gy, shut, slit, dark) {
@@ -202,7 +207,7 @@ function drawPet(g) {
   const lp = lightPet(), ink = lp ? hideInk() : null, limbA = w => Math.min(1, w * (lp ? 2.4 : 1.7));
   if (lp) hideTick();
   const base = skein ? [236, 226, 206] : lp ? HIDE.coatL : mix([238, 210, 226], acc, 0.28), dark = lp ? ink : mix(base, [60, 40, 70], skein ? 0.55 : 0.4), pose = pet.pose, sy = pose === 2 ? 6 * sc : 0, paper = lp;
-  const breath = Math.sin(t * (1.6 + 0.9 * E)) * (0.018 + 0.03 * E) * (reduceMotion ? 0.3 : 1);
+  const breath = Math.sin(t * (1.6 + 0.9 * E)) * (0.018 + 0.03 * E) * (reduceMotion ? 0.3 : 1) * ((typeof MAG !== 'undefined' && MAG.look) ? 0.15 : 1);
   g.scale(1 + breath, 1 - breath * 0.8);
   // an ink bloom behind her (a violet one at night)
   if (E > 0.3) { const R = (34 + 30 * E) * sc, ag = g.createRadialGradient(0, -4 * sc, 0, 0, -4 * sc, R), c = paper ? [30, 24, 40] : [120, 70, 180];
@@ -239,7 +244,9 @@ function drawPet(g) {
     { const hx = 6 * sc, hy = 4 * sc + sy, hs = 2.4 * sc; g.fillStyle = rgba(mix(acc, [255, 120, 150], 0.5), 0.8); g.beginPath(); g.moveTo(hx, hy + hs); g.bezierCurveTo(hx - hs * 2, hy - hs * 0.5, hx - hs * 0.6, hy - hs * 2, hx, hy - hs * 0.6); g.bezierCurveTo(hx + hs * 0.6, hy - hs * 2, hx + hs * 2, hy - hs * 0.5, hx, hy + hs); g.fill(); }
   }
   if (wg > 0.06) { const up = pose === 1 || pet.jump > 0.3; g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4 : 2.8) * sc; [-1, 1].forEach(s => { g.beginPath(); g.moveTo(s * 11 * sc, -2 * sc + sy); if (pose === 3) g.lineTo(s * 9 * sc, -20 * sc + sy); else g.lineTo(s * (up ? 20 : 18) * sc, (up ? -12 : 6) * sc + sy - pet.jump * 6 * sc); g.stroke(); }); }
-  g.save(); g.translate(0, -22 * sc + sy); g.rotate(pose === 3 ? 0.18 : Math.sin(t * 0.7) * 0.06);
+  let magA = 0;
+  if (typeof MAG !== 'undefined' && MAG.look) { const hx = hole.placed ? hole.x : W * 0.72, hy = hole.placed ? hole.y : H * 0.42; magA = clamp(Math.atan2(hy - (pet.y - 22 * sc), hx - pet.x) * 0.45, -0.7, 0.7); }
+  g.save(); g.translate(0, -22 * sc + sy); g.rotate((pose === 3 ? 0.18 : Math.sin(t * 0.7) * 0.06 * (magA ? 0.15 : 1)) + magA);
   if (skein) drawSkeinHair(g, sc);
   else if (wl > 0.04) [-1, 1].forEach(s => { g.save(); g.translate(s * 6 * sc, -10 * sc); g.rotate(s * (0.18 + Math.sin(t * 1.1 + s) * 0.06) + (Rs > 0.55 ? s * 0.5 : 0)); const L = (6 + 18 * wl) * sc; g.globalAlpha = Math.min(1, wl * 1.8); g.fillStyle = rgba(lp ? (s < 0 ? HIDE.coatL : HIDE.coatR) : base, 1); g.beginPath(); g.ellipse(0, -L / 2, 4.2 * sc, L / 2, 0, 0, TAU); g.fill();
     if (lp) { g.strokeStyle = rgba(ink, 0.95); g.lineWidth = Math.max(1.2, 1.3 * sc); g.stroke(); }
@@ -363,6 +370,6 @@ function draw() {
   if (!paper) { ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H); }
   drawTip(); quietChord();
   ctx3.clearRect(0, 0, W, H); if (skin === 'story') drawStory3(); else if (paper) drawPaper3();
-  ctx2.clearRect(0, 0, W, H); drawPet(ctx2); drawGuards(ctx2); drawBubble(ctx2); drawRail(ctx2); drawReelFx(ctx2);
+  ctx2.clearRect(0, 0, W, H); drawPet(ctx2); if (typeof drawMag === 'function') drawMag(ctx2); drawGuards(ctx2); drawBubble(ctx2); drawRail(ctx2); drawReelFx(ctx2);
   drawPad();
 }

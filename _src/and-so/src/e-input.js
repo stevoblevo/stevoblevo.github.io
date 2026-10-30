@@ -349,6 +349,7 @@ window.addEventListener('keydown', e => {
   if (tg === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key.toLowerCase(); lastUserT = t;
+  if ($('book') && $('book').classList.contains('on')) { if (k === 'escape') bookClose(); return; }
   if (k === 'escape' && $('brookMap').classList.contains('on')) { closeBrook(); return; }
   if (k === 'escape' && $('liner').classList.contains('on')) { $('liner').classList.remove('on'); return; }
   if (k === 'escape' && MIR.open) { mirrorTable(false); return; }

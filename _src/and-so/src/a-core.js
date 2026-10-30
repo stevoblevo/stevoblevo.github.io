@@ -322,4 +322,7 @@ const zoomLevel = () => XMAX / (VIEW.x1 - VIEW.x0);
 const holeTerm = x => { if (!hole.on) return 0; const dx = (x - hole.c) / 70; return -hole.m * Math.exp(-dx * dx); };
 function relCents(f) { const r = f / fRoot, k = Math.floor(Math.log(r) / Math.log(M.eq) + 1e-9); return 1200 * Math.log2(r / Math.pow(M.eq, k)); }
 function jlog(s) { journal.push(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}  ${s}`); if (journal.length > 500) journal.shift(); }
-function haptic(ms) { if (!SET.haptics) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+let gestured = false;
+window.addEventListener('pointerdown', () => { gestured = true; }, { capture: true });
+window.addEventListener('keydown', () => { gestured = true; }, { capture: true });
+function haptic(ms) { if (!SET.haptics || !gestured) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
