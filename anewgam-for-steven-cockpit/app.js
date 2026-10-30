@@ -25,7 +25,7 @@
     if (!source.trim()) return;
     if (state.threads.length >= 250) return toast('250 threads held. Export your skein before starting another.');
     const now = new Date().toISOString();
-    state.threads.unshift({id: crypto.randomUUID(), source: source.trim().slice(0, 4000), heldAt: now, updatedAt: now, status: 'held-local', proof: ''});
+    state.threads.unshift({id: crypto.randomUUID(), source: source.slice(0, 4000), heldAt: now, updatedAt: now, status: 'held-local', proof: ''});
     state.blooms++; record('thread-held'); save();
     toast(memoryOnly ? 'Held in this tab only. Export to keep it.' : 'Thread saved on this device. Nothing sent.');
     return true;
@@ -43,8 +43,8 @@
     $('#continueBtn').textContent = state.threads.length ? 'Open threads' : 'Begin a thread';
   }
   $('#dropForm').addEventListener('submit', e => {
-    e.preventDefault(); captured = $('#dropInput').value.trim();
-    if (!captured) return toast('Drop a fragment first.');
+    e.preventDefault(); captured = $('#dropInput').value;
+    if (!captured.trim()) return toast('Drop a fragment first.');
     $('#interpretText').textContent = `“${captured}” — ready to hold exactly as written. No AI or remote execution is connected here.`;
     $('#interpret').classList.add('show'); $('#holdBtn').focus();
   });
@@ -67,37 +67,51 @@
   });
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); promptEvent = e; });
   window.addEventListener('appinstalled', () => { $('#installBtn').textContent = 'Installed'; });
+  const systemTheme = matchMedia('(prefers-color-scheme: dark)');
   function theme(value) {
-    document.documentElement.dataset.theme = value;
-    $('#themeToggle').textContent = value === 'light' ? '☾ Dark' : '☀ Light';
-    $('#themeToggle').setAttribute('aria-label', value === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
-    $('meta[name="theme-color"]').content = value === 'light' ? '#f6f1e8' : '#071510';
-    $('#gen2Hero').src = value === 'light' ? 'gen2-light.webp' : 'gen2-dark.webp';
+    const resolved = value === 'system' ? (systemTheme.matches ? 'dark' : 'light') : value;
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.sb = resolved === 'light' ? 'daylight' : 'knight';
+    $('#themeToggle').textContent = resolved === 'light' ? 'Switch to night' : 'Switch to daylight';
+    $('#themeSelect').value = value;
+    $('meta[name="theme-color"]').content = resolved === 'light' ? '#f4f6f2' : '#111b20';
   }
-  theme(state.theme === 'light' ? 'light' : 'dark');
+  const selectedTheme = () => ['dark','light'].includes(state.theme) ? state.theme : 'system';
+  theme(selectedTheme());
+  systemTheme.addEventListener('change', () => theme(selectedTheme()));
+  $('#themeSelect').addEventListener('change', e => { state.theme = e.target.value; theme(state.theme); save(); });
   $('#themeToggle').addEventListener('click', () => { state.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; theme(state.theme); save(); });
-  function route() { const hash = location.hash || '#cockpit'; $$('[data-nav]').forEach(a => { if (a.hash === hash) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }); }
+  function route() { const hash = location.hash || '#garden'; $$('[data-nav]').forEach(a => { if (a.hash === hash) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }); }
   window.addEventListener('hashchange', route); route();
   const items = window.__libraryItems || []; let filter = 'all';
   function renderLibrary() {
     const query = $('#librarySearch').value.toLowerCase().trim();
-    const visible = items.filter(x => (filter === 'all' || (x.tags || []).includes(filter) || x.id.includes(filter)) && `${x.title} ${x.caption} ${(x.tags || []).join(' ')}`.toLowerCase().includes(query));
-    $('#grid').replaceChildren(); $('#empty').style.display = visible.length ? 'none' : 'block';
-    $('#libraryCount').textContent = `${visible.length} / ${items.length} plates`;
+    const visible = items.filter(x => (filter === 'all' || (x.tags || []).includes(filter)) && `${x.title} ${x.caption} ${(x.tags || []).join(' ')}`.toLowerCase().includes(query));
+    window.__visibleArt = visible;
+    $('#grid').replaceChildren(); $('#empty').hidden = visible.length > 0;
+    $('#libraryCount').textContent = `${visible.length} / ${items.length} works`;
+    $('#coverage').textContent = `${items.length} works: ${items.filter(x=>!x.previewOnly).length} public source images and ${items.filter(x=>x.previewOnly).length} early previews. The archive brings together the published cockpit, Goober, Peachfall, Skein and Skyknight collections.`;
     for (const x of visible) {
-      const card = document.createElement('article'); card.className = 'card'; card.dataset.id = x.id; card.tabIndex = 0; card.setAttribute('role', 'button'); card.setAttribute('aria-label', `Open ${x.title}`);
-      const image = document.createElement('img'); image.className = 'thumb'; image.src = x.thumbnail || x.image; image.alt = x.alt || x.title; image.loading = 'lazy';
+      const card = document.createElement('button'); card.type='button'; card.className = 'card'; card.dataset.id = x.id; card.dataset.preview=String(!!x.previewOnly); card.setAttribute('aria-label', `Open ${x.title}`);
+      const mat=document.createElement('div');mat.className='art-mat';
+      const image = document.createElement('img'); image.className = 'thumb'; image.src = x.thumbnail || x.image; image.alt = x.alt || x.title; image.loading = 'lazy'; image.decoding='async';
+      image.width=x.width;image.height=x.height;
+      if(x.display){image.srcset=`${x.thumbnail} 480w, ${x.display} 1440w`;image.sizes='(max-width:600px) 92vw, 44vw';}
+      const error=document.createElement('span');error.className='unavailable';error.textContent='Image unavailable · open to try the source';
+      image.addEventListener('error',()=>card.classList.add('failed'));
+      mat.append(image,error);
       const body = document.createElement('div'); body.className = 'body';
-      for (const [tag, cls, text] of [['div','kicker',`${x.date} · ${x.status}`], ['h2','',x.title], ['p','caption',x.caption], ['div','meta',(x.tags || []).join(' · ')]]) {
+      for (const [tag, cls, text] of [['div','kicker',x.previewOnly ? 'Early seed / 100 × 75 preview' : `${(x.tags||[]).includes('vistas')?'Skyknight':(x.tags||[]).includes('skein')?'Skein':(x.tags||[]).includes('peachfall')?'Peachfall':(x.tags||[]).includes('goober')?'Goober':'Anewgam'} / ${x.width} × ${x.height}`], ['h3','',x.title]]) {
         const el = document.createElement(tag); el.className = cls; el.textContent = text; body.append(el);
       }
-      card.append(image, body); $('#grid').append(card);
+      card.append(mat, body); $('#grid').append(card);
     }
   }
   window.__setLibraryFilter = f => { filter = f || 'all'; $$('[data-filter]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.filter === filter))); renderLibrary(); };
   $$('[data-filter]').forEach(b => b.addEventListener('click', () => window.__setLibraryFilter(b.dataset.filter)));
   $('#librarySearch').addEventListener('input', renderLibrary);
-  $('#open-gallery').addEventListener('click', () => { const card = $('#grid .card'); if (card) window.__openGallery(card.dataset.id); else toast('No plates match this search.'); });
+  $('#clearSearch').addEventListener('click',()=>{$('#librarySearch').value='';window.__setLibraryFilter('all');$('#librarySearch').focus();});
+  $('#open-gallery').addEventListener('click', () => { const card = $('#grid .card'); if (card) window.__openGallery(card.dataset.id); else toast('No works match this search.'); });
   renderLibrary(); render();
   $('#updateApp').addEventListener('click', async () => {
     if (!('serviceWorker' in navigator)) return toast('Service workers are unavailable in this browser.');
