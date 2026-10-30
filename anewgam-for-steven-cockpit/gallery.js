@@ -1,215 +1,94 @@
-/* Yandex-style wall viewer. Uses window.__libraryItems. Does not own door hashes. */
-(function () {
-  const items = () => window.__libraryItems || [];
-  const stage = document.getElementById("ya-stage");
-  const img = document.getElementById("ya-img");
-  const title = document.getElementById("ya-title");
-  const meta = document.getElementById("ya-meta");
-  const related = document.getElementById("ya-related");
-  const count = document.getElementById("ya-count");
-  if (!stage || !img) return;
-
-  let idx = 0;
-  let zoom = 1;
-  let panX = 0;
-  let panY = 0;
-  let dragging = false;
-  let lastX = 0;
-  let lastY = 0;
-  let returnFocus = null;
-
-  function srcOf(x) {
-    return (x && (x.image || x.thumbnail)) || "";
+/* Existing art IDs and #view= links; actual public source bytes, native modal, reversible history. */
+(()=>{
+  'use strict';
+  const $=s=>document.querySelector(s), stage=$('#ya-stage'), image=$('#ya-img');
+  const items=()=>window.__libraryItems||[];
+  let sequence=[], current=null, returnFocus=null, previousHash='#library', zoom=1, pan={x:0,y:0}, pointers=new Map(), gesture=null, timer, pending=null, loadEpoch=0;
+  const announce=message=>{$('#ya-announcement').textContent=message;};
+  function reset(){zoom=1;pan={x:0,y:0};pointers.clear();gesture=null;transform();}
+  function transform(){image.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${zoom})`;$('#ya-reset').textContent=zoom===1?'Fit':Math.round(zoom*100)+'%';}
+  function scale(value){zoom=current?.previewOnly?1:Math.min(5,Math.max(1,value));if(zoom===1)pan={x:0,y:0};transform();}
+  function cancelLoad(){clearTimeout(timer);loadEpoch++;if(pending){pending.onload=pending.onerror=null;pending=null;}image.setAttribute('aria-busy','false');}
+  function load(){
+    cancelLoad();const epoch=loadEpoch, work=current, request=new Image();pending=request;
+    const active=()=>epoch===loadEpoch&&stage.open&&current===work;
+    image.hidden=true;image.setAttribute('aria-busy','true');$('#ya-error').hidden=true;announce('Loading artwork.');
+    const fail=()=>{if(!active())return;clearTimeout(timer);image.hidden=true;image.setAttribute('aria-busy','false');$('#ya-error').hidden=false;announce('Artwork unavailable. Try again or browse another work.');};
+    request.onload=()=>{if(!active())return;clearTimeout(timer);image.src=request.src;image.hidden=false;image.setAttribute('aria-busy','false');$('#ya-error').hidden=true;announce(`${work.title}. ${work.width} by ${work.height} pixels${work.previewOnly?'. Preview only.':''}`);};
+    request.onerror=fail;
+    timer=setTimeout(fail,20000);
+    request.src=work.image||work.thumbnail;
   }
-
-  function list() {
-    const xs = items();
-    return xs.length ? xs : [];
+  function paint(id){
+    const work=items().find(x=>x.id===id);if(!work)return false;
+    current=work;reset();stage.dataset.preview=String(!!work.previewOnly);
+    $('#ya-title').textContent=work.title;
+    $('#ya-count').textContent=`${sequence.findIndex(x=>x.id===id)+1} / ${sequence.length}`;
+    $('#ya-caption').textContent=work.caption||'';
+    $('#ya-meta').textContent=work.previewOnly?'100 × 75 preview · original unavailable':`${work.width} × ${work.height} · ${work.image.endsWith('.webp')?'Published WebP':'Public original'} · ${Math.round(work.bytes/1024)} KB`;
+    $('#ya-provenance').textContent=work.provenance||'Published source artwork. Earlier generation details unverified.';
+    image.alt=work.alt||work.title;image.width=work.width;image.height=work.height;
+    const source=$('#ya-original');source.hidden=!!work.previewOnly;source.href=work.previewOnly?'#':work.image;
+    $('#ya-in').disabled=$('#ya-out').disabled=!!work.previewOnly;
+    $('#ya-prev').disabled=$('#ya-next').disabled=sequence.length<2;
+    load();window.dispatchEvent(new CustomEvent('sae:art-open',{detail:{id}}));return true;
   }
-
-  function relatedOf(x) {
-    const xs = list();
-    const tags = new Set((x.tags || []).map(String));
-    return xs
-      .filter((y) => y.id !== x.id)
-      .map((y) => {
-        const hit = (y.tags || []).filter((t) => tags.has(t)).length;
-        return { y, hit };
-      })
-      .filter((r) => r.hit > 0)
-      .sort((a, b) => b.hit - a.hit)
-      .slice(0, 8)
-      .map((r) => r.y);
-  }
-
-  function applyTransform() {
-    img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
-  }
-
-  function resetView() {
-    zoom = 1;
-    panX = 0;
-    panY = 0;
-    applyTransform();
-  }
-
-  function openAt(i, pushHash) {
-    const xs = list();
-    if (!xs.length) return;
-    idx = ((i % xs.length) + xs.length) % xs.length;
-    const x = xs[idx];
-    img.src = srcOf(x);
-    img.alt = x.alt || x.title || "";
-    title.textContent = x.title || x.id;
-    meta.textContent = [x.date, x.status, (x.tags || []).join(" · ")].filter(Boolean).join(" · ");
-    count.textContent = `${idx + 1} / ${xs.length}`;
-    related.replaceChildren();
-    for (const y of relatedOf(x)) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "ya-rel";
-      b.title = y.title;
-      const im = document.createElement("img");
-      im.src = y.thumbnail || srcOf(y);
-      im.alt = y.title || "";
-      b.append(im);
-      b.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        openAt(list().findIndex((z) => z.id === y.id), true);
-      });
-      related.append(b);
+  function open(id,push=true){
+    if(!items().some(x=>x.id===id)){window.__anewgam?.toast('That artwork is not in this public archive.');return;}
+    if(!stage.open){
+      returnFocus=document.activeElement;previousHash=/^#view=|^#gallery$|^#hires$/.test(location.hash)?'#library':location.hash||'#garden';
+      const visible=window.__visibleArt||[];sequence=visible.some(x=>x.id===id)?visible.slice():items().slice();
+      stage.showModal();document.body.classList.add('ya-open');
     }
-    if (stage.hidden) returnFocus = document.activeElement;
-    stage.hidden = false;
-    document.querySelector('.shell').inert = true;
-    document.querySelector('.side-nav').inert = true;
-    document.querySelectorAll('.sae-family-header,.sae-family-footer').forEach(el => el.inert = true);
-    document.getElementById('ya-close').focus();
-    document.body.classList.add("ya-open");
-    resetView();
-    if (pushHash) {
-      const h = "view=" + encodeURIComponent(x.id);
-      if (location.hash.replace(/^#/, "") !== h) history.replaceState(null, "", "#" + h);
-    }
+    paint(id);
+    if(push)history.pushState({artView:true,returnHash:previousHash},'',`#view=${encodeURIComponent(id)}`);
+    $('#ya-close').focus();
   }
-
-  function close() {
-    stage.hidden = true;
-    document.body.classList.remove("ya-open");
-    document.querySelector('.shell').inert = false;
-    document.querySelector('.side-nav').inert = false;
-    document.querySelectorAll('.sae-family-header,.sae-family-footer').forEach(el => el.inert = false);
-    returnFocus?.focus();
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-    if (/^#view=|^#gallery$/.test(location.hash)) history.replaceState(null, "", "#library");
+  function close(){
+    if(!stage.open)return;
+    if(history.state?.artView)history.back();
+    else {history.replaceState(null,'',previousHash);finishClose();}
   }
-
-  function next(d) {
-    openAt(idx + d, true);
+  function finishClose(){
+    cancelLoad();if(stage.open)stage.close();document.body.classList.remove('ya-open');
+    if(document.fullscreenElement===stage)document.exitFullscreen().catch(()=>{});
+    if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
   }
-
-  window.__openGallery = function (id) {
-    const xs = list();
-    const i = id ? xs.findIndex((x) => x.id === id) : 0;
-    openAt(i < 0 ? 0 : i, true);
-  };
-
-  document.getElementById("grid")?.addEventListener("click", (ev) => {
-    const card = ev.target.closest(".card");
-    if (!card) return;
-    const i = list().findIndex(x => x.id === card.dataset.id);
-    if (i >= 0) openAt(i, true);
+  function step(delta){if(!current||!sequence.length)return;const i=sequence.findIndex(x=>x.id===current.id);const next=sequence[(i+delta+sequence.length)%sequence.length];paint(next.id);history.replaceState(history.state,'',`#view=${encodeURIComponent(next.id)}`);}
+  window.__openGallery=id=>open(id||(window.__visibleArt||items())[0]?.id);
+  $('#grid').addEventListener('click',e=>{const card=e.target.closest('.card');if(card)open(card.dataset.id);});
+  $('#ya-close').addEventListener('click',close);stage.addEventListener('cancel',e=>{e.preventDefault();close();});
+  // Storeybrook B/back may close the native dialog directly; preserve URL and return focus too.
+  stage.addEventListener('close',()=>{cancelLoad();if(document.body.classList.contains('ya-open')){document.body.classList.remove('ya-open');if(/^#view=|^#gallery$|^#hires$/.test(location.hash)){if(history.state?.artView)history.back();else history.replaceState(null,'',previousHash);}returnFocus?.focus({preventScroll:true});}});
+  $('#ya-prev').addEventListener('click',()=>step(-1));$('#ya-next').addEventListener('click',()=>step(1));
+  $('#ya-in').addEventListener('click',()=>scale(zoom+.5));$('#ya-out').addEventListener('click',()=>scale(zoom-.5));$('#ya-reset').addEventListener('click',reset);$('#ya-retry').addEventListener('click',load);
+  $('#ya-full').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if(stage.requestFullscreen)await stage.requestFullscreen();else announce('Fullscreen is unavailable in this browser.');}catch{announce('Fullscreen is unavailable in this browser.');}});
+  stage.addEventListener('keydown',e=>{
+    if(e.altKey||e.ctrlKey||e.metaKey)return;
+    // At TV density arrows move focus between real buttons; their A/Enter actions browse.
+    if(document.documentElement.dataset.density!=='tv'&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();e.stopPropagation();step(e.key==='ArrowLeft'?-1:1);}
+    if(['+','=','-','0'].includes(e.key)){e.preventDefault();e.stopPropagation();e.key==='0'?reset():scale(zoom+(['+','='].includes(e.key)?.5:-.5));}
   });
-
-  document.getElementById('grid')?.addEventListener('keydown', ev => {
-    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches('.card')) {
-      ev.preventDefault(); window.__openGallery(ev.target.dataset.id);
-    }
+  image.addEventListener('wheel',e=>{e.preventDefault();scale(zoom+(e.deltaY<0?.2:-.2));},{passive:false});image.addEventListener('dblclick',reset);
+  const frame=$('.ya-frame');
+  frame.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button'))return;frame.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pointers.size===1)gesture={startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY};
+    if(pointers.size===2){const [a,b]=[...pointers.values()];gesture={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};}
   });
-  document.getElementById("ya-close")?.addEventListener("click", close);
-  document.getElementById("ya-prev")?.addEventListener("click", () => next(-1));
-  document.getElementById("ya-next")?.addEventListener("click", () => next(1));
-  document.getElementById("ya-full")?.addEventListener("click", () => {
-    if (!document.fullscreenElement) stage.requestFullscreen?.().catch(() => {});
-    else document.exitFullscreen().catch(() => {});
+  frame.addEventListener('pointermove',e=>{
+    if(!pointers.has(e.pointerId))return;const old=pointers.get(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pointers.size===2&&gesture?.distance){const [a,b]=[...pointers.values()];scale(gesture.zoom*Math.hypot(a.x-b.x,a.y-b.y)/gesture.distance);}
+    else if(zoom>1){pan.x+=e.clientX-old.x;pan.y+=e.clientY-old.y;transform();}
   });
-
-  stage.addEventListener("click", (ev) => {
-    if (ev.target.closest("button, .ya-ui, .ya-rel, #ya-img")) return;
-    const r = stage.getBoundingClientRect();
-    const x = (ev.clientX - r.left) / r.width;
-    if (x < 0.28) next(-1);
-    else if (x > 0.72) next(1);
-    else if (ev.target === stage || ev.target.classList.contains("ya-dim")) close();
-  });
-
-  img.addEventListener("dblclick", resetView);
-
-  img.addEventListener("wheel", (ev) => {
-    ev.preventDefault();
-    const nextZ = Math.min(4, Math.max(1, zoom + (ev.deltaY < 0 ? 0.18 : -0.18)));
-    zoom = nextZ;
-    if (zoom === 1) {
-      panX = 0;
-      panY = 0;
-    }
-    applyTransform();
-  }, { passive: false });
-
-  img.addEventListener("pointerdown", (ev) => {
-    if (zoom <= 1) return;
-    dragging = true;
-    lastX = ev.clientX;
-    lastY = ev.clientY;
-    img.setPointerCapture(ev.pointerId);
-  });
-  img.addEventListener("pointermove", (ev) => {
-    if (!dragging) return;
-    panX += ev.clientX - lastX;
-    panY += ev.clientY - lastY;
-    lastX = ev.clientX;
-    lastY = ev.clientY;
-    applyTransform();
-  });
-  img.addEventListener("pointerup", () => { dragging = false; });
-
-  window.addEventListener("keydown", (ev) => {
-    if (ev.target.closest('input, textarea, select, [contenteditable="true"], dialog')) return;
-    if (!stage.hidden && ev.key === 'Tab') {
-      const buttons = [...stage.querySelectorAll('button:not([disabled])')];
-      const first = buttons[0], last = buttons[buttons.length - 1];
-      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
-      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
-    }
-    if (stage.hidden) {
-      if (ev.key === "g" && !ev.metaKey && !ev.ctrlKey) {
-        openAt(0, true);
-      }
-      return;
-    }
-    if (ev.key === "Escape") close();
-    else if (ev.key === "ArrowLeft") next(-1);
-    else if (ev.key === "ArrowRight") next(1);
-    else if (ev.key === "f" || ev.key === "F") document.getElementById("ya-full")?.click();
-    else if (ev.key === "+" || ev.key === "=") { zoom = Math.min(4, zoom + 0.25); applyTransform(); }
-    else if (ev.key === "-" || ev.key === "_") { zoom = Math.max(1, zoom - 0.25); if (zoom === 1) { panX = 0; panY = 0; } applyTransform(); }
-    else if (ev.key === "0") resetView();
-  });
-
-  function fromHash() {
-    let raw; try { raw = decodeURIComponent((location.hash || "").replace(/^#/, "")); } catch { return; }
-    if (raw === "gallery") openAt(0, false);
-    else if (raw === "hires") {
-      if (window.__setLibraryFilter) window.__setLibraryFilter("hires");
-      const i = list().findIndex(x => (x.tags || []).includes("hires"));
-      if (i >= 0) openAt(i, false);
-    }
-    else if (raw.startsWith("view=")) {
-      const id = raw.slice(5);
-      const i = list().findIndex((x) => x.id === id);
-      if (i >= 0) openAt(i, false);
-    }
+  function end(e){if(pointers.size===1&&zoom===1&&gesture?.startX!=null){const dx=e.clientX-gesture.startX,dy=e.clientY-gesture.startY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1);}pointers.delete(e.pointerId);if(!pointers.size)gesture=null;}
+  frame.addEventListener('pointerup',end);frame.addEventListener('pointercancel',()=>{pointers.clear();gesture=null;});
+  function route(){
+    let hash;try{hash=decodeURIComponent(location.hash);}catch{finishClose();return;}
+    if(hash.startsWith('#view=')){const id=hash.slice(6);if(items().some(x=>x.id===id))open(id,false);else{finishClose();window.__anewgam?.toast('That artwork is not in this public archive.');}}
+    else if(hash==='#gallery')open((window.__visibleArt||items())[0]?.id,false);
+    else if(hash==='#hires'){window.__setLibraryFilter?.('hires');open((window.__visibleArt||[])[0]?.id,false);}
+    else finishClose();
   }
-  window.addEventListener("hashchange", fromHash);
-  fromHash();
+  window.addEventListener('hashchange',route);window.addEventListener('popstate',route);route();
 })();
