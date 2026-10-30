@@ -15,7 +15,8 @@ const DEVICES = {
 };
 const MLOOKS = ['sb-comix', 'sb-knight', 'sb-origami', 'sb-inkblot', 'sb-skein', 'glasshouse', 'sb-daylight', 'peachfall'];
 const V61 = ['v6.1.html', 'v6.1/', 'https://stevoblevo.github.io/and-so/v6.1/'];
-const mirAllowed = () => MIR.depth > 0 || stoneOpen(STONE.get('mirror'));
+var dreamBypass = () => false;
+const mirAllowed = () => MIR.depth > 0 || stoneOpen(STONE.get('mirror')) || dreamBypass();
 const mirUp = msg => { try { if (MIR.depth > 0 && window.parent !== window) window.parent.postMessage(msg, '*'); } catch (e) {} };
 const mirPost = (w, msg) => { try { if (w.frame && w.frame.contentWindow) w.frame.contentWindow.postMessage(msg, '*'); } catch (e) {} };
 
@@ -63,7 +64,7 @@ function mirOpen(kind, dev, look) {
     '<button class="mw-b" data-a="rot" title="turn it to face someone else" aria-label="turn the window">⟳</button>' +
     '<button class="mw-b" data-a="min" title="fold it away" aria-label="fold the window away">–</button>' +
     '<button class="mw-b" data-a="close" title="close" aria-label="close the window">×</button></div><div class="mw-screen"></div><div class="mw-grip" aria-hidden="true"></div>';
-  el.querySelector('.mw-name').textContent = kind === '61' ? `AND SO 6.1 · ${D.name}` : `AND SO 7 · ${D.name} · ${SB_NAMES[look] || look}`;
+  el.querySelector('.mw-name').textContent = kind === '61' ? `AND SO 6.1 · ${D.name}` : `AND SO ${ANDSO_VERSION} · ${D.name} · ${SB_NAMES[look] || look}`;
   const n = MIR.wins.length;
   w.x = clamp((phone ? 12 : W * 0.06 + n * W * 0.22) + rand(-10, 10), 8, Math.max(8, W - D.w * fit - 16));
   w.y = clamp((phone ? 70 : 76 + (n % 2) * 40) + rand(-6, 6), 56, Math.max(56, H - D.h * fit - 60));
@@ -145,6 +146,7 @@ window.addEventListener('message', e => {
   const d = e.data; if (!d || typeof d !== 'object' || typeof d.andso !== 'string') return;
   const w = MIR.wins.find(x => x.frame && x.frame.contentWindow === e.source);
   if (w) {
+    if (d.andso === 'ens') { if (typeof ensRecv === 'function') ensRecv(d, e.source); return; }
     if (d.andso === 'hello') { w.ready = true; mirPost(w, { andso: 'seed', save: snapshot() }); mirPost(w, { andso: 'mute', v: !w.sound }); mirDeep(); discover('x-mirror'); }
     else if (d.andso === 'deep') { w.deep = clamp(+d.v || 0, 0, 9); mirDeep(); }
     else if (d.andso === 'found' && typeof d.id === 'string' && CATI.has(d.id)) discover(d.id);
@@ -152,6 +154,7 @@ window.addEventListener('message', e => {
     return;
   }
   if (MIR.depth > 0 && e.source === window.parent) {
+    if (d.andso === 'ens') { if (typeof ensRecv === 'function') ensRecv(d, e.source); return; }
     if (d.andso === 'seed' && d.save && typeof d.save === 'object') {
       applySave(d.save, true); SET.haptics = false; SET.motion = false; MIR.seeded = true; checkUnlocks(true); renderGuide(); scoreUI(); jarPaint(false); syncQuietUI(); syncArticUI();
       if (MIR.look && SKINS.includes(MIR.look)) setSkin(MIR.look);

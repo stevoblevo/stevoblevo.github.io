@@ -1,0 +1,524 @@
+[
+ {
+  "id": "bwv846",
+  "composer": "Bach",
+  "title": "Prelude in C",
+  "work": "The Well-Tempered Clavier, Book I, BWV 846",
+  "year": 1722,
+  "key": "C",
+  "meter": 4,
+  "tempo": 76,
+  "form": "broken chords",
+  "gate": "hold",
+  "invite": "Hold one note.",
+  "warm": "Just one note, held. That's how it starts.",
+  "pd": "Published 1722. Public domain in the United States. Our reduction of the opening, not a modern edition.",
+  "bars": [
+   [
+    "C"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C"
+   ]
+  ],
+  "melody": "0:0.5 4:0.5 7:0.5 12:0.5 16:0.5 7:0.5 12:0.5 16:0.5 0:0.5 2:0.5 9:0.5 14:0.5 17:0.5 9:0.5 14:0.5 17:0.5 -1:0.5 2:0.5 7:0.5 14:0.5 17:0.5 7:0.5 14:0.5 17:0.5 0:0.5 4:0.5 7:0.5 12:0.5 16:0.5 7:0.5 12:0.5 16:0.5"
+ },
+ {
+  "id": "anh114",
+  "composer": "Bach",
+  "title": "Minuet in G",
+  "work": "Minuet in G, BWV Anh. 114, from the Anna Magdalena notebook, by Christian Petzold",
+  "year": 1725,
+  "key": "G",
+  "meter": 3,
+  "tempo": 112,
+  "form": "minuet",
+  "gate": "beats",
+  "invite": "Give it eight even steps.",
+  "warm": "You've got a pulse now. Let's dance a little.",
+  "pd": "From the 1725 notebook. Public domain in the United States. Our dance reduction of the opening, not a modern edition.",
+  "bars": [
+   [
+    "G"
+   ],
+   [
+    "G"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G"
+   ],
+   [
+    "C"
+   ],
+   [
+    "G"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G"
+   ]
+  ],
+  "melody": "7:0.5 0:0.5 2:0.5 4:0.5 7:0.5 5:0.5 4:0.5 2:0.5 4:0.5 5:0.5 4:0.5 2:0.5 0:1 0:1 7:1 5:1 4:1 2:1 0:1.5 2:0.5 0:1"
+ },
+ {
+  "id": "k525",
+  "composer": "Mozart",
+  "title": "Eine kleine Nachtmusik",
+  "work": "Serenade in G, K. 525, first movement",
+  "year": 1787,
+  "key": "G",
+  "meter": 4,
+  "tempo": 132,
+  "form": "sonata opening",
+  "gate": "match",
+  "invite": "She is humming. Match her.",
+  "warm": "Same key, same smile. Mozart heard you.",
+  "pd": "1787. Public domain in the United States. Our reduction of the opening theme, not a modern edition.",
+  "bars": [
+   [
+    "G"
+   ],
+   [
+    "D"
+   ],
+   [
+    "G"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G"
+   ],
+   [
+    "C"
+   ],
+   [
+    "G",
+    "D7"
+   ],
+   [
+    "G"
+   ]
+  ],
+  "melody": "7:0.5 12:0.5 7:0.5 12:1 16:0.5 14:0.5 12:0.5 11:0.5 12:1 7:0.5 4:0.5 0:1"
+ },
+ {
+  "id": "k545",
+  "composer": "Mozart",
+  "title": "Sonata in C",
+  "work": "Piano Sonata in C, K. 545, first movement",
+  "year": 1788,
+  "key": "C",
+  "meter": 4,
+  "tempo": 120,
+  "form": "sonata opening",
+  "gate": "phrase",
+  "invite": "The phrase, clean through.",
+  "warm": "Clean as morning light.",
+  "pd": "1788. Public domain in the United States. Our reduction of the opening, not a modern edition.",
+  "bars": [
+   [
+    "C"
+   ],
+   [
+    "G"
+   ],
+   [
+    "C"
+   ],
+   [
+    "F"
+   ],
+   [
+    "C"
+   ],
+   [
+    "G"
+   ],
+   [
+    "C"
+   ],
+   [
+    "C"
+   ]
+  ],
+  "melody": "12:0.5 16:0.5 19:0.5 24:0.5 19:0.5 16:0.5 19:0.5 16:0.5 12:0.5 14:0.5 16:1 12:1"
+ },
+ {
+  "id": "elise",
+  "composer": "Beethoven",
+  "title": "Für Elise",
+  "work": "Bagatelle in A minor, WoO 59",
+  "year": 1810,
+  "key": "Am",
+  "meter": 3,
+  "tempo": 126,
+  "form": "bagatelle",
+  "gate": "dynamic",
+  "invite": "Loud, and then quiet.",
+  "warm": "Loud, then soft. That's feeling.",
+  "pd": "Published in the 19th century from the 1810 sketch. Public domain in the United States. Our reduction of the famous opening, not a modern edition.",
+  "bars": [
+   [
+    "Am"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "C"
+   ],
+   [
+    "G"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "E7"
+   ]
+  ],
+  "melody": "7:0.5 6:0.5 7:0.5 6:0.5 7:0.5 2:0.5 5:0.5 3:0.5 0:1 2:0.5 3:0.5 7:1"
+ },
+ {
+  "id": "moonlight",
+  "composer": "Beethoven",
+  "title": "Moonlight",
+  "work": "Piano Sonata No. 14, Op. 27 No. 2, first movement",
+  "year": 1802,
+  "key": "C#m",
+  "meter": 4,
+  "tempo": 56,
+  "form": "adagio",
+  "gate": "slow",
+  "feel": "triplet",
+  "invite": "Set the walk to sixty or under, and stay.",
+  "warm": "Slow is brave. The moon waited with you.",
+  "pd": "1802. Public domain in the United States. Our triplet reduction of the opening, not a modern edition.",
+  "bars": [
+   [
+    "C#m"
+   ],
+   [
+    "C#m"
+   ],
+   [
+    "C#m"
+   ],
+   [
+    "C#m"
+   ],
+   [
+    "A"
+   ],
+   [
+    "E"
+   ],
+   [
+    "G#7"
+   ],
+   [
+    "C#m"
+   ]
+  ],
+  "melody": "-5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3 -5:1/3 0:1/3 3:1/3"
+ },
+ {
+  "id": "ode",
+  "composer": "Beethoven",
+  "title": "Ode to Joy",
+  "work": "Symphony No. 9, finale theme",
+  "year": 1824,
+  "key": "D",
+  "meter": 4,
+  "tempo": 120,
+  "form": "theme",
+  "gate": "together",
+  "invite": "Open a second copy. The clasp will catch.",
+  "warm": "Two of you now. That's what this one is about.",
+  "pd": "1824. Public domain in the United States. Our reduction of the theme, not a modern edition.",
+  "bars": [
+   [
+    "D"
+   ],
+   [
+    "D"
+   ],
+   [
+    "G"
+   ],
+   [
+    "D"
+   ],
+   [
+    "A"
+   ],
+   [
+    "D"
+   ],
+   [
+    "G"
+   ],
+   [
+    "D"
+   ],
+   [
+    "A"
+   ],
+   [
+    "D"
+   ],
+   [
+    "D"
+   ],
+   [
+    "A"
+   ],
+   [
+    "D"
+   ],
+   [
+    "G"
+   ],
+   [
+    "A"
+   ],
+   [
+    "D"
+   ]
+  ],
+  "melody": "4:1 4:1 5:1 7:1 7:1 5:1 4:1 2:1 -2:1 -2:1 2:1 4:1 4:1.5 2:0.5 2:2"
+ },
+ {
+  "id": "sugar",
+  "composer": "Tchaikovsky",
+  "title": "Dance of the Sugar Plum Fairy",
+  "work": "The Nutcracker, Op. 71",
+  "year": 1892,
+  "key": "Em",
+  "meter": 4,
+  "tempo": 100,
+  "form": "character dance",
+  "gate": "stack",
+  "timbre": "bell",
+  "invite": "A third copy. Take a part.",
+  "warm": "Small bells, big hush. Lovely.",
+  "pd": "1892. Public domain in the United States. Our bell reduction of the opening, not a modern ballet edition.",
+  "bars": [
+   [
+    "Em"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Em"
+   ]
+  ],
+  "melody": "12:0.25 13:0.25 12:0.25 11:0.25 12:0.5 7:0.5 3:0.5 0:1 12:0.25 13:0.25 12:0.25 11:0.25 7:1 0:1"
+ },
+ {
+  "id": "swan",
+  "composer": "Tchaikovsky",
+  "title": "Swan Lake",
+  "work": "Swan Lake, Op. 20, the swan theme",
+  "year": 1876,
+  "key": "Bm",
+  "meter": 4,
+  "tempo": 72,
+  "form": "theme",
+  "gate": "dream",
+  "invite": "Walk a whole dream, and don't step off.",
+  "warm": "You walked the whole dream. Rest your wings.",
+  "pd": "1876. Public domain in the United States. Our reduction of the theme, not a modern edition.",
+  "bars": [
+   [
+    "Bm"
+   ],
+   [
+    "F#7"
+   ],
+   [
+    "Bm"
+   ],
+   [
+    "Bm"
+   ],
+   [
+    "G"
+   ],
+   [
+    "D"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "F#7"
+   ]
+  ],
+  "melody": "0:1 3:0.5 2:0.5 0:1 -2:1 2:1 0:2 7:1 5:1 3:1 2:2"
+ },
+ {
+  "id": "firebird",
+  "composer": "Stravinsky",
+  "title": "The Firebird",
+  "work": "The Firebird, 1910 ballet, closing hymn",
+  "year": 1910,
+  "key": "B",
+  "meter": 4,
+  "tempo": 66,
+  "form": "hymn",
+  "gate": "mag",
+  "timbre": "horn",
+  "invite": "Mag finds you. She does that.",
+  "warm": "Something bright woke up in the wood.",
+  "pd": "The 1910 ballet, published before 1931, so public domain in the United States. Our reduction of that score, not the 1919 or 1945 suites.",
+  "bars": [
+   [
+    "B"
+   ],
+   [
+    "E"
+   ],
+   [
+    "F#"
+   ],
+   [
+    "B"
+   ],
+   [
+    "B"
+   ],
+   [
+    "E"
+   ],
+   [
+    "F#"
+   ],
+   [
+    "B"
+   ]
+  ],
+  "melody": "0:1 2:1 4:1 5:1 7:1 9:1 11:1 12:2"
+ },
+ {
+  "id": "petrushka",
+  "composer": "Stravinsky",
+  "title": "Petrushka",
+  "work": "Petrushka, 1911 original",
+  "year": 1911,
+  "key": "C",
+  "meter": 7,
+  "tempo": 126,
+  "form": "puppet dance in 7",
+  "gate": "uneven",
+  "also": 6,
+  "invite": "Keep the limp in the meter.",
+  "warm": "Funny little puppet. You kept up.",
+  "pd": "The 1911 original, published before 1931, so public domain in the United States. Our reduction, not the 1947 revision.",
+  "bars": [
+   [
+    "C"
+   ],
+   [
+    "F#"
+   ],
+   [
+    "C"
+   ],
+   [
+    "F#"
+   ],
+   [
+    "C"
+   ],
+   [
+    "F#"
+   ],
+   [
+    "C"
+   ],
+   [
+    "C"
+   ]
+  ],
+  "melody": "0:1 0:1 3:1 3:1 6:1 7:1 6:1 0:1 0:1 6:1 6:1 3:1 1:1 0:1"
+ },
+ {
+  "id": "rite",
+  "composer": "Stravinsky",
+  "title": "The Rite of Spring",
+  "work": "The Rite of Spring, 1913",
+  "year": 1913,
+  "key": "A",
+  "meter": 4,
+  "tempo": 52,
+  "form": "introduction",
+  "gate": "all",
+  "timbre": "reed",
+  "invite": "Every piece, once.",
+  "warm": "Spring, all at once. You earned the wild one.",
+  "pd": "The 1913 score, published before 1931, so public domain in the United States. Our reduction of the opening, not a later edition.",
+  "bars": [
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Am"
+   ]
+  ],
+  "melody": "15:1.5 14:1 10:1 7:1 14:1 12:0.5 10:0.5 8:1 7:2"
+ }
+]

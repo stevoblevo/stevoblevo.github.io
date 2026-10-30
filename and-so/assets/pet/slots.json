@@ -1,0 +1,31 @@
+{
+  "mag": { "src": "assets/pet/mag.png", "ready": false },
+  "bunny": { "src": "assets/pet/bunny.png", "ready": false },
+  "bunnyVignette": { "src": "assets/art/pet-bunny.webp", "ready": false, "vignette": true },
+  "elphantea": {
+    "looks": {
+      "glasshouse": { "src": "assets/pet/elphantea/glasshouse.webp", "ready": false },
+      "peachfall": { "src": "assets/pet/elphantea/peachfall.webp", "ready": false },
+      "origami-skein": { "src": "assets/pet/elphantea/origami-skein.webp", "ready": false },
+      "storeybrook": { "src": "assets/pet/elphantea/storeybrook.webp", "ready": false },
+      "comix": { "src": "assets/pet/elphantea/comix.webp", "ready": false },
+      "default": { "src": "assets/pet/elphantea/default.webp", "ready": false }
+    },
+    "map": {
+      "glasshouse": "glasshouse",
+      "peachfall": "peachfall",
+      "sb-origami": "origami-skein",
+      "sb-skein": "origami-skein",
+      "sb-daylight": "storeybrook",
+      "sb-knight": "storeybrook",
+      "sb-inkblot": "storeybrook",
+      "sb-comix": "comix"
+    },
+    "poses": {
+      "ears-flapping": { "src": "assets/pet/elphantea/ears-flapping.webp", "ready": false, "anchor": [0.5, 1], "scale": 1 },
+      "singing": { "src": "assets/pet/elphantea/singing.webp", "ready": false, "anchor": [0.5, 1], "scale": 1 },
+      "perked": { "src": "assets/pet/elphantea/perked.webp", "ready": false, "anchor": [0.5, 1], "scale": 1 },
+      "drooped": { "src": "assets/pet/elphantea/drooped.webp", "ready": false, "anchor": [0.5, 1], "scale": 1 }
+    }
+  }
+}

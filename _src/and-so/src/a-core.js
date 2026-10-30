@@ -18,6 +18,60 @@ const lcm = (a, b) => (a / gcd(a, b)) * b;
 const mq = q => { try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch (e) { return false; } };
 const reduceMotion = mq('(prefers-reduced-motion: reduce)');
 const isTouch = mq('(pointer: coarse)') || (navigator.maxTouchPoints || 0) > 1;
+// what this browser, machine and screen actually are. Layout, WebAudio unlock and the narrator read it.
+const DEV = (() => {
+  const ua = navigator.userAgent || '';
+  const edge = /Edg\//.test(ua);
+  const opera = /OPR\//.test(ua);
+  const chrome = /Chrome\//.test(ua) && !edge && !opera;
+  const firefox = /Firefox\//.test(ua);
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+  const safari = (/Safari\//.test(ua) && !chrome && !edge && !firefox && !opera) || (ios && /Apple/.test(ua) && !chrome && !firefox);
+  const android = /Android/.test(ua);
+  let software = false;
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (!gl) software = true;
+    else {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      const r = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') : '';
+      software = /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(r);
+      const lose = gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
+    }
+  } catch (e) { software = true; }
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const lowPower = mq('(prefers-reduced-data: reduce)') || !!(conn && conn.saveData) || (navigator.deviceMemory > 0 && navigator.deviceMemory <= 2);
+  return {
+    touch: isTouch, mouse: mq('(pointer: fine)') || !isTouch,
+    form: 'desktop', reduce: reduceMotion, lowPower, software,
+    safari: !!safari, chrome: !!chrome, firefox: !!firefox, edge: !!edge,
+    ios: !!ios, android: !!android, mac: /Mac/.test(ua) && !ios, windows: /Win/.test(ua),
+    browser: edge ? 'edge' : chrome ? 'chrome' : firefox ? 'firefox' : safari ? 'safari' : 'other'
+  };
+})();
+const fxRich = () => !(DEV.reduce || DEV.lowPower || DEV.software);
+function devForm(w) {
+  if (w < 700) return 'phone';
+  if (w < 1100 || (DEV.touch && w < 1280)) return 'tablet';
+  return 'desktop';
+}
+function devApply() {
+  DEV.form = devForm(window.innerWidth || 1200);
+  const b = document.body; if (!b) return;
+  b.classList.toggle('dev-touch', !!DEV.touch);
+  b.classList.toggle('dev-mouse', !!DEV.mouse && !DEV.touch);
+  b.classList.toggle('dev-phone', DEV.form === 'phone');
+  b.classList.toggle('dev-tablet', DEV.form === 'tablet');
+  b.classList.toggle('dev-desktop', DEV.form === 'desktop');
+  b.classList.toggle('dev-reduce', !!DEV.reduce);
+  b.classList.toggle('dev-low', !!DEV.lowPower);
+  b.classList.toggle('dev-soft', !!DEV.software);
+  b.dataset.browser = DEV.browser;
+  b.dataset.pointer = DEV.touch ? 'touch' : 'mouse';
+  const note = $('devNote');
+  if (note) note.textContent = `${DEV.browser}, ${DEV.form}, ${DEV.touch ? 'touch' : 'mouse'}${DEV.reduce ? ', reduced motion' : ''}${DEV.lowPower ? ', low power' : ''}${DEV.software ? ', software rendering' : ''}.`;
+}
 let F_SERIF = '"Newsreader", ui-serif, Georgia, serif', F_MONO = '"DM Mono", ui-monospace, Menlo, monospace', F_UI = 'system-ui, -apple-system, "Segoe UI", sans-serif';
 const fnt = (px, kind, style) => `${style || ''} ${Math.round(px)}px ${kind === 'm' ? F_MONO : kind === 'u' ? F_UI : F_SERIF}`;
 
@@ -322,4 +376,7 @@ const zoomLevel = () => XMAX / (VIEW.x1 - VIEW.x0);
 const holeTerm = x => { if (!hole.on) return 0; const dx = (x - hole.c) / 70; return -hole.m * Math.exp(-dx * dx); };
 function relCents(f) { const r = f / fRoot, k = Math.floor(Math.log(r) / Math.log(M.eq) + 1e-9); return 1200 * Math.log2(r / Math.pow(M.eq, k)); }
 function jlog(s) { journal.push(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}  ${s}`); if (journal.length > 500) journal.shift(); }
-function haptic(ms) { if (!SET.haptics) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+let gestured = false;
+window.addEventListener('pointerdown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+window.addEventListener('keydown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+function haptic(ms) { if (!SET.haptics || !gestured) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }

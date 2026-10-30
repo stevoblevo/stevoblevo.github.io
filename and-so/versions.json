@@ -4,15 +4,35 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "8.1",
+   "short": "AND SO 8.1",
+   "name": "AND SO 8.1 · The Book, in the jam",
+   "date": "2026-10-30",
+   "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.",
+   "path": "/and-so/v8.1/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "0848e5e7372ca105a170e4c15f6bbaf82143529bcb010b710d45803e80223c5b"
+  },
+  {
+   "id": "8",
+   "short": "AND SO 8",
+   "name": "AND SO 8 · The Book",
+   "date": "2026-10-30",
+   "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.",
+   "path": "/and-so/v8/",
+   "commit": "471c3b3ccdcf06902cad03940a4d5c5b96990cf7",
+   "sha256": "5cffce827c453e5bac08154704e7a1a3530c86d2d0186f67c3c58c13aa5abde8"
+  },
+  {
    "id": "7",
    "short": "AND SO 7",
    "name": "AND SO 7 · Everfallen",
    "date": "2026-10-27",
    "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.",
    "path": "/and-so/v7/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "c87cc0d1c206a0d14305985c3dd205f0063f27ba5534c3acf0b12f32bfacf9c5"
+   "commit": "c691e5ac2b205ebde26b4f0eb99edbc10f4d0374",
+   "sha256": "0bcb3f0d2831313f195856a51eacdaa586db7b027500097a4c95ddd801267732"
   },
   {
    "id": "6.1",

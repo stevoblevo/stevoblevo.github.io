@@ -10,7 +10,8 @@ function placeGw(x, y) { const r = gw.getBoundingClientRect(); gw.style.left = c
 function resize() {
   readSafe();
   W = window.innerWidth; H = window.innerHeight;
-  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
+  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 || !fxRich() ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
+  if (typeof devApply === 'function') devApply();
   [cvs, cvs2, cvs3].forEach(c => { c.width = Math.max(1, Math.round(W * DPR)); c.height = Math.max(1, Math.round(H * DPR)); });
   [ctx, ctx2, ctx3].forEach(g => g.setTransform(DPR, 0, 0, DPR, 0, 0));
   S = clamp(Math.min(W, H) / 760, 0.7, 2);
@@ -349,6 +350,7 @@ window.addEventListener('keydown', e => {
   if (tg === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key.toLowerCase(); lastUserT = t;
+  if ($('book') && $('book').classList.contains('on')) { if (k === 'escape') bookClose(); return; }
   if (k === 'escape' && $('brookMap').classList.contains('on')) { closeBrook(); return; }
   if (k === 'escape' && $('liner').classList.contains('on')) { $('liner').classList.remove('on'); return; }
   if (k === 'escape' && MIR.open) { mirrorTable(false); return; }

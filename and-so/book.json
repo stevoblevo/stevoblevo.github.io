@@ -1,0 +1,3474 @@
+[
+ {
+  "id": "st-louis",
+  "title": "St. Louis Blues",
+  "form": "12-bar blues",
+  "key": "G",
+  "tempo": 92,
+  "pd": true,
+  "year": 1914,
+  "basis": "W. C. Handy, 1914. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "I hate to see the evening sun go down",
+  "melody": "3:1 3:0.5 7:0.5 10:1 8:1 7:1 3:1 2:1 0:2",
+  "bars": [
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "D7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "tiger",
+  "title": "Tiger Rag",
+  "form": "16-bar strain",
+  "key": "Bb",
+  "tempo": 168,
+  "pd": true,
+  "year": 1917,
+  "basis": "Original Dixieland Jazz Band, 1917. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Hold that tiger",
+  "melody": "0:0.5 0:0.5 2:0.5 4:0.5 5:0.5 7:0.5 9:0.5 10:1 7:1",
+  "bars": [
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb",
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "after-youve-gone",
+  "title": "After You've Gone",
+  "form": "32-bar ABAC",
+  "key": "Bb",
+  "tempo": 126,
+  "pd": true,
+  "year": 1918,
+  "basis": "Creamer and Layton, 1918. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "After you've gone and left me crying",
+  "melody": "4:1 4:1 5:1 7:1.5 5:0.5 4:1 2:1 0:2",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb"
+   ],
+   [
+    "Eb"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "royal-garden",
+  "title": "Royal Garden Blues",
+  "form": "12-bar blues",
+  "key": "Bb",
+  "tempo": 108,
+  "pd": true,
+  "year": 1919,
+  "basis": "Clarence and Spencer Williams, 1919. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Royal garden blues",
+  "melody": "0:1 3:1 5:1 7:1 10:1 7:1 5:1 3:2",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "indiana",
+  "title": "Indiana",
+  "form": "32-bar ABAC",
+  "key": "F",
+  "tempo": 132,
+  "pd": true,
+  "year": 1917,
+  "basis": "Hanley and MacDonald, 1917. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Back home again in Indiana",
+  "melody": "0:1 2:1 4:1 5:1 7:1.5 5:0.5 4:1 2:2",
+  "bars": [
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7",
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F",
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "sweet-georgia",
+  "title": "Sweet Georgia Brown",
+  "form": "32-bar ABAC",
+  "key": "Ab",
+  "tempo": 160,
+  "pd": true,
+  "year": 1925,
+  "basis": "Bernie, Pinkard, and Casey, 1925. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Sweet Georgia Brown",
+  "melody": "4:0.5 7:0.5 11:1 9:1 7:1 4:1 0:2",
+  "bars": [
+   [
+    "Ab"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab"
+   ],
+   [
+    "Ab"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "bye-blackbird",
+  "title": "Bye Bye Blackbird",
+  "form": "32-bar ABAC",
+  "key": "F",
+  "tempo": 112,
+  "pd": true,
+  "year": 1926,
+  "basis": "Henderson and Dixon, 1926. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Pack up all my care and woe",
+  "melody": "0:1 0:1 4:1 5:1 4:1 2:1 0:2",
+  "bars": [
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm"
+   ],
+   [
+    "Dm"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm"
+   ],
+   [
+    "F"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F"
+   ],
+   [
+    "F"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "man-i-love",
+  "title": "The Man I Love",
+  "form": "32-bar AABA",
+  "key": "Eb",
+  "tempo": 72,
+  "pd": true,
+  "year": 1924,
+  "basis": "George and Ira Gershwin, 1924. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Someday he'll come along",
+  "melody": "0:1 4:1 7:1 11:1 10:1 7:1 4:2",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "someone",
+  "title": "Someone to Watch Over Me",
+  "form": "32-bar AABA",
+  "key": "Eb",
+  "tempo": 76,
+  "pd": true,
+  "year": 1926,
+  "basis": "George and Ira Gershwin, 1926. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "There's a somebody I'm longing to see",
+  "melody": "4:1 7:1 9:1 11:1.5 9:0.5 7:1 4:2",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "swonderful",
+  "title": "'S Wonderful",
+  "form": "32-bar AABA",
+  "key": "Eb",
+  "tempo": 132,
+  "pd": true,
+  "year": 1927,
+  "basis": "George and Ira Gershwin, 1927. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "'S wonderful",
+  "melody": "0:0.5 0:0.5 4:1 7:1 4:1 2:1 0:2",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "anything-but-love",
+  "title": "I Can't Give You Anything But Love",
+  "form": "32-bar ABAC",
+  "key": "G",
+  "tempo": 116,
+  "pd": true,
+  "year": 1928,
+  "basis": "McHugh and Fields, 1928. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "I can't give you anything but love",
+  "melody": "0:1 2:1 4:1 7:1.5 5:0.5 4:1 2:2",
+  "bars": [
+   [
+    "G"
+   ],
+   [
+    "G"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G"
+   ],
+   [
+    "G"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G"
+   ],
+   [
+    "G"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "Em"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G",
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G"
+   ],
+   [
+    "G"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "aint-misbehavin",
+  "title": "Ain't Misbehavin'",
+  "form": "32-bar AABA",
+  "key": "Eb",
+  "tempo": 108,
+  "pd": true,
+  "year": 1929,
+  "basis": "Fats Waller and Harry Brooks, 1929. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "No one to talk with, all by myself",
+  "melody": "0:1 0:1 4:1 5:1 7:1 5:1 4:2",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm6"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm6"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm6"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "honeysuckle",
+  "title": "Honeysuckle Rose",
+  "form": "32-bar AABA",
+  "key": "F",
+  "tempo": 140,
+  "pd": true,
+  "year": 1929,
+  "basis": "Fats Waller, 1929. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Every honey bee fills with jealousy",
+  "melody": "0:1 4:0.5 5:0.5 7:1 4:1 2:1 0:2",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "stardust",
+  "title": "Stardust",
+  "form": "32-bar AABA",
+  "key": "Db",
+  "tempo": 68,
+  "pd": true,
+  "year": 1929,
+  "basis": "Hoagy Carmichael, 1929. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "And now the purple dusk of twilight time",
+  "melody": "9:1 8:1 7:1 5:1 4:1 2:1 0:2",
+  "bars": [
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "basin",
+  "title": "Basin Street Blues",
+  "form": "16-bar blues",
+  "key": "Bb",
+  "tempo": 96,
+  "pd": true,
+  "year": 1928,
+  "basis": "Spencer Williams, 1928. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Won't you come along with me",
+  "melody": "0:1 3:1 5:1 7:1.5 5:0.5 3:1 0:2",
+  "bars": [
+   [
+    "Bb"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb"
+   ],
+   [
+    "Eb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb"
+   ],
+   [
+    "Eb"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb"
+   ],
+   [
+    "Bb"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "what-is-this",
+  "title": "What Is This Thing Called Love",
+  "form": "32-bar AABA",
+  "key": "C",
+  "tempo": 144,
+  "pd": true,
+  "year": 1929,
+  "basis": "Cole Porter, 1929. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "What is this thing called love",
+  "melody": "0:1 1:1 0:1 -2:1 3:1 0:1 -1:2",
+  "bars": [
+   [
+    "Cm"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm"
+   ],
+   [
+    "Cm"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "rhythm",
+  "title": "I Got Rhythm",
+  "form": "32-bar AABA",
+  "key": "Bb",
+  "tempo": 176,
+  "pd": true,
+  "year": 1930,
+  "basis": "George and Ira Gershwin, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "I got rhythm, I got music",
+  "melody": "0:1 2:1 4:1 5:1 7:1.5 5:0.5 4:1 0:2",
+  "bars": [
+   [
+    "Bbmaj7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "embraceable",
+  "title": "Embraceable You",
+  "form": "32-bar ABAC",
+  "key": "G",
+  "tempo": 80,
+  "pd": true,
+  "year": 1930,
+  "basis": "George and Ira Gershwin, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Embrace me, my sweet embraceable you",
+  "melody": "4:1 7:1 9:1 11:1 9:1 7:1 4:2",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "body",
+  "title": "Body and Soul",
+  "form": "32-bar AABA",
+  "key": "Db",
+  "tempo": 70,
+  "pd": true,
+  "year": 1930,
+  "basis": "Heyman, Sour, Eyton, and Green, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "My heart is sad and lonely",
+  "melody": "9:1 8:1 5:1 4:1 2:1 0:1 -2:2",
+  "bars": [
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dmaj7"
+   ],
+   [
+    "Dmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "georgia",
+  "title": "Georgia on My Mind",
+  "form": "32-bar AABA",
+  "key": "F",
+  "tempo": 66,
+  "pd": true,
+  "year": 1930,
+  "basis": "Hoagy Carmichael and Stuart Gorrell, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
+  "lyric": "Georgia, Georgia, the whole day through",
+  "melody": "9:1.5 7:0.5 5:1 4:1 2:1 0:2",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ],
+  "meter": 4
+ },
+ {
+  "id": "summertime",
+  "title": "Summertime",
+  "form": "16-bar AABA",
+  "key": "Am",
+  "tempo": 72,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Dm"
+   ],
+   [
+    "Dm"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am"
+   ],
+   [
+    "Am"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "all-the-things",
+  "title": "All the Things You Are",
+  "form": "36-bar AABA",
+  "key": "Ab",
+  "tempo": 120,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#m7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Emaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7b5",
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "a-train",
+  "title": "Take the A Train",
+  "form": "32-bar AABA",
+  "key": "C",
+  "tempo": 148,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "misty",
+  "title": "Misty",
+  "form": "32-bar AABA",
+  "key": "Eb",
+  "tempo": 66,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bbm7",
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Abm7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "autumn-leaves",
+  "title": "Autumn Leaves",
+  "form": "32-bar AABC",
+  "key": "Gm",
+  "tempo": 132,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm"
+   ],
+   [
+    "Gm"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "blue-bossa",
+  "title": "Blue Bossa",
+  "form": "16-bar",
+  "key": "Cm",
+  "tempo": 132,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5",
+    "G7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "so-what",
+  "title": "So What",
+  "form": "32-bar AABA",
+  "key": "Dm",
+  "tempo": 136,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "footprints",
+  "title": "Footprints",
+  "form": "12-bar minor",
+  "key": "Cm",
+  "tempo": 120,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "cantaloupe",
+  "title": "Cantaloupe Island",
+  "form": "16-bar",
+  "key": "Fm",
+  "tempo": 112,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "maiden",
+  "title": "Maiden Voyage",
+  "form": "32-bar AABA",
+  "key": "D",
+  "tempo": 118,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "Eb7sus"
+   ],
+   [
+    "Eb7sus"
+   ],
+   [
+    "Eb7sus"
+   ],
+   [
+    "Eb7sus"
+   ],
+   [
+    "Db7sus"
+   ],
+   [
+    "Db7sus"
+   ],
+   [
+    "Db7sus"
+   ],
+   [
+    "Db7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "D7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ],
+   [
+    "F7sus"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "watermelon",
+  "title": "Watermelon Man",
+  "form": "16-bar blues",
+  "key": "F",
+  "tempo": 126,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "blue-monk",
+  "title": "Blue Monk",
+  "form": "12-bar blues",
+  "key": "Bb",
+  "tempo": 112,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "satin-doll",
+  "title": "Satin Doll",
+  "form": "32-bar AABA",
+  "key": "C",
+  "tempo": 128,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "fly-me",
+  "title": "Fly Me to the Moon",
+  "form": "32-bar ABAB",
+  "key": "C",
+  "tempo": 120,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bm7b5"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bm7b5"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "ipanema",
+  "title": "The Girl from Ipanema",
+  "form": "40-bar AABA",
+  "key": "F",
+  "tempo": 128,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "F#m7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ },
+ {
+  "id": "giant-steps",
+  "title": "Giant Steps",
+  "form": "16-bar",
+  "key": "Eb",
+  "tempo": 220,
+  "basis": "Changes only: title, form, and key. No melody and no lyric.",
+  "bars": [
+   [
+    "Bmaj7",
+    "D7"
+   ],
+   [
+    "Gmaj7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7",
+    "F#7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "C#m7",
+    "F#7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C#m7",
+    "F#7"
+   ]
+  ],
+  "meter": 4,
+  "pd": false
+ }
+]

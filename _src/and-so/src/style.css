@@ -149,6 +149,8 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: none; b
 .sel, .txt { background: rgba(0, 0, 0, .28); color: var(--ink); border: 1px solid rgba(234, 220, 198, .18); border-radius: 8px; padding: 7px 9px; font: inherit; font-size: 13px; min-height: 34px }
 .sel { width: 100%; margin-top: 8px }
 .txt { flex: 1; min-width: 0 }
+body.dev-touch .pill, body.dev-touch .txt, body.dev-touch select.txt { min-height: 42px }
+body.dev-reduce #book, body.dev-reduce .jf, body.dev-reduce .jam-phase { animation: none; transition: none }
 .hidden { display: none !important }
 .lock { font-family: var(--f-serif); font-style: italic; font-size: 13px; color: var(--ink-faint); margin-top: 6px }
 .unl { margin-top: 8px; font-size: 11px; line-height: 1.55; color: var(--ink-soft) }

@@ -83,20 +83,33 @@ function bell3(f, gain, delay, dest) {
   });
 }
 
+function unlockAudio() {
+  gestured = true;
+  if (!A.ac && entered) { try { audio.init(); } catch (e) { /* not ready */ } }
+  if (!A.ac) return;
+  if (A.ac.state === 'suspended') A.ac.resume();
+  // Safari and iOS stay silent until a buffer actually starts inside the gesture
+  if (DEV.safari || DEV.ios) {
+    try {
+      const b = A.ac.createBuffer(1, 1, 22050), s = A.ac.createBufferSource();
+      s.buffer = b; s.connect(A.ac.destination); s.start(0);
+    } catch (e) { /* already running */ }
+  }
+}
 const audio = {
   init() {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC || A.ac) return;
     try {
-      const ac = (A.ac = new AC({ latencyHint: 'interactive' }));
+      const ac = (A.ac = new AC({ latencyHint: DEV.lowPower || DEV.software ? 'playback' : 'interactive' }));
       A.useCS = typeof ac.createConstantSource === 'function';
       A.vol = ac.createGain(); A.vol.gain.value = 0; A.vol.connect(ac.destination);
       const lim = ac.createDynamicsCompressor();
-      lim.threshold.value = -14; lim.knee.value = 8; lim.ratio.value = 12; lim.attack.value = 0.005; lim.release.value = 0.3; lim.connect(A.vol);
+      lim.threshold.value = -14; lim.knee.value = 8; lim.ratio.value = 12; lim.attack.value = 0.005; lim.release.value = 0.3; lim.connect(A.vol); A.lim = lim;
       A.lp = ac.createBiquadFilter(); A.lp.type = 'lowpass'; A.lp.Q.value = 0.5; A.lp.frequency.value = 5000; A.lp.connect(lim);
       A.bus = ac.createGain(); A.bus.gain.value = 0.85; A.bus.connect(A.lp);
       const lfo = ac.createOscillator(); lfo.frequency.value = 0.09; const lg = ac.createGain(); lg.gain.value = 0.05; lfo.connect(lg); lg.connect(A.bus.gain); lfo.start();
-      A.conv = ac.createConvolver(); A.conv.buffer = impulse(3.4, 2.6);
+      A.conv = ac.createConvolver(); A.conv.buffer = impulse(fxRich() ? 3.4 : 1.2, fxRich() ? 2.6 : 1.4);
       A.rw = ac.createGain(); A.rw.gain.value = 0.32; A.bus.connect(A.conv); A.conv.connect(A.rw); A.rw.connect(A.lp);
       const sp = ac.createChannelSplitter(2), mg = ac.createChannelMerger(2), dL = ac.createDelay(0.05), dR = ac.createDelay(0.05);
       dL.delayTime.value = 0.014; dR.delayTime.value = 0.019;
@@ -132,6 +145,7 @@ const audio = {
     if (!A.ac) return;
     const now = A.ac.currentTime;
     glide(A.vol.gain, muted ? 0 : 0.95 * SET.vol, 0.15);
+    if (typeof ensStage === 'function') ensStage();
     A.lp.frequency.setTargetAtTime(9000 * Math.pow(1800 / 9000, SET.warm), now, 0.2);
     A.chWet.gain.setTargetAtTime((SET.hp ? 0.5 : 0.12) * SET.space, now, 0.3);
     A.ppWet.gain.setTargetAtTime(SET.sparkle ? (SET.hp ? 0.42 : 0.24) : 0, now, 0.2);

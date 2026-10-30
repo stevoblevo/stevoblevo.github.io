@@ -1,0 +1,13 @@
+{
+  "files": {
+    "glasshouse": { "src": "assets/art/glasshouse.webp", "ready": false },
+    "peachfall": { "src": "assets/art/peachfall.webp", "ready": false },
+    "origami-skein": { "src": "assets/art/origami-skein.webp", "ready": false },
+    "bach": { "src": "assets/art/wing-bach.webp", "ready": false },
+    "mozart": { "src": "assets/art/wing-mozart.webp", "ready": false },
+    "beethoven": { "src": "assets/art/wing-beethoven.webp", "ready": false },
+    "tchaikovsky": { "src": "assets/art/wing-tchaikovsky.webp", "ready": false },
+    "stravinsky": { "src": "assets/art/wing-stravinsky.webp", "ready": false },
+    "pet-bunny": { "src": "assets/art/pet-bunny.webp", "ready": false, "vignette": true }
+  }
+}

@@ -139,24 +139,72 @@
   };
   d.addEventListener('keydown', function (e) { nav.key(e); });
 
-  /* ---------- read aloud: Irish English first, word by word ---------- */
+  /* ---------- read aloud: English, in an accent that is not the listener's ---------- */
   var SY = w.speechSynthesis || null;
-  var IRISH_NAMES = /moira|orla|emily.*ireland|connor.*ireland|ireland|irish/i;
+  var NOVELTY = /albert|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|zarvox|bahh|deranged|hysterical|pipe organ|princess/i;
+  /* clearest foreign English first. The listener's own region is skipped. */
+  var ACCENT_POOL = [
+    { region: 'IE', re: /en-ie|\bmoira\b|\borla\b/i },
+    { region: 'ZA', re: /en-za|\btessa\b/i },
+    { region: 'IN', re: /en-in|\brishi\b|\bveena\b/i },
+    { region: 'AU', re: /en-au|\bkaren\b/i },
+    { region: 'GB', re: /en-gb|\bdaniel\b|\bserena\b/i },
+    { region: 'NZ', re: /en-nz/i },
+    { region: 'SC', re: /fiona|en-gb-sct|en-scot|scotland/i },
+    { region: 'US', re: /en-us|\bsamantha\b|\bava\b|\ballison\b|\baria\b|\bjenny\b|\bguy\b|\bzira\b|\bdavid\b/i }
+  ];
+  function homeRegion() {
+    var lang = String((navigator.languages && navigator.languages[0]) || navigator.language || '').replace(/_/g, '-').toLowerCase();
+    if (/scotland|scot/.test(lang)) return 'SC';
+    var bits = lang.split('-');
+    return (bits[1] || '').toUpperCase();
+  }
+  function voiceRegion(v) {
+    var blob = ((v && v.lang) || '') + ' ' + ((v && v.name) || '');
+    if (/fiona|scotland|en-scot|en-gb-sct/i.test(blob)) return 'SC';
+    for (var i = 0; i < ACCENT_POOL.length; i++) {
+      if (ACCENT_POOL[i].region === 'SC') continue;
+      if (ACCENT_POOL[i].re.test(blob)) return ACCENT_POOL[i].region;
+    }
+    var m = /^en-([a-z]{2})/i.exec((v && v.lang) || '');
+    return m ? m[1].toUpperCase() : '';
+  }
+  function voiceQuality(v) {
+    var n = ((v && v.name) || '') + ' ' + ((v && v.voiceURI) || '');
+    var s = 0;
+    if (/premium/i.test(n)) s += 40;
+    if (/enhanced/i.test(n)) s += 28;
+    if (/natural/i.test(n)) s += 24;
+    if (/online/i.test(n)) s += 6;
+    return s;
+  }
+  function englishVoice(v) { return !!(v && /^en/i.test(v.lang || '') && !NOVELTY.test(v.name || '')); }
   var read = {
     supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _timer: 0, _boundary: false,
+    homeRegion: homeRegion,
     voices: function () {
       if (!read.supported) return [];
-      var v = SY.getVoices() || [];
-      function rank(x) { var l = (x.lang || '').toLowerCase(); return l === 'en-ie' || IRISH_NAMES.test(x.name) && l.indexOf('en') === 0 ? 0 : l === 'en-gb' ? 1 : l.indexOf('en') === 0 ? 2 : 3; }
-      return v.slice().sort(function (a, b) { return rank(a) - rank(b) || (b.localService === a.localService ? 0 : b.localService ? 1 : -1) || a.name.localeCompare(b.name); });
+      var v = (SY.getVoices() || []).filter(englishVoice);
+      var region = homeRegion();
+      var pool = ACCENT_POOL.filter(function (a) { return a.region !== region; });
+      function rank(x) {
+        var r = voiceRegion(x), idx = -1, i;
+        for (i = 0; i < pool.length; i++) if (pool[i].region === r) { idx = i; break; }
+        if (idx < 0 && r && r !== region) idx = pool.length + 1;
+        if (idx < 0) idx = 80;
+        return idx * 100 - voiceQuality(x);
+      }
+      return v.slice().sort(function (a, b) { return rank(a) - rank(b) || a.name.localeCompare(b.name); });
     },
     pick: function (name) {
       var v = read.voices(); if (!v.length) return null;
-      if (name) { var m = v.filter(function (x) { return x.name === name; })[0]; if (m) return m; }
-      var saved = get('sb:voice', null); if (saved) { var s = v.filter(function (x) { return x.name === saved; })[0]; if (s) return s; }
+      function byName(n) { if (!n) return null; for (var i = 0; i < v.length; i++) if (v[i].name === n) return v[i]; return null; }
+      if (name) { var named = byName(name); if (named) return named; }
+      var saved = get('sb:voice', null);
+      var s = byName(saved); if (s) return s;
       return v[0];
     },
-    isIrish: function (v) { return !!v && (/^en-ie$/i.test(v.lang || '') || (IRISH_NAMES.test(v.name) && /^en/i.test(v.lang || ''))); },
+    isIrish: function (v) { return voiceRegion(v) === 'IE'; },
     prepare: function (root) {
       if (root.__sbWords) return root.__sbWords;
       var words = [], text = '', walker = d.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), nodes = [], n;
@@ -202,7 +250,7 @@
     _next: function () {
       if (read._i >= read._chunks.length) { read._done(); return; }
       var c = read._chunks[read._i], u = new w.SpeechSynthesisUtterance(c.text);
-      if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang; } else u.lang = 'en-IE';
+      if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang; } else u.lang = 'en';
       u.rate = read.rate; u.pitch = read.pitch;
       u.onboundary = function (e) { if (e.name && e.name !== 'word') return; read._boundary = true; read._mark(c.start + (e.charIndex || 0)); };
       u.onstart = function () {
@@ -235,9 +283,9 @@
       if (!read.supported) { bar.setAttribute('data-unsupported', ''); var vv = $('.sb-reader__voice', bar); if (vv) vv.textContent = 'This browser has no voices. The words are all here to read.'; var pb = $('.sb-reader__play', bar); if (pb) pb.disabled = true; return; }
       var play = $('.sb-reader__play', bar), sel = $('select[data-sb-voice]', bar), rate = $('select[data-sb-rate]', bar), vname = $('.sb-reader__voice', bar);
       function fill() {
-        var vs = read.voices(), cur = read.pick(); if (!sel) { if (vname && cur) vname.textContent = cur.name + (read.isIrish(cur) ? ' · Irish English' : ''); return; }
-        sel.innerHTML = vs.filter(function (v) { return /^en/i.test(v.lang); }).map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name.replace(/^(Microsoft|Google)\s+/, '').replace(/\s*\(Natural\)/, '')) + (read.isIrish(v) ? ' (Irish)' : '') + '</option>'; }).join('');
-        if (vname && cur) vname.textContent = read.isIrish(cur) ? 'Irish English voice' : 'No Irish voice on this device: ' + cur.lang;
+        var vs = read.voices(), cur = read.pick(); if (!sel) { if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || ''); return; }
+        sel.innerHTML = vs.map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name) + '</option>'; }).join('');
+        if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || '');
       }
       fill(); if (SY.addEventListener) SY.addEventListener('voiceschanged', fill); else SY.onvoiceschanged = fill;
       if (play) play.addEventListener('click', function () { read.toggle(tgt || d.querySelector('[data-sb-story]') || d.body); });
@@ -246,6 +294,8 @@
       read._sync();
     }
   };
+
+  if (SY) { try { SY.getVoices(); } catch (e) { /* voices arrive on voiceschanged */ } }
 
   /* ---------- nougats: small rewards that fly to the jar ---------- */
   function nougatSVG(seed) {
