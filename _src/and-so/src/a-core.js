@@ -377,6 +377,6 @@ const holeTerm = x => { if (!hole.on) return 0; const dx = (x - hole.c) / 70; re
 function relCents(f) { const r = f / fRoot, k = Math.floor(Math.log(r) / Math.log(M.eq) + 1e-9); return 1200 * Math.log2(r / Math.pow(M.eq, k)); }
 function jlog(s) { journal.push(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}  ${s}`); if (journal.length > 500) journal.shift(); }
 let gestured = false;
-window.addEventListener('pointerdown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
-window.addEventListener('keydown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+window.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('#voiceCommands')) return; gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+window.addEventListener('keydown', e => { if (e.target.closest && e.target.closest('#voiceCommands')) return; gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
 function haptic(ms) { if (!SET.haptics || !gestured) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }

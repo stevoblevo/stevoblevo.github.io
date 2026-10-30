@@ -308,6 +308,24 @@ body[data-skin="fieldstone"] :is(.chip, #quests, #viewChip, #zc) { background: r
 body[data-skin="fieldstone"] .btn { border-color: rgba(217, 236, 108, .6) }
 
 @media (prefers-reduced-motion: reduce) { * { transition-duration: .01s !important; animation: none !important } }
+
+/* Voice controls remain visible in Quiet and above the game sheets. No pulsing mic indicator. */
+#voiceCommands { position: fixed; z-index: 1400; left: 12px; top: calc(80px + env(safe-area-inset-top)); width: min(330px, calc(100vw - 24px)); box-sizing: border-box; border: 1px solid #65766b; border-radius: 12px; background: #f4f6f2; color: #183429; padding: 6px 10px; font: 14px/1.4 system-ui, sans-serif; }
+body.landing #voiceCommands { display: none; }
+#voiceCommands .vc-head { display: flex; align-items: flex-start; gap: 8px; }
+#voiceCommands details { flex: 1; min-width: 0; }
+#voiceCommands summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+#voiceCommands summary::before { content: '▸'; }
+#voiceCommands details[open] summary::before { content: '▾'; }
+#voiceCommands .vc-body { position: absolute; right: -1px; left: -1px; top: 100%; max-height: min(calc(100dvh - 230px), 500px); overflow: auto; border: 1px solid #65766b; border-radius: 0 0 12px 12px; background: #f4f6f2; padding: 0 14px 14px; }
+#voiceCommands .vc-body p { margin: 8px 0 12px; }
+#voiceCommands button { min-height: 44px; padding: 8px 10px; border: 1px solid #65766b; border-radius: 8px; background: #fff; color: #183429; cursor: pointer; font: inherit; }
+#voiceCommands button:disabled { opacity: .55; cursor: default; }
+#voiceCommands :focus-visible { outline: 3px solid #136f63; outline-offset: 2px; }
+#voiceCommands[data-listening="true"] { border: 2px solid #136f63; }
+#vcStatus { margin: 0; font-size: 12px; }
+@media (max-width: 759px) { #voiceCommands { top: calc(106px + env(safe-area-inset-top)); } }
+@media (max-height: 500px) { #voiceCommands { top: 72px; } #voiceCommands .vc-body { max-height: calc(100dvh - 180px); } }
 /* Storeybrook 1 tokens, scoped: they apply inside any element whose data-sb names a look (the page, or one panel) */
 [data-sb="daylight"]{--paper:#f4f6f2;--surface:#e9eee7;--page:#ffffff;--line:#cdd5ca;--ink:#26323f;--ink-muted:#55616c;--accent:var(--rose);--accent-soft:var(--rose-soft);--on-accent:var(--on-rose);--cue:var(--cerulean);--cue-soft:var(--cerulean-soft);--on-cue:var(--on-cerulean);--link:var(--cue);--danger:#b3261e;--focus:#2a6a9c;--scrim:rgba(244, 246, 242, 0.86);--chrome:rgba(255, 255, 255, 0.9);--rose:#b8325f;--rose-soft:#efe4e5;--on-rose:#ffffff;--cerulean:#2a6a9c;--cerulean-soft:#e2e9ea;--on-cerulean:#ffffff;--sap:#44702a;--sap-soft:#e4eae0;--on-sap:#ffffff;--gamboge:#d4920f;--gamboge-soft:#f1edde;--on-gamboge:#26323f;--copper:#8c5a2b;--copper-soft:#ebe8e0;--on-copper:#ffffff;--wash-sky:#c8e3f4;--wash-meadow:#cfe3b8;--wash-rose:#f3c6d3;--wash-sun:#f7dc97;--wash-brook:#8cc2e6;--art-line:#2f3b48;--art-light:#ffffff;--art-shade:#c7d3cf;--art-stone:#d9ddd4;--art-water:#6fb0dc;--nougat:#f2dcb8;--nougat-nut:#a8743f;--wrapper:#d94f7f;--tag-sun:#8a5a00;--tag-rose:#a3304f;--tag-lilac:#6a4fa3;--tag-sea:#1f6f5c;--tag-sky:#2a6a9c;--shadow-page:0 1px 0 rgba(38, 50, 63, 0.06), 0 10px 30px rgba(38, 50, 63, 0.10);--shadow-lift:0 18px 40px rgba(38, 50, 63, 0.18);--shadow-sticker:0 2px 0 rgba(38, 50, 63, 0.15), 0 6px 14px rgba(38, 50, 63, 0.14);--shadow-seal:inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 6px rgba(0, 0, 0, 0.25), 0 3px 8px rgba(38, 50, 63, 0.25);--shadow-ink:0 1px 0 rgba(255, 255, 255, 0.7);--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:72px;--space-9:112px;--space-10:168px;--radius-none:0;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--radius-xl:32px;--radius-pill:999px;--z-art:0;--z-content:10;--z-stone:20;--z-sticky:40;--z-reader:50;--z-drawer:60;--z-overlay:1000;--z-drop:2000;--dur-tap:120ms;--dur-quick:220ms;--dur-base:420ms;--dur-turn:700ms;--dur-drop:900ms;--dur-bleed:1600ms;--ease-out:cubic-bezier(0.2, 0.9, 0.3, 1);--ease-paper:cubic-bezier(0.45, 0.05, 0.25, 1);--ease-bounce:cubic-bezier(0.34, 1.56, 0.64, 1);--bp-medium:640px;--bp-expanded:1024px;--bp-wide:1600px;--bp-tv:1800px;--size-root:clamp(16px, 0.42vw + 10px, 28px);--size-target:48px;--size-stone:56px;--size-cover:260px;--size-measure:60ch;--size-page:680px;--size-reader:560px;--size-jar:72px;--size-container:1280px;--op-grain:0.2;--op-wash:0.85;--op-disabled:0.45;--border-pencil:1px;--border-ink:2px;--border-comix:3px;--border-focus:3px;--border-focus-offset:3px;--shape-blob:58% 42% 55% 45% / 46% 54% 46% 54%;--shape-stone:52% 48% 46% 54% / 60% 58% 42% 40%;--shape-seal:49% 51% 47% 53% / 52% 47% 53% 48%;--shape-tag:6px 6px 6px 6px;--density-regular:1;--density-kid:1.15;--density-tv:1.5;--tex-grain-size:160px;--tex-deckle:6;--tex-bleed:14;--tex-halftone:6px;--font-display:"DynaPuff", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;--font-story:"Alegreya", "Iowan Old Style", "Palatino Linotype", Georgia, serif;--font-ui:"Andika", "Segoe UI", ui-sans-serif, system-ui, sans-serif;--font-old:"IM Fell English", "Iowan Old Style", Georgia, serif;--font-comic:"Bangers", "Impact", "Arial Black", sans-serif;--font-comic-text:"Comic Neue", "Comic Sans MS", "Chalkboard SE", sans-serif;--font-fold:"Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", sans-serif;--font-hand:"Caveat", "Bradley Hand", "Segoe Print", cursive}
 [data-sb="knight"]{--paper:#1c2838;--surface:#24334a;--page:#2a3a52;--line:#3d4f6b;--ink:#f4efe6;--ink-muted:#b7c2d2;--accent:var(--gamboge);--accent-soft:var(--gamboge-soft);--on-accent:var(--on-gamboge);--cue:var(--cerulean);--cue-soft:var(--cerulean-soft);--on-cue:var(--on-cerulean);--link:var(--cue);--danger:#ff8a7a;--focus:#f0c75e;--scrim:rgba(28, 40, 56, 0.84);--chrome:rgba(42, 58, 82, 0.9);--rose:#f29fb0;--rose-soft:#4b4252;--on-rose:#1c2838;--cerulean:#8fb4e8;--cerulean-soft:#35475f;--on-cerulean:#1c2838;--sap:#a9d98a;--sap-soft:#3b4f4a;--on-sap:#1c2838;--gamboge:#f0c75e;--gamboge-soft:#4b4b40;--on-gamboge:#1c2838;--copper:#e3b27a;--copper-soft:#484647;--on-copper:#1c2838;--wash-sky:#2f4a6e;--wash-meadow:#2c4a3d;--wash-rose:#5a3a52;--wash-sun:#6b5a2e;--wash-brook:#3d6a8c;--art-line:#0f1724;--art-light:#f4efe6;--art-shade:#16202e;--art-stone:#4a5a73;--art-water:#5a8fbf;--nougat:#f2dcb8;--nougat-nut:#c78e52;--wrapper:#e87a9a;--tag-sun:#f3cf8a;--tag-rose:#f29fb0;--tag-lilac:#c4a2ff;--tag-sea:#8ff0d2;--tag-sky:#8fb4e8;--shadow-page:0 1px 0 rgba(0, 0, 0, 0.3), 0 14px 40px rgba(5, 10, 20, 0.45);--shadow-lift:0 22px 50px rgba(5, 10, 20, 0.6);--shadow-sticker:0 2px 0 rgba(0, 0, 0, 0.4), 0 8px 18px rgba(0, 0, 0, 0.45);--shadow-seal:inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 6px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.5);--shadow-ink:0 2px 12px rgba(0, 0, 0, 0.6);--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:72px;--space-9:112px;--space-10:168px;--radius-none:0;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--radius-xl:32px;--radius-pill:999px;--z-art:0;--z-content:10;--z-stone:20;--z-sticky:40;--z-reader:50;--z-drawer:60;--z-overlay:1000;--z-drop:2000;--dur-tap:120ms;--dur-quick:220ms;--dur-base:420ms;--dur-turn:700ms;--dur-drop:900ms;--dur-bleed:1600ms;--ease-out:cubic-bezier(0.2, 0.9, 0.3, 1);--ease-paper:cubic-bezier(0.45, 0.05, 0.25, 1);--ease-bounce:cubic-bezier(0.34, 1.56, 0.64, 1);--bp-medium:640px;--bp-expanded:1024px;--bp-wide:1600px;--bp-tv:1800px;--size-root:clamp(16px, 0.42vw + 10px, 28px);--size-target:48px;--size-stone:56px;--size-cover:260px;--size-measure:60ch;--size-page:680px;--size-reader:560px;--size-jar:72px;--size-container:1280px;--op-grain:0.2;--op-wash:0.85;--op-disabled:0.45;--border-pencil:1px;--border-ink:2px;--border-comix:3px;--border-focus:3px;--border-focus-offset:3px;--shape-blob:58% 42% 55% 45% / 46% 54% 46% 54%;--shape-stone:52% 48% 46% 54% / 60% 58% 42% 40%;--shape-seal:49% 51% 47% 53% / 52% 47% 53% 48%;--shape-tag:6px 6px 6px 6px;--density-regular:1;--density-kid:1.15;--density-tv:1.5;--tex-grain-size:160px;--tex-deckle:6;--tex-bleed:14;--tex-halftone:6px;--font-display:"DynaPuff", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;--font-story:"Alegreya", "Iowan Old Style", "Palatino Linotype", Georgia, serif;--font-ui:"Andika", "Segoe UI", ui-sans-serif, system-ui, sans-serif;--font-old:"IM Fell English", "Iowan Old Style", Georgia, serif;--font-comic:"Bangers", "Impact", "Arial Black", sans-serif;--font-comic-text:"Comic Neue", "Comic Sans MS", "Chalkboard SE", sans-serif;--font-fold:"Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", sans-serif;--font-hand:"Caveat", "Bradley Hand", "Segoe Print", cursive}
@@ -1254,6 +1272,19 @@ body.booking #hud { opacity: .15 }
 <button id="jar" class="sb-jar sbi" aria-label="nougats in the jar. open the brook" title="the brook (C)"><span class="sb-jar__count" id="jarN">0</span></button>
 <button id="cWords" class="cw sbi" aria-pressed="false" aria-label="hide the words" title="hide the words (Q)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 6l5 12M5.8 14h6.4M15 18c0-2.2 1-3.6 3-3.6s3 1.4 3 3.6m-6-2.2h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path class="cw-x" d="M3 3l18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
 <div id="mirBadge" class="hidden" role="note"><i></i><i></i><i></i><b>×1</b></div>
+
+<aside id="voiceCommands" aria-label="Voice commands" data-listening="false">
+  <div class="vc-head"><details id="vcHelp"><summary>Voice commands · <span id="vcBadge">Off</span></summary>
+    <div class="vc-body">
+      <p id="vcPrivacy">Your browser may send microphone audio to its speech provider; offline use is not guaranteed. AND SO saves no command audio or transcripts.</p>
+      <p>Use headphones. Listening lasts up to 45 seconds and never restarts itself. Starting commands switches off singing and overhearing; narration stops commands.</p>
+      <p id="vcExamples">English: “hummer on/off”, “rain on/off”, “notes mode”, “drone mode”, “mute all”, “stop listening”. Bare names do nothing.</p>
+      <p>“Mute all” silences sound here and keeps listening. Stop listening closes command input. The usual sound controls always work.</p>
+      <div class="btns"><button type="button" class="pill" id="vcStart" aria-describedby="vcPrivacy vcExamples">Start listening</button><button type="button" class="pill" id="vcMute">Mute all here</button></div>
+    </div>
+  </details><button type="button" id="vcStop" disabled>Stop listening</button></div>
+  <p id="vcStatus" role="status" aria-live="polite" aria-atomic="true">Voice commands off.</p>
+</aside>
 
 <div id="top">
   <button class="chip" id="tMode" aria-label="change tuning"><i class="dot"></i><span id="tModeName">just</span></button>
@@ -6678,8 +6709,8 @@ const holeTerm = x => { if (!hole.on) return 0; const dx = (x - hole.c) / 70; re
 function relCents(f) { const r = f / fRoot, k = Math.floor(Math.log(r) / Math.log(M.eq) + 1e-9); return 1200 * Math.log2(r / Math.pow(M.eq, k)); }
 function jlog(s) { journal.push(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}  ${s}`); if (journal.length > 500) journal.shift(); }
 let gestured = false;
-window.addEventListener('pointerdown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
-window.addEventListener('keydown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+window.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('#voiceCommands')) return; gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+window.addEventListener('keydown', e => { if (e.target.closest && e.target.closest('#voiceCommands')) return; gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
 function haptic(ms) { if (!SET.haptics || !gestured) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
 // ===== audio: every tone is two banks of sine partials, so any spectrum works =====
@@ -7017,7 +7048,7 @@ function trainPass() {
 
 // ---------- capture: the last ten seconds, and recordings ----------
 const capture = {
-  ringL: null, ringR: null, pos: 0, len: 0, proc: null, rec: null, chunks: [], dest: null,
+  replays: new Set(), ringL: null, ringR: null, pos: 0, len: 0, proc: null, rec: null, chunks: [], dest: null,
   setup() {
     if (!A.ac || this.proc) return;
     const ac = A.ac;
@@ -7026,8 +7057,15 @@ const capture = {
     this.proc.onaudioprocess = e => { const a = e.inputBuffer.getChannelData(0), b = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : a, L = this.ringL, R = this.ringR, n = this.len; let p = this.pos; for (let i = 0; i < a.length; i++) { L[p] = a[i]; R[p] = b[i]; p = (p + 1) % n; } this.pos = p; };
     const z = ac.createGain(); z.gain.value = 0; A.vol.connect(this.proc); this.proc.connect(z); z.connect(ac.destination);
   },
+  stopReplay() {
+    for (const { sources, gain } of this.replays) {
+      for (const source of sources) { try { source.stop(); source.disconnect(); } catch (_) {} }
+      gain.disconnect();
+    }
+    this.replays.clear();
+  },
   replay() {
-    if (!A.ac || !this.ringL) return false;
+    if (muted || !A.ac || !this.ringL) return false;
     const ac = A.ac, sr = ac.sampleRate, n = Math.min(this.len, Math.floor(sr * 10)), L = new Float32Array(n), R = new Float32Array(n);
     let p = (this.pos - n + this.len) % this.len; for (let i = 0; i < n; i++) { L[i] = this.ringL[p]; R[i] = this.ringR[p]; p = (p + 1) % this.len; }
     const buf = ac.createBuffer(2, n, sr); buf.copyToChannel(L, 0); buf.copyToChannel(R, 1);
@@ -7036,6 +7074,8 @@ const capture = {
     const now = ac.currentTime, g = ac.createGain(); g.gain.value = 0.95 * SET.vol; g.connect(ac.destination);
     const s1 = ac.createBufferSource(); s1.buffer = rb; s1.connect(g); s1.start(now);
     const s2 = ac.createBufferSource(); s2.buffer = buf; s2.connect(g); s2.start(now + 0.72);
+    const replay = { sources: [s1, s2], gain: g }; this.replays.add(replay);
+    s2.onended = () => { this.replays.delete(replay); g.disconnect(); };
     A.vol.gain.setTargetAtTime(0.1 * SET.vol, now, 0.1); setTimeout(() => audio.applyMix(), (0.75 + n / sr) * 1000);
     return true;
   },
@@ -9739,7 +9779,7 @@ function draw() {
 
 // ===== listen: a demo hummer first, your own voice if you want it. pitch is tracked on this page (YIN), the music follows, Saelion ad-libs =====
 const LS = {
-  src: null, used: false, micOk: false, auto: false, autoAt: 0, autoDone: false,
+  src: null, pending: false, request: 0, used: false, micOk: false, auto: false, autoAt: 0, autoDone: false,
   det: null, an: null, sink: null, buf: null, dec: null, cm: null, stream: null, msrc: null, hum: null,
   nextT: 0, rms: 0, floor: 0.002, f: 0, fi: 0, conf: 0, vN: 0, uN: 0, jumpN: 0, hist: [],
   note: null, phrase: [], phrases: 0, lastVoicedT: -99, lastFollowT: -99, lastAction: '', lastShift: 0,
@@ -10035,12 +10075,14 @@ function humTick() {
 // ---------- start, stop, the tick ----------
 async function listenStart(src, auto) {
   if (!entered) return;
+  if (src === 'mic') voiceCommandsStop('Voice commands off while the singing microphone is in use.');
   if (!A.ac) audio.init();
   if (!A.ac) { caption("this browser can't run the audio here.", 2600); return; }
   if (A.ac.state === 'suspended') A.ac.resume();
   if (!auto) LS.used = true;
   if (LS.src === src) { listenUI(); return; }
   listenStop(true);
+  const request = LS.request;
   earBuild();
   LS.phrase.length = 0; LS.note = null; LS.hist.length = 0; LS.vN = 0; LS.uN = 0; LS.lastAction = ''; LS.roomC = null; LS.echoT = 0; LS.devs.length = 0;
   if (src === 'demo') {
@@ -10049,14 +10091,19 @@ async function listenStart(src, auto) {
     jlog(auto ? 'the demo hummer joined in' : 'demo hummer on');
   } else {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { micNote('no microphone access in this browser.'); return; }
+    LS.pending = true;
     $('lNote').textContent = 'asking for the microphone…';
     try {
       const st = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false, channelCount: 1 } });
+      if (request !== LS.request) { st.getTracks().forEach(tr => tr.stop()); return; }
+      LS.pending = false;
       LS.stream = st; LS.msrc = A.ac.createMediaStreamSource(st); LS.msrc.connect(LS.det);
       LS.src = 'mic'; LS.auto = false; LS.micOk = true; LS.floor = 0.002; LS.selfF.length = 0;
       caption('listening. hum, sing, or let something in the room hum for a while.', 3600); jlog('microphone on');
       st.getAudioTracks().forEach(tr => tr.addEventListener('ended', () => { if (LS.src === 'mic') listenStop(); }));
     } catch (e) {
+      if (request !== LS.request) return;
+      LS.pending = false;
       const n = e && e.name;
       if (n === 'NotAllowedError' || n === 'SecurityError') micNote(CAP.selfHost ? 'the microphone was declined, or this page is framed without it. the demo hummer still works. the standalone page:' : 'this host keeps the microphone off. open AND SO on its own page to sing to it:', true);
       else if (n === 'NotFoundError' || n === 'OverconstrainedError') micNote('no microphone found. the demo hummer still works.');
@@ -10072,6 +10119,7 @@ function micNote(msg, link) {
   caption(msg.replace(/:$/, '.'), 3800);
 }
 function listenStop(quiet) {
+  LS.request++; LS.pending = false;
   const was = LS.src;
   if (LS.hum) { humKill(LS.hum); LS.hum = null; }
   if (LS.stream) { LS.stream.getTracks().forEach(tr => tr.stop()); LS.stream = null; }
@@ -12880,7 +12928,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && EAR
 // ===== the narrator: a clear English accent from outside the listener's region, plus an optional ElevenLabs reading =====
 // The key, when someone pastes one, stays in localStorage. Nothing in the repo holds a key.
 const EL_ON = 'andso:el:on', EL_KEY = 'andso:el:key', EL_ID = 'andso:el:id';
-let elAudio = null, voiceFilled = false;
+let elAudio = null, voiceFilled = false, elPending = false, elGeneration = 0, elRequest = null, elUrl = null, elReject = null;
 
 function elOn() { try { return localStorage.getItem(EL_ON) === '1'; } catch (e) { return false; } }
 function elKey() { try { return localStorage.getItem(EL_KEY) || ''; } catch (e) { return ''; } }
@@ -12910,23 +12958,41 @@ function fillVoiceSelect() {
   voiceFilled = vs.length > 0;
 }
 function stopEleven() {
+  elGeneration++; elPending = false;
+  if (elRequest) { elRequest.abort(); elRequest = null; }
+  if (elReject) { const reject = elReject; elReject = null; reject(Object.assign(new Error('cancelled'), { cancelled: true })); }
+  if (elUrl) { URL.revokeObjectURL(elUrl); elUrl = null; }
   if (elAudio) { try { elAudio.pause(); } catch (e) { /* already stopped */ } elAudio = null; }
 }
 function speakEleven(text) {
+  voiceCommandsStop('Voice commands off while narration plays.');
   const key = elKey(), id = elId();
   if (!elOn() || !key || !id) return Promise.reject(new Error('off'));
   stopEleven();
+  const generation = elGeneration, request = new AbortController();
+  elRequest = request; elPending = true;
+  const cancelled = () => Object.assign(new Error('cancelled'), { cancelled: true });
   return fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(id)}/stream?output_format=mp3_44100_128`, {
-    method: 'POST',
+    method: 'POST', signal: request.signal,
     headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({ text: String(text || '').slice(0, 2500), model_id: 'eleven_turbo_v2_5' })
   }).then(res => { if (!res.ok) throw new Error('el'); return res.blob(); }).then(blob => new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(blob), a = new Audio(url);
+    if (generation !== elGeneration) { reject(cancelled()); return; }
+    elPending = false; elRequest = null; elReject = reject;
+    const url = URL.createObjectURL(blob), a = new Audio(url); elUrl = url;
     elAudio = a;
-    a.onended = () => { URL.revokeObjectURL(url); if (elAudio === a) elAudio = null; resolve(); };
-    a.onerror = () => { URL.revokeObjectURL(url); reject(new Error('play')); };
-    const p = a.play(); if (p && p.catch) p.catch(reject);
-  }));
+    a.onended = () => { if (generation !== elGeneration) { reject(cancelled()); return; } elReject = null; elUrl = null; URL.revokeObjectURL(url); if (elAudio === a) elAudio = null; resolve(); };
+    a.onerror = () => { if (generation !== elGeneration) { reject(cancelled()); return; } elReject = null; elUrl = null; elAudio = null; URL.revokeObjectURL(url); reject(new Error('play')); };
+    const p = a.play(); if (p && p.catch) p.catch(error => {
+      URL.revokeObjectURL(url);
+      if (elAudio === a) { elAudio = null; elUrl = null; elReject = null; }
+      reject(error);
+    });
+  })).catch(error => {
+    if (generation !== elGeneration) throw cancelled();
+    elPending = false; elRequest = null;
+    throw error;
+  });
 }
 function hookEleven() {
   const R = window.Storeybrook && Storeybrook.read;
@@ -12940,7 +13006,7 @@ function hookEleven() {
     speakEleven(c.text).then(() => {
       if (R.state === 'idle') return;
       R._i++; R._next();
-    }).catch(() => { if (R.state !== 'idle') next(); });
+    }).catch(error => { if (!error.cancelled && R.state !== 'idle') next(); });
   };
   const stop = R.stop.bind(R);
   R.stop = function (quiet) { stopEleven(); return stop(quiet); };
@@ -12950,7 +13016,7 @@ function voiceTest() {
   if (!R || !R.supported) { caption("this browser can't read aloud.", 2200); return; }
   const line = 'Here is a voice from somewhere else.';
   if (elOn() && elKey() && elId()) {
-    speakEleven(line).catch(() => R.speak(line, { rate: 0.96, pitch: 1.02 }));
+    speakEleven(line).catch(error => { if (!error.cancelled) R.speak(line, { rate: 0.96, pitch: 1.02 }); });
     return;
   }
   R.speak(line, { rate: 0.96, pitch: 1.02 });
@@ -13137,16 +13203,17 @@ async function claudeMishear(text) {
 }
 // the browser's own speech recognition, only after it is switched on, and never remembered as on
 function earsOn(on) {
+  if (on) voiceCommandsStop('Voice commands off while Saelion overhears.');
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   EAR.want = !!on && !!SR; EAR.err = '';
-  if (!EAR.want) { try { if (EAR.rec) EAR.rec.stop(); } catch (e) {} EAR.rec = null; EAR.on = false; earUI(); return; }
+  if (!EAR.want) { const previous = EAR.rec; EAR.rec = null; EAR.on = false; try { if (previous) previous.abort(); } catch (e) {} earUI(); return; }
   if (EAR.rec) return;
   try {
     const r = new SR(); r.continuous = true; r.interimResults = false; r.lang = navigator.language || 'en-US'; r.maxAlternatives = 1;
-    r.onresult = e => { for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) hearText(e.results[i][0].transcript, 'mic'); };
-    r.onerror = e => { EAR.err = e && e.error || 'error'; if (EAR.err === 'not-allowed' || EAR.err === 'service-not-allowed' || EAR.err === 'audio-capture') { EAR.want = false; caption("words can't be heard here. whisper them into the box instead.", 3200); } earUI(); };
-    r.onend = () => { EAR.rec = null; EAR.on = false; if (EAR.want) setTimeout(() => { if (EAR.want && !EAR.rec) earsOn(true); }, 500); earUI(); };
-    r.onstart = () => { EAR.on = true; earUI(); };
+    r.onresult = e => { if (EAR.rec !== r || !EAR.want) return; for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) hearText(e.results[i][0].transcript, 'mic'); };
+    r.onerror = e => { if (EAR.rec !== r) return; EAR.err = e && e.error || 'error'; if (EAR.err === 'not-allowed' || EAR.err === 'service-not-allowed' || EAR.err === 'audio-capture') { EAR.want = false; caption("words can't be heard here. whisper them into the box instead.", 3200); } earUI(); };
+    r.onend = () => { if (EAR.rec !== r) return; EAR.rec = null; EAR.on = false; if (EAR.want) setTimeout(() => { if (EAR.want && !EAR.rec) earsOn(true); }, 500); earUI(); };
+    r.onstart = () => { if (EAR.rec !== r || !EAR.want) { try { r.abort(); } catch (_) {} return; } EAR.on = true; earUI(); };
     EAR.rec = r; r.start(); discover('x-ears'); jlog('Saelion is overhearing words');
   } catch (e) { EAR.want = false; EAR.rec = null; EAR.err = 'unavailable'; }
   earUI();
@@ -14206,6 +14273,7 @@ window.addEventListener('pointerdown', e => {
   dreamHand();
 }, true);
 window.addEventListener('keydown', e => {
+  if (e.target && e.target.closest && e.target.closest('#voiceCommands')) return;
   if (!DREAM.on || t < DREAM.arm) return;
   e.preventDefault();
   e.stopImmediatePropagation();
@@ -14398,6 +14466,189 @@ function drawOnePet(g, x, y, sc, kind) {
 }
 magBoot();
 on('magCarrot', magCarrotTap);
+
+// Bounded voice commands. No transcripts, audio, credentials or listening preference are stored.
+const ANDSO_COMMANDS = (() => {
+  function parse(text) {
+    if (typeof text !== 'string' || text.length > 80) return null;
+    const s = text.toLowerCase().trim().replace(/[.,!?]+$/, '').replace(/\s+/g, ' ')
+      .replace(/^please /, '').replace(/ please$/, '');
+    if (/^(stop listening|voice commands off)$/.test(s)) return 'listen:off';
+    if (/^(mute all|mute all audio|stop all|stop all audio|sound off)$/.test(s)) return 'sound:off';
+    const mode = /^(?:(?:switch to|set|use) (notes|drones?)|(?:notes|drones?) mode|(?:notes|drones?) on)$/.exec(s);
+    if (mode) return /notes/.test(s) ? 'mode:pluck' : 'mode:drone';
+    const layer = /^(?:(?:turn|switch) )?(?:(on|off) (?:the )?(demo hummer|hummer|hum her|rain|reign)|(?:the )?(demo hummer|hummer|hum her|rain|reign) (on|off))$/.exec(s);
+    if (!layer) return null;
+    return `${/^(rain|reign)$/.test(layer[2] || layer[3]) ? 'rain' : 'hummer'}:${layer[1] || layer[4]}`;
+  }
+
+  function createSession({ createRecognition, apply, report, blocked = () => false,
+    now = () => performance.now(), later = setTimeout, cancel = clearTimeout }) {
+    let current = null, timer = null, state = 'off', last = '', lastAt = -Infinity;
+    const publish = message => report({ state, message });
+    function stop(message = 'Voice commands off.') {
+      const r = current;
+      current = null; state = 'off'; cancel(timer); timer = null;
+      // Invalidate first: abort may synchronously dispatch end/result in an adapter.
+      if (r) { try { r.abort(); } catch (_) { /* browser has already ended */ } }
+      publish(message);
+    }
+    function start() {
+      if (current) return;
+      if (blocked()) { publish('Stop narration before starting voice commands.'); return; }
+      let r;
+      try { r = createRecognition(); } catch (_) { publish('Voice commands unavailable. Use the sound controls.'); return; }
+      current = r; state = 'starting'; last = ''; lastAt = -Infinity;
+      r.continuous = true; r.interimResults = false; r.maxAlternatives = 1; r.lang = 'en-US';
+      const seen = new Set();
+      r.onstart = () => {
+        if (current !== r) { try { r.abort(); } catch (_) {} return; }
+        state = 'listening'; cancel(timer);
+        timer = later(() => stop('Voice commands off after 45 seconds. Start again when ready.'), 45000);
+        publish('Listening for a command.');
+      };
+      r.onresult = event => {
+        if (current !== r || state !== 'listening') return;
+        if (blocked()) { stop('Voice commands off while narration plays.'); return; }
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (current !== r) return;
+          const result = event.results[i];
+          if (!result.isFinal || seen.has(i)) continue;
+          seen.add(i);
+          const best = result[0], confidence = best && best.confidence;
+          const command = Number.isFinite(confidence) && confidence >= 0.75 && confidence <= 1 ? parse(best.transcript) : null;
+          if (!command) { publish('No clear command. Use an example below or the sound controls.'); continue; }
+          if (command === last && now() - lastAt < 1200) continue;
+          last = command; lastAt = now();
+          if (command === 'listen:off') { stop(); return; }
+          try { publish(apply(command)); }
+          catch (_) { stop('Command unavailable. Use the sound controls.'); return; }
+        }
+      };
+      r.onnomatch = () => { if (current === r) publish('No clear command. Use the sound controls.'); };
+      r.onerror = event => {
+        if (current !== r) return;
+        const messages = {
+          'not-allowed': 'Microphone permission denied or removed. Use the sound controls.',
+          'service-not-allowed': 'Speech recognition is blocked. Use the sound controls.',
+          'audio-capture': 'Microphone unavailable. Use the sound controls.',
+          network: 'Speech service unavailable or offline. Use the sound controls.',
+          'no-speech': 'No speech heard. Voice commands off.',
+          aborted: 'Voice commands off.'
+        };
+        stop(messages[event.error] || 'Speech recognition ended. Use the sound controls.');
+      };
+      r.onend = () => { if (current === r) stop('Voice commands off. Start again when ready.'); };
+      timer = later(() => stop('Microphone did not start. Use the sound controls.'), 8000);
+      publish('Starting microphone…');
+      try { r.start(); } catch (_) { stop('Microphone could not start. Use the sound controls.'); }
+    }
+    return { start, stop, active: () => current !== null };
+  }
+  return { parse, createSession };
+})();
+
+// Command mode shares the existing browser recognition route, but never feeds hearText/guardians.
+// Only one input mode at a time; an ended recognition session is never restarted automatically.
+let commandSession = null;
+function voiceCommandsStop(message) {
+  if (commandSession && commandSession.active()) commandSession.stop(message);
+}
+function commandNarrating() {
+  const r = window.Storeybrook && Storeybrook.read, s = window.speechSynthesis;
+  return !!(elPending || elAudio || (s && (s.speaking || s.pending)) || (r && r.state === 'speaking'));
+}
+function applyVoiceCommand(command) {
+  if (!entered) return 'Enter AND SO first.';
+  if (command === 'sound:off') {
+    muteAllHere();
+    return 'All sound here muted. Voice commands are still listening.';
+  }
+  // Take over from a tour just as an ordinary sound control does. Never restart playback/unmute.
+  if (REEL.on) reelStop(false);
+  if (DREAM.on) dreamFinish(false);
+  lastUserT = t; userIdleUntil = t + 14;
+  const [target, value] = command.split(':');
+  if (target === 'hummer') {
+    LS.used = true; LS.autoDone = true;
+    if (value === 'off') { if (LS.src === 'demo') listenStop(true); }
+    else if (LS.src !== 'demo') listenStart('demo');
+    syncUI();
+    return value === 'on' && LS.src !== 'demo' ? 'Hummer unavailable. Use the sound controls.' : `Hummer ${value}${muted ? ' · sound is muted' : ''}.`;
+  }
+  if (target === 'rain') {
+    SET.rain = value === 'on'; rainOn(SET.rain); syncUI(); persistSoon();
+    return `Rain ${value}${muted ? ' · sound is muted' : ''}.`;
+  }
+  if (target === 'mode') {
+    if (SET.artic !== value) setArtic(value, true);
+    return `${value === 'pluck' ? 'Notes' : 'Drones'} mode${muted ? ' · sound is muted' : ''}.`;
+  }
+  return 'No command applied.';
+}
+function muteAllHere() {
+  // Replay bypasses the music bus; narration and paper sounds have their own outputs.
+  for (const w of MIR.wins) if (w.sound) mirSound(w, false);
+  muted = true; audio.applyMix(); capture.stopReplay();
+  try { if (window.Storeybrook) { Storeybrook.read.stop(true); Storeybrook.sound.enable(false); if (Storeybrook.sound.ctx) Storeybrook.sound.ctx.suspend(); } } catch (_) {}
+  stopEleven();
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (_) {}
+  syncUI();
+}
+function commandBoot() {
+  const panel = $('voiceCommands'), start = $('vcStart'), stop = $('vcStop'), badge = $('vcBadge'), status = $('vcStatus');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function available() {
+    const ok = !!SR && window.isSecureContext && navigator.onLine !== false && MIR.depth === 0;
+    start.disabled = !ok;
+    if (!commandSession.active()) {
+      const message = !SR ? 'Voice commands unavailable in this browser. Use the sound controls.'
+        : !window.isSecureContext ? 'Voice commands need HTTPS. Use the sound controls.'
+        : MIR.depth > 0 ? 'Use voice commands in the outer AND SO window.'
+        : navigator.onLine === false ? 'Offline. Use the sound controls.' : 'Voice commands off.';
+      status.textContent = message;
+    }
+    return ok;
+  }
+  commandSession = ANDSO_COMMANDS.createSession({
+    createRecognition: () => new SR(), apply: applyVoiceCommand, blocked: commandNarrating,
+    report: ({ state, message }) => {
+      const active = state !== 'off';
+      panel.dataset.listening = String(active);
+      badge.textContent = state === 'starting' ? 'Starting…' : active ? '● Listening' : 'Off';
+      start.disabled = active || !SR || !window.isSecureContext || navigator.onLine === false || MIR.depth > 0;
+      stop.disabled = !active; status.textContent = message;
+    }
+  });
+  start.addEventListener('click', () => {
+    if (!entered || !available()) return;
+    if (LS.pending) { status.textContent = 'Finish the singing microphone request first.'; return; }
+    if (commandNarrating()) { status.textContent = 'Stop narration before starting voice commands.'; return; }
+    earsOn(false);
+    if (LS.src === 'mic') listenStop(true);
+    commandSession.start();
+    if (commandSession.active()) { $('vcHelp').open = false; stop.focus(); }
+  });
+  stop.addEventListener('click', () => voiceCommandsStop());
+  $('vcMute').addEventListener('click', muteAllHere);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) voiceCommandsStop('Voice commands off while this page is hidden.'); });
+  window.addEventListener('pagehide', () => voiceCommandsStop());
+  window.addEventListener('offline', () => { voiceCommandsStop('Offline. Use the sound controls.'); available(); });
+  window.addEventListener('online', available); // Update the button only; never restart.
+  // All existing read-aloud entry points go through these methods. Stop before producing speech.
+  const r = window.Storeybrook && Storeybrook.read;
+  if (r) for (const method of ['speak', 'resume']) {
+    const previous = r[method].bind(r);
+    r[method] = (...args) => { voiceCommandsStop('Voice commands off while narration plays.'); return previous(...args); };
+  }
+  panel.addEventListener('keydown', event => {
+    // A keyboard interaction in this panel must not play a jam note or trigger a game shortcut.
+    if (event.key === 'Escape') voiceCommandsStop();
+    event.stopPropagation();
+  });
+  available();
+}
+commandBoot();
 
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;
@@ -14641,6 +14892,7 @@ try {
 try {
   if (/[?&]debug\b/.test(location.search)) window.__andso = {
     voices: () => voices.filter(v => v.wT > 0).map(v => ({ x: +v.x.toFixed(2), c: +v.c.toFixed(2), lab: v.lab, locked: v.locked, glide: !!v.glide, echo: v.echo, drag: !!v.dragging })),
+    sound: () => ({ muted, audioState: A.ac && A.ac.state, rain: SET.rain, artic: SET.artic, hummer: LS.src === 'demo', masterGain: A.vol && A.vol.gain.value, replays: capture.replays.size }),
     ls: () => ({ src: LS.src, f: +LS.f.toFixed(2), conf: +LS.conf.toFixed(3), phrases: LS.phrases, lines: LS.lines.slice(), note: !!LS.note, roomC: LS.roomC, act: LS.lastAction, rms: +LS.rms.toFixed(4), dispX: LS.dispX }),
     state: () => ({ t: +t.toFixed(2), root: +fRoot.toFixed(3), tune: +TUNE.toFixed(5), Rs: +Rs.toFixed(4), chord: chordNow && chordNow.str, mood: moodNow(), mode: M.key, skin, found: [...found], score: GAME.score }),
     listenStart, listenStop, setFollow, lean, setMood, setMode, setSkin, setViewMode, setX5d, reelStart, reelStop,
