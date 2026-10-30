@@ -338,7 +338,7 @@
     ],
     "provenance": "ChatGPT library → goober/assets/crossing-original.jpg · public recovered",
     "status": "recovered_original",
-    "thumbnail": "/goober/assets/crossing.webp",
+    "thumbnail": "/goober/assets/crossing-original.jpg",
     "image": "/goober/assets/crossing-original.jpg",
     "previewOnly": false,
     "width": 1792,
@@ -361,7 +361,7 @@
     ],
     "provenance": "ChatGPT library → goober/assets/garden-original.png · public recovered",
     "status": "recovered_original",
-    "thumbnail": "/goober/assets/garden.webp",
+    "thumbnail": "/goober/assets/garden-original.png",
     "image": "/goober/assets/garden-original.png",
     "previewOnly": false,
     "width": 1536,
@@ -385,7 +385,7 @@
     ],
     "provenance": "ChatGPT library → goober/assets/sanctuary-original.png · public recovered",
     "status": "recovered_original",
-    "thumbnail": "/goober/assets/sanctuary.webp",
+    "thumbnail": "/goober/assets/sanctuary-original.png",
     "image": "/goober/assets/sanctuary-original.png",
     "previewOnly": false,
     "width": 1536,
@@ -416,7 +416,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-01.webp",
     "sha256": "3f7b8574b635d2efccb96702f981031bee5ead528626fc34373e6efb7c07d361",
-    "bytes": 3501875
+    "bytes": 3501875,
+    "thumbnailWidth": 512,
+    "thumbnailHeight": 640,
+    "displayWidth": 1120,
+    "displayHeight": 1400
   },
   {
     "id": "pf-02",
@@ -439,7 +443,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-02.webp",
     "sha256": "91ac394a078c812f2b4202330d5180e7f2da4da5087cb988e84aeff6cf0adb77",
-    "bytes": 3267642
+    "bytes": 3267642,
+    "thumbnailWidth": 512,
+    "thumbnailHeight": 640,
+    "displayWidth": 1120,
+    "displayHeight": 1400
   },
   {
     "id": "pf-03",
@@ -462,7 +470,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-03.webp",
     "sha256": "1496e0ae46b11d188bb81eaad66ff85ba6a30e72431a26110e50c5fb5165ef84",
-    "bytes": 2966503
+    "bytes": 2966503,
+    "thumbnailWidth": 640,
+    "thumbnailHeight": 360,
+    "displayWidth": 1400,
+    "displayHeight": 788
   },
   {
     "id": "pf-04",
@@ -485,7 +497,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-04.webp",
     "sha256": "82e85c61cf92a255e3c67f506afbe3b20754119f60b92f06e1687d48ee3075d3",
-    "bytes": 2583799
+    "bytes": 2583799,
+    "thumbnailWidth": 640,
+    "thumbnailHeight": 640,
+    "displayWidth": 1254,
+    "displayHeight": 1254
   },
   {
     "id": "pf-05",
@@ -508,7 +524,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-05.webp",
     "sha256": "ee85c6be1a0ff872be586efe226375709fd6d8cbabd59d0fde7b38892f5aedc2",
-    "bytes": 2738688
+    "bytes": 2738688,
+    "thumbnailWidth": 640,
+    "thumbnailHeight": 640,
+    "displayWidth": 1254,
+    "displayHeight": 1254
   },
   {
     "id": "pf-06",
@@ -532,7 +552,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-06.webp",
     "sha256": "e6d2c1d2838ad10aa4eef6cb9680e7d16a1312664e957d8ba8bb3b44155738a7",
-    "bytes": 2912676
+    "bytes": 2912676,
+    "thumbnailWidth": 512,
+    "thumbnailHeight": 640,
+    "displayWidth": 1120,
+    "displayHeight": 1400
   },
   {
     "id": "pf-07",
@@ -555,7 +579,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-07.webp",
     "sha256": "23cc64c0c5983e239fe82738eb39f4cfb28a1f63625601d9f95ad659e74c3f2e",
-    "bytes": 2975609
+    "bytes": 2975609,
+    "thumbnailWidth": 512,
+    "thumbnailHeight": 640,
+    "displayWidth": 1120,
+    "displayHeight": 1400
   },
   {
     "id": "pf-08",
@@ -578,7 +606,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-08.webp",
     "sha256": "c5c91bd7dce1d45e9f7c6953eafcc4b8dc05aa583128d99ab568a127997b4542",
-    "bytes": 3184987
+    "bytes": 3184987,
+    "thumbnailWidth": 640,
+    "thumbnailHeight": 427,
+    "displayWidth": 1400,
+    "displayHeight": 933
   },
   {
     "id": "pf-09",
@@ -601,7 +633,11 @@
     "availability": "Public source",
     "display": "/goober/assets/rediscovered/peachfall-09.webp",
     "sha256": "a979f382e4ca13eb31b924bdf9b3d11c58f66828d01b125e12635b65fc948256",
-    "bytes": 3227367
+    "bytes": 3227367,
+    "thumbnailWidth": 512,
+    "thumbnailHeight": 640,
+    "displayWidth": 1120,
+    "displayHeight": 1400
   },
   {
     "id": "skein-7f1908bd",

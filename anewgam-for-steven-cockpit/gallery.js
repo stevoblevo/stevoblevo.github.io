@@ -3,17 +3,21 @@
   'use strict';
   const $=s=>document.querySelector(s), stage=$('#ya-stage'), image=$('#ya-img');
   const items=()=>window.__libraryItems||[];
-  let sequence=[], current=null, returnFocus=null, previousHash='#library', zoom=1, pan={x:0,y:0}, pointers=new Map(), gesture=null, timer;
+  let sequence=[], current=null, returnFocus=null, previousHash='#library', zoom=1, pan={x:0,y:0}, pointers=new Map(), gesture=null, timer, pending=null, loadEpoch=0;
   const announce=message=>{$('#ya-announcement').textContent=message;};
   function reset(){zoom=1;pan={x:0,y:0};pointers.clear();gesture=null;transform();}
   function transform(){image.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${zoom})`;$('#ya-reset').textContent=zoom===1?'Fit':Math.round(zoom*100)+'%';}
   function scale(value){zoom=current?.previewOnly?1:Math.min(5,Math.max(1,value));if(zoom===1)pan={x:0,y:0};transform();}
-  function fail(){clearTimeout(timer);image.hidden=true;$('#ya-error').hidden=false;announce('Artwork unavailable. Try again or browse another work.');}
+  function cancelLoad(){clearTimeout(timer);loadEpoch++;if(pending){pending.onload=pending.onerror=null;pending=null;}image.setAttribute('aria-busy','false');}
   function load(){
-    clearTimeout(timer);image.hidden=false;$('#ya-error').hidden=true;
-    image.onload=()=>{clearTimeout(timer);announce(`${current.title}. ${current.width} by ${current.height} pixels${current.previewOnly?'. Preview only.':''}`);};
-    image.onerror=fail;image.src=current.image||current.thumbnail;
-    timer=setTimeout(()=>{if(!image.complete)fail();},20000);
+    cancelLoad();const epoch=loadEpoch, work=current, request=new Image();pending=request;
+    const active=()=>epoch===loadEpoch&&stage.open&&current===work;
+    image.hidden=true;image.setAttribute('aria-busy','true');$('#ya-error').hidden=true;announce('Loading artwork.');
+    const fail=()=>{if(!active())return;clearTimeout(timer);image.hidden=true;image.setAttribute('aria-busy','false');$('#ya-error').hidden=false;announce('Artwork unavailable. Try again or browse another work.');};
+    request.onload=()=>{if(!active())return;clearTimeout(timer);image.src=request.src;image.hidden=false;image.setAttribute('aria-busy','false');$('#ya-error').hidden=true;announce(`${work.title}. ${work.width} by ${work.height} pixels${work.previewOnly?'. Preview only.':''}`);};
+    request.onerror=fail;
+    timer=setTimeout(fail,20000);
+    request.src=work.image||work.thumbnail;
   }
   function paint(id){
     const work=items().find(x=>x.id===id);if(!work)return false;
@@ -46,7 +50,7 @@
     else {history.replaceState(null,'',previousHash);finishClose();}
   }
   function finishClose(){
-    clearTimeout(timer);if(stage.open)stage.close();document.body.classList.remove('ya-open');
+    cancelLoad();if(stage.open)stage.close();document.body.classList.remove('ya-open');
     if(document.fullscreenElement===stage)document.exitFullscreen().catch(()=>{});
     if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
   }
@@ -55,7 +59,7 @@
   $('#grid').addEventListener('click',e=>{const card=e.target.closest('.card');if(card)open(card.dataset.id);});
   $('#ya-close').addEventListener('click',close);stage.addEventListener('cancel',e=>{e.preventDefault();close();});
   // Storeybrook B/back may close the native dialog directly; preserve URL and return focus too.
-  stage.addEventListener('close',()=>{if(document.body.classList.contains('ya-open')){document.body.classList.remove('ya-open');if(/^#view=|^#gallery$|^#hires$/.test(location.hash)){if(history.state?.artView)history.back();else history.replaceState(null,'',previousHash);}returnFocus?.focus({preventScroll:true});}});
+  stage.addEventListener('close',()=>{cancelLoad();if(document.body.classList.contains('ya-open')){document.body.classList.remove('ya-open');if(/^#view=|^#gallery$|^#hires$/.test(location.hash)){if(history.state?.artView)history.back();else history.replaceState(null,'',previousHash);}returnFocus?.focus({preventScroll:true});}});
   $('#ya-prev').addEventListener('click',()=>step(-1));$('#ya-next').addEventListener('click',()=>step(1));
   $('#ya-in').addEventListener('click',()=>scale(zoom+.5));$('#ya-out').addEventListener('click',()=>scale(zoom-.5));$('#ya-reset').addEventListener('click',reset);$('#ya-retry').addEventListener('click',load);
   $('#ya-full').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if(stage.requestFullscreen)await stage.requestFullscreen();else announce('Fullscreen is unavailable in this browser.');}catch{announce('Fullscreen is unavailable in this browser.');}});

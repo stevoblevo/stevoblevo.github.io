@@ -7,13 +7,13 @@ The existing `/anewgam-for-steven-cockpit/` becomes an art-led garden, archive a
 - Immediate full-screen art, one primary invitation, quiet navigation and a way back from every depth. Large uncropped archive views replace thumbnail cards. The opening image is a scenic crop; its explicit button opens the complete work.
 - Native modal viewer loads actual published source bytes; keyboard, pointer swipe, pinch/zoom, fit, fullscreen request, source link and provenance. Filtering defines the next/previous sequence. Browser Back closes the viewer; deep-link reload selects the exact work. Unknown IDs do not silently open another work.
 - Daylight/night follow the system by default, with a saved override. Quiet suppresses transitions and optional labels. Reduced-motion CSS and interaction checks disable motion. No sound starts automatically.
-- Existing Storeybrook embed tokens and navigation are copied unchanged into `vendor/` from this repository at the base revision, avoiding external dependencies. The integration confines navigation to an open modal. Regular targets are 48px; TV targets 64px with 5px focus rings. Spatial keyboard and gamepad A/B/D-pad behavior comes from the shared component.
+- Existing Storeybrook embed tokens and navigation are vendored from this repository at the base revision, avoiding external dependencies. Tokens are unchanged; three bounded navigation patches include native summary controls, close the focused disclosure on Back, and honor Quiet at runtime alongside the OS motion preference. The integration confines navigation to an open modal. Regular targets are 48px; TV targets 64px with 5px focus rings. Spatial keyboard and gamepad A/B/D-pad behavior comes from the shared component.
 - Depthfield's public brand book at `stevoblevo/depthfield@41eac2256b994b8830f2255d5ab95a81d502bb26` informed the full-bleed composition, restrained chrome and art-first hierarchy. No new renderer, backend, collector or platform was created.
 - Scoped shell caching retains the existing PWA and now normalizes URL fragments before allowlist matching. Large art is not bulk-cached. The site provides missing-image recovery and an explicit preview-only state.
 
 ## Public art coverage
 
-Baseline: 26 records. Candidate: **51 records = 41 published source images + 10 legacy previews**. No image binaries are added or modified.
+Baseline: 26 records. Candidate: **51 records = 41 published source images + 10 legacy previews**. No image binaries are added or modified. The three Goober archive entries use the full-frame originals because their existing small WebPs are cropped.
 
 | Collection | Source images |
 | --- | ---: |
@@ -23,7 +23,7 @@ Baseline: 26 records. Candidate: **51 records = 41 published source images + 10 
 | Peachfall original PNGs | 9 |
 | Deduplicated Skyknight scenic vistas | 16 |
 
-`art-inventory.json` records source paths, dimensions, byte counts and SHA-256. The original public catalog/provenance records remain in `goober/gallery/catalog.json`, `goober/assets/asset-provenance.json` and `peachfall/source/manifest.json`. Peachfall discovery uses the existing small/large WebP derivatives; the viewer loads each actual PNG. Vistas have filename-derived titles and explicitly unverified earlier generation details.
+`art-inventory.json` records source paths, dimensions, byte counts and SHA-256. The original public catalog/provenance records remain in `goober/gallery/catalog.json`, `goober/assets/asset-provenance.json` and `peachfall/source/manifest.json`. Peachfall discovery uses the existing small/large WebP derivatives with individually measured width descriptors; the viewer loads each actual PNG. Vistas have filename-derived titles and explicitly unverified earlier generation details.
 
 All ten old embedded JPEGs are exactly 100 × 75 pixels. They remain at their actual size with “original unavailable”; no upscaled replacement is called an original. Private archives and the private Art Airport original are excluded. Process screenshots, personal reference images, instructional diagrams, sprite sheets and duplicate scenic bytes are not counted as additional artworks. This is a bounded public inventory, not a claim to have recovered every image from private accounts or every repository.
 
@@ -32,11 +32,11 @@ All ten old embedded JPEGs are exactly 100 × 75 pixels. They remain at their ac
 Run from the repository root:
 
 ```sh
-node --test anewgam-for-steven-cockpit/regression.test.cjs anewgam-for-steven-cockpit/art-world.test.cjs
+node --test anewgam-for-steven-cockpit/regression.test.cjs anewgam-for-steven-cockpit/art-world.test.cjs anewgam-for-steven-cockpit/review-fixes.test.cjs
 python3 -m http.server 4319 --bind 127.0.0.1
 ```
 
-Both Node test files passed. Checks include all 51 source fingerprints, legacy dimensions, unique IDs, nine original Peachfall paths and derivatives, local link existence, parse/ID regression, complete scoped cache assets, unrelated-cache preservation, and offline navigation with fragments. `git diff --check` passed.
+All three Node test files passed. Checks include all 51 source fingerprints, legacy dimensions, unique IDs, nine original Peachfall paths and derivatives, local link existence, parse/ID regression, complete scoped cache assets, unrelated-cache preservation, and offline navigation with fragments. `git diff --check` passed.
 
 Actual in-app Chromium browser review used the local HTTP checkout. Screenshots were inspected in the task transcript at desktop, 390 × 844 phone and 1920 × 1080 large-screen sizes; no horizontal overflow was observed. The screenshots are local candidate views, not live deployment proof.
 
@@ -49,7 +49,15 @@ Verified interactions:
 - A source file was temporarily removed only in this isolated checkout: the viewer showed its error/retry UI. Restoring the same bytes and pressing retry loaded the 1792px original. The source file is restored unchanged.
 - Stopping the review server initially exposed an inherited fragment allowlist bug. After the fix and worker refresh, stopping the server again and reloading succeeded: all 51 records, the 1536px cached hero and local thread were present. Both review servers were stopped after use.
 
-Limits: pointer gestures and D-pad keys are browser tests, not physical phone/TV/controller acceptance. Pinch and real gamepad buttons are implemented but not physically tested. OS reduced-motion behavior was checked in CSS/interaction code; the browser's OS preference was not changed. PWA installation, first-install offline use and live Pages served-byte acceptance remain untested. No new public preview hosting was created.
+Limits: pointer gestures and D-pad keys are browser tests, not physical phone/TV/controller acceptance. Pinch and real gamepad buttons are implemented but not physically tested. Dynamic OS reduced-motion changes and interruption of an active transition are covered by runtime tests with a changing matchMedia result; the host OS preference was not changed. PWA installation, first-install offline use and live Pages served-byte acceptance remain untested. No new public preview hosting was created.
+
+## Independent-review corrections
+
+- Summary controls now participate in Storeybrook spatial navigation. Back closes the focused disclosure and retains focus before leaving the workshop or viewer. A real browser D-pad/Enter/Escape journey verified closed → open → closed with focus on the summary and the workshop URL unchanged; provenance also closes before its viewer.
+- Quiet reaches the document scroll root and the shared navigation motion check. Enabling Quiet or reduced motion during the visit cancels active animations and stops smooth scrolling. Browser inspection confirmed Quiet + D-pad keeps the root at `scroll-behavior: auto`; runtime tests toggle both preferences without reinitialization.
+- The three Goober archive images now use their uncropped originals. Nine Peachfall srcsets use the measured width of each individual WebP, rather than a maximum bounding-box label. Binary-header tests verify all 18 derivative dimensions. For example, pf-01 is 512 × 640 and 1120 × 1400; browser currentSrc selects the large WebP and reports density-corrected intrinsic size, while the viewer loads the full 1122 × 1402 PNG.
+- Viewer requests have an epoch and detached image loader. Late success clears the timeout error and reveals the source; obsolete requests cannot overwrite the next work, a retry or a closed viewer. A local server deliberately delayed pf-01 by 23 seconds: the 20-second error appeared and then cleared on successful 1122px source load. A fresh-origin missing-source test restored the same Crossing bytes and Retry displayed the 1792px original. Rapid next/previous was also exercised in browser; deterministic tests cover callbacks arriving after retry, navigation and close.
+- No existing branch-preview deployment is configured in this checkout. The only workflow verifies Goober/Peachfall and documents native master-only Pages publication; it does not publish cockpit pull requests. No raw GitHub HTML is presented as a runnable preview, and no new hosting service was created.
 
 ## Ownership and promotion
 

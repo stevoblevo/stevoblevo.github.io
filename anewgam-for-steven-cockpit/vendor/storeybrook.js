@@ -1,4 +1,5 @@
-/* Storeybrook 1.0.0 · behaviors for storybook pages and little games. One classic script, no dependencies, no network.
+/* Cockpit integration patches: native summaries, disclosure back, runtime Quiet motion preference.
+   Storeybrook 1.0.0 · behaviors for storybook pages and little games. One classic script, no dependencies, no network.
    window.Storeybrook: theme, density, nav, read (read aloud), rewards (nougats), unlocks, brook, creature, spread,
    fold, blot, drawer, dialog, toast, sound, haptic, icons. Every module checks reduced motion at run time and
    wraps storage, so a page works with storage blocked and with JS off (markup stays readable). */
@@ -20,7 +21,7 @@
   function $(s, r) { return (r || d).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); }
   function look() { return d.documentElement.getAttribute('data-theme') || d.documentElement.getAttribute('data-sb') || ''; }
-  function reduced() { try { return w.matchMedia('(prefers-reduced-motion: reduce)').matches || look() === 'inkblot'; } catch (e) { return false; } }
+  function reduced() { try { return w.matchMedia('(prefers-reduced-motion: reduce)').matches || look() === 'inkblot' || !!(d.body && d.body.classList.contains('quiet')); } catch (e) { return false; } }
   function store(kind) { try { var s = w[kind]; var k = '__sb'; s.setItem(k, '1'); s.removeItem(k); return s; } catch (e) { return null; } }
   var LS = store('localStorage'), SS = store('sessionStorage');
   function get(k, def, s) { s = s || LS; try { var v = s && s.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } }
@@ -88,7 +89,7 @@
   };
 
   /* ---------- spatial navigation: arrows, a remote's D-pad, a gamepad ---------- */
-  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [data-sb-focus]';
+  var FOCUSABLE = 'summary, a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [data-sb-focus]';
   var nav = {
     on: false, pad: null,
     candidates: function () { return $$(FOCUSABLE).filter(function (e) { var r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && !e.closest('[hidden],[inert]') && getComputedStyle(e).visibility !== 'hidden'; }); },
@@ -105,6 +106,8 @@
       return false;
     },
     back: function () {
+      var disclosure = d.activeElement && d.activeElement.closest('details[open]');
+      if (disclosure) { disclosure.open = false; var summary = disclosure.querySelector('summary'); if (summary) summary.focus({ preventScroll: true }); return true; }
       var dl = $('dialog[open]'); if (dl) { dl.close(); return true; }
       var dr = $('.sb-drawer.is-open'); if (dr) { drawer.close(dr); return true; }
       emit('back', {}); return false;

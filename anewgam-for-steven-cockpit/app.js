@@ -96,7 +96,7 @@
       const mat=document.createElement('div');mat.className='art-mat';
       const image = document.createElement('img'); image.className = 'thumb'; image.src = x.thumbnail || x.image; image.alt = x.alt || x.title; image.loading = 'lazy'; image.decoding='async';
       image.width=x.width;image.height=x.height;
-      if(x.display){image.srcset=`${x.thumbnail} 480w, ${x.display} 1440w`;image.sizes='(max-width:600px) 92vw, 44vw';}
+      if(x.display){image.srcset=`${x.thumbnail} ${x.thumbnailWidth}w, ${x.display} ${x.displayWidth}w`;image.sizes='(max-width:600px) 92vw, 44vw';}
       const error=document.createElement('span');error.className='unavailable';error.textContent='Image unavailable · open to try the source';
       image.addEventListener('error',()=>card.classList.add('failed'));
       mat.append(image,error);

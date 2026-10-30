@@ -3,7 +3,10 @@
   const $=s=>document.querySelector(s), root=document.documentElement;
   const state=()=>window.__anewgam.getState();
   const save=()=>window.__anewgam.setState(state());
-  function quiet(value){document.body.classList.toggle('quiet',value);$('#quietToggle').setAttribute('aria-pressed',String(value));}
+  const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+  function stopMotion(){document.getAnimations?.().forEach(animation=>animation.cancel());window.scrollTo({left:window.scrollX,top:window.scrollY,behavior:'instant'});}
+  function quiet(value){document.body.classList.toggle('quiet',value);root.classList.toggle('quiet',value);$('#quietToggle').setAttribute('aria-pressed',String(value));if(value)stopMotion();}
+  motionPreference.addEventListener('change',()=>{if(motionPreference.matches)stopMotion();});
   quiet(!!state().quiet);
   $('#quietToggle').addEventListener('click',()=>{state().quiet=!state().quiet;quiet(state().quiet);save();});
   const settings=$('#settings');$('#settingsOpen').addEventListener('click',()=>settings.showModal());$('#settingsClose').addEventListener('click',()=>settings.close());
@@ -15,7 +18,7 @@
   const originalCandidates=nav.candidates.bind(nav);
   nav.candidates=()=>{const modal=document.querySelector('dialog[open]');return originalCandidates().filter(el=>!modal||modal.contains(el));};
   const originalBack=nav.back.bind(nav);
-  nav.back=()=>{if(document.querySelector('dialog[open]'))return originalBack();if(location.hash&&location.hash!=='#garden'){location.hash='#garden';return true;}return false;};
+  nav.back=()=>{if(originalBack())return true;if(location.hash&&location.hash!=='#garden'){location.hash='#garden';return true;}return false;};
   window.Storeybrook.density.init();
   function tv(value){root.dataset.density=value?'tv':'regular';$('#tvToggle').setAttribute('aria-pressed',String(value));nav.on=value;if(value)nav.enable();}
   // enable before assigning on so the shared gamepad listener is installed.
@@ -30,7 +33,7 @@
   });
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>{
     const target=document.getElementById(a.hash.slice(1));
-    if(target&&!state().quiet&&!matchMedia('(prefers-reduced-motion: reduce)').matches)target.animate?.([{opacity:.7},{opacity:1}],{duration:220,easing:'ease-out'});
+    if(target&&!state().quiet&&!motionPreference.matches)target.animate?.([{opacity:.7},{opacity:1}],{duration:220,easing:'ease-out'});
   }));
   const place=()=>{let hash=location.hash||'#garden';if(['#cockpit','#attend','#colour'].includes(hash))hash='#workshop';if(hash.startsWith('#view=')||hash==='#gallery'||hash==='#hires')hash='#library';document.querySelectorAll('[data-nav]').forEach(a=>{if(a.hash===hash)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});};
   window.addEventListener('hashchange',place);window.addEventListener('popstate',place);place();
