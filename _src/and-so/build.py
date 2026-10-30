@@ -23,7 +23,7 @@ FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
          "&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800"
          "&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1"
          "&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap")
-VERSION = "8.1.1"
+VERSION = "8.1.2"
 
 
 def main() -> None:
@@ -46,9 +46,11 @@ def main() -> None:
     styles = (f'<style id="andso-css">\n{css}{sb_css}{css_sb}</style>\n'
               "<script>document.documentElement.dataset.sb = 'daylight';</script>\n")
     body = f'<div id="andso-app">\n{body}</div>\n'
-    scripts = f"<script id=\"sb-js\">\n{sb_js}\n</script>\n<script id=\"andso-js\">\n(() => {{\n'use strict';\nconst ANDSO_VERSION = '{VERSION}';\n{script}\n}})();\n</script>\n"
+    fs = (SRC / "fs.js").read_text()
+    assert "</script" not in fs and "<!--" not in fs
+    scripts = f"<script id=\"sb-js\">\n{sb_js}\n</script>\n<script id=\"andso-js\">\n(() => {{\n'use strict';\nconst ANDSO_VERSION = '{VERSION}';\n{script}\n}})();\n</script>\n<script id=\"andso-fs-js\">\n{fs}\n</script>\n"
     page = (
-        "<title>AND SO 8.1.1</title>\n"
+        "<title>AND SO 8.1.2</title>\n"
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
         f"{styles}{body}\n{scripts}"
@@ -64,13 +66,13 @@ def main() -> None:
     (dist / "and-so.html").write_text(
         '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
-        '<meta name="description" content="AND SO 8.1.1 · The Book, in the jam: a microtonal instrument, a lead sheet on the same clock, and a classical wing. '
+        '<meta name="description" content="AND SO 8.1.2 · The Book, in the jam: a microtonal instrument, a lead sheet on the same clock, and a classical wing. '
         'voices roll into the valleys where notes agree.">\n'
         '<meta name="theme-color" content="#f4f6f2">\n'
         '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3E%3Ccircle cx=\'8\' cy=\'8\' r=\'5\' fill=\'%23e7b23a\'/%3E%3C/svg%3E">\n'
         # the page draws both light and dark looks itself, so a browser's own dark mode has nothing to repaint
         '<meta name="color-scheme" content="light dark">\n'
-        '<title>AND SO 8.1.1</title>\n'
+        '<title>AND SO 8.1.2</title>\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
         f"{styles}</head>\n<body>\n{body}\n{scripts}</body>\n</html>\n")
