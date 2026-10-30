@@ -1,0 +1,5195 @@
+[
+ {
+  "id": "all-of-me",
+  "title": "All of Me",
+  "composer": "Gerald Marks",
+  "year": 1931,
+  "key": "C",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "how-high",
+  "title": "How High the Moon",
+  "composer": "Morgan Lewis",
+  "year": 1940,
+  "key": "G",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "just-friends",
+  "title": "Just Friends",
+  "composer": "John Klenner",
+  "year": 1931,
+  "key": "G",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#m7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ]
+  ]
+ },
+ {
+  "id": "another-you",
+  "title": "There Will Never Be Another You",
+  "composer": "Harry Warren",
+  "year": 1942,
+  "key": "Eb",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "the-way",
+  "title": "The Way You Look Tonight",
+  "composer": "Jerome Kern",
+  "year": 1936,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "but-not",
+  "title": "But Not for Me",
+  "composer": "George Gershwin",
+  "year": 1930,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "our-love",
+  "title": "Our Love Is Here to Stay",
+  "composer": "George Gershwin",
+  "year": 1938,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "stella",
+  "title": "Stella by Starlight",
+  "composer": "Victor Young",
+  "year": 1946,
+  "key": "Bb",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Cm7b5"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Em7b5",
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "green-dolphin",
+  "title": "On Green Dolphin Street",
+  "composer": "Bronislaw Kaper",
+  "year": 1947,
+  "key": "Eb",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "invitation",
+  "title": "Invitation",
+  "composer": "Bronislaw Kaper",
+  "year": 1952,
+  "key": "Cm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ]
+  ]
+ },
+ {
+  "id": "my-romance",
+  "title": "My Romance",
+  "composer": "Richard Rodgers",
+  "year": 1935,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "have-you-met",
+  "title": "Have You Met Miss Jones",
+  "composer": "Richard Rodgers",
+  "year": 1937,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Em7",
+    "A7"
+   ],
+   [
+    "Dmaj7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "my-funny",
+  "title": "My Funny Valentine",
+  "composer": "Richard Rodgers",
+  "year": 1937,
+  "key": "Cm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5",
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dm7b5",
+    "G7"
+   ],
+   [
+    "Cm7"
+   ]
+  ]
+ },
+ {
+  "id": "spring",
+  "title": "It Might as Well Be Spring",
+  "composer": "Richard Rodgers",
+  "year": 1945,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#m7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "there-is",
+  "title": "There Is No Greater Love",
+  "composer": "Isham Jones",
+  "year": 1936,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "easy-living",
+  "title": "Easy Living",
+  "composer": "Ralph Rainger",
+  "year": 1937,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "out-of-nowhere",
+  "title": "Out of Nowhere",
+  "composer": "Johnny Green",
+  "year": 1931,
+  "key": "G",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#m7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "you-go-to-my-head",
+  "title": "You Go to My Head",
+  "composer": "J. Fred Coots",
+  "year": 1938,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "skylark",
+  "title": "Skylark",
+  "composer": "Hoagy Carmichael",
+  "year": 1941,
+  "key": "Eb",
+  "form": "32-bar ABAC",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "the-nearness",
+  "title": "The Nearness of You",
+  "composer": "Hoagy Carmichael",
+  "year": 1938,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "in-a-sentimental",
+  "title": "In a Sentimental Mood",
+  "composer": "Duke Ellington",
+  "year": 1935,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "dont-blame",
+  "title": "Don't Blame Me",
+  "composer": "Jimmy McHugh",
+  "year": 1933,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "exactly",
+  "title": "Exactly Like You",
+  "composer": "Jimmy McHugh",
+  "year": 1930,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "im-confessin",
+  "title": "I'm Confessin'",
+  "composer": "Doc Daugherty",
+  "year": 1930,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "pennies",
+  "title": "Pennies from Heaven",
+  "composer": "Arthur Johnston",
+  "year": 1936,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "polka-dots",
+  "title": "Polka Dots and Moonbeams",
+  "composer": "Jimmy Van Heusen",
+  "year": 1940,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "i-thought",
+  "title": "I Thought About You",
+  "composer": "Jimmy Van Heusen",
+  "year": 1939,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "like-someone",
+  "title": "Like Someone in Love",
+  "composer": "Jimmy Van Heusen",
+  "year": 1944,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "imagination",
+  "title": "Imagination",
+  "composer": "Jimmy Van Heusen",
+  "year": 1940,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "darn",
+  "title": "Darn That Dream",
+  "composer": "Jimmy Van Heusen",
+  "year": 1939,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "it-could",
+  "title": "It Could Happen to You",
+  "composer": "Jimmy Van Heusen",
+  "year": 1944,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "all-gods",
+  "title": "All God's Chillun Got Rhythm",
+  "composer": "Bronislaw Kaper",
+  "year": 1937,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "softly",
+  "title": "Softly, as in a Morning Sunrise",
+  "composer": "Sigmund Romberg",
+  "year": 1928,
+  "key": "Cm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": true,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ]
+  ]
+ },
+ {
+  "id": "lover-come",
+  "title": "Lover, Come Back to Me",
+  "composer": "Sigmund Romberg",
+  "year": 1928,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": true,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "yesterdays",
+  "title": "Yesterdays",
+  "composer": "Jerome Kern",
+  "year": 1933,
+  "key": "Dm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ]
+  ]
+ },
+ {
+  "id": "all-the-things-b",
+  "title": "Long Ago and Far Away",
+  "composer": "Jerome Kern",
+  "year": 1944,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "the-song-is",
+  "title": "The Song Is You",
+  "composer": "Jerome Kern",
+  "year": 1932,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "smoke",
+  "title": "Smoke Gets in Your Eyes",
+  "composer": "Jerome Kern",
+  "year": 1933,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "a-fine",
+  "title": "A Fine Romance",
+  "composer": "Jerome Kern",
+  "year": 1936,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "night-and-day",
+  "title": "Night and Day",
+  "composer": "Cole Porter",
+  "year": 1932,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "what-is",
+  "title": "I Love You",
+  "composer": "Cole Porter",
+  "year": 1944,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "love-for-sale",
+  "title": "Love for Sale",
+  "composer": "Cole Porter",
+  "year": 1930,
+  "key": "Cm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ]
+  ]
+ },
+ {
+  "id": "night-day-2",
+  "title": "Just One of Those Things",
+  "composer": "Cole Porter",
+  "year": 1935,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "you-do",
+  "title": "You'd Be So Nice to Come Home To",
+  "composer": "Cole Porter",
+  "year": 1943,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "from-this",
+  "title": "From This Moment On",
+  "composer": "Cole Porter",
+  "year": 1950,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "easy-to-love",
+  "title": "Easy to Love",
+  "composer": "Cole Porter",
+  "year": 1936,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#m7"
+   ],
+   [
+    "B7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "F#7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "i-concentrate",
+  "title": "I Concentrate on You",
+  "composer": "Cole Porter",
+  "year": 1940,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abm7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ }
+]

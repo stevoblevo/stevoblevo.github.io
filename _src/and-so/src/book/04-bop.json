@@ -1,0 +1,5097 @@
+[
+ {
+  "id": "ornithology",
+  "title": "Ornithology",
+  "composer": "Charlie Parker",
+  "year": 1946,
+  "key": "G",
+  "form": "32-bar ABAC",
+  "tempo": 180,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "satellite",
+  "title": "Satellite",
+  "composer": "John Coltrane",
+  "year": 1960,
+  "key": "G",
+  "form": "32-bar ABAC",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "hot-house",
+  "title": "Hot House",
+  "composer": "Tadd Dameron",
+  "year": 1945,
+  "key": "Cm",
+  "form": "32-bar AABA",
+  "tempo": 180,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dm7b5"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ]
+  ]
+ },
+ {
+  "id": "donna-lee",
+  "title": "Donna Lee",
+  "composer": "Charlie Parker",
+  "year": 1947,
+  "key": "Ab",
+  "form": "32-bar ABAC",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Fo7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Fo7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "confirmation",
+  "title": "Confirmation",
+  "composer": "Charlie Parker",
+  "year": 1946,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5",
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5",
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5",
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "yardbird",
+  "title": "Yardbird Suite",
+  "composer": "Charlie Parker",
+  "year": 1946,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 176,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ]
+  ]
+ },
+ {
+  "id": "scrapple",
+  "title": "Scrapple from the Apple",
+  "composer": "Charlie Parker",
+  "year": 1947,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 190,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ]
+  ]
+ },
+ {
+  "id": "dewey",
+  "title": "Dewey Square",
+  "composer": "Charlie Parker",
+  "year": 1947,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 180,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "suede",
+  "title": "My Little Suede Shoes",
+  "composer": "Charlie Parker",
+  "year": 1951,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 160,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ]
+  ]
+ },
+ {
+  "id": "groovin",
+  "title": "Groovin' High",
+  "composer": "Dizzy Gillespie",
+  "year": 1945,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 180,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ]
+  ]
+ },
+ {
+  "id": "tunisia",
+  "title": "A Night in Tunisia",
+  "composer": "Dizzy Gillespie",
+  "year": 1942,
+  "key": "Dm",
+  "form": "32-bar AABA",
+  "tempo": 176,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Em7b5"
+   ],
+   [
+    "A7"
+   ]
+  ]
+ },
+ {
+  "id": "salt-peanuts",
+  "title": "Salt Peanuts",
+  "composer": "Dizzy Gillespie",
+  "year": 1942,
+  "key": "Bb",
+  "form": "16-bar",
+  "tempo": 220,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ]
+  ]
+ },
+ {
+  "id": "woody",
+  "title": "Woody'n You",
+  "composer": "Dizzy Gillespie",
+  "year": 1943,
+  "key": "Db",
+  "form": "32-bar AABA",
+  "tempo": 176,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Amaj7"
+   ],
+   [
+    "Amaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbm7"
+   ],
+   [
+    "Gb7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ]
+  ]
+ },
+ {
+  "id": "bebop",
+  "title": "Bebop",
+  "composer": "Dizzy Gillespie",
+  "year": 1945,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "dizzy-atmosphere",
+  "title": "Dizzy Atmosphere",
+  "composer": "Dizzy Gillespie",
+  "year": 1945,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "solar",
+  "title": "Solar",
+  "composer": "Miles Davis",
+  "year": 1954,
+  "key": "Cm",
+  "form": "12-bar blues",
+  "tempo": 160,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7",
+    "Ab7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dm7b5",
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ]
+  ]
+ },
+ {
+  "id": "tune-up",
+  "title": "Tune Up",
+  "composer": "Miles Davis",
+  "year": 1953,
+  "key": "D",
+  "form": "16-bar",
+  "tempo": 176,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dmaj7"
+   ],
+   [
+    "Dmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dmaj7"
+   ],
+   [
+    "Dmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "four",
+  "title": "Four",
+  "composer": "Miles Davis",
+  "year": 1954,
+  "key": "Eb",
+  "form": "32-bar ABAC",
+  "tempo": 168,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "so-what-b",
+  "title": "Impressions",
+  "composer": "John Coltrane",
+  "year": 1961,
+  "key": "Dm",
+  "form": "32-bar AABA",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Dm7"
+   ]
+  ]
+ },
+ {
+  "id": "mr-day",
+  "title": "Mr. Day",
+  "composer": "John Coltrane",
+  "year": 1960,
+  "key": "Bb",
+  "form": "12-bar blues",
+  "tempo": 160,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "naima",
+  "title": "Naima",
+  "composer": "John Coltrane",
+  "year": 1959,
+  "key": "Eb",
+  "form": "16-bar",
+  "tempo": 60,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gm7b5",
+    "C7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "moments-notice",
+  "title": "Moment's Notice",
+  "composer": "John Coltrane",
+  "year": 1957,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 176,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bbm7",
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bbm7",
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7",
+    "Bb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bbm7",
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ]
+  ]
+ },
+ {
+  "id": "lazy-bird",
+  "title": "Lazy Bird",
+  "composer": "John Coltrane",
+  "year": 1957,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 160,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Bm7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "locomotion",
+  "title": "Locomotion",
+  "composer": "John Coltrane",
+  "year": 1957,
+  "key": "Bb",
+  "form": "12-bar blues",
+  "tempo": 180,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "grand-central",
+  "title": "Grand Central",
+  "composer": "John Coltrane",
+  "year": 1959,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 200,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Bmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ]
+  ]
+ },
+ {
+  "id": "spacetrane",
+  "title": "Spiral",
+  "composer": "John Coltrane",
+  "year": 1957,
+  "key": "Eb",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "blue-bossa-b",
+  "title": "Recorda Me",
+  "composer": "Joe Henderson",
+  "year": 1963,
+  "key": "Am",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Bm7b5"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Bm7b5",
+    "E7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Am7"
+   ]
+  ]
+ },
+ {
+  "id": "inner-urge",
+  "title": "Inner Urge",
+  "composer": "Joe Henderson",
+  "year": 1964,
+  "key": "Fm",
+  "form": "32-bar AABA",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Amaj7"
+   ],
+   [
+    "Amaj7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "recorda-2",
+  "title": "Isotope",
+  "composer": "Joe Henderson",
+  "year": 1964,
+  "key": "C",
+  "form": "12-bar blues",
+  "tempo": 160,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Gb7"
+   ]
+  ]
+ },
+ {
+  "id": "black-narcissus",
+  "title": "Black Narcissus",
+  "composer": "Joe Henderson",
+  "year": 1969,
+  "key": "G",
+  "form": "32-bar AABA",
+  "tempo": 80,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Cmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gbmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Gmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ],
+   [
+    "Dbmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "song-for-my-father",
+  "title": "Song for My Father",
+  "composer": "Horace Silver",
+  "year": 1964,
+  "key": "Fm",
+  "form": "24-bar AAB",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ]
+  ]
+ },
+ {
+  "id": "the-preacher",
+  "title": "The Preacher",
+  "composer": "Horace Silver",
+  "year": 1955,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb6"
+   ],
+   [
+    "Bb6"
+   ]
+  ]
+ },
+ {
+  "id": "strollin",
+  "title": "Strollin'",
+  "composer": "Horace Silver",
+  "year": 1960,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 112,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Edim7"
+   ],
+   [
+    "Edim7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "nutville",
+  "title": "Nica's Dream",
+  "composer": "Horace Silver",
+  "year": 1956,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7b5"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "peace",
+  "title": "Peace",
+  "composer": "Horace Silver",
+  "year": 1959,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 72,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebm7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ]
+  ]
+ },
+ {
+  "id": "silver-serenade",
+  "title": "Silver's Serenade",
+  "composer": "Horace Silver",
+  "year": 1963,
+  "key": "Eb",
+  "form": "32-bar AABA",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "cape-verdean",
+  "title": "The Cape Verdean Blues",
+  "composer": "Horace Silver",
+  "year": 1965,
+  "key": "Fm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "juicy",
+  "title": "Juicy Lucy",
+  "composer": "Horace Silver",
+  "year": 1964,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "the-kicker",
+  "title": "The Kicker",
+  "composer": "Joe Henderson",
+  "year": 1967,
+  "key": "C",
+  "form": "32-bar AABA",
+  "tempo": 160,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "short-story",
+  "title": "Short Story",
+  "composer": "Joe Henderson",
+  "year": 1964,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7b5",
+    "A7"
+   ],
+   [
+    "Dm7",
+    "G7"
+   ],
+   [
+    "Cm7",
+    "F7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Bbm7",
+    "Eb7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Abm7",
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Am7",
+    "D7"
+   ],
+   [
+    "Gm7",
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "ceora",
+  "title": "Ceora",
+  "composer": "Lee Morgan",
+  "year": 1965,
+  "key": "Ab",
+  "form": "32-bar AABA",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Ebmaj7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "the-sidewinder",
+  "title": "The Sidewinder",
+  "composer": "Lee Morgan",
+  "year": 1963,
+  "key": "Eb",
+  "form": "24-bar blues",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ]
+  ]
+ },
+ {
+  "id": "search-for",
+  "title": "Search for the New Land",
+  "composer": "Lee Morgan",
+  "year": 1964,
+  "key": "F",
+  "form": "32-bar AABA",
+  "tempo": 100,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Bbmaj7"
+   ],
+   [
+    "Am7"
+   ],
+   [
+    "D7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Fmaj7"
+   ],
+   [
+    "Em7"
+   ],
+   [
+    "A7"
+   ],
+   [
+    "Dm7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Gm7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "yes-indeed",
+  "title": "Yes I Can, No You Can't",
+  "composer": "Lee Morgan",
+  "year": 1964,
+  "key": "Bb",
+  "form": "12-bar blues",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "dat-dere",
+  "title": "Dat Dere",
+  "composer": "Bobby Timmons",
+  "year": 1960,
+  "key": "Bb",
+  "form": "32-bar AABA",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "moanin",
+  "title": "Moanin'",
+  "composer": "Bobby Timmons",
+  "year": 1958,
+  "key": "Fm",
+  "form": "32-bar AABA",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Abmaj7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Gm7b5"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "dis-here",
+  "title": "This Here",
+  "composer": "Bobby Timmons",
+  "year": 1960,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 3,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "work-song",
+  "title": "Work Song",
+  "composer": "Nat Adderley",
+  "year": 1960,
+  "key": "Fm",
+  "form": "16-bar",
+  "tempo": 116,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bbm7"
+   ],
+   [
+    "Fm7"
+   ],
+   [
+    "Fm7"
+   ]
+  ]
+ },
+ {
+  "id": "sack-o-woe",
+  "title": "Sack o' Woe",
+  "composer": "Cannonball Adderley",
+  "year": 1960,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ]
+  ]
+ },
+ {
+  "id": "mercy",
+  "title": "Mercy, Mercy, Mercy",
+  "composer": "Joe Zawinul",
+  "year": 1966,
+  "key": "Bb",
+  "form": "16-bar",
+  "tempo": 88,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ]
+  ]
+ },
+ {
+  "id": "country-preacher",
+  "title": "Country Preacher",
+  "composer": "Joe Zawinul",
+  "year": 1969,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 100,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "eighty-one",
+  "title": "Eighty-One",
+  "composer": "Ron Carter",
+  "year": 1965,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 108,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "freedom-jazz",
+  "title": "Freedom Jazz Dance",
+  "composer": "Eddie Harris",
+  "year": 1965,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "Db7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ },
+ {
+  "id": "compared",
+  "title": "Compared to What",
+  "composer": "Gene McDaniels",
+  "year": 1966,
+  "key": "Eb",
+  "form": "16-bar",
+  "tempo": 100,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ]
+  ]
+ },
+ {
+  "id": "cold-duck",
+  "title": "Cold Duck Time",
+  "composer": "Eddie Harris",
+  "year": 1969,
+  "key": "Bb",
+  "form": "16-bar",
+  "tempo": 120,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Ab7"
+   ],
+   [
+    "G7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ]
+  ]
+ },
+ {
+  "id": "chameleon",
+  "title": "Chameleon",
+  "composer": "Herbie Hancock",
+  "year": 1973,
+  "key": "Bb",
+  "form": "16-bar",
+  "tempo": 108,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Cm7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Eb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ]
+  ]
+ },
+ {
+  "id": "the-chicken",
+  "title": "The Chicken",
+  "composer": "Pee Wee Ellis",
+  "year": 1969,
+  "key": "F",
+  "form": "16-bar",
+  "tempo": 140,
+  "meter": 4,
+  "pd": false,
+  "basis": "Our chord chart for AND SO. Not a copy of a printed fake-book page.",
+  "bars": [
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "C7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "Bb7"
+   ],
+   [
+    "F7"
+   ],
+   [
+    "F7"
+   ]
+  ]
+ }
+]

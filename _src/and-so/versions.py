@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="8.1.2", short="AND SO 8.1.2", name="AND SO 8.1.2 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.2/", latest=True, source="dist",
+    dict(id="8.1.3", short="AND SO 8.1.3", name="AND SO 8.1.3 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.3/", latest=True, source="dist",
+         line="8.1.3 fake book: 331 standards, chord changes only except public-domain melodies."),
+    dict(id="8.1.2", short="AND SO 8.1.2", name="AND SO 8.1.2 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.2/", source="bc7db7cb7bd59f695ae29ab738006d6538d99635",
          line="8.1.2 full screen."),
     dict(id="8.1.1", short="AND SO 8.1.1", name="AND SO 8.1.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.1/", source="eca23d0a44601de2a49fd36498972e47b4a5d5d6",
          line="8.1.1 voice fix. The listener's language first, then the OS and browser, with quality inside each step. Inside that language, an accent from another region. Moira is not in the pool. ?voices=1 lists the choice. Full screen."),
@@ -108,7 +110,7 @@ a.ver:hover, a.ver:focus-visible {{ transform: translateY(-2px); }}
 <h1 class="display-l">Every AND SO</h1>
 <p class="sb-lede">A short changelog, newest first. Each line opens that version, and the one before stays where it was. They keep separate saves.</p>
 <ol>{items}</ol>
-<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1.2</a>
+<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1.3</a>
 </main>
 <script src="/storeybrook/dist/components/bundle.js"></script>
 <script>if (window.Storeybrook) Storeybrook.init();</script>
