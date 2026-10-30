@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="8", short="AND SO 8", name="AND SO 8 · The Book", date="2026-10-30", path="/and-so/v8/", latest=True, source="dist",
+    dict(id="8.1", short="AND SO 8.1", name="AND SO 8.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1/", latest=True, source="dist",
+         line="The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region."),
+    dict(id="8", short="AND SO 8", name="AND SO 8 · The Book", date="2026-10-30", path="/and-so/v8/", source="471c3b3ccdcf06902cad03940a4d5c5b96990cf7",
          line="A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her."),
     dict(id="7", short="AND SO 7", name="AND SO 7 · Everfallen", date="2026-10-27", path="/and-so/v7/", source="c691e5ac2b205ebde26b4f0eb99edbc10f4d0374", corner="bl",
          line="Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look."),
@@ -102,7 +104,7 @@ a.ver:hover, a.ver:focus-visible {{ transform: translateY(-2px); }}
 <h1 class="display-l">Every AND SO</h1>
 <p class="sb-lede">A short changelog, newest first. Each line opens that version, and the one before stays where it was. They keep separate saves.</p>
 <ol>{items}</ol>
-<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8</a>
+<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1</a>
 </main>
 <script src="/storeybrook/dist/components/bundle.js"></script>
 <script>if (window.Storeybrook) Storeybrook.init();</script>

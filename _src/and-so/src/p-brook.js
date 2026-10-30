@@ -161,7 +161,7 @@ function openStory(id) {
 }
 function storyVoiceNote() {
   const R = window.Storeybrook && Storeybrook.read; if (!R || !R.supported) { $('stVoice').textContent = "this browser can't read aloud. the words are all here."; return; }
-  const v = R.pick(); $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})${R.isIrish(v) ? ', Irish English, as requested.' : '. no Irish voice on this device.'}` : 'voice: the default one.';
+  const v = R.pick(); $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})` : 'voice: the default one.';
 }
 function readStoryAloud() {
   const R = window.Storeybrook && Storeybrook.read; const pane = $('stPane');

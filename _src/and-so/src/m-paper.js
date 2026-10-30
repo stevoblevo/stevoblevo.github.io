@@ -31,6 +31,51 @@ function paperPal() {
     brook: tokRGB('wash-brook', [140, 194, 230]), ink: tokRGB('art-line', [47, 59, 72]), sap: tokRGB('sap', [68, 112, 42]), accent: tokRGB('accent', [184, 50, 95]), paper: tokRGB('paper', [244, 246, 242]), water: tokRGB('art-water', [111, 176, 220]) };
   return PAPER.pal;
 }
+const ART = { img: {} };
+const ART_LOOK = { glasshouse: 'glasshouse', peachfall: 'peachfall', 'sb-origami': 'origami-skein', 'sb-skein': 'origami-skein' };
+const ART_WING = { Bach: 'bach', Mozart: 'mozart', Beethoven: 'beethoven', Tchaikovsky: 'tchaikovsky', Stravinsky: 'stravinsky' };
+function artSrc(id) { return (typeof petBase === 'function' ? petBase() : '') + 'assets/art/' + id + '.webp'; }
+function artLoad(id) {
+  if (ART.img[id] || ART.img[id] === false) return;
+  ART.img[id] = false;
+  const img = new Image();
+  img.onload = () => { if (img.naturalWidth > 2) { ART.img[id] = img; if (typeof applyLook === 'function') applyLook(); } };
+  img.onerror = () => { ART.img[id] = false; };
+  img.src = artSrc(id);
+}
+function artBoot() {
+  const base = (typeof petBase === 'function' ? petBase() : '');
+  fetch(base + 'assets/art/manifest.json').then(r => r.ok ? r.json() : null).then(m => {
+    if (!m) return;
+    const files = m.files || m.images || m;
+    if (!files || typeof files !== 'object' || Array.isArray(files)) return;
+    Object.keys(files).forEach(id => {
+      const src = files[id] && (files[id].src || files[id]);
+      if (typeof src !== 'string' || files[id].ready === false) return;
+      const img = new Image();
+      img.onload = () => { if (img.naturalWidth > 2) { ART.img[id] = img; applyLook(); } };
+      img.src = src.startsWith('http') || src.startsWith('/') ? src : base + src.replace(/^\.\//, '');
+    });
+  }).catch(() => {});
+}
+function paintLookArt() {
+  const id = ART_LOOK[skin];
+  const img = id && ART.img[id];
+  if (!img || img === true || !img.naturalWidth) return false;
+  ctx.drawImage(img, 0, 0, W, H);
+  ctx.fillStyle = 'rgba(0,0,0,0.28)';
+  ctx.fillRect(0, 0, W, H);
+  return true;
+}
+function wingRoomArt(composer) {
+  const face = $('wingFace'); if (!face) return;
+  const img = ART.img[ART_WING[composer] || ''];
+  if (img && img.naturalWidth) {
+    face.style.backgroundImage = `linear-gradient(rgba(246,241,230,.82), rgba(246,241,230,.9)), url("${img.src}")`;
+    face.style.backgroundSize = 'cover';
+    face.style.backgroundPosition = 'center';
+  } else face.style.backgroundImage = '';
+}
 function applyLook() {
   const L = sbLook(), root = document.documentElement;
   if (L) root.dataset.sb = L; else delete root.dataset.sb;
@@ -43,7 +88,14 @@ function applyLook() {
   document.querySelectorAll('.sbi').forEach(el => { el.dataset.sb = il; });
   const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = L ? (getComputedStyle(root).getPropertyValue('--paper').trim() || '#f4f6f2') : '#140a12';
   document.querySelectorAll('[data-look]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.look === skin)));
+  const painted = ART.img[ART_LOOK[skin]];
+  if (painted && painted.naturalWidth) {
+    document.body.style.backgroundImage = `url("${painted.src}")`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+  } else document.body.style.backgroundImage = '';
 }
+artBoot();
 // the patterns each paper uses under the terrain: halftone for Comix, stipple for Ink Blot, knit for Skein silk
 function paperPattern(g, kind) {
   const P = paperPal(), key = kind + skin; if (PAPER[kind] && PAPER.dotsKey === key) return PAPER[kind];

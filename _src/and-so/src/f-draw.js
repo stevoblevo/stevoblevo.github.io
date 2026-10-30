@@ -7,6 +7,7 @@ function spaced(s, x, y, sp) { for (const ch of s) { ctx.fillText(ch, x, y); x +
 
 function drawBg() {
   if (wxWorld()) { drawWorldBg(); return; }
+  if (typeof paintLookArt === 'function' && paintLookArt()) return;
   // paper: the canvas stays clear so the watercolor page shows through; CSS prints what is drawn here in ink
   if (paperLook()) { ctx.clearRect(0, 0, W, H); if (era || flash55 > 0.02) { ctx.fillStyle = `rgba(120,80,30,${(era ? 0.1 : 0) + 0.2 * flash55})`; ctx.fillRect(0, 0, W, H); } return; }
   if (skin === 'sb-knight') {

@@ -27,13 +27,16 @@ const JSESS = {
 };
 const JAM = { on: false, sess: 1, S: null, bpm: 96, bar: -1, bi: 0, chorus: 0, chord: null, keyF: 130.81, padF: 261.63, barT0: 0, beat: 0.6, keys: [], held: new Map(),
   score: 0, notes: 0, good: 0, cNotes: 0, cGood: 0, cAns: 0, answered: 0, blues: new Set(), call: null, resp: [], phase: '', uiQ: [], birdQ: [], last: null, walk: [], comp: [], compPat: -1,
-  ending: false, endAt: 0, prev: null, switching: false };
+  ending: false, endAt: 0, prev: null, switching: false,
+  chart: null, feel: 'swing', semi: 0, voicing: 'full', reharm: 'off', parts: { bass: true, comp: true, drums: true, melody: true }, practice: '', loopOn: true, loopA: 0, loopB: 0, countLeft: 0, counting: false };
 const jamOpen = n => { const S = JSESS[n]; if (!S) return false; const st = STONE.get(S.stone); return !st || stoneOpen(st); };
 
 function jamStart(n) {
   if (!entered || era || !JSESS[n]) return;
   if (!jamOpen(n)) { const st = STONE.get(JSESS[n].stone); caption(`${JSESS[n].name} opens at ${st.need} nougats. the jar has ${GAME.nougats}.`, 2800); return; }
   if (JAM.on) jamStop(true);
+  JAM.chart = null;
+  if (typeof BOOK !== 'undefined' && BOOK.onPlay) { BOOK.onPlay = false; if (typeof bookPaint === 'function') bookPaint(); }
   if (round) skipRound(); if (rail) stopRail(false); pump = null;
   if (LS.src) listenStop();
   const S = JSESS[n];
@@ -56,7 +59,8 @@ function jamStart(n) {
 }
 function jamStop(quiet) {
   if (!JAM.on) return;
-  JAM.on = false; jamReleaseAll();
+  JAM.on = false; JAM.counting = false; jamReleaseAll();
+  if (typeof BOOK !== 'undefined') { BOOK.onPlay = false; if (typeof bookPaint === 'function') bookPaint(); }
   const P = JAM.prev || {};
   if (P.tease != null) SET.tease = P.tease;
   rhy.on = P.rhy != null ? P.rhy : rhy.on; rhy.nextT = 0; rhy.bar = -1; rhy.base = null;
@@ -71,6 +75,7 @@ function jamStop(quiet) {
 
 // ---------- the changes ----------
 function jamChange(id) {
+  if (JAM.chart) { jamChangeSym(id); return; }
   const C = JCH[id]; if (!C) return;
   JAM.chord = Object.assign({ id }, C);
   const rootF = JAM.keyF * C.root;
@@ -91,7 +96,9 @@ function jamPadRoles() { const els = $('jamKeys').children; JAM.keys.forEach((k,
 // ---------- the band ----------
 function jamBar(t0) {
   const S = JAM.S; if (!S) return;
-  JAM.bar++; JAM.barT0 = t0; JAM.beat = 60 / JAM.bpm;
+  JAM.barT0 = t0; JAM.beat = 60 / JAM.bpm;
+  if (JAM.chart) { jamChartBar(t0); return; }
+  JAM.bar++;
   const L = S.form.length, bi = JAM.bar % L;
   if (JAM.bar > 0 && bi === 0) jamChorusEnd();
   if (JAM.ending) return;
@@ -104,6 +111,7 @@ function jamBar(t0) {
 }
 function jamStep(i, t0, n, spb) {
   if (!JAM.S || JAM.ending) return;
+  if (JAM.chart) { jamChartStep(i, t0, n, spb); return; }
   const beat = (i / n) | 0, sub = i % n, lv = clamp(dyn, 0.55, 1.05);
   if (sub === 0) ride(t0, (beat % 2 ? 0.8 : 1) * lv);
   if (sub === 2 && beat % 2 === 1) ride(t0, 0.55 * lv);
@@ -285,14 +293,16 @@ function jamUI(full) {
   if (full) {
     $('jamTitle').textContent = S.name;
     const ch = $('jamChart'); ch.textContent = '';
-    S.form.forEach(id => { const c = document.createElement('span'); c.className = 'jb'; c.textContent = JCH[id].sym; ch.appendChild(c); });
+    const cells = JAM.chart ? JAM.chart.play : S.form;
+    cells.forEach(id => { const c = document.createElement('span'); c.className = 'jb'; c.textContent = jamCellLabel(id); ch.appendChild(c); });
     document.querySelectorAll('[data-jam]').forEach(b => { const n = +b.dataset.jam; b.classList.toggle('on', n === JAM.sess && JAM.on); b.disabled = !jamOpen(n); });
   }
   const cells = $('jamChart').children; for (let i = 0; i < cells.length; i++) cells[i].classList.toggle('on', i === JAM.bi);
+  const cur = cells[JAM.bi]; if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ inline: 'center', block: 'nearest', behavior: (typeof DEV !== 'undefined' && DEV.reduce) ? 'auto' : 'smooth' }); } catch (e) {} }
   const ph = $('jamPhase'); ph.dataset.phase = JAM.phase || '';
-  ph.textContent = JAM.phase === 'call' ? 'the horn' : JAM.phase === 'you' ? 'your answer' : JAM.phase === 'end' ? 'the last chord' : 'play anything';
-  $('jamChord').textContent = JAM.chord ? `${JAM.chord.sym} · ${JAM.chord.name}` : '';
-  $('jamSet').textContent = `chorus ${Math.min(JAM.chorus + 1, S.sets)} of ${S.sets}`;
+  ph.textContent = JAM.phase === 'count' ? 'count in' : JAM.phase === 'call' ? 'the horn' : JAM.phase === 'you' ? 'your answer' : JAM.phase === 'end' ? 'the last chord' : 'play anything';
+  $('jamChord').textContent = JAM.chord ? (JAM.chart ? JAM.chord.sym : `${JAM.chord.sym} · ${JAM.chord.name}`) : '';
+  $('jamSet').textContent = JAM.chart ? `bar ${Math.min(JAM.bi + 1, JAM.chart.play.length)} of ${JAM.chart.play.length}` : `chorus ${Math.min(JAM.chorus + 1, S.sets)} of ${S.sets}`;
   $('jamScore').textContent = String(JAM.score);
 }
 function jamTick() {
@@ -304,6 +314,282 @@ function jamTick() {
   while (JAM.birdQ.length && JAM.birdQ[0].t <= now) { const b = JAM.birdQ.shift(); bird.tx = b.x; bird.ty = b.y; bird.flash = 1; bird.lastNote = t; if (bird.x < -50) { bird.x = b.x; bird.y = b.y; } }
   if (JAM.ending && JAM.endAt && t > JAM.endAt) jamStop(false);
 }
+// ---------- a chart from the book, on this same clock ----------
+const JUST_PC = [1, 16 / 15, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 45 / 32, 3 / 2, 8 / 5, 5 / 3, 7 / 4, 15 / 8];
+const E31_PC = [0, 3, 5, 8, 10, 13, 15, 18, 21, 23, 26, 28];
+function pcRatio(semi) {
+  semi = ((semi % 12) + 12) % 12;
+  if (M.key === 'tet31') return E31(E31_PC[semi]);
+  if (M.easy) return Math.pow(2, semi / 12);
+  return JUST_PC[semi];
+}
+function jamGrid() {
+  const feel = JAM.feel || 'swing';
+  const meter = (JAM.chart && JAM.chart.meter) || 4;
+  if (feel === 'waltz') return { n: 2, meter, swing: 0.5 };
+  if (feel === 'swing') return { n: 3, meter, swing: 0.66 };
+  return { n: 2, meter, swing: 0.5 };
+}
+function jamPartOn(part) {
+  if (JAM.practice === part) return false;
+  if (JAM.parts && JAM.parts[part] === false) return false;
+  const ens = part === 'drums' ? 'drum' : part;
+  if (typeof ensAudible === 'function' && !ensAudible(ens)) return false;
+  return true;
+}
+function jamCellLabel(id) {
+  if (Array.isArray(id)) return id.map(c => (typeof labelChord === 'function' ? (labelChord(c, JAM.semi || 0) || c) : c)).filter(Boolean).join(' ') || '·';
+  if (JAM.chart) return (typeof labelChord === 'function' ? labelChord(id, JAM.semi || 0) : id) || '·';
+  return JCH[id] ? JCH[id].sym : String(id || '·');
+}
+function isDom7(c) {
+  if (!c || !c.iv) return false;
+  const iv = c.iv.map(i => ((i % 12) + 12) % 12);
+  return iv.includes(4) && iv.includes(10);
+}
+function spellChord(root, qual) {
+  const names = (typeof NOTE_NAMES !== 'undefined') ? NOTE_NAMES : ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  return names[(root + 12) % 12] + (qual || '7');
+}
+function reharmBars(bars) {
+  const src = bars.map(b => (Array.isArray(b) ? b.slice() : [b]));
+  if (JAM.reharm !== 'light' || typeof parseChord !== 'function') return src;
+  const out = src.map(b => b.slice());
+  for (let i = 0; i < out.length; i++) {
+    if (out[i].length !== 1) continue;
+    const cur = parseChord(out[i][0]);
+    const next = parseChord((out[(i + 1) % out.length] || ['·'])[0]);
+    const prevSym = (out[(i - 1 + out.length) % out.length] || ['·'])[0];
+    if (cur && isDom7(cur)) { out[i] = [spellChord((cur.root + 6) % 12, '7')]; continue; }
+    if (cur && next && out[i][0] === prevSym && cur.root !== next.root) {
+      out[i] = [spellChord((next.root + 2) % 12, 'm7'), spellChord((next.root + 7) % 12, '7')];
+    }
+  }
+  return out;
+}
+function jamVoiceTones(iv) {
+  const norm = (iv || [0, 4, 7]).map(i => ((i % 12) + 12) % 12);
+  const third = norm.find(i => i === 3 || i === 4) ?? 4;
+  const fifth = norm.find(i => i === 7) ?? 7;
+  const sev = norm.find(i => i === 9 || i === 10 || i === 11);
+  const dens = JAM.voicing || 'full';
+  let pcs;
+  if (dens === 'shells') pcs = [third, sev != null ? sev : fifth];
+  else if (dens === 'rootless') pcs = [third, sev != null ? sev : fifth, (fifth + 2) % 12];
+  else pcs = [0, third, fifth].concat(sev != null ? [sev] : []);
+  return pcs.map(pcRatio);
+}
+function jamChangeSym(sym) {
+  const parsed = typeof parseChord === 'function' ? parseChord(sym) : null;
+  const label = parsed && typeof labelChord === 'function' ? (labelChord(sym, JAM.semi || 0) || sym) : (sym || '·');
+  if (!parsed) {
+    JAM.chord = { id: sym || '·', sym: '·', root: 1, tones: [1, 5 / 4, 3 / 2, 7 / 4], voice: [1, 5 / 4, 3 / 2], name: 'rest', iv: [0, 4, 7] };
+    return;
+  }
+  const home = typeof pcOf === 'function' ? (pcOf(JAM.chart.key) || 0) : 0;
+  const bassPc = parsed.bass != null ? parsed.bass : parsed.root;
+  const rel = (bassPc + (JAM.semi || 0) - home + 120) % 12;
+  const root = pcRatio(rel);
+  const iv = parsed.iv && parsed.iv.length ? parsed.iv : [0, 4, 7];
+  const third = iv.find(i => ((i % 12) + 12) % 12 === 3 || ((i % 12) + 12) % 12 === 4) ?? 4;
+  const fifth = iv.find(i => ((i % 12) + 12) % 12 === 7) ?? 7;
+  const sev = iv.find(i => [9, 10, 11].includes(((i % 12) + 12) % 12));
+  const tones = [1, pcRatio(((third % 12) + 12) % 12), pcRatio(((fifth % 12) + 12) % 12), pcRatio(sev != null ? ((sev % 12) + 12) % 12 : 10)];
+  const voice = jamVoiceTones(iv);
+  JAM.chord = { id: sym, sym: label, name: label, root, tones, voice, iv };
+  const rootF = JAM.keyF * root;
+  fRoot = fold(rootF, 2, 98); audio.setRoot(fRoot); rootFlash = 0.7;
+  setChordTargets(rootF, voice);
+  for (const v of voices) if (v.target != null) v.approachUntil = 0;
+  jamPadRoles();
+}
+function jamPadForChart(tune) {
+  const blues = /blues/i.test((tune && tune.form) || '');
+  const degs = blues ? [[0, '1'], [2, '2'], [3, '♭3', 1], [4, '3'], [5, '4'], [7, '5'], [9, '6'], [10, '♭7', 1], [12, '1']] : [[0, '1'], [2, '2'], [4, '3'], [5, '4'], [7, '5'], [9, '6'], [11, '7'], [12, '1']];
+  const names = (typeof NOTE_NAMES !== 'undefined') ? NOTE_NAMES : ['C'];
+  return degs.map(([d, deg, blue]) => ({ r: pcRatio(d), lab: names[d % 12] || deg, deg, blue: !!blue }));
+}
+function melodyAllowed(tune) { return !!(tune && tune.melody && tune.pd); }
+function jamWalkChart(bi) {
+  const C = JAM.chord || { root: 1, tones: [1, 5 / 4, 3 / 2, 7 / 4] };
+  const R = fold(JAM.keyF * C.root, 2, 62);
+  const beats = (JAM.chart && JAM.chart.meter) || 4;
+  const tones = C.tones || [1, 5 / 4, 3 / 2, 7 / 4];
+  const out = [];
+  for (let b = 0; b < beats; b++) {
+    if (b === 0) out.push(R);
+    else if (b === beats - 1) out.push(fold(R * (tones[1] || 1), 2, 62));
+    else out.push(fold(R * (tones[1 + ((b - 1) % 3)] || 1), 2, 62));
+  }
+  return out;
+}
+function jamChartBar(t0) {
+  const play = JAM.chart.play || [];
+  const L = Math.max(1, play.length);
+  if (JAM.countLeft > 0) {
+    JAM.countLeft--; JAM.counting = true; JAM.phase = 'count';
+    JAM.uiQ.push({ t: t0, bi: clamp(JAM.bar, 0, L - 1), phase: 'count' });
+    return;
+  }
+  JAM.counting = false;
+  const a = clamp(JAM.loopOn ? JAM.loopA : 0, 0, L - 1);
+  const b = clamp(JAM.loopOn ? (JAM.loopB || L - 1) : L - 1, a, L - 1);
+  if (JAM.bar < a) JAM.bar = a - 1;
+  JAM.bar++;
+  if (JAM.bar > b) {
+    if (!JAM.loopOn && JAM.bar >= L) { jamEnding(t0); return; }
+    JAM.bar = a; jamChorusEnd();
+  }
+  const bi = clamp(JAM.bar, 0, L - 1);
+  JAM.bi = bi;
+  const chords = play[bi] || ['·'];
+  jamChange(chords[0]);
+  JAM.walk = jamWalkChart(bi);
+  JAM.comp = jamCompForGrid();
+  JAM.phase = '';
+  JAM.uiQ.push({ t: t0, bi, phase: '' });
+  jamSchedMelody(t0, bi);
+  if (typeof BOOK !== 'undefined') { BOOK.bar = bi; if (typeof bookHighlight === 'function') bookHighlight(); }
+}
+function jamCompForGrid() {
+  const g = jamGrid(), N = Math.max(1, g.meter * g.n), feel = JAM.feel || 'swing';
+  const at = (beats, amt) => [Math.min(N - 1, beats * g.n), amt];
+  if (feel === 'ballad') return [at(0, 0.7)];
+  if (feel === 'bossa') return [at(1, 0.55), at(Math.max(1, g.meter - 1), 0.5)];
+  if (feel === 'waltz') return [at(0, 0.75), at(1, 0.4)];
+  if (feel === 'straight') return [at(1, 0.7), at(3 % g.meter, 0.65)];
+  return [at(0, 0.9), at(2, 0.75)];
+}
+function jamDrums(feel, beat, sub, n, t0, lv) {
+  if (feel === 'bossa') {
+    if (sub === 0 && (beat === 0 || beat === 2)) kick(t0, beat === 0 ? 0.36 * lv : 0.2 * lv);
+    if (sub === (n >> 1) && beat === 1) kick(t0, 0.22 * lv);
+    if (sub === 0 && (beat === 1 || beat === 3)) chick(t0, 0.45 * lv);
+    if (sub === 0 || sub === (n >> 1)) ride(t0, 0.32 * lv);
+    return;
+  }
+  if (feel === 'ballad') {
+    if (sub === 0 && beat % 2 === 0) kick(t0, 0.4 * lv);
+    if (sub === 0 && beat % 2 === 1) snare(t0, 0.16 * lv);
+    if (sub === 0) ride(t0, 0.26 * lv);
+    return;
+  }
+  if (feel === 'waltz') {
+    if (sub === 0 && beat % 3 === 0) kick(t0, 0.46 * lv);
+    if (sub === 0 && beat % 3 !== 0) chick(t0, 0.38 * lv);
+    if (sub === 0) ride(t0, 0.36 * lv);
+    return;
+  }
+  if (feel === 'straight') {
+    if (sub === 0 && beat % 2 === 0) kick(t0, 0.42 * lv);
+    if (sub === 0 && beat % 2 === 1) snare(t0, 0.46 * lv);
+    if (sub === 0 || sub === (n >> 1)) hat(t0, 0.32 * lv, false);
+    return;
+  }
+  if (sub === 0) ride(t0, (beat % 2 ? 0.8 : 1) * lv);
+  if (n >= 3 && sub === 2 && beat % 2 === 1) ride(t0, 0.55 * lv);
+  if (sub === 0 && beat % 2 === 1) chick(t0, lv);
+  if (sub === 0) kick(t0, 0.14 * lv);
+  if (n >= 3 && sub === 2 && Math.random() < (beat === 3 ? 0.35 : 0.14)) snare(t0, rand(0.1, 0.22) * lv);
+}
+function jamChartStep(i, t0, n, spb) {
+  const beat = (i / n) | 0, sub = i % n, lv = clamp(dyn, 0.55, 1.05);
+  const meter = (JAM.chart && JAM.chart.meter) || 4;
+  if (JAM.counting) {
+    if (jamPartOn('drums') && sub === 0) hat(t0, beat === 0 ? 0.7 : 0.4, false);
+    return;
+  }
+  if (jamPartOn('drums')) jamDrums(JAM.feel || 'swing', beat, sub, n, t0, lv);
+  if (jamPartOn('bass') && sub === 0 && JAM.walk[beat]) jamBass(t0, JAM.walk[beat], 0.95 * lv, spb * n * 0.94);
+  if (jamPartOn('comp')) for (const c of JAM.comp) if (c[0] === i) jamCompHit(t0, c[1] * lv);
+  if (sub === 0) {
+    const chords = (JAM.chart.play && JAM.chart.play[JAM.bi]) || ['·'];
+    const seg = Math.max(1, chords.length);
+    const ci = Math.min(seg - 1, Math.floor((beat / meter) * seg));
+    const sym = chords[ci];
+    if (sym && (!JAM.chord || JAM.chord.id !== sym)) jamChange(sym);
+  }
+}
+function jamSchedMelody(t0, bi) {
+  const tune = JAM.chart;
+  if (!tune || !tune.pd || !tune.melody || !tune.melody.length) return;
+  if (!jamPartOn('melody') || typeof toneAt !== 'function' || typeof pcOf !== 'function') return;
+  const meter = tune.meter || 4, a0 = bi * meter, beat = 60 / JAM.bpm;
+  const home = (pcOf(tune.key) || 0) + (JAM.semi || 0);
+  tune.melody.forEach(ev => {
+    if (ev.at < a0 - 0.01 || ev.at >= a0 + meter - 0.01) return;
+    toneAt(t0 + Math.max(0, ev.at - a0) * beat, 60 + ((home % 12) + 12) % 12 + ev.semi, ev.dur * beat, 0.7, 'melody');
+  });
+}
+function jamSyncChart() {
+  if (!JAM.chart) return;
+  JAM.chart.play = reharmBars(JAM.chart.bars);
+  JAM.loopA = clamp(JAM.loopA || 0, 0, JAM.chart.play.length - 1);
+  JAM.loopB = clamp(JAM.loopB == null ? JAM.chart.play.length - 1 : JAM.loopB, JAM.loopA, JAM.chart.play.length - 1);
+  if (JAM.chord) jamChange(JAM.chord.id);
+  jamUI(true);
+  if (typeof bookRenderChart === 'function') bookRenderChart();
+}
+function jamLoadChart(tune, opt) {
+  opt = opt || {};
+  if (!tune || !entered) return;
+  if (!A.ac) audio.init();
+  if (!A.ac) return;
+  if (A.ac.state === 'suspended') A.ac.resume();
+  if (round) skipRound();
+  if (!JAM.prev) JAM.prev = { mode: M.key, rhy: rhy.on, tease: SET.tease };
+  const bars = typeof normBars === 'function' ? normBars(tune.bars) : (tune.bars || [['·']]);
+  const meter = tune.meter || 4;
+  JAM.chart = {
+    id: tune.id, title: tune.title || 'chart', key: tune.key || 'C', form: tune.form || '',
+    pd: melodyAllowed(tune), meter, bars, play: [], melody: melodyAllowed(tune) && typeof parseMelody === 'function' ? parseMelody(tune.melody) : []
+  };
+  JAM.semi = (typeof BOOK !== 'undefined' && BOOK.semi) || 0;
+  JAM.feel = (typeof BOOK !== 'undefined' && BOOK.feel) || (meter === 3 ? 'waltz' : 'swing');
+  JAM.voicing = (typeof BOOK !== 'undefined' && BOOK.voicing) || 'full';
+  JAM.reharm = (typeof BOOK !== 'undefined' && BOOK.reharm) || 'off';
+  JAM.parts = Object.assign({ bass: true, comp: true, drums: true, melody: true }, (typeof BOOK !== 'undefined' && BOOK.parts) || {});
+  JAM.practice = (typeof BOOK !== 'undefined' && BOOK.practice) || '';
+  JAM.loopOn = typeof BOOK === 'undefined' || BOOK.loop !== false;
+  JAM.loopA = Math.max(0, ((typeof BOOK !== 'undefined' && BOOK.loopA) || 1) - 1);
+  JAM.loopB = (typeof BOOK !== 'undefined' && BOOK.loopB) ? BOOK.loopB - 1 : bars.length - 1;
+  JAM.chart.play = reharmBars(bars);
+  JAM.S = {
+    name: tune.title || 'chart', bpm: (typeof BOOK !== 'undefined' && BOOK.bpm) || tune.tempo || 112, sets: 8,
+    pad: jamPadForChart(tune), semi: 16 / 15, two: 9 / 8, six: 5 / 3,
+    form: JAM.chart.play.map(b => b.join(' ')), line: tune.basis || tune.form || '', chart: true, mode: M.key
+  };
+  JAM.sess = 0; JAM.bpm = JAM.S.bpm;
+  JAM.keyF = fold(fRoot, 2, 98); JAM.padF = fold(JAM.keyF * 2, 2, 220);
+  if (opt.play) {
+    for (let g = 0; g < 4 && voices.filter(v => v.wT > 0).length < 4; g++) if (!addVoice(rand(300, XMAX - 300), { temp: 0 })) break;
+    Object.assign(JAM, { on: true, bar: -1, bi: 0, chorus: 0, ending: false, endAt: 0, compPat: -1, counting: false, score: JAM.score || 0 });
+    JAM.countLeft = (typeof BOOK !== 'undefined' && BOOK.countIn) ? 1 : 0;
+    JAM.uiQ.length = 0; JAM.birdQ.length = 0;
+    rhy.nextT = 0; rhy.step = 0; rhy.bar = -1;
+    jamChange((JAM.chart.play[0] || ['·'])[0]);
+    JAM.walk = jamWalkChart(0); JAM.comp = [];
+    jamPadBuild();
+    $('jam').classList.add('on'); $('jam').setAttribute('aria-hidden', 'false'); document.body.classList.add('jamming');
+    resize();
+  }
+  jamUI(true);
+  if (typeof bookRenderChart === 'function') bookRenderChart();
+}
+function bookApplyJam() {
+  if (!JAM.chart || typeof BOOK === 'undefined') return;
+  JAM.bpm = BOOK.bpm; JAM.feel = BOOK.feel; JAM.semi = BOOK.semi; JAM.voicing = BOOK.voicing; JAM.reharm = BOOK.reharm;
+  JAM.parts = Object.assign({ bass: true, comp: true, drums: true, melody: true }, BOOK.parts);
+  JAM.practice = BOOK.practice || '';
+  JAM.loopOn = BOOK.loop !== false;
+  JAM.loopA = Math.max(0, (BOOK.loopA || 1) - 1);
+  JAM.loopB = BOOK.loopB ? BOOK.loopB - 1 : JAM.chart.bars.length - 1;
+  JAM.chart.pd = melodyAllowed(BOOK.tune);
+  JAM.chart.melody = JAM.chart.pd && typeof parseMelody === 'function' ? parseMelody(BOOK.tune.melody) : [];
+  rhy.nextT = 0;
+  jamSyncChart();
+}
+
 // the pad takes a strip at the bottom; the terrain moves up to make room
 const jamPadH = () => (JAM.on ? Math.round(phone ? clamp(H * 0.3, 170, 290) : clamp(H * 0.2, 120, 230)) : 0);
 function jamPointer() {

@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "8.1",
+   "short": "AND SO 8.1",
+   "name": "AND SO 8.1 · The Book, in the jam",
+   "date": "2026-10-30",
+   "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.",
+   "path": "/and-so/v8.1/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "0848e5e7372ca105a170e4c15f6bbaf82143529bcb010b710d45803e80223c5b"
+  },
+  {
    "id": "8",
    "short": "AND SO 8",
    "name": "AND SO 8 · The Book",
    "date": "2026-10-30",
    "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.",
    "path": "/and-so/v8/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "e10bafc225a71a99e84d3380fadda1d546a171110ced89db3e7862906fe926bd"
+   "commit": "471c3b3ccdcf06902cad03940a4d5c5b96990cf7",
+   "sha256": "5cffce827c453e5bac08154704e7a1a3530c86d2d0186f67c3c58c13aa5abde8"
   },
   {
    "id": "7",

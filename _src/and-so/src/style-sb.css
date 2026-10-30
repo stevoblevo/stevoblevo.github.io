@@ -233,7 +233,7 @@ body.quiet #heard { display: none }
 #jam.on { display: flex }
 .jam-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; min-height: 36px; padding: 0 4px 6px }
 .jam-title { font: var(--sb-display-weight) clamp(16px, .55vw + 11px, 30px)/1 var(--sb-display) }
-.jam-chart { display: inline-flex; flex-wrap: wrap; gap: 3px }
+.jam-chart { display: inline-flex; flex-wrap: nowrap; gap: 3px; max-width: min(52vw, 640px); overflow-x: auto }
 .jb { min-width: 2.5em; padding: 3px 6px; border: 1.5px solid var(--line); border-radius: 7px; font: 700 clamp(11px, .3vw + 8px, 20px)/1.2 var(--sb-ui); text-align: center; color: var(--ink-muted) }
 .jb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent) }
 .jam-phase { padding: 4px 11px; border-radius: 999px; background: var(--surface); font: 700 clamp(12px, .3vw + 9px, 20px)/1 var(--sb-ui) }

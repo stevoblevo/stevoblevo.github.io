@@ -85,6 +85,7 @@
     <button class="dk" id="dMore"><span>⌃</span>more</button>
   </div>
   <div class="wb" id="wb">
+    <div class="note" id="devNote"></div>
     <div class="modes">
       <button class="mode on" data-m="just"><b>just</b><span>7-limit · harmonic</span></button>
       <button class="mode" data-m="gamelan"><b>gamelan</b><span>slendro · ombak</span></button>
@@ -202,6 +203,15 @@
       <div class="btns"><button class="pill" id="bOpen">open the box</button><button class="pill" id="bAutoV">auto vibe</button><button class="pill" id="bCenter">center</button></div>
       <div class="note">drag the puck. five vibes, blended: micro, groove, glow, drift, chaos. the music and Saelion both follow it.</div>
       <button type="button" id="magCarrot" class="mag-carrot" hidden aria-label="a loose carrot"></button></div>
+
+    <div class="sec">read aloud</div>
+    <label class="row"><span>voice</span><select id="sVoice" class="txt" aria-label="read-aloud voice"></select></label>
+    <div class="btns"><button class="pill" id="sVoiceTest" type="button">hear it</button></div>
+    <div class="note" id="sVoiceNote">an English accent from outside this device's own region. the choice stays in this browser.</div>
+    <label class="row"><span>ElevenLabs experiment</span><input type="checkbox" class="sw" id="sElOn"></label>
+    <input class="txt" id="sElKey" type="password" autocomplete="off" spellcheck="false" placeholder="your ElevenLabs API key, kept in this browser" aria-label="ElevenLabs API key">
+    <input class="txt" id="sElId" autocomplete="off" spellcheck="false" placeholder="ElevenLabs voice id" aria-label="ElevenLabs voice id">
+    <div class="note">off until you switch it on. the key never leaves this browser except when a reading is sent to ElevenLabs. any error falls back to the system voice. no key is stored with the page.</div>
 
     <div class="sec">headphones</div>
     <label class="row"><span>binaural split</span><input type="checkbox" class="sw" id="sHp"></label>

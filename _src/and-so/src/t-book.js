@@ -1,5 +1,6 @@
 // ===== the book: a jam-along fake book. charts are our own data. melody and words only when the tune is public domain here =====
-var BOOK = { open: false, onPlay: false, id: '', tune: null, bars: [], meter: 4, events: [], bpm: 112, semi: 0, voice: 'piano', loop: true, abs: 0, bar: -1, beatIn: 0, sym: '', kind: 'book', heard: 0, timbre: '', also: null, blank: false };
+var BOOK = { open: false, onPlay: false, id: '', tune: null, bars: [], meter: 4, events: [], bpm: 112, semi: 0, voice: 'piano', loop: true, abs: 0, bar: -1, beatIn: 0, sym: '', kind: 'book', heard: 0, timbre: '', also: null, blank: false,
+  feel: 'swing', parts: { bass: true, comp: true, drums: true, melody: true }, voicing: 'full', reharm: 'off', countIn: true, practice: '', loopA: 1, loopB: 0 };
 var bookNext = 0;
 const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const PC_OF = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
@@ -116,85 +117,9 @@ function soundPc(chord, which) {
   const pc = which === 'bass' && chord.bass != null ? chord.bass : chord.root;
   return (pc + BOOK.semi + 120) % 12;
 }
-function bookDrums(t0, beatIn, meter) {
-  if (!ensAudible('drum')) return;
-  if (meter === 7) {
-    if (beatIn === 0 || beatIn === 2 || beatIn === 4) kick(t0, beatIn === 0 ? 0.34 : 0.16);
-    nz(t0, 0.025, 'bandpass', 4600, 1.2, 0.016);
-    return;
-  }
-  if (beatIn === 0) kick(t0, meter === 3 ? 0.28 : 0.4);
-  if (meter === 4 && (beatIn === 1 || beatIn === 3)) nz(t0, 0.03, 'highpass', 6500, 0.7, 0.012);
-  nz(t0, 0.028, 'bandpass', 5200, 1.6, beatIn % 2 ? 0.014 : 0.022);
-}
-function bookStrike(t0, abs) {
-  const meter = BOOK.meter || 4, n = BOOK.bars.length || 1, total = n * meter;
-  if (!BOOK.loop && abs >= total) { bookPause(); return; }
-  const local = ((abs % total) + total) % total;
-  const bar = (local / meter) | 0, beatIn = local % meter;
-  const chords = BOOK.bars[bar] || ['·'];
-  const seg = Math.max(1, chords.length);
-  const ci = Math.min(seg - 1, Math.floor((beatIn / meter) * seg));
-  const sym = chords[ci];
-  const chord = parseChord(sym);
-  BOOK.bar = bar; BOOK.beatIn = beatIn; BOOK.sym = sym || '';
-  const spb = 60 / BOOK.bpm;
-  if (chord && ensAudible('bass')) {
-    const nxtBar = (bar + (beatIn === meter - 1 ? 1 : 0)) % n;
-    const nxt = parseChord((BOOK.bars[nxtBar] || ['·'])[0]);
-    let pc = soundPc(chord, 'bass');
-    if (beatIn === meter - 1 && nxt) pc = (soundPc(nxt, 'bass') + 11) % 12;
-    else if (beatIn > 0 && beatIn < meter - 1) pc = (soundPc(chord, 'root') + chord.iv[beatIn % chord.iv.length]) % 12;
-    const midi = 36 + pc + (pc < 4 && beatIn === 0 ? 0 : 0);
-    toneAt(t0, 36 + pc + (midi < 36 ? 12 : 0), spb * 0.95, 0.9, 'bass');
-  }
-  if (chord && ensAudible('comp')) {
-    const guitar = BOOK.voice === 'guitar';
-    const hit = guitar || meter !== 4 || beatIn === 1 || beatIn === 3 || beatIn === 0 && meter === 3;
-    if (hit) {
-      const third = chord.iv[1] != null ? chord.iv[1] : 4;
-      const sev = chord.iv.find(i => i === 10 || i === 11);
-      const pcs = [soundPc(chord, 'root') + third];
-      if (sev != null) pcs.push(soundPc(chord, 'root') + sev);
-      else if (chord.iv[2] != null) pcs.push(soundPc(chord, 'root') + chord.iv[2]);
-      pcs.forEach((pc, i) => toneAt(t0 + i * 0.012, 60 + (pc % 12) + (pc % 12 < 4 ? 12 : 0), guitar ? 0.22 : 0.5, 0.85, 'comp'));
-      if (BOOK.also != null && beatIn === 0) {
-        const r = (soundPc(chord, 'root') + BOOK.also) % 12;
-        [0, 4, 7].forEach((iv, i) => toneAt(t0, 60 + (r + iv) % 12, 0.35, 0.35, 'comp'));
-      }
-    }
-  }
-  if (chord && ensAudible('pad') && beatIn === 0) {
-    chord.iv.slice(0, 3).forEach(iv => toneAt(t0, 48 + (soundPc(chord, 'root') + iv) % 12 + 12, spb * meter * 0.9, 0.45, 'pad'));
-  }
-  if (BOOK.tune && BOOK.tune.pd && ensAudible('melody')) {
-    BOOK.events.forEach(ev => {
-      const rel = ev.at - local;
-      if (rel >= -0.02 && rel < 0.98) toneAt(t0 + Math.max(0, rel) * spb, 60 + tonicPc() + ev.semi, ev.dur * spb, 0.8, 'melody');
-    });
-  } else if (chord && ensAudible('melody') && beatIn === 0) {
-    const third = chord.iv[1] != null ? chord.iv[1] : 4;
-    toneAt(t0, 72 + (soundPc(chord, 'root') + third) % 12, spb * 1.4, 0.45, 'melody');
-  }
-  bookDrums(t0, beatIn, meter);
-  if (bar !== BOOK.painted) { BOOK.painted = bar; bookHighlight(); }
-}
-function bookTick() {
-  if (!BOOK.onPlay || !A.ac || paused) return;
-  const now = A.ac.currentTime;
-  if (!bookNext || bookNext < now - 0.25) bookNext = now + 0.06;
-  const spb = 60 / Math.max(36, BOOK.bpm);
-  let guard = 0;
-  while (bookNext < now + 0.14 && guard++ < 6) { bookStrike(bookNext, BOOK.abs); BOOK.abs++; bookNext += spb; }
-  if (typeof bookMix === 'function') bookMix();
-  if (BOOK.kind === 'wing') BOOK.heard += Math.min(0.05, spb);
-}
-function bookMix() {
-  if (!A.ac || !A.bus) return;
-  if (typeof ENS !== 'undefined' && ENS.on && ENS.n > 1) return;
-  const g = BOOK.open && BOOK.onPlay ? 0.4 : 0.85;
-  A.bus.gain.setTargetAtTime(g, A.ac.currentTime, 0.25);
-}
+
+function bookTick() { /* the jam clock plays the chart */ }
+function bookMix() {}
 function bookEnsure() {
   if (!entered) return false;
   if (!A.ac) audio.init();
@@ -204,171 +129,201 @@ function bookEnsure() {
   return true;
 }
 function bookPlay() {
-  if (!bookEnsure()) return;
-  if (JAM.on) jamStop(true);
-  BOOK.onPlay = true; BOOK.heard = 0;
-  if (!bookNext) bookNext = A.ac.currentTime + 0.08;
-  const sun = $('bookSun'); if (sun) sun.classList.add('is-on');
+  if (!BOOK.tune || !bookEnsure()) return;
+  BOOK.onPlay = true;
+  bookApplyFromUI();
+  jamLoadChart(BOOK.tune, { play: true });
   bookPaint();
 }
 function bookPause() {
-  BOOK.onPlay = false; bookNext = 0;
-  const sun = $('bookSun'); if (sun) sun.classList.remove('is-on');
-  bookMix();
+  BOOK.onPlay = false;
+  if (JAM.chart && JAM.on) jamStop(true);
+  bookPaint();
 }
 function bookChoose(id) {
   const t = chartById(id) || (BOOK_DATA && BOOK_DATA[0]);
   if (!t) return;
   BOOK.blank = false;
   BOOK.tune = t; BOOK.id = t.id; BOOK.kind = t.kind || (t.gate ? 'wing' : 'book');
-  BOOK.bars = normBars(t.bars); BOOK.meter = t.meter || 4; BOOK.events = parseMelody(t.melody);
+  BOOK.bars = normBars(t.bars); BOOK.meter = t.meter || 4; BOOK.events = melodyAllowed(t) ? parseMelody(t.melody) : [];
   BOOK.timbre = t.timbre || ''; BOOK.also = t.also != null ? t.also : null;
-  BOOK.bpm = t.tempo || BOOK.bpm; BOOK.abs = 0; BOOK.bar = 0; BOOK.heard = 0; bookNext = 0;
+  if (!BOOK.bpm) BOOK.bpm = t.tempo || 112;
+  BOOK.bpm = t.tempo && !BOOK.touchedTempo ? t.tempo : BOOK.bpm;
+  if (BOOK.feel === 'swing' && BOOK.meter === 3 && !BOOK.touchedFeel) BOOK.feel = 'waltz';
+  BOOK.loopB = BOOK.loopB && BOOK.loopB <= BOOK.bars.length ? BOOK.loopB : BOOK.bars.length;
+  BOOK.bar = 0;
   bookRender();
   if (!BOOK.holdFace && $('bookOpen')) { $('bookOpen').hidden = false; if ($('wingFace')) $('wingFace').hidden = true; if (typeof WING !== 'undefined') WING.face = false; }
-  if (BOOK.onPlay) bookPlay();
+  if (BOOK.onPlay || (JAM.on && JAM.chart)) bookPlay();
+  else jamLoadChart(t, { play: false });
 }
 function bookBlank() {
   BOOK.blank = true; BOOK.kind = 'book'; BOOK.id = 'yours';
   BOOK.tune = { id: 'yours', title: 'Your page', form: 'an empty sheet', key: 'C', pd: false, basis: 'And so, your turn.', bars: [['·'], ['·'], ['·'], ['·'], ['·'], ['·'], ['·'], ['·']], meter: 4, tempo: BOOK.bpm };
-  BOOK.bars = normBars(BOOK.tune.bars); BOOK.meter = 4; BOOK.events = []; BOOK.timbre = ''; BOOK.also = null; BOOK.abs = 0;
+  BOOK.bars = normBars(BOOK.tune.bars); BOOK.meter = 4; BOOK.events = []; BOOK.loopB = 8;
   bookPause(); bookRender();
 }
-function bookSetSemi(d) { BOOK.semi = ((d % 12) + 12) % 12; bookRenderChart(); bookPaint(); }
+function bookSetSemi(d) {
+  BOOK.semi = ((d % 12) + 12) % 12;
+  bookRenderChart();
+  if (JAM.chart) { JAM.semi = BOOK.semi; if (JAM.chord) jamChange(JAM.chord.id); jamUI(true); }
+  bookPaint();
+}
 function bookNudgeKey(dir) { bookSetSemi(BOOK.semi + dir); }
-function bookSetTempo(bpm) { BOOK.bpm = clamp(+bpm || 112, 40, 240); bookPaint(); }
-function bookSetVoice(v) { BOOK.voice = v === 'guitar' ? 'guitar' : 'piano'; bookPaint(); }
-function bookHearBar(i) {
-  if (!bookEnsure()) return;
-  const chords = BOOK.bars[i] || [];
-  const c = parseChord(chords[0]);
-  if (!c) return;
-  const t0 = A.ac.currentTime + 0.02;
-  const third = c.iv[1] != null ? c.iv[1] : 4;
-  toneAt(t0, 48 + soundPc(c, 'bass'), 0.7, 0.8, 'bass', true);
-  toneAt(t0, 60 + (soundPc(c, 'root') + third) % 12, 0.8, 0.7, 'comp', true);
-  if (c.iv[2] != null) toneAt(t0, 64 + (soundPc(c, 'root') + c.iv[2]) % 12, 0.8, 0.55, 'comp', true);
-  BOOK.bar = i; bookHighlight();
+function bookSetTempo(bpm) { BOOK.touchedTempo = true; BOOK.bpm = clamp(+bpm || 112, 40, 240); if (JAM.chart) JAM.bpm = BOOK.bpm; bookPaint(); }
+function bookApplyFromUI() {
+  const feel = $('bookFeel'); if (feel) BOOK.feel = feel.value;
+  const voi = $('bookVoicing'); if (voi) BOOK.voicing = voi.value;
+  const reh = $('bookReharm'); if (reh) BOOK.reharm = reh.value;
+  const pr = $('bookPractice'); if (pr) BOOK.practice = pr.value;
+  const cnt = $('bookCount'); if (cnt) BOOK.countIn = cnt.checked;
+  const loop = $('bookLoop'); if (loop) BOOK.loop = loop.checked;
+  const a = $('bookFrom'), b = $('bookTo');
+  if (a) BOOK.loopA = clamp(+a.value || 1, 1, BOOK.bars.length || 1);
+  if (b) BOOK.loopB = clamp(+b.value || BOOK.bars.length || 1, BOOK.loopA, BOOK.bars.length || 1);
+  ['bass', 'comp', 'drums', 'melody'].forEach(part => {
+    const el = $('bookPart-' + part); if (el) BOOK.parts[part] = el.checked && !el.disabled;
+  });
+  if (typeof bookApplyJam === 'function' && JAM.chart) bookApplyJam();
+}
+function bookJump(i) {
+  BOOK.bar = i;
+  if (JAM.chart && JAM.chart.play && JAM.chart.play[i]) {
+    JAM.bar = i; JAM.bi = i;
+    jamChange(JAM.chart.play[i][0]);
+    if (JAM.on) jamUI(false);
+  } else if (bookEnsure()) {
+    const c = parseChord((BOOK.bars[i] || [])[0]);
+    if (c) {
+      const t0 = A.ac.currentTime + 0.02;
+      toneAt(t0, 48 + soundPc(c, 'bass'), 0.7, 0.8, 'bass', true);
+      const third = c.iv[1] != null ? c.iv[1] : 4;
+      toneAt(t0, 60 + (soundPc(c, 'root') + third) % 12, 0.8, 0.7, 'comp', true);
+    }
+  }
+  bookHighlight();
 }
 
-function spineHue(form) {
-  const f = (form || '').toLowerCase();
-  if (f.includes('blues') || f.includes('12-bar')) return 'sea';
-  if (f.includes('minor') || f.includes('modal') || f.includes('character')) return 'leaf';
-  if (f.includes('bossa') || f.includes('40-bar') || f.includes('16-bar')) return 'rose';
-  if (f.includes('aaba') || f.includes('abac')) return 'gold';
-  return 'ink';
-}
 function bookMount() {
   const root = $('book'); if (!root || root.dataset.built) return; root.dataset.built = '1';
   root.className = 'book';
   root.setAttribute('role', 'dialog');
   root.setAttribute('aria-label', 'the book');
-  root.innerHTML = '<div class="book-table"><button type="button" class="book-x" id="bookClose" aria-label="close the book">×</button>'
-    + '<button type="button" class="book-cover" id="bookCover"><b>The Book</b><i>and so</i><em>gold on the edge</em></button>'
-    + '<div class="book-open" id="bookOpen">'
-    + '<div class="spines" id="bookSpines" role="listbox" aria-label="tunes"></div>'
-    + '<div class="sheet" id="bookSheet">'
-    + '<p class="sheet-kicker" id="bookKicker"></p><h2 id="bookTitle"></h2>'
-    + '<p class="sheet-form" id="bookForm"></p><p class="sheet-basis" id="bookBasis"></p>'
-    + '<div class="chart" id="bookChart"></div>'
-    + '<div class="sun-row"><button type="button" class="sun" id="bookSun" aria-label="play or stop"><i></i></button>'
-    + '<div class="sun-side"><button type="button" id="bookKeyDn" aria-label="one key down">‹</button><b id="bookKeyN">C</b><button type="button" id="bookKeyUp" aria-label="one key up">›</button></div>'
-    + '<label class="walk">tempo <b id="bookTempoN">112</b><input id="bookTempo" type="range" min="40" max="220" value="112" aria-label="tempo"></label>'
-    + '<button type="button" class="ring" id="bookLoop" aria-pressed="true" aria-label="loop">↻</button>'
-    + '<button type="button" class="voice" id="bookVoice" aria-label="piano or guitar">piano</button></div>'
-    + '<div class="sheet-marks"><button type="button" id="bookToWing" aria-label="the wing">✶</button><button type="button" id="bookDream" aria-label="dream the book">dream</button><button type="button" id="bookKeep" hidden>keep</button></div>'
-    + '<div class="page-pets" id="bookPets" hidden></div></div>'
-    + '<div class="wing-face" id="wingFace" hidden></div></div>';
+  const part = (id, label) => `<label class="bk-part"><input type="checkbox" id="bookPart-${id}" checked> ${label}</label>`;
+  root.innerHTML = '<div class="bk" id="bookOpen">'
+    + '<div class="wh bk-h"><span class="wt">THE BOOK</span><span class="ws" id="bookKicker"></span><button type="button" class="wbtn" id="bookClose" aria-label="close the book">×</button></div>'
+    + '<div class="bk-body">'
+    + '<label class="bk-line">tune <select id="bookTune" aria-label="tune"></select></label>'
+    + '<h2 id="bookTitle"></h2>'
+    + '<p class="bk-form" id="bookForm"></p><p class="bk-basis" id="bookBasis"></p>'
+    + '<div class="bk-chart" id="bookChart" role="list" aria-label="lead sheet"></div>'
+    + '<div class="bk-controls">'
+    + '<button type="button" class="pill" id="bookGo">play</button>'
+    + '<label class="bk-line">tempo <b id="bookTempoN">112</b><input id="bookTempo" type="range" min="40" max="220" value="112" aria-label="tempo"></label>'
+    + '<span class="bk-key"><button type="button" id="bookKeyDn" aria-label="one key down">−</button><b id="bookKeyN">C</b><button type="button" id="bookKeyUp" aria-label="one key up">+</button></span>'
+    + '<label class="bk-line">feel <select id="bookFeel" aria-label="feel"><option value="swing">swing</option><option value="straight">straight</option><option value="bossa">bossa</option><option value="ballad">ballad</option><option value="waltz">waltz</option></select></label>'
+    + '<span class="bk-parts">' + part('bass', 'bass') + part('comp', 'comp') + part('drums', 'drums') + part('melody', 'melody') + '</span>'
+    + '<label class="bk-line">voicing <select id="bookVoicing" aria-label="voicing"><option value="shells">shells</option><option value="rootless">rootless</option><option value="full">full</option></select></label>'
+    + '<label class="bk-line">reharm <select id="bookReharm" aria-label="reharm"><option value="off">off</option><option value="light">light</option></select></label>'
+    + '<label class="bk-line">loop <input id="bookLoop" type="checkbox" checked aria-label="loop"> <input id="bookFrom" type="number" min="1" value="1" aria-label="loop from bar">–<input id="bookTo" type="number" min="1" value="1" aria-label="loop to bar"></label>'
+    + '<label class="bk-line">count-in <input id="bookCount" type="checkbox" checked aria-label="count in"></label>'
+    + '<label class="bk-line">practice <select id="bookPractice" aria-label="practice"><option value="">band plays</option><option value="bass">you play bass</option><option value="comp">you play chords</option><option value="drums">you play drums</option><option value="melody">you play the line</option></select></label>'
+    + '</div>'
+    + '<div class="bk-marks"><button type="button" id="bookToWing">the wing</button><button type="button" id="bookDream">dream</button><button type="button" id="bookKeep" hidden>keep</button></div>'
+    + '<div class="page-pets" id="bookPets" hidden></div>'
+    + '</div><div class="wing-face" id="wingFace" hidden></div></div>';
   on('bookClose', bookClose);
-  on('bookCover', () => bookCover(false));
-  on('bookSun', () => BOOK.onPlay ? bookPause() : bookPlay());
+  on('bookGo', () => BOOK.onPlay ? bookPause() : bookPlay());
   on('bookKeyDn', () => bookNudgeKey(-1));
   on('bookKeyUp', () => bookNudgeKey(1));
-  on('bookLoop', () => { BOOK.loop = !BOOK.loop; bookPaint(); });
-  on('bookVoice', () => bookSetVoice(BOOK.voice === 'guitar' ? 'piano' : 'guitar'));
   on('bookToWing', () => { if (typeof wingOpen === 'function') wingOpen(); });
   on('bookDream', () => { if (typeof dreamStart === 'function') dreamStart('book'); });
   on('bookKeep', () => { try { toggleRec(); } catch (e) {} });
   $('bookTempo').addEventListener('input', e => bookSetTempo(e.target.value));
+  ['bookFeel', 'bookVoicing', 'bookReharm', 'bookPractice', 'bookLoop', 'bookCount', 'bookFrom', 'bookTo'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.addEventListener('change', () => { if (id === 'bookFeel') BOOK.touchedFeel = true; bookApplyFromUI(); bookPaint(); if (BOOK.onPlay) bookPlay(); });
+  });
+  ['bass', 'comp', 'drums', 'melody'].forEach(part => {
+    const el = $('bookPart-' + part); if (!el) return;
+    el.addEventListener('change', () => { bookApplyFromUI(); });
+  });
+  $('bookTune').addEventListener('change', () => bookChoose($('bookTune').value));
   bookSpines();
   if (typeof wingMount === 'function') wingMount();
   if (typeof petSlotsPaint === 'function') petSlotsPaint($('bookPets'));
 }
 function bookSpines() {
-  const host = $('bookSpines'); if (!host || !BOOK_DATA) return; host.textContent = '';
+  const host = $('bookTune'); if (!host || !BOOK_DATA) return;
+  host.innerHTML = '';
   BOOK_DATA.forEach(t => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'spine hue-' + spineHue(t.form) + (t.pd ? ' is-pd' : '');
-    b.setAttribute('role', 'option'); b.dataset.id = t.id; b.setAttribute('aria-label', t.title + (t.pd ? ', public domain' : ''));
-    b.title = t.title;
-    b.addEventListener('click', () => { bookCover(false); bookChoose(t.id); });
-    host.appendChild(b);
+    const o = document.createElement('option');
+    o.value = t.id; o.textContent = t.title + (t.pd ? '' : '');
+    host.appendChild(o);
   });
+  bookSpinesMark();
 }
 function bookRenderChart() {
-  const el = $('bookChart'); if (!el) return; el.textContent = '';
-  const meter = BOOK.meter || 4;
-  BOOK.bars.forEach((chords, i) => {
+  const el = $('bookChart'); if (!el) return;
+  el.textContent = '';
+  const bars = (JAM.chart && JAM.chart.id === BOOK.id && JAM.chart.play) ? JAM.chart.play : BOOK.bars;
+  bars.forEach((chords, i) => {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'stone'; b.dataset.i = String(i);
+    b.type = 'button'; b.className = 'bar'; b.dataset.i = String(i);
+    const n = document.createElement('i'); n.textContent = String(i + 1);
     const name = document.createElement('b');
-    name.textContent = chords.map(c => labelChord(c, BOOK.semi)).filter(Boolean).join(' ') || '·';
-    b.appendChild(name);
-    if (BOOK.tune && BOOK.tune.pd && BOOK.events.length) {
-      const dots = document.createElement('span'); dots.className = 'dots';
-      const a0 = i * meter, a1 = a0 + meter;
-      BOOK.events.forEach(ev => {
-        if (ev.at < a0 || ev.at >= a1) return;
-        const d = document.createElement('i');
-        d.style.left = ((ev.at - a0) / meter * 100) + '%';
-        d.style.bottom = clamp(8 + ev.semi * 2.1, 4, 46) + 'px';
-        dots.appendChild(d);
-      });
-      b.appendChild(dots);
-    }
-    b.addEventListener('click', () => bookHearBar(i));
+    const list = Array.isArray(chords) ? chords : [chords];
+    name.textContent = list.map(c => labelChord(c, BOOK.semi)).filter(Boolean).join(' ') || '·';
+    b.appendChild(n); b.appendChild(name);
+    b.addEventListener('click', () => bookJump(i));
     el.appendChild(b);
   });
   bookHighlight();
 }
 function bookRender() {
   bookMount();
-  const t = BOOK.tune;
-  if (!t) return;
+  const t = BOOK.tune; if (!t) return;
   $('bookKicker').textContent = BOOK.kind === 'wing' ? (t.composer || '') : (t.pd ? 'public domain' : 'changes');
   $('bookTitle').textContent = t.title || '';
-  $('bookForm').textContent = [t.form, shownKey()].filter(Boolean).join(' · ');
-  $('bookBasis').textContent = t.basis || t.pd || '';
+  $('bookForm').textContent = [t.form, shownKey(), (t.meter || 4) + '/4'].filter(Boolean).join(' · ');
+  $('bookBasis').textContent = t.basis || (typeof t.pd === 'string' ? t.pd : '') || '';
   bookRenderChart();
   bookSpinesMark();
   bookPaint();
   if (typeof MAG !== 'undefined') bookShowPets(!!MAG.found);
-  const wing = $('wingFace');
-  if (wing && BOOK.kind !== 'wing-face') { /* sheet stays */ }
 }
 function bookSpinesMark() {
-  const host = $('bookSpines'); if (!host) return;
-  host.querySelectorAll('.spine').forEach(s => s.classList.toggle('is-on', s.dataset.id === BOOK.id));
+  const host = $('bookTune'); if (!host) return;
+  host.value = BOOK.id || host.value;
 }
 function bookHighlight() {
   const el = $('bookChart'); if (!el) return;
-  [...el.children].forEach((n, i) => n.classList.toggle('is-now', i === BOOK.bar));
-  const cur = el.children[BOOK.bar];
-  if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) {} }
+  const bar = JAM.chart && JAM.on ? JAM.bi : BOOK.bar;
+  [...el.children].forEach((n, i) => n.classList.toggle('is-now', i === bar));
+  const cur = el.children[bar];
+  if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: (typeof DEV !== 'undefined' && DEV.reduce) ? 'auto' : 'smooth' }); } catch (e) {} }
 }
 function bookPaint() {
   const k = $('bookKeyN'); if (k) k.textContent = shownKey();
   const n = $('bookTempoN'); if (n) n.textContent = String(BOOK.bpm | 0);
   const r = $('bookTempo'); if (r && document.activeElement !== r) r.value = String(BOOK.bpm | 0);
-  const loop = $('bookLoop'); if (loop) loop.setAttribute('aria-pressed', BOOK.loop ? 'true' : 'false');
-  const v = $('bookVoice'); if (v) v.textContent = BOOK.voice === 'guitar' ? 'guitar' : 'piano';
+  const loop = $('bookLoop'); if (loop) loop.checked = !!BOOK.loop;
+  const feel = $('bookFeel'); if (feel && document.activeElement !== feel) feel.value = BOOK.feel || 'swing';
+  const voi = $('bookVoicing'); if (voi && document.activeElement !== voi) voi.value = BOOK.voicing || 'full';
+  const reh = $('bookReharm'); if (reh && document.activeElement !== reh) reh.value = BOOK.reharm || 'off';
+  const pr = $('bookPractice'); if (pr && document.activeElement !== pr) pr.value = BOOK.practice || '';
+  const cnt = $('bookCount'); if (cnt) cnt.checked = BOOK.countIn !== false;
+  const a = $('bookFrom'); if (a && document.activeElement !== a) a.value = String(BOOK.loopA || 1);
+  const b = $('bookTo'); if (b && document.activeElement !== b) b.value = String(BOOK.loopB || BOOK.bars.length || 1);
+  const mel = $('bookPart-melody');
+  if (mel) { mel.disabled = !melodyAllowed(BOOK.tune); if (mel.disabled) mel.checked = false; }
+  ['bass', 'comp', 'drums', 'melody'].forEach(part => {
+    const el = $('bookPart-' + part); if (el && !el.disabled && document.activeElement !== el) el.checked = BOOK.parts[part] !== false;
+  });
+  const go = $('bookGo'); if (go) go.textContent = BOOK.onPlay ? 'stop' : 'play';
   const keep = $('bookKeep'); if (keep) keep.hidden = BOOK.id !== 'yours';
 }
-function bookCover(closed) {
-  const root = $('book'); if (!root) return;
-  root.classList.toggle('is-closed', !!closed);
-}
+function bookCover() {}
 function bookOpen(id, opt) {
   opt = opt || {};
   if (!entered) { const hold = id, o = opt; $('enter').click(); setTimeout(() => bookOpen(hold, o), 700); return; }
@@ -379,17 +334,15 @@ function bookOpen(id, opt) {
   if (id === 'blank') bookBlank();
   else if (id) bookChoose(id);
   else if (!BOOK.tune) bookChoose('st-louis');
-  bookCover(!!opt.cover);
   if (opt.play) bookPlay();
   if (opt.wing && typeof wingShow === 'function') wingShow(opt.wing, { play: !!opt.play });
-  else if ($('wingFace')) $('wingFace').hidden = BOOK.kind !== 'wing-face';
+  else if ($('wingFace')) $('wingFace').hidden = !(typeof WING !== 'undefined' && WING.face);
 }
 function bookClose() {
   bookPause(); BOOK.open = false;
   const root = $('book'); if (root) { root.classList.remove('on'); root.setAttribute('aria-hidden', 'true'); }
   document.body.classList.remove('booking');
   if ($('wingFace')) $('wingFace').hidden = true;
-  bookMix();
 }
 function bookShowPets(on) {
   const el = $('bookPets'); if (!el) return;
@@ -401,7 +354,7 @@ window.addEventListener('keydown', e => {
   if (typeof DREAM !== 'undefined' && DREAM.on) return;
   if (!$('book') || !$('book').classList.contains('on')) return;
   const tg = e.target && e.target.tagName;
-  if (tg === 'INPUT' || tg === 'TEXTAREA') return;
+  if (tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT') return;
   if (e.key === 'Escape') { bookClose(); e.stopPropagation(); }
   else if (e.key === ' ') { e.preventDefault(); BOOK.onPlay ? bookPause() : bookPlay(); }
 }, true);

@@ -14,6 +14,7 @@ function magBoot() {
   const base = petBase();
   fetch(base + 'assets/pet/slots.json').then(r => r.ok ? r.json() : null).then(slots => {
     if (!slots) return;
+    if (slots.elphantea) PET_SLOTS.elphantea = slots.elphantea;
     ['mag', 'bunny'].forEach(k => {
       const s = slots[k];
       if (!s) return;
@@ -100,7 +101,13 @@ function magArrive() {
   for (let i = 0; i < 16; i++) MAG.petals.push({ x: MAG.x, y: MAG.y - 10, vx: rand(-40, 50), vy: rand(-80, -20), life: rand(1.2, 2.2) });
   document.body.classList.add('mag-home');
   const card = $('magCard');
-  if (card) { card.hidden = false; card.innerHTML = '<div class="pair"></div><p>Mag found you. She does that.</p>'; petSlotsPaint(card.querySelector('.pair')); setTimeout(() => { card.hidden = true; }, 4600); }
+  if (card) {
+    card.hidden = false;
+    const bunny = (typeof ART !== 'undefined' && ART.img && ART.img['pet-bunny'] && ART.img['pet-bunny'].naturalWidth) ? ART.img['pet-bunny'] : null;
+    if (bunny) card.innerHTML = '<figure class="bunny-vignette"><img alt="" src="' + bunny.src + '"></figure><p>Mag found you. The bunny was asleep.</p>';
+    else { card.innerHTML = '<div class="pair"></div><p>Mag found you. She does that.</p>'; petSlotsPaint(card.querySelector('.pair')); }
+    setTimeout(() => { card.hidden = true; }, 4600);
+  }
   caption('Mag found you. She does that.', 3600);
   if (typeof wingOnMag === 'function') wingOnMag();
   persistSoon();

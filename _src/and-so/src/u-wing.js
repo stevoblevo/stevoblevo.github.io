@@ -57,6 +57,7 @@ function wingPaint() {
   });
   const p = wingNow();
   const open = p && (WING.step > WING_DATA.indexOf(p) + 1 || BOOK.id === p.id && BOOK.kind === 'wing' && BOOK.onPlay);
+  if (p && typeof wingRoomArt === 'function') wingRoomArt(p.composer);
   if ($('wingKicker')) $('wingKicker').textContent = p ? p.composer : '';
   if ($('wingTitle')) $('wingTitle').textContent = p && (WING.step > WING_DATA.indexOf(p) || open) ? p.title : '';
   if ($('wingInvite')) $('wingInvite').textContent = p && WING.step <= WING_DATA.length ? p.invite : 'The wing is open.';

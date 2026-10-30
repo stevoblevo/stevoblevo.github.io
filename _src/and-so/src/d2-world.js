@@ -204,13 +204,10 @@ When the music sat in the sweet spot long enough, the lattice folded in on itsel
 
 Nobody told the bunny what the lattice was for. It figured it out by listening, which is the only way anyone ever has.`;
 function readStory() {
+  const R = window.Storeybrook && Storeybrook.read;
+  if (R && R.supported) { R.speak($('stText').value, { rate: 0.95, pitch: 1.05 }); const v = R.pick(); $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})` : 'voice: the default one.'; discover('x-story'); jlog('read the story aloud'); return; }
   if (!('speechSynthesis' in window)) { caption("this browser can't read aloud.", 2600); return; }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance($('stText').value), vs = speechSynthesis.getVoices();
-  const v = vs.find(x => /en-IE/i.test(x.lang)) || vs.find(x => /en-GB/i.test(x.lang)) || vs.find(x => /^en/i.test(x.lang));
-  if (v) u.voice = v; u.rate = 0.95; u.pitch = 1.05; speechSynthesis.speak(u);
-  $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})${/en-IE/i.test(v.lang) ? ', Irish, as requested.' : '. no Irish voice on this device.'}` : 'voice: the default one.';
-  discover('x-story'); jlog('read the story aloud');
+  caption("this browser can't read aloud.", 2600);
 }
 
 // ---------- hands-on helpers ----------

@@ -10,7 +10,8 @@ function placeGw(x, y) { const r = gw.getBoundingClientRect(); gw.style.left = c
 function resize() {
   readSafe();
   W = window.innerWidth; H = window.innerHeight;
-  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
+  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 || !fxRich() ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
+  if (typeof devApply === 'function') devApply();
   [cvs, cvs2, cvs3].forEach(c => { c.width = Math.max(1, Math.round(W * DPR)); c.height = Math.max(1, Math.round(H * DPR)); });
   [ctx, ctx2, ctx3].forEach(g => g.setTransform(DPR, 0, 0, DPR, 0, 0));
   S = clamp(Math.min(W, H) / 760, 0.7, 2);

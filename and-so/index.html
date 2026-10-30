@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="AND SO 8 · The Book: a microtonal instrument, a jam-along fake book, and a classical wing. voices roll into the valleys where notes agree.">
+<meta name="description" content="AND SO 8.1 · The Book, in the jam: a microtonal instrument, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
 <meta name="theme-color" content="#f4f6f2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%23e7b23a'/%3E%3C/svg%3E">
 <meta name="color-scheme" content="light dark">
-<title>AND SO 8</title>
+<title>AND SO 8.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
 <style id="andso-css">
@@ -162,6 +162,8 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: none; b
 .sel, .txt { background: rgba(0, 0, 0, .28); color: var(--ink); border: 1px solid rgba(234, 220, 198, .18); border-radius: 8px; padding: 7px 9px; font: inherit; font-size: 13px; min-height: 34px }
 .sel { width: 100%; margin-top: 8px }
 .txt { flex: 1; min-width: 0 }
+body.dev-touch .pill, body.dev-touch .txt, body.dev-touch select.txt { min-height: 42px }
+body.dev-reduce #book, body.dev-reduce .jf, body.dev-reduce .jam-phase { animation: none; transition: none }
 .hidden { display: none !important }
 .lock { font-family: var(--f-serif); font-style: italic; font-size: 13px; color: var(--ink-faint); margin-top: 6px }
 .unl { margin-top: 8px; font-size: 11px; line-height: 1.55; color: var(--ink-soft) }
@@ -994,7 +996,7 @@ body.quiet #heard { display: none }
 #jam.on { display: flex }
 .jam-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; min-height: 36px; padding: 0 4px 6px }
 .jam-title { font: var(--sb-display-weight) clamp(16px, .55vw + 11px, 30px)/1 var(--sb-display) }
-.jam-chart { display: inline-flex; flex-wrap: wrap; gap: 3px }
+.jam-chart { display: inline-flex; flex-wrap: nowrap; gap: 3px; max-width: min(52vw, 640px); overflow-x: auto }
 .jb { min-width: 2.5em; padding: 3px 6px; border: 1.5px solid var(--line); border-radius: 7px; font: 700 clamp(11px, .3vw + 8px, 20px)/1.2 var(--sb-ui); text-align: center; color: var(--ink-muted) }
 .jb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent) }
 .jam-phase { padding: 4px 11px; border-radius: 999px; background: var(--surface); font: 700 clamp(12px, .3vw + 9px, 20px)/1 var(--sb-ui) }
@@ -1107,35 +1109,38 @@ body:not(.landing) .book-mark { color: #6b4e2e }
 .dream-line { margin: 10px 0 0 }
 .dream-line button { all: unset; cursor: pointer; font: italic 400 15px/1 "Newsreader", Georgia, serif; letter-spacing: .08em; color: inherit; opacity: .72; text-decoration: underline wavy; text-underline-offset: .35em }
 .dream-line button:hover, .dream-line button:focus-visible { opacity: 1 }
-#book { position: fixed; inset: 0; z-index: 48; display: none; color: #241c16; font-family: "Newsreader", Georgia, serif }
+#book { position: fixed; z-index: 48; display: none; top: 64px; right: 14px; width: min(440px, calc(100vw - 24px)); max-height: min(82vh, 760px); color: var(--ink, #241c16); font-family: "Andika", "Newsreader", sans-serif }
 #book.on { display: block }
-.book-table { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 40%, #2a211c 0%, #120e0c 70%); overflow: hidden }
-.book-x { position: absolute; z-index: 3; top: 12px; right: 14px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: #f3e6c8; font: 400 28px/1 Georgia, serif; cursor: pointer }
-.book-cover { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; width: min(280px, 74vw); aspect-ratio: 3/4; border: 0; border-radius: 3px 10px 10px 3px; cursor: pointer; color: #f6edd8; background: linear-gradient(90deg, #6e1d2a 0 10px, #7c2432 10px, #8d2d3c 100%); box-shadow: 0 24px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(230,190,110,.55), inset 8px 0 0 rgba(198,161,90,.85) }
-.book-cover b { display: block; margin-top: 28%; font: 500 42px/1 "DynaPuff", "Newsreader", serif; font-weight: 500 }
-.book-cover i, .book-cover em { display: block; font-style: italic; opacity: .8 }
-.book-cover em { margin-top: 18%; letter-spacing: .22em; font-size: 12px; text-transform: lowercase }
-#book:not(.is-closed) .book-cover { display: none }
-#book.is-closed .book-open, #book.is-closed .wing-face { display: none }
-.book-open { position: absolute; inset: 18px 16px 16px; display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 12px; animation: bookIn .55s ease }
-@keyframes bookIn { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
-.spines { display: flex; flex-direction: column; gap: 5px; overflow: auto; padding: 8px 0 }
-.spine { flex: 0 0 18px; width: 28px; height: 18px; border: 0; border-radius: 2px 7px 7px 2px; cursor: pointer; background: #c6a15a; box-shadow: inset -3px 0 0 rgba(0,0,0,.18) }
-.spine.is-pd { box-shadow: inset -3px 0 0 rgba(0,0,0,.18), 0 0 0 1px rgba(232,220,180,.7) }
-.spine.is-on { outline: 2px solid #f3e6c8; outline-offset: 1px }
-.hue-sea { background: #3f7f86 } .hue-leaf { background: #6d8f62 } .hue-rose { background: #b76b73 } .hue-gold { background: #c6a15a } .hue-ink { background: #5c5148 }
-.sheet { position: relative; min-width: 0; overflow: auto; padding: clamp(18px, 3vw, 42px) clamp(16px, 3vw, 48px) 24px; border-radius: 2px 14px 14px 2px; background: #f6f1e6; box-shadow: 0 18px 50px rgba(0,0,0,.35); color: #241c16 }
-.sheet-kicker { margin: 0; letter-spacing: .18em; text-transform: lowercase; font: 600 12px/1 "Andika", sans-serif; color: #8a704c }
-.sheet h2 { margin: .15em 0 .1em; font: 500 clamp(32px, 5vw, 64px)/.95 "DynaPuff", "Newsreader", serif; font-weight: 500 }
-.sheet-form { margin: 0; font: italic 400 clamp(16px, 2vw, 22px)/1.3 "Newsreader", serif }
-.sheet-basis { margin: .35em 0 .8em; max-width: 46rem; font: 400 13px/1.35 "Andika", sans-serif; color: #6d5b48 }
-.chart { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 18px 4px 28px; min-height: 132px }
-.stone { position: relative; flex: 0 0 auto; scroll-snap-align: center; min-width: 72px; height: 96px; border: 0; border-radius: 40px 40px 16px 16px; background: transparent; color: #241c16; cursor: pointer; transition: transform .35s ease }
-.stone b { position: absolute; left: 0; right: 0; bottom: 8px; font: 600 15px/1.1 "Andika", sans-serif }
-.stone .dots { position: absolute; inset: 0 0 28px }
-.stone .dots i { position: absolute; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: #8d2d3c }
-.stone.is-now { transform: translateY(-6px) }
-.stone.is-now::before { content: ""; position: absolute; left: 50%; top: 6px; width: 28px; height: 28px; translate: -50% 0; border-radius: 50%; background: radial-gradient(circle at 38% 35%, #fff6d4, #e7b23a 55%, #c6842a); box-shadow: 0 0 18px rgba(231,178,58,.85) }
+.bk { display: flex; flex-direction: column; max-height: inherit; border: 1px solid var(--glass-line, rgba(36,28,22,.18)); border-radius: 16px; background: color-mix(in srgb, var(--page, #f6f1e6) 94%, transparent); box-shadow: 0 16px 40px rgba(0,0,0,.18); overflow: hidden }
+.bk-h { display: flex; align-items: center; gap: 8px }
+.bk-body { overflow: auto; padding: 8px 12px 14px; min-height: 0 }
+.bk-body h2 { margin: .1em 0; font: 600 22px/1.15 "Newsreader", Georgia, serif }
+.bk-form, .bk-basis { margin: 0 0 .35em; font: 400 13px/1.35 "Andika", sans-serif; color: var(--ink-muted, #6d5b48) }
+.bk-line { display: flex; align-items: center; gap: 6px; font: 600 12px/1 "Andika", sans-serif; color: var(--ink-muted, #6d5b48) }
+.bk-line select, .bk-line input[type="number"] { font: inherit; color: inherit; background: transparent; border: 1px solid var(--glass-line, rgba(36,28,22,.25)); border-radius: 8px; min-height: 28px }
+.bk-controls { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-top: 8px }
+.bk-key { display: inline-flex; align-items: center; gap: 4px }
+.bk-key button { width: 28px; height: 28px; border: 1px solid var(--glass-line, rgba(36,28,22,.25)); border-radius: 8px; background: transparent; color: inherit; cursor: pointer }
+.bk-key b { min-width: 2.2em; text-align: center }
+.bk-parts { display: inline-flex; flex-wrap: wrap; gap: 6px 8px }
+.bk-part { font: 600 12px/1 "Andika", sans-serif }
+.bk-chart { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 8px 0 }
+.bk-chart .bar { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 48px; padding: 4px 6px; border: 1px solid var(--glass-line, rgba(36,28,22,.22)); border-radius: 8px; background: transparent; color: inherit; cursor: pointer; text-align: left }
+.bk-chart .bar i { font-style: normal; font: 600 10px/1 "Andika", sans-serif; opacity: .55 }
+.bk-chart .bar b { font: 700 13px/1.15 "Andika", sans-serif }
+.bk-chart .bar.is-now { border-color: var(--gold, #c6842a); background: color-mix(in srgb, var(--gold, #e7b23a) 18%, transparent) }
+.bk-marks { display: flex; gap: 12px; margin-top: 8px }
+.bk-marks button { border: 0; background: transparent; color: inherit; cursor: pointer; font: italic 400 14px/1 "Newsreader", serif; text-decoration: underline; text-underline-offset: .25em }
+#bookTune { max-width: 100%; flex: 1 }
+body.dev-phone #book, body.dev-tablet #book { top: auto; right: 0; left: 0; bottom: 0; width: 100%; max-height: 78vh; }
+body.dev-phone.jamming #book, body.dev-tablet.jamming #book { bottom: 34vh; max-height: 50vh; }
+body.dev-phone .bk, body.dev-tablet .bk { border-radius: 16px 16px 0 0 }
+body.dev-touch .bk-chart .bar, body.dev-touch .bk-key button { min-height: 44px }
+body.dev-reduce #book { animation: none }
+.sheet-kicker { margin: 0; letter-spacing: .14em; text-transform: lowercase; font: 600 12px/1 "Andika", sans-serif }
+.sheet h2 { margin: .15em 0 .1em; font: 500 clamp(28px, 4vw, 48px)/.95 "Newsreader", serif }
+.sheet-form { margin: 0; font: italic 400 16px/1.3 "Newsreader", serif }
+.sheet-basis { margin: .35em 0 .8em; font: 400 13px/1.35 "Andika", sans-serif }
 .sun-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 6px }
 .sun { width: 54px; height: 54px; border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 38% 35%, #fff6d4, #e7b23a 58%, #b87428); box-shadow: 0 0 0 6px rgba(231,178,58,.18) }
 .sun.is-on { box-shadow: 0 0 0 8px rgba(231,178,58,.35), 0 0 24px rgba(231,178,58,.8) }
@@ -1182,6 +1187,8 @@ body.ens-glow .book-table { box-shadow: inset 0 0 80px rgba(231,178,58,.35) }
 .mag-note:nth-child(1) { height: 16px } .mag-note:nth-child(2) { height: 26px } .mag-note:nth-child(3) { height: 36px } .mag-note:nth-child(4) { height: 18px }
 .mag-note.is-got { box-shadow: 0 0 8px #e7b23a }
 .mag-card { position: fixed; z-index: 60; left: 50%; top: 18%; translate: -50% 0; padding: 12px 18px 16px; border-radius: 18px; background: rgba(246,241,230,.94); color: #241c16; text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,.25) }
+.bunny-vignette { margin: 0 auto 8px; width: min(240px, 70vw); padding: 8px; border-radius: 12px; background: #1c1612; box-shadow: inset 0 0 0 1px rgba(246,241,230,.35) }
+.bunny-vignette img { display: block; width: 100%; height: auto; border-radius: 8px; object-fit: cover; object-position: center bottom }
 .mag-card p { margin: 4px 0 0; font: italic 400 18px/1.3 "Newsreader", serif }
 .mag-card .pair { display: flex; justify-content: center; align-items: flex-end }
 body.dreaming #hud, body.dreaming #quests, body.dreaming #gw, body.dreaming #top, body.dreaming #hint, body.dreaming #toast, body.dreaming #cap, body.dreaming #viewChip { opacity: 0 !important; pointer-events: none }
@@ -1307,6 +1314,7 @@ body.booking #hud { opacity: .15 }
     <button class="dk" id="dMore"><span>⌃</span>more</button>
   </div>
   <div class="wb" id="wb">
+    <div class="note" id="devNote"></div>
     <div class="modes">
       <button class="mode on" data-m="just"><b>just</b><span>7-limit · harmonic</span></button>
       <button class="mode" data-m="gamelan"><b>gamelan</b><span>slendro · ombak</span></button>
@@ -1424,6 +1432,15 @@ body.booking #hud { opacity: .15 }
       <div class="btns"><button class="pill" id="bOpen">open the box</button><button class="pill" id="bAutoV">auto vibe</button><button class="pill" id="bCenter">center</button></div>
       <div class="note">drag the puck. five vibes, blended: micro, groove, glow, drift, chaos. the music and Saelion both follow it.</div>
       <button type="button" id="magCarrot" class="mag-carrot" hidden aria-label="a loose carrot"></button></div>
+
+    <div class="sec">read aloud</div>
+    <label class="row"><span>voice</span><select id="sVoice" class="txt" aria-label="read-aloud voice"></select></label>
+    <div class="btns"><button class="pill" id="sVoiceTest" type="button">hear it</button></div>
+    <div class="note" id="sVoiceNote">an English accent from outside this device's own region. the choice stays in this browser.</div>
+    <label class="row"><span>ElevenLabs experiment</span><input type="checkbox" class="sw" id="sElOn"></label>
+    <input class="txt" id="sElKey" type="password" autocomplete="off" spellcheck="false" placeholder="your ElevenLabs API key, kept in this browser" aria-label="ElevenLabs API key">
+    <input class="txt" id="sElId" autocomplete="off" spellcheck="false" placeholder="ElevenLabs voice id" aria-label="ElevenLabs voice id">
+    <div class="note">off until you switch it on. the key never leaves this browser except when a reading is sent to ElevenLabs. any error falls back to the system voice. no key is stored with the page.</div>
 
     <div class="sec">headphones</div>
     <label class="row"><span>binaural split</span><input type="checkbox" class="sw" id="sHp"></label>
@@ -1740,24 +1757,72 @@ body.booking #hud { opacity: .15 }
   };
   d.addEventListener('keydown', function (e) { nav.key(e); });
 
-  /* ---------- read aloud: Irish English first, word by word ---------- */
+  /* ---------- read aloud: English, in an accent that is not the listener's ---------- */
   var SY = w.speechSynthesis || null;
-  var IRISH_NAMES = /moira|orla|emily.*ireland|connor.*ireland|ireland|irish/i;
+  var NOVELTY = /albert|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|zarvox|bahh|deranged|hysterical|pipe organ|princess/i;
+  /* clearest foreign English first. The listener's own region is skipped. */
+  var ACCENT_POOL = [
+    { region: 'IE', re: /en-ie|\bmoira\b|\borla\b/i },
+    { region: 'ZA', re: /en-za|\btessa\b/i },
+    { region: 'IN', re: /en-in|\brishi\b|\bveena\b/i },
+    { region: 'AU', re: /en-au|\bkaren\b/i },
+    { region: 'GB', re: /en-gb|\bdaniel\b|\bserena\b/i },
+    { region: 'NZ', re: /en-nz/i },
+    { region: 'SC', re: /fiona|en-gb-sct|en-scot|scotland/i },
+    { region: 'US', re: /en-us|\bsamantha\b|\bava\b|\ballison\b|\baria\b|\bjenny\b|\bguy\b|\bzira\b|\bdavid\b/i }
+  ];
+  function homeRegion() {
+    var lang = String((navigator.languages && navigator.languages[0]) || navigator.language || '').replace(/_/g, '-').toLowerCase();
+    if (/scotland|scot/.test(lang)) return 'SC';
+    var bits = lang.split('-');
+    return (bits[1] || '').toUpperCase();
+  }
+  function voiceRegion(v) {
+    var blob = ((v && v.lang) || '') + ' ' + ((v && v.name) || '');
+    if (/fiona|scotland|en-scot|en-gb-sct/i.test(blob)) return 'SC';
+    for (var i = 0; i < ACCENT_POOL.length; i++) {
+      if (ACCENT_POOL[i].region === 'SC') continue;
+      if (ACCENT_POOL[i].re.test(blob)) return ACCENT_POOL[i].region;
+    }
+    var m = /^en-([a-z]{2})/i.exec((v && v.lang) || '');
+    return m ? m[1].toUpperCase() : '';
+  }
+  function voiceQuality(v) {
+    var n = ((v && v.name) || '') + ' ' + ((v && v.voiceURI) || '');
+    var s = 0;
+    if (/premium/i.test(n)) s += 40;
+    if (/enhanced/i.test(n)) s += 28;
+    if (/natural/i.test(n)) s += 24;
+    if (/online/i.test(n)) s += 6;
+    return s;
+  }
+  function englishVoice(v) { return !!(v && /^en/i.test(v.lang || '') && !NOVELTY.test(v.name || '')); }
   var read = {
     supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _timer: 0, _boundary: false,
+    homeRegion: homeRegion,
     voices: function () {
       if (!read.supported) return [];
-      var v = SY.getVoices() || [];
-      function rank(x) { var l = (x.lang || '').toLowerCase(); return l === 'en-ie' || IRISH_NAMES.test(x.name) && l.indexOf('en') === 0 ? 0 : l === 'en-gb' ? 1 : l.indexOf('en') === 0 ? 2 : 3; }
-      return v.slice().sort(function (a, b) { return rank(a) - rank(b) || (b.localService === a.localService ? 0 : b.localService ? 1 : -1) || a.name.localeCompare(b.name); });
+      var v = (SY.getVoices() || []).filter(englishVoice);
+      var region = homeRegion();
+      var pool = ACCENT_POOL.filter(function (a) { return a.region !== region; });
+      function rank(x) {
+        var r = voiceRegion(x), idx = -1, i;
+        for (i = 0; i < pool.length; i++) if (pool[i].region === r) { idx = i; break; }
+        if (idx < 0 && r && r !== region) idx = pool.length + 1;
+        if (idx < 0) idx = 80;
+        return idx * 100 - voiceQuality(x);
+      }
+      return v.slice().sort(function (a, b) { return rank(a) - rank(b) || a.name.localeCompare(b.name); });
     },
     pick: function (name) {
       var v = read.voices(); if (!v.length) return null;
-      if (name) { var m = v.filter(function (x) { return x.name === name; })[0]; if (m) return m; }
-      var saved = get('sb:voice', null); if (saved) { var s = v.filter(function (x) { return x.name === saved; })[0]; if (s) return s; }
+      function byName(n) { if (!n) return null; for (var i = 0; i < v.length; i++) if (v[i].name === n) return v[i]; return null; }
+      if (name) { var named = byName(name); if (named) return named; }
+      var saved = get('sb:voice', null);
+      var s = byName(saved); if (s) return s;
       return v[0];
     },
-    isIrish: function (v) { return !!v && (/^en-ie$/i.test(v.lang || '') || (IRISH_NAMES.test(v.name) && /^en/i.test(v.lang || ''))); },
+    isIrish: function (v) { return voiceRegion(v) === 'IE'; },
     prepare: function (root) {
       if (root.__sbWords) return root.__sbWords;
       var words = [], text = '', walker = d.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), nodes = [], n;
@@ -1803,7 +1868,7 @@ body.booking #hud { opacity: .15 }
     _next: function () {
       if (read._i >= read._chunks.length) { read._done(); return; }
       var c = read._chunks[read._i], u = new w.SpeechSynthesisUtterance(c.text);
-      if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang; } else u.lang = 'en-IE';
+      if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang; } else u.lang = 'en';
       u.rate = read.rate; u.pitch = read.pitch;
       u.onboundary = function (e) { if (e.name && e.name !== 'word') return; read._boundary = true; read._mark(c.start + (e.charIndex || 0)); };
       u.onstart = function () {
@@ -1836,9 +1901,9 @@ body.booking #hud { opacity: .15 }
       if (!read.supported) { bar.setAttribute('data-unsupported', ''); var vv = $('.sb-reader__voice', bar); if (vv) vv.textContent = 'This browser has no voices. The words are all here to read.'; var pb = $('.sb-reader__play', bar); if (pb) pb.disabled = true; return; }
       var play = $('.sb-reader__play', bar), sel = $('select[data-sb-voice]', bar), rate = $('select[data-sb-rate]', bar), vname = $('.sb-reader__voice', bar);
       function fill() {
-        var vs = read.voices(), cur = read.pick(); if (!sel) { if (vname && cur) vname.textContent = cur.name + (read.isIrish(cur) ? ' · Irish English' : ''); return; }
-        sel.innerHTML = vs.filter(function (v) { return /^en/i.test(v.lang); }).map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name.replace(/^(Microsoft|Google)\s+/, '').replace(/\s*\(Natural\)/, '')) + (read.isIrish(v) ? ' (Irish)' : '') + '</option>'; }).join('');
-        if (vname && cur) vname.textContent = read.isIrish(cur) ? 'Irish English voice' : 'No Irish voice on this device: ' + cur.lang;
+        var vs = read.voices(), cur = read.pick(); if (!sel) { if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || ''); return; }
+        sel.innerHTML = vs.map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name) + '</option>'; }).join('');
+        if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || '');
       }
       fill(); if (SY.addEventListener) SY.addEventListener('voiceschanged', fill); else SY.onvoiceschanged = fill;
       if (play) play.addEventListener('click', function () { read.toggle(tgt || d.querySelector('[data-sb-story]') || d.body); });
@@ -1847,6 +1912,8 @@ body.booking #hud { opacity: .15 }
       read._sync();
     }
   };
+
+  if (SY) { try { SY.getVoices(); } catch (e) { /* voices arrive on voiceschanged */ } }
 
   /* ---------- nougats: small rewards that fly to the jar ---------- */
   function nougatSVG(seed) {
@@ -2232,8 +2299,8 @@ body.booking #hud { opacity: .15 }
 <script id="andso-js">
 (() => {
 'use strict';
-const ANDSO_VERSION = '8';
-const ANDSO_VERSIONS = [{"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/", "latest": true}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
+const ANDSO_VERSION = '8.1';
+const ANDSO_VERSIONS = [{"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/", "latest": true}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
 const BOOK_DATA = [
  {
   "id": "st-louis",
@@ -6252,6 +6319,60 @@ const lcm = (a, b) => (a / gcd(a, b)) * b;
 const mq = q => { try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch (e) { return false; } };
 const reduceMotion = mq('(prefers-reduced-motion: reduce)');
 const isTouch = mq('(pointer: coarse)') || (navigator.maxTouchPoints || 0) > 1;
+// what this browser, machine and screen actually are. Layout, WebAudio unlock and the narrator read it.
+const DEV = (() => {
+  const ua = navigator.userAgent || '';
+  const edge = /Edg\//.test(ua);
+  const opera = /OPR\//.test(ua);
+  const chrome = /Chrome\//.test(ua) && !edge && !opera;
+  const firefox = /Firefox\//.test(ua);
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+  const safari = (/Safari\//.test(ua) && !chrome && !edge && !firefox && !opera) || (ios && /Apple/.test(ua) && !chrome && !firefox);
+  const android = /Android/.test(ua);
+  let software = false;
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (!gl) software = true;
+    else {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      const r = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') : '';
+      software = /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(r);
+      const lose = gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
+    }
+  } catch (e) { software = true; }
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const lowPower = mq('(prefers-reduced-data: reduce)') || !!(conn && conn.saveData) || (navigator.deviceMemory > 0 && navigator.deviceMemory <= 2);
+  return {
+    touch: isTouch, mouse: mq('(pointer: fine)') || !isTouch,
+    form: 'desktop', reduce: reduceMotion, lowPower, software,
+    safari: !!safari, chrome: !!chrome, firefox: !!firefox, edge: !!edge,
+    ios: !!ios, android: !!android, mac: /Mac/.test(ua) && !ios, windows: /Win/.test(ua),
+    browser: edge ? 'edge' : chrome ? 'chrome' : firefox ? 'firefox' : safari ? 'safari' : 'other'
+  };
+})();
+const fxRich = () => !(DEV.reduce || DEV.lowPower || DEV.software);
+function devForm(w) {
+  if (w < 700) return 'phone';
+  if (w < 1100 || (DEV.touch && w < 1280)) return 'tablet';
+  return 'desktop';
+}
+function devApply() {
+  DEV.form = devForm(window.innerWidth || 1200);
+  const b = document.body; if (!b) return;
+  b.classList.toggle('dev-touch', !!DEV.touch);
+  b.classList.toggle('dev-mouse', !!DEV.mouse && !DEV.touch);
+  b.classList.toggle('dev-phone', DEV.form === 'phone');
+  b.classList.toggle('dev-tablet', DEV.form === 'tablet');
+  b.classList.toggle('dev-desktop', DEV.form === 'desktop');
+  b.classList.toggle('dev-reduce', !!DEV.reduce);
+  b.classList.toggle('dev-low', !!DEV.lowPower);
+  b.classList.toggle('dev-soft', !!DEV.software);
+  b.dataset.browser = DEV.browser;
+  b.dataset.pointer = DEV.touch ? 'touch' : 'mouse';
+  const note = $('devNote');
+  if (note) note.textContent = `${DEV.browser}, ${DEV.form}, ${DEV.touch ? 'touch' : 'mouse'}${DEV.reduce ? ', reduced motion' : ''}${DEV.lowPower ? ', low power' : ''}${DEV.software ? ', software rendering' : ''}.`;
+}
 let F_SERIF = '"Newsreader", ui-serif, Georgia, serif', F_MONO = '"DM Mono", ui-monospace, Menlo, monospace', F_UI = 'system-ui, -apple-system, "Segoe UI", sans-serif';
 const fnt = (px, kind, style) => `${style || ''} ${Math.round(px)}px ${kind === 'm' ? F_MONO : kind === 'u' ? F_UI : F_SERIF}`;
 
@@ -6557,8 +6678,8 @@ const holeTerm = x => { if (!hole.on) return 0; const dx = (x - hole.c) / 70; re
 function relCents(f) { const r = f / fRoot, k = Math.floor(Math.log(r) / Math.log(M.eq) + 1e-9); return 1200 * Math.log2(r / Math.pow(M.eq, k)); }
 function jlog(s) { journal.push(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}  ${s}`); if (journal.length > 500) journal.shift(); }
 let gestured = false;
-window.addEventListener('pointerdown', () => { gestured = true; }, { capture: true });
-window.addEventListener('keydown', () => { gestured = true; }, { capture: true });
+window.addEventListener('pointerdown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
+window.addEventListener('keydown', () => { gestured = true; if (typeof unlockAudio === 'function') unlockAudio(); }, { capture: true });
 function haptic(ms) { if (!SET.haptics || !gestured) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
 // ===== audio: every tone is two banks of sine partials, so any spectrum works =====
@@ -6646,12 +6767,25 @@ function bell3(f, gain, delay, dest) {
   });
 }
 
+function unlockAudio() {
+  gestured = true;
+  if (!A.ac && entered) { try { audio.init(); } catch (e) { /* not ready */ } }
+  if (!A.ac) return;
+  if (A.ac.state === 'suspended') A.ac.resume();
+  // Safari and iOS stay silent until a buffer actually starts inside the gesture
+  if (DEV.safari || DEV.ios) {
+    try {
+      const b = A.ac.createBuffer(1, 1, 22050), s = A.ac.createBufferSource();
+      s.buffer = b; s.connect(A.ac.destination); s.start(0);
+    } catch (e) { /* already running */ }
+  }
+}
 const audio = {
   init() {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC || A.ac) return;
     try {
-      const ac = (A.ac = new AC({ latencyHint: 'interactive' }));
+      const ac = (A.ac = new AC({ latencyHint: DEV.lowPower || DEV.software ? 'playback' : 'interactive' }));
       A.useCS = typeof ac.createConstantSource === 'function';
       A.vol = ac.createGain(); A.vol.gain.value = 0; A.vol.connect(ac.destination);
       const lim = ac.createDynamicsCompressor();
@@ -6659,7 +6793,7 @@ const audio = {
       A.lp = ac.createBiquadFilter(); A.lp.type = 'lowpass'; A.lp.Q.value = 0.5; A.lp.frequency.value = 5000; A.lp.connect(lim);
       A.bus = ac.createGain(); A.bus.gain.value = 0.85; A.bus.connect(A.lp);
       const lfo = ac.createOscillator(); lfo.frequency.value = 0.09; const lg = ac.createGain(); lg.gain.value = 0.05; lfo.connect(lg); lg.connect(A.bus.gain); lfo.start();
-      A.conv = ac.createConvolver(); A.conv.buffer = impulse(3.4, 2.6);
+      A.conv = ac.createConvolver(); A.conv.buffer = impulse(fxRich() ? 3.4 : 1.2, fxRich() ? 2.6 : 1.4);
       A.rw = ac.createGain(); A.rw.gain.value = 0.32; A.bus.connect(A.conv); A.conv.connect(A.rw); A.rw.connect(A.lp);
       const sp = ac.createChannelSplitter(2), mg = ac.createChannelMerger(2), dL = ac.createDelay(0.05), dR = ac.createDelay(0.05);
       dL.delayTime.value = 0.014; dR.delayTime.value = 0.019;
@@ -7251,9 +7385,11 @@ function rhythmTick() {
   if (!rhyActive()) { rhy.nextT = 0; return; }
   const now = aNow();
   if (!rhy.nextT || rhy.nextT < now - 0.3) { rhy.nextT = now + 0.08; rhy.step = 0; }
-  const n = JAM.on ? 3 : era ? 3 : tuplet, bpm = JAM.on ? JAM.bpm : era ? 152 : clamp((M.easy ? 80 : 68) + 42 * W5[1] + 16 * (effPace() - 0.45) - 10 * W5[3], 58, 132);
+  const grid = JAM.on && JAM.chart ? jamGrid() : null;
+  const n = grid ? grid.n : JAM.on ? 3 : era ? 3 : tuplet, bpm = JAM.on ? JAM.bpm : era ? 152 : clamp((M.easy ? 80 : 68) + 42 * W5[1] + 16 * (effPace() - 0.45) - 10 * W5[3], 58, 132);
   rhy.bpm = bpm;
-  const spb = 60 / bpm / n, N = 4 * n;
+  const meter = grid ? grid.meter : 4;
+  const spb = 60 / bpm / n, N = meter * n;
   let guard = 0;
   while (rhy.nextT < now + 0.15 && guard++ < 64) {
     const i = rhy.step % N;
@@ -7262,7 +7398,7 @@ function rhythmTick() {
     if (JAM.on) jamStep(i, rhy.nextT, n, spb); else if (era) play55(i, rhy.nextT, spb); else playStep(i, rhy.nextT, n, spb);
     if (plucky() && !JAM.on) pluckStep(i, rhy.nextT, n, spb);
     visQ.push({ t: rhy.nextT, i, n });
-    const sw = !era && !JAM.on && n === 4 ? 0.5 + 0.1 * W5[1] + (M.easy ? 0.05 : 0) : 0.5;
+    const sw = grid ? grid.swing : (!era && !JAM.on && n === 4 ? 0.5 + 0.1 * W5[1] + (M.easy ? 0.05 : 0) : 0.5);
     rhy.nextT += (i % 2 === 0 ? 2 * sw : 2 * (1 - sw)) * spb;
     rhy.step = (i + 1) % N;
   }
@@ -8046,13 +8182,10 @@ When the music sat in the sweet spot long enough, the lattice folded in on itsel
 
 Nobody told the bunny what the lattice was for. It figured it out by listening, which is the only way anyone ever has.`;
 function readStory() {
+  const R = window.Storeybrook && Storeybrook.read;
+  if (R && R.supported) { R.speak($('stText').value, { rate: 0.95, pitch: 1.05 }); const v = R.pick(); $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})` : 'voice: the default one.'; discover('x-story'); jlog('read the story aloud'); return; }
   if (!('speechSynthesis' in window)) { caption("this browser can't read aloud.", 2600); return; }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance($('stText').value), vs = speechSynthesis.getVoices();
-  const v = vs.find(x => /en-IE/i.test(x.lang)) || vs.find(x => /en-GB/i.test(x.lang)) || vs.find(x => /^en/i.test(x.lang));
-  if (v) u.voice = v; u.rate = 0.95; u.pitch = 1.05; speechSynthesis.speak(u);
-  $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})${/en-IE/i.test(v.lang) ? ', Irish, as requested.' : '. no Irish voice on this device.'}` : 'voice: the default one.';
-  discover('x-story'); jlog('read the story aloud');
+  caption("this browser can't read aloud.", 2600);
 }
 
 // ---------- hands-on helpers ----------
@@ -8267,7 +8400,8 @@ function placeGw(x, y) { const r = gw.getBoundingClientRect(); gw.style.left = c
 function resize() {
   readSafe();
   W = window.innerWidth; H = window.innerHeight;
-  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
+  DPR = skin === 'bw2' ? 1 : Math.min(window.devicePixelRatio || 1, MIR.depth > 0 || !fxRich() ? 1 : 2) * dprScale;   // copies in the mirror are drawn small anyway
+  if (typeof devApply === 'function') devApply();
   [cvs, cvs2, cvs3].forEach(c => { c.width = Math.max(1, Math.round(W * DPR)); c.height = Math.max(1, Math.round(H * DPR)); });
   [ctx, ctx2, ctx3].forEach(g => g.setTransform(DPR, 0, 0, DPR, 0, 0));
   S = clamp(Math.min(W, H) / 760, 0.7, 2);
@@ -8756,6 +8890,7 @@ function spaced(s, x, y, sp) { for (const ch of s) { ctx.fillText(ch, x, y); x +
 
 function drawBg() {
   if (wxWorld()) { drawWorldBg(); return; }
+  if (typeof paintLookArt === 'function' && paintLookArt()) return;
   // paper: the canvas stays clear so the watercolor page shows through; CSS prints what is drawn here in ink
   if (paperLook()) { ctx.clearRect(0, 0, W, H); if (era || flash55 > 0.02) { ctx.fillStyle = `rgba(120,80,30,${(era ? 0.1 : 0) + 0.2 * flash55})`; ctx.fillRect(0, 0, W, H); } return; }
   if (skin === 'sb-knight') {
@@ -11482,6 +11617,51 @@ function paperPal() {
     brook: tokRGB('wash-brook', [140, 194, 230]), ink: tokRGB('art-line', [47, 59, 72]), sap: tokRGB('sap', [68, 112, 42]), accent: tokRGB('accent', [184, 50, 95]), paper: tokRGB('paper', [244, 246, 242]), water: tokRGB('art-water', [111, 176, 220]) };
   return PAPER.pal;
 }
+const ART = { img: {} };
+const ART_LOOK = { glasshouse: 'glasshouse', peachfall: 'peachfall', 'sb-origami': 'origami-skein', 'sb-skein': 'origami-skein' };
+const ART_WING = { Bach: 'bach', Mozart: 'mozart', Beethoven: 'beethoven', Tchaikovsky: 'tchaikovsky', Stravinsky: 'stravinsky' };
+function artSrc(id) { return (typeof petBase === 'function' ? petBase() : '') + 'assets/art/' + id + '.webp'; }
+function artLoad(id) {
+  if (ART.img[id] || ART.img[id] === false) return;
+  ART.img[id] = false;
+  const img = new Image();
+  img.onload = () => { if (img.naturalWidth > 2) { ART.img[id] = img; if (typeof applyLook === 'function') applyLook(); } };
+  img.onerror = () => { ART.img[id] = false; };
+  img.src = artSrc(id);
+}
+function artBoot() {
+  const base = (typeof petBase === 'function' ? petBase() : '');
+  fetch(base + 'assets/art/manifest.json').then(r => r.ok ? r.json() : null).then(m => {
+    if (!m) return;
+    const files = m.files || m.images || m;
+    if (!files || typeof files !== 'object' || Array.isArray(files)) return;
+    Object.keys(files).forEach(id => {
+      const src = files[id] && (files[id].src || files[id]);
+      if (typeof src !== 'string' || files[id].ready === false) return;
+      const img = new Image();
+      img.onload = () => { if (img.naturalWidth > 2) { ART.img[id] = img; applyLook(); } };
+      img.src = src.startsWith('http') || src.startsWith('/') ? src : base + src.replace(/^\.\//, '');
+    });
+  }).catch(() => {});
+}
+function paintLookArt() {
+  const id = ART_LOOK[skin];
+  const img = id && ART.img[id];
+  if (!img || img === true || !img.naturalWidth) return false;
+  ctx.drawImage(img, 0, 0, W, H);
+  ctx.fillStyle = 'rgba(0,0,0,0.28)';
+  ctx.fillRect(0, 0, W, H);
+  return true;
+}
+function wingRoomArt(composer) {
+  const face = $('wingFace'); if (!face) return;
+  const img = ART.img[ART_WING[composer] || ''];
+  if (img && img.naturalWidth) {
+    face.style.backgroundImage = `linear-gradient(rgba(246,241,230,.82), rgba(246,241,230,.9)), url("${img.src}")`;
+    face.style.backgroundSize = 'cover';
+    face.style.backgroundPosition = 'center';
+  } else face.style.backgroundImage = '';
+}
 function applyLook() {
   const L = sbLook(), root = document.documentElement;
   if (L) root.dataset.sb = L; else delete root.dataset.sb;
@@ -11494,7 +11674,14 @@ function applyLook() {
   document.querySelectorAll('.sbi').forEach(el => { el.dataset.sb = il; });
   const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = L ? (getComputedStyle(root).getPropertyValue('--paper').trim() || '#f4f6f2') : '#140a12';
   document.querySelectorAll('[data-look]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.look === skin)));
+  const painted = ART.img[ART_LOOK[skin]];
+  if (painted && painted.naturalWidth) {
+    document.body.style.backgroundImage = `url("${painted.src}")`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+  } else document.body.style.backgroundImage = '';
 }
+artBoot();
 // the patterns each paper uses under the terrain: halftone for Comix, stipple for Ink Blot, knit for Skein silk
 function paperPattern(g, kind) {
   const P = paperPal(), key = kind + skin; if (PAPER[kind] && PAPER.dotsKey === key) return PAPER[kind];
@@ -11848,13 +12035,16 @@ const JSESS = {
 };
 const JAM = { on: false, sess: 1, S: null, bpm: 96, bar: -1, bi: 0, chorus: 0, chord: null, keyF: 130.81, padF: 261.63, barT0: 0, beat: 0.6, keys: [], held: new Map(),
   score: 0, notes: 0, good: 0, cNotes: 0, cGood: 0, cAns: 0, answered: 0, blues: new Set(), call: null, resp: [], phase: '', uiQ: [], birdQ: [], last: null, walk: [], comp: [], compPat: -1,
-  ending: false, endAt: 0, prev: null, switching: false };
+  ending: false, endAt: 0, prev: null, switching: false,
+  chart: null, feel: 'swing', semi: 0, voicing: 'full', reharm: 'off', parts: { bass: true, comp: true, drums: true, melody: true }, practice: '', loopOn: true, loopA: 0, loopB: 0, countLeft: 0, counting: false };
 const jamOpen = n => { const S = JSESS[n]; if (!S) return false; const st = STONE.get(S.stone); return !st || stoneOpen(st); };
 
 function jamStart(n) {
   if (!entered || era || !JSESS[n]) return;
   if (!jamOpen(n)) { const st = STONE.get(JSESS[n].stone); caption(`${JSESS[n].name} opens at ${st.need} nougats. the jar has ${GAME.nougats}.`, 2800); return; }
   if (JAM.on) jamStop(true);
+  JAM.chart = null;
+  if (typeof BOOK !== 'undefined' && BOOK.onPlay) { BOOK.onPlay = false; if (typeof bookPaint === 'function') bookPaint(); }
   if (round) skipRound(); if (rail) stopRail(false); pump = null;
   if (LS.src) listenStop();
   const S = JSESS[n];
@@ -11877,7 +12067,8 @@ function jamStart(n) {
 }
 function jamStop(quiet) {
   if (!JAM.on) return;
-  JAM.on = false; jamReleaseAll();
+  JAM.on = false; JAM.counting = false; jamReleaseAll();
+  if (typeof BOOK !== 'undefined') { BOOK.onPlay = false; if (typeof bookPaint === 'function') bookPaint(); }
   const P = JAM.prev || {};
   if (P.tease != null) SET.tease = P.tease;
   rhy.on = P.rhy != null ? P.rhy : rhy.on; rhy.nextT = 0; rhy.bar = -1; rhy.base = null;
@@ -11892,6 +12083,7 @@ function jamStop(quiet) {
 
 // ---------- the changes ----------
 function jamChange(id) {
+  if (JAM.chart) { jamChangeSym(id); return; }
   const C = JCH[id]; if (!C) return;
   JAM.chord = Object.assign({ id }, C);
   const rootF = JAM.keyF * C.root;
@@ -11912,7 +12104,9 @@ function jamPadRoles() { const els = $('jamKeys').children; JAM.keys.forEach((k,
 // ---------- the band ----------
 function jamBar(t0) {
   const S = JAM.S; if (!S) return;
-  JAM.bar++; JAM.barT0 = t0; JAM.beat = 60 / JAM.bpm;
+  JAM.barT0 = t0; JAM.beat = 60 / JAM.bpm;
+  if (JAM.chart) { jamChartBar(t0); return; }
+  JAM.bar++;
   const L = S.form.length, bi = JAM.bar % L;
   if (JAM.bar > 0 && bi === 0) jamChorusEnd();
   if (JAM.ending) return;
@@ -11925,6 +12119,7 @@ function jamBar(t0) {
 }
 function jamStep(i, t0, n, spb) {
   if (!JAM.S || JAM.ending) return;
+  if (JAM.chart) { jamChartStep(i, t0, n, spb); return; }
   const beat = (i / n) | 0, sub = i % n, lv = clamp(dyn, 0.55, 1.05);
   if (sub === 0) ride(t0, (beat % 2 ? 0.8 : 1) * lv);
   if (sub === 2 && beat % 2 === 1) ride(t0, 0.55 * lv);
@@ -12106,14 +12301,16 @@ function jamUI(full) {
   if (full) {
     $('jamTitle').textContent = S.name;
     const ch = $('jamChart'); ch.textContent = '';
-    S.form.forEach(id => { const c = document.createElement('span'); c.className = 'jb'; c.textContent = JCH[id].sym; ch.appendChild(c); });
+    const cells = JAM.chart ? JAM.chart.play : S.form;
+    cells.forEach(id => { const c = document.createElement('span'); c.className = 'jb'; c.textContent = jamCellLabel(id); ch.appendChild(c); });
     document.querySelectorAll('[data-jam]').forEach(b => { const n = +b.dataset.jam; b.classList.toggle('on', n === JAM.sess && JAM.on); b.disabled = !jamOpen(n); });
   }
   const cells = $('jamChart').children; for (let i = 0; i < cells.length; i++) cells[i].classList.toggle('on', i === JAM.bi);
+  const cur = cells[JAM.bi]; if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ inline: 'center', block: 'nearest', behavior: (typeof DEV !== 'undefined' && DEV.reduce) ? 'auto' : 'smooth' }); } catch (e) {} }
   const ph = $('jamPhase'); ph.dataset.phase = JAM.phase || '';
-  ph.textContent = JAM.phase === 'call' ? 'the horn' : JAM.phase === 'you' ? 'your answer' : JAM.phase === 'end' ? 'the last chord' : 'play anything';
-  $('jamChord').textContent = JAM.chord ? `${JAM.chord.sym} · ${JAM.chord.name}` : '';
-  $('jamSet').textContent = `chorus ${Math.min(JAM.chorus + 1, S.sets)} of ${S.sets}`;
+  ph.textContent = JAM.phase === 'count' ? 'count in' : JAM.phase === 'call' ? 'the horn' : JAM.phase === 'you' ? 'your answer' : JAM.phase === 'end' ? 'the last chord' : 'play anything';
+  $('jamChord').textContent = JAM.chord ? (JAM.chart ? JAM.chord.sym : `${JAM.chord.sym} · ${JAM.chord.name}`) : '';
+  $('jamSet').textContent = JAM.chart ? `bar ${Math.min(JAM.bi + 1, JAM.chart.play.length)} of ${JAM.chart.play.length}` : `chorus ${Math.min(JAM.chorus + 1, S.sets)} of ${S.sets}`;
   $('jamScore').textContent = String(JAM.score);
 }
 function jamTick() {
@@ -12125,6 +12322,282 @@ function jamTick() {
   while (JAM.birdQ.length && JAM.birdQ[0].t <= now) { const b = JAM.birdQ.shift(); bird.tx = b.x; bird.ty = b.y; bird.flash = 1; bird.lastNote = t; if (bird.x < -50) { bird.x = b.x; bird.y = b.y; } }
   if (JAM.ending && JAM.endAt && t > JAM.endAt) jamStop(false);
 }
+// ---------- a chart from the book, on this same clock ----------
+const JUST_PC = [1, 16 / 15, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 45 / 32, 3 / 2, 8 / 5, 5 / 3, 7 / 4, 15 / 8];
+const E31_PC = [0, 3, 5, 8, 10, 13, 15, 18, 21, 23, 26, 28];
+function pcRatio(semi) {
+  semi = ((semi % 12) + 12) % 12;
+  if (M.key === 'tet31') return E31(E31_PC[semi]);
+  if (M.easy) return Math.pow(2, semi / 12);
+  return JUST_PC[semi];
+}
+function jamGrid() {
+  const feel = JAM.feel || 'swing';
+  const meter = (JAM.chart && JAM.chart.meter) || 4;
+  if (feel === 'waltz') return { n: 2, meter, swing: 0.5 };
+  if (feel === 'swing') return { n: 3, meter, swing: 0.66 };
+  return { n: 2, meter, swing: 0.5 };
+}
+function jamPartOn(part) {
+  if (JAM.practice === part) return false;
+  if (JAM.parts && JAM.parts[part] === false) return false;
+  const ens = part === 'drums' ? 'drum' : part;
+  if (typeof ensAudible === 'function' && !ensAudible(ens)) return false;
+  return true;
+}
+function jamCellLabel(id) {
+  if (Array.isArray(id)) return id.map(c => (typeof labelChord === 'function' ? (labelChord(c, JAM.semi || 0) || c) : c)).filter(Boolean).join(' ') || '·';
+  if (JAM.chart) return (typeof labelChord === 'function' ? labelChord(id, JAM.semi || 0) : id) || '·';
+  return JCH[id] ? JCH[id].sym : String(id || '·');
+}
+function isDom7(c) {
+  if (!c || !c.iv) return false;
+  const iv = c.iv.map(i => ((i % 12) + 12) % 12);
+  return iv.includes(4) && iv.includes(10);
+}
+function spellChord(root, qual) {
+  const names = (typeof NOTE_NAMES !== 'undefined') ? NOTE_NAMES : ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  return names[(root + 12) % 12] + (qual || '7');
+}
+function reharmBars(bars) {
+  const src = bars.map(b => (Array.isArray(b) ? b.slice() : [b]));
+  if (JAM.reharm !== 'light' || typeof parseChord !== 'function') return src;
+  const out = src.map(b => b.slice());
+  for (let i = 0; i < out.length; i++) {
+    if (out[i].length !== 1) continue;
+    const cur = parseChord(out[i][0]);
+    const next = parseChord((out[(i + 1) % out.length] || ['·'])[0]);
+    const prevSym = (out[(i - 1 + out.length) % out.length] || ['·'])[0];
+    if (cur && isDom7(cur)) { out[i] = [spellChord((cur.root + 6) % 12, '7')]; continue; }
+    if (cur && next && out[i][0] === prevSym && cur.root !== next.root) {
+      out[i] = [spellChord((next.root + 2) % 12, 'm7'), spellChord((next.root + 7) % 12, '7')];
+    }
+  }
+  return out;
+}
+function jamVoiceTones(iv) {
+  const norm = (iv || [0, 4, 7]).map(i => ((i % 12) + 12) % 12);
+  const third = norm.find(i => i === 3 || i === 4) ?? 4;
+  const fifth = norm.find(i => i === 7) ?? 7;
+  const sev = norm.find(i => i === 9 || i === 10 || i === 11);
+  const dens = JAM.voicing || 'full';
+  let pcs;
+  if (dens === 'shells') pcs = [third, sev != null ? sev : fifth];
+  else if (dens === 'rootless') pcs = [third, sev != null ? sev : fifth, (fifth + 2) % 12];
+  else pcs = [0, third, fifth].concat(sev != null ? [sev] : []);
+  return pcs.map(pcRatio);
+}
+function jamChangeSym(sym) {
+  const parsed = typeof parseChord === 'function' ? parseChord(sym) : null;
+  const label = parsed && typeof labelChord === 'function' ? (labelChord(sym, JAM.semi || 0) || sym) : (sym || '·');
+  if (!parsed) {
+    JAM.chord = { id: sym || '·', sym: '·', root: 1, tones: [1, 5 / 4, 3 / 2, 7 / 4], voice: [1, 5 / 4, 3 / 2], name: 'rest', iv: [0, 4, 7] };
+    return;
+  }
+  const home = typeof pcOf === 'function' ? (pcOf(JAM.chart.key) || 0) : 0;
+  const bassPc = parsed.bass != null ? parsed.bass : parsed.root;
+  const rel = (bassPc + (JAM.semi || 0) - home + 120) % 12;
+  const root = pcRatio(rel);
+  const iv = parsed.iv && parsed.iv.length ? parsed.iv : [0, 4, 7];
+  const third = iv.find(i => ((i % 12) + 12) % 12 === 3 || ((i % 12) + 12) % 12 === 4) ?? 4;
+  const fifth = iv.find(i => ((i % 12) + 12) % 12 === 7) ?? 7;
+  const sev = iv.find(i => [9, 10, 11].includes(((i % 12) + 12) % 12));
+  const tones = [1, pcRatio(((third % 12) + 12) % 12), pcRatio(((fifth % 12) + 12) % 12), pcRatio(sev != null ? ((sev % 12) + 12) % 12 : 10)];
+  const voice = jamVoiceTones(iv);
+  JAM.chord = { id: sym, sym: label, name: label, root, tones, voice, iv };
+  const rootF = JAM.keyF * root;
+  fRoot = fold(rootF, 2, 98); audio.setRoot(fRoot); rootFlash = 0.7;
+  setChordTargets(rootF, voice);
+  for (const v of voices) if (v.target != null) v.approachUntil = 0;
+  jamPadRoles();
+}
+function jamPadForChart(tune) {
+  const blues = /blues/i.test((tune && tune.form) || '');
+  const degs = blues ? [[0, '1'], [2, '2'], [3, '♭3', 1], [4, '3'], [5, '4'], [7, '5'], [9, '6'], [10, '♭7', 1], [12, '1']] : [[0, '1'], [2, '2'], [4, '3'], [5, '4'], [7, '5'], [9, '6'], [11, '7'], [12, '1']];
+  const names = (typeof NOTE_NAMES !== 'undefined') ? NOTE_NAMES : ['C'];
+  return degs.map(([d, deg, blue]) => ({ r: pcRatio(d), lab: names[d % 12] || deg, deg, blue: !!blue }));
+}
+function melodyAllowed(tune) { return !!(tune && tune.melody && tune.pd); }
+function jamWalkChart(bi) {
+  const C = JAM.chord || { root: 1, tones: [1, 5 / 4, 3 / 2, 7 / 4] };
+  const R = fold(JAM.keyF * C.root, 2, 62);
+  const beats = (JAM.chart && JAM.chart.meter) || 4;
+  const tones = C.tones || [1, 5 / 4, 3 / 2, 7 / 4];
+  const out = [];
+  for (let b = 0; b < beats; b++) {
+    if (b === 0) out.push(R);
+    else if (b === beats - 1) out.push(fold(R * (tones[1] || 1), 2, 62));
+    else out.push(fold(R * (tones[1 + ((b - 1) % 3)] || 1), 2, 62));
+  }
+  return out;
+}
+function jamChartBar(t0) {
+  const play = JAM.chart.play || [];
+  const L = Math.max(1, play.length);
+  if (JAM.countLeft > 0) {
+    JAM.countLeft--; JAM.counting = true; JAM.phase = 'count';
+    JAM.uiQ.push({ t: t0, bi: clamp(JAM.bar, 0, L - 1), phase: 'count' });
+    return;
+  }
+  JAM.counting = false;
+  const a = clamp(JAM.loopOn ? JAM.loopA : 0, 0, L - 1);
+  const b = clamp(JAM.loopOn ? (JAM.loopB || L - 1) : L - 1, a, L - 1);
+  if (JAM.bar < a) JAM.bar = a - 1;
+  JAM.bar++;
+  if (JAM.bar > b) {
+    if (!JAM.loopOn && JAM.bar >= L) { jamEnding(t0); return; }
+    JAM.bar = a; jamChorusEnd();
+  }
+  const bi = clamp(JAM.bar, 0, L - 1);
+  JAM.bi = bi;
+  const chords = play[bi] || ['·'];
+  jamChange(chords[0]);
+  JAM.walk = jamWalkChart(bi);
+  JAM.comp = jamCompForGrid();
+  JAM.phase = '';
+  JAM.uiQ.push({ t: t0, bi, phase: '' });
+  jamSchedMelody(t0, bi);
+  if (typeof BOOK !== 'undefined') { BOOK.bar = bi; if (typeof bookHighlight === 'function') bookHighlight(); }
+}
+function jamCompForGrid() {
+  const g = jamGrid(), N = Math.max(1, g.meter * g.n), feel = JAM.feel || 'swing';
+  const at = (beats, amt) => [Math.min(N - 1, beats * g.n), amt];
+  if (feel === 'ballad') return [at(0, 0.7)];
+  if (feel === 'bossa') return [at(1, 0.55), at(Math.max(1, g.meter - 1), 0.5)];
+  if (feel === 'waltz') return [at(0, 0.75), at(1, 0.4)];
+  if (feel === 'straight') return [at(1, 0.7), at(3 % g.meter, 0.65)];
+  return [at(0, 0.9), at(2, 0.75)];
+}
+function jamDrums(feel, beat, sub, n, t0, lv) {
+  if (feel === 'bossa') {
+    if (sub === 0 && (beat === 0 || beat === 2)) kick(t0, beat === 0 ? 0.36 * lv : 0.2 * lv);
+    if (sub === (n >> 1) && beat === 1) kick(t0, 0.22 * lv);
+    if (sub === 0 && (beat === 1 || beat === 3)) chick(t0, 0.45 * lv);
+    if (sub === 0 || sub === (n >> 1)) ride(t0, 0.32 * lv);
+    return;
+  }
+  if (feel === 'ballad') {
+    if (sub === 0 && beat % 2 === 0) kick(t0, 0.4 * lv);
+    if (sub === 0 && beat % 2 === 1) snare(t0, 0.16 * lv);
+    if (sub === 0) ride(t0, 0.26 * lv);
+    return;
+  }
+  if (feel === 'waltz') {
+    if (sub === 0 && beat % 3 === 0) kick(t0, 0.46 * lv);
+    if (sub === 0 && beat % 3 !== 0) chick(t0, 0.38 * lv);
+    if (sub === 0) ride(t0, 0.36 * lv);
+    return;
+  }
+  if (feel === 'straight') {
+    if (sub === 0 && beat % 2 === 0) kick(t0, 0.42 * lv);
+    if (sub === 0 && beat % 2 === 1) snare(t0, 0.46 * lv);
+    if (sub === 0 || sub === (n >> 1)) hat(t0, 0.32 * lv, false);
+    return;
+  }
+  if (sub === 0) ride(t0, (beat % 2 ? 0.8 : 1) * lv);
+  if (n >= 3 && sub === 2 && beat % 2 === 1) ride(t0, 0.55 * lv);
+  if (sub === 0 && beat % 2 === 1) chick(t0, lv);
+  if (sub === 0) kick(t0, 0.14 * lv);
+  if (n >= 3 && sub === 2 && Math.random() < (beat === 3 ? 0.35 : 0.14)) snare(t0, rand(0.1, 0.22) * lv);
+}
+function jamChartStep(i, t0, n, spb) {
+  const beat = (i / n) | 0, sub = i % n, lv = clamp(dyn, 0.55, 1.05);
+  const meter = (JAM.chart && JAM.chart.meter) || 4;
+  if (JAM.counting) {
+    if (jamPartOn('drums') && sub === 0) hat(t0, beat === 0 ? 0.7 : 0.4, false);
+    return;
+  }
+  if (jamPartOn('drums')) jamDrums(JAM.feel || 'swing', beat, sub, n, t0, lv);
+  if (jamPartOn('bass') && sub === 0 && JAM.walk[beat]) jamBass(t0, JAM.walk[beat], 0.95 * lv, spb * n * 0.94);
+  if (jamPartOn('comp')) for (const c of JAM.comp) if (c[0] === i) jamCompHit(t0, c[1] * lv);
+  if (sub === 0) {
+    const chords = (JAM.chart.play && JAM.chart.play[JAM.bi]) || ['·'];
+    const seg = Math.max(1, chords.length);
+    const ci = Math.min(seg - 1, Math.floor((beat / meter) * seg));
+    const sym = chords[ci];
+    if (sym && (!JAM.chord || JAM.chord.id !== sym)) jamChange(sym);
+  }
+}
+function jamSchedMelody(t0, bi) {
+  const tune = JAM.chart;
+  if (!tune || !tune.pd || !tune.melody || !tune.melody.length) return;
+  if (!jamPartOn('melody') || typeof toneAt !== 'function' || typeof pcOf !== 'function') return;
+  const meter = tune.meter || 4, a0 = bi * meter, beat = 60 / JAM.bpm;
+  const home = (pcOf(tune.key) || 0) + (JAM.semi || 0);
+  tune.melody.forEach(ev => {
+    if (ev.at < a0 - 0.01 || ev.at >= a0 + meter - 0.01) return;
+    toneAt(t0 + Math.max(0, ev.at - a0) * beat, 60 + ((home % 12) + 12) % 12 + ev.semi, ev.dur * beat, 0.7, 'melody');
+  });
+}
+function jamSyncChart() {
+  if (!JAM.chart) return;
+  JAM.chart.play = reharmBars(JAM.chart.bars);
+  JAM.loopA = clamp(JAM.loopA || 0, 0, JAM.chart.play.length - 1);
+  JAM.loopB = clamp(JAM.loopB == null ? JAM.chart.play.length - 1 : JAM.loopB, JAM.loopA, JAM.chart.play.length - 1);
+  if (JAM.chord) jamChange(JAM.chord.id);
+  jamUI(true);
+  if (typeof bookRenderChart === 'function') bookRenderChart();
+}
+function jamLoadChart(tune, opt) {
+  opt = opt || {};
+  if (!tune || !entered) return;
+  if (!A.ac) audio.init();
+  if (!A.ac) return;
+  if (A.ac.state === 'suspended') A.ac.resume();
+  if (round) skipRound();
+  if (!JAM.prev) JAM.prev = { mode: M.key, rhy: rhy.on, tease: SET.tease };
+  const bars = typeof normBars === 'function' ? normBars(tune.bars) : (tune.bars || [['·']]);
+  const meter = tune.meter || 4;
+  JAM.chart = {
+    id: tune.id, title: tune.title || 'chart', key: tune.key || 'C', form: tune.form || '',
+    pd: melodyAllowed(tune), meter, bars, play: [], melody: melodyAllowed(tune) && typeof parseMelody === 'function' ? parseMelody(tune.melody) : []
+  };
+  JAM.semi = (typeof BOOK !== 'undefined' && BOOK.semi) || 0;
+  JAM.feel = (typeof BOOK !== 'undefined' && BOOK.feel) || (meter === 3 ? 'waltz' : 'swing');
+  JAM.voicing = (typeof BOOK !== 'undefined' && BOOK.voicing) || 'full';
+  JAM.reharm = (typeof BOOK !== 'undefined' && BOOK.reharm) || 'off';
+  JAM.parts = Object.assign({ bass: true, comp: true, drums: true, melody: true }, (typeof BOOK !== 'undefined' && BOOK.parts) || {});
+  JAM.practice = (typeof BOOK !== 'undefined' && BOOK.practice) || '';
+  JAM.loopOn = typeof BOOK === 'undefined' || BOOK.loop !== false;
+  JAM.loopA = Math.max(0, ((typeof BOOK !== 'undefined' && BOOK.loopA) || 1) - 1);
+  JAM.loopB = (typeof BOOK !== 'undefined' && BOOK.loopB) ? BOOK.loopB - 1 : bars.length - 1;
+  JAM.chart.play = reharmBars(bars);
+  JAM.S = {
+    name: tune.title || 'chart', bpm: (typeof BOOK !== 'undefined' && BOOK.bpm) || tune.tempo || 112, sets: 8,
+    pad: jamPadForChart(tune), semi: 16 / 15, two: 9 / 8, six: 5 / 3,
+    form: JAM.chart.play.map(b => b.join(' ')), line: tune.basis || tune.form || '', chart: true, mode: M.key
+  };
+  JAM.sess = 0; JAM.bpm = JAM.S.bpm;
+  JAM.keyF = fold(fRoot, 2, 98); JAM.padF = fold(JAM.keyF * 2, 2, 220);
+  if (opt.play) {
+    for (let g = 0; g < 4 && voices.filter(v => v.wT > 0).length < 4; g++) if (!addVoice(rand(300, XMAX - 300), { temp: 0 })) break;
+    Object.assign(JAM, { on: true, bar: -1, bi: 0, chorus: 0, ending: false, endAt: 0, compPat: -1, counting: false, score: JAM.score || 0 });
+    JAM.countLeft = (typeof BOOK !== 'undefined' && BOOK.countIn) ? 1 : 0;
+    JAM.uiQ.length = 0; JAM.birdQ.length = 0;
+    rhy.nextT = 0; rhy.step = 0; rhy.bar = -1;
+    jamChange((JAM.chart.play[0] || ['·'])[0]);
+    JAM.walk = jamWalkChart(0); JAM.comp = [];
+    jamPadBuild();
+    $('jam').classList.add('on'); $('jam').setAttribute('aria-hidden', 'false'); document.body.classList.add('jamming');
+    resize();
+  }
+  jamUI(true);
+  if (typeof bookRenderChart === 'function') bookRenderChart();
+}
+function bookApplyJam() {
+  if (!JAM.chart || typeof BOOK === 'undefined') return;
+  JAM.bpm = BOOK.bpm; JAM.feel = BOOK.feel; JAM.semi = BOOK.semi; JAM.voicing = BOOK.voicing; JAM.reharm = BOOK.reharm;
+  JAM.parts = Object.assign({ bass: true, comp: true, drums: true, melody: true }, BOOK.parts);
+  JAM.practice = BOOK.practice || '';
+  JAM.loopOn = BOOK.loop !== false;
+  JAM.loopA = Math.max(0, (BOOK.loopA || 1) - 1);
+  JAM.loopB = BOOK.loopB ? BOOK.loopB - 1 : JAM.chart.bars.length - 1;
+  JAM.chart.pd = melodyAllowed(BOOK.tune);
+  JAM.chart.melody = JAM.chart.pd && typeof parseMelody === 'function' ? parseMelody(BOOK.tune.melody) : [];
+  rhy.nextT = 0;
+  jamSyncChart();
+}
+
 // the pad takes a strip at the bottom; the terrain moves up to make room
 const jamPadH = () => (JAM.on ? Math.round(phone ? clamp(H * 0.3, 170, 290) : clamp(H * 0.2, 120, 230)) : 0);
 function jamPointer() {
@@ -12302,7 +12775,7 @@ function openStory(id) {
 }
 function storyVoiceNote() {
   const R = window.Storeybrook && Storeybrook.read; if (!R || !R.supported) { $('stVoice').textContent = "this browser can't read aloud. the words are all here."; return; }
-  const v = R.pick(); $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})${R.isIrish(v) ? ', Irish English, as requested.' : '. no Irish voice on this device.'}` : 'voice: the default one.';
+  const v = R.pick(); $('stVoice').textContent = v ? `voice: ${v.name} (${v.lang})` : 'voice: the default one.';
 }
 function readStoryAloud() {
   const R = window.Storeybrook && Storeybrook.read; const pane = $('stPane');
@@ -12403,6 +12876,129 @@ on('earGo', earWhisper);
 $('earIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); earWhisper(); } });
 on('earSleep', guardsSleep);
 document.addEventListener('visibilitychange', () => { if (document.hidden && EAR.want) earsOn(false); });
+
+// ===== the narrator: a clear English accent from outside the listener's region, plus an optional ElevenLabs reading =====
+// The key, when someone pastes one, stays in localStorage. Nothing in the repo holds a key.
+const EL_ON = 'andso:el:on', EL_KEY = 'andso:el:key', EL_ID = 'andso:el:id';
+let elAudio = null, voiceFilled = false;
+
+function elOn() { try { return localStorage.getItem(EL_ON) === '1'; } catch (e) { return false; } }
+function elKey() { try { return localStorage.getItem(EL_KEY) || ''; } catch (e) { return ''; } }
+function elId() { try { return (localStorage.getItem(EL_ID) || '').trim(); } catch (e) { return ''; } }
+function elSave(k, v) { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) { /* storage blocked */ } }
+
+function voiceNote(v) {
+  const el = $('sVoiceNote'); if (!el) return;
+  const R = window.Storeybrook && Storeybrook.read;
+  const home = R && R.homeRegion ? R.homeRegion() : '';
+  if (elOn() && elKey() && elId()) { el.textContent = 'ElevenLabs is on. if it fails, the system voice speaks.'; return; }
+  if (!v) { el.textContent = 'no English voice yet. some browsers load them a moment after the page.'; return; }
+  const away = home && v.lang && v.lang.toUpperCase().indexOf(home) < 0;
+  el.textContent = `${v.name} (${v.lang})${home ? `, outside ${home}` : ''}${away ? '' : ', the only English voice here'}.`;
+}
+function fillVoiceSelect() {
+  const sel = $('sVoice'); if (!sel) return;
+  const R = window.Storeybrook && Storeybrook.read;
+  if (!R || !R.supported) { sel.innerHTML = '<option value="">this browser has no voices</option>'; voiceNote(null); return; }
+  try { speechSynthesis.getVoices(); } catch (e) { /* late */ }
+  const vs = R.voices(), cur = R.pick();
+  const saved = (() => { try { const raw = localStorage.getItem('sb:voice'); return raw ? JSON.parse(raw) : ''; } catch (e) { return ''; } })();
+  const opts = ['<option value="">automatic</option>'].concat(vs.map(v => `<option value="${String(v.name).replace(/"/g, '&quot;')}"${saved === v.name ? ' selected' : ''}>${v.name} · ${v.lang}</option>`));
+  sel.innerHTML = opts.join('');
+  if (!saved) sel.value = '';
+  voiceNote(cur);
+  voiceFilled = vs.length > 0;
+}
+function stopEleven() {
+  if (elAudio) { try { elAudio.pause(); } catch (e) { /* already stopped */ } elAudio = null; }
+}
+function speakEleven(text) {
+  const key = elKey(), id = elId();
+  if (!elOn() || !key || !id) return Promise.reject(new Error('off'));
+  stopEleven();
+  return fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(id)}/stream?output_format=mp3_44100_128`, {
+    method: 'POST',
+    headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+    body: JSON.stringify({ text: String(text || '').slice(0, 2500), model_id: 'eleven_turbo_v2_5' })
+  }).then(res => { if (!res.ok) throw new Error('el'); return res.blob(); }).then(blob => new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob), a = new Audio(url);
+    elAudio = a;
+    a.onended = () => { URL.revokeObjectURL(url); if (elAudio === a) elAudio = null; resolve(); };
+    a.onerror = () => { URL.revokeObjectURL(url); reject(new Error('play')); };
+    const p = a.play(); if (p && p.catch) p.catch(reject);
+  }));
+}
+function hookEleven() {
+  const R = window.Storeybrook && Storeybrook.read;
+  if (!R || R._elHook) return;
+  R._elHook = true;
+  const next = R._next.bind(R);
+  R._next = function () {
+    if (!(elOn() && elKey() && elId()) || R.state === 'idle') return next();
+    if (R._i >= R._chunks.length) { R._done(); return; }
+    const c = R._chunks[R._i];
+    speakEleven(c.text).then(() => {
+      if (R.state === 'idle') return;
+      R._i++; R._next();
+    }).catch(() => { if (R.state !== 'idle') next(); });
+  };
+  const stop = R.stop.bind(R);
+  R.stop = function (quiet) { stopEleven(); return stop(quiet); };
+}
+function voiceTest() {
+  const R = window.Storeybrook && Storeybrook.read;
+  if (!R || !R.supported) { caption("this browser can't read aloud.", 2200); return; }
+  const line = 'Here is a voice from somewhere else.';
+  if (elOn() && elKey() && elId()) {
+    speakEleven(line).catch(() => R.speak(line, { rate: 0.96, pitch: 1.02 }));
+    return;
+  }
+  R.speak(line, { rate: 0.96, pitch: 1.02 });
+  voiceNote(R.pick());
+}
+function voiceBoot() {
+  hookEleven();
+  fillVoiceSelect();
+  const sel = $('sVoice'), test = $('sVoiceTest'), on = $('sElOn'), key = $('sElKey'), id = $('sElId');
+  if (sel && !sel.dataset.bound) {
+    sel.dataset.bound = '1';
+    sel.addEventListener('change', () => {
+      try {
+        if (sel.value) localStorage.setItem('sb:voice', JSON.stringify(sel.value));
+        else localStorage.removeItem('sb:voice');
+      } catch (e) { /* storage blocked */ }
+      const R = window.Storeybrook && Storeybrook.read;
+      if (R && R.state !== 'idle') R.speak(R._el || 'Here is a voice from somewhere else.');
+      fillVoiceSelect();
+    });
+  }
+  if (test && !test.dataset.bound) { test.dataset.bound = '1'; test.addEventListener('click', voiceTest); }
+  if (on && !on.dataset.bound) {
+    on.dataset.bound = '1';
+    on.checked = elOn();
+    on.addEventListener('change', () => { elSave(EL_ON, on.checked ? '1' : ''); fillVoiceSelect(); });
+  }
+  if (key && !key.dataset.bound) {
+    key.dataset.bound = '1';
+    key.value = elKey();
+    key.addEventListener('change', () => { elSave(EL_KEY, key.value.trim()); fillVoiceSelect(); });
+  }
+  if (id && !id.dataset.bound) {
+    id.dataset.bound = '1';
+    id.value = elId();
+    id.addEventListener('change', () => { elSave(EL_ID, id.value.trim()); fillVoiceSelect(); });
+  }
+  const SY = window.speechSynthesis;
+  if (SY) {
+    const again = () => fillVoiceSelect();
+    if (SY.addEventListener) SY.addEventListener('voiceschanged', again);
+    else SY.onvoiceschanged = again;
+    // Chrome, Safari and Firefox often hand the list over after the first paint
+    setTimeout(again, 250); setTimeout(again, 1200);
+  }
+  if (typeof devApply === 'function') devApply();
+}
+voiceBoot();
 
 // ===== the overhearing: Saelion listens for words, mishears them on purpose, and each mishearing becomes a guardian =====
 // "oh I see love" is heard first, plainly. A little later an ice cube turns up (I see, ice), then a floating heart
@@ -12828,7 +13424,8 @@ function hideBody(g, sc, sy, ink) { const cy = 2 * sc + sy; hideShape(g, () => {
 function hideEgg(g, sc, ink) { hideShape(g, () => { g.beginPath(); g.ellipse(0, 0, 13 * sc, 17 * sc, 0, 0, TAU); }, HIDE_EGG, sc, 0, -19 * sc, 19 * sc, ink); }
 
 // ===== the book: a jam-along fake book. charts are our own data. melody and words only when the tune is public domain here =====
-var BOOK = { open: false, onPlay: false, id: '', tune: null, bars: [], meter: 4, events: [], bpm: 112, semi: 0, voice: 'piano', loop: true, abs: 0, bar: -1, beatIn: 0, sym: '', kind: 'book', heard: 0, timbre: '', also: null, blank: false };
+var BOOK = { open: false, onPlay: false, id: '', tune: null, bars: [], meter: 4, events: [], bpm: 112, semi: 0, voice: 'piano', loop: true, abs: 0, bar: -1, beatIn: 0, sym: '', kind: 'book', heard: 0, timbre: '', also: null, blank: false,
+  feel: 'swing', parts: { bass: true, comp: true, drums: true, melody: true }, voicing: 'full', reharm: 'off', countIn: true, practice: '', loopA: 1, loopB: 0 };
 var bookNext = 0;
 const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const PC_OF = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
@@ -12945,85 +13542,9 @@ function soundPc(chord, which) {
   const pc = which === 'bass' && chord.bass != null ? chord.bass : chord.root;
   return (pc + BOOK.semi + 120) % 12;
 }
-function bookDrums(t0, beatIn, meter) {
-  if (!ensAudible('drum')) return;
-  if (meter === 7) {
-    if (beatIn === 0 || beatIn === 2 || beatIn === 4) kick(t0, beatIn === 0 ? 0.34 : 0.16);
-    nz(t0, 0.025, 'bandpass', 4600, 1.2, 0.016);
-    return;
-  }
-  if (beatIn === 0) kick(t0, meter === 3 ? 0.28 : 0.4);
-  if (meter === 4 && (beatIn === 1 || beatIn === 3)) nz(t0, 0.03, 'highpass', 6500, 0.7, 0.012);
-  nz(t0, 0.028, 'bandpass', 5200, 1.6, beatIn % 2 ? 0.014 : 0.022);
-}
-function bookStrike(t0, abs) {
-  const meter = BOOK.meter || 4, n = BOOK.bars.length || 1, total = n * meter;
-  if (!BOOK.loop && abs >= total) { bookPause(); return; }
-  const local = ((abs % total) + total) % total;
-  const bar = (local / meter) | 0, beatIn = local % meter;
-  const chords = BOOK.bars[bar] || ['·'];
-  const seg = Math.max(1, chords.length);
-  const ci = Math.min(seg - 1, Math.floor((beatIn / meter) * seg));
-  const sym = chords[ci];
-  const chord = parseChord(sym);
-  BOOK.bar = bar; BOOK.beatIn = beatIn; BOOK.sym = sym || '';
-  const spb = 60 / BOOK.bpm;
-  if (chord && ensAudible('bass')) {
-    const nxtBar = (bar + (beatIn === meter - 1 ? 1 : 0)) % n;
-    const nxt = parseChord((BOOK.bars[nxtBar] || ['·'])[0]);
-    let pc = soundPc(chord, 'bass');
-    if (beatIn === meter - 1 && nxt) pc = (soundPc(nxt, 'bass') + 11) % 12;
-    else if (beatIn > 0 && beatIn < meter - 1) pc = (soundPc(chord, 'root') + chord.iv[beatIn % chord.iv.length]) % 12;
-    const midi = 36 + pc + (pc < 4 && beatIn === 0 ? 0 : 0);
-    toneAt(t0, 36 + pc + (midi < 36 ? 12 : 0), spb * 0.95, 0.9, 'bass');
-  }
-  if (chord && ensAudible('comp')) {
-    const guitar = BOOK.voice === 'guitar';
-    const hit = guitar || meter !== 4 || beatIn === 1 || beatIn === 3 || beatIn === 0 && meter === 3;
-    if (hit) {
-      const third = chord.iv[1] != null ? chord.iv[1] : 4;
-      const sev = chord.iv.find(i => i === 10 || i === 11);
-      const pcs = [soundPc(chord, 'root') + third];
-      if (sev != null) pcs.push(soundPc(chord, 'root') + sev);
-      else if (chord.iv[2] != null) pcs.push(soundPc(chord, 'root') + chord.iv[2]);
-      pcs.forEach((pc, i) => toneAt(t0 + i * 0.012, 60 + (pc % 12) + (pc % 12 < 4 ? 12 : 0), guitar ? 0.22 : 0.5, 0.85, 'comp'));
-      if (BOOK.also != null && beatIn === 0) {
-        const r = (soundPc(chord, 'root') + BOOK.also) % 12;
-        [0, 4, 7].forEach((iv, i) => toneAt(t0, 60 + (r + iv) % 12, 0.35, 0.35, 'comp'));
-      }
-    }
-  }
-  if (chord && ensAudible('pad') && beatIn === 0) {
-    chord.iv.slice(0, 3).forEach(iv => toneAt(t0, 48 + (soundPc(chord, 'root') + iv) % 12 + 12, spb * meter * 0.9, 0.45, 'pad'));
-  }
-  if (BOOK.tune && BOOK.tune.pd && ensAudible('melody')) {
-    BOOK.events.forEach(ev => {
-      const rel = ev.at - local;
-      if (rel >= -0.02 && rel < 0.98) toneAt(t0 + Math.max(0, rel) * spb, 60 + tonicPc() + ev.semi, ev.dur * spb, 0.8, 'melody');
-    });
-  } else if (chord && ensAudible('melody') && beatIn === 0) {
-    const third = chord.iv[1] != null ? chord.iv[1] : 4;
-    toneAt(t0, 72 + (soundPc(chord, 'root') + third) % 12, spb * 1.4, 0.45, 'melody');
-  }
-  bookDrums(t0, beatIn, meter);
-  if (bar !== BOOK.painted) { BOOK.painted = bar; bookHighlight(); }
-}
-function bookTick() {
-  if (!BOOK.onPlay || !A.ac || paused) return;
-  const now = A.ac.currentTime;
-  if (!bookNext || bookNext < now - 0.25) bookNext = now + 0.06;
-  const spb = 60 / Math.max(36, BOOK.bpm);
-  let guard = 0;
-  while (bookNext < now + 0.14 && guard++ < 6) { bookStrike(bookNext, BOOK.abs); BOOK.abs++; bookNext += spb; }
-  if (typeof bookMix === 'function') bookMix();
-  if (BOOK.kind === 'wing') BOOK.heard += Math.min(0.05, spb);
-}
-function bookMix() {
-  if (!A.ac || !A.bus) return;
-  if (typeof ENS !== 'undefined' && ENS.on && ENS.n > 1) return;
-  const g = BOOK.open && BOOK.onPlay ? 0.4 : 0.85;
-  A.bus.gain.setTargetAtTime(g, A.ac.currentTime, 0.25);
-}
+
+function bookTick() { /* the jam clock plays the chart */ }
+function bookMix() {}
 function bookEnsure() {
   if (!entered) return false;
   if (!A.ac) audio.init();
@@ -13033,171 +13554,201 @@ function bookEnsure() {
   return true;
 }
 function bookPlay() {
-  if (!bookEnsure()) return;
-  if (JAM.on) jamStop(true);
-  BOOK.onPlay = true; BOOK.heard = 0;
-  if (!bookNext) bookNext = A.ac.currentTime + 0.08;
-  const sun = $('bookSun'); if (sun) sun.classList.add('is-on');
+  if (!BOOK.tune || !bookEnsure()) return;
+  BOOK.onPlay = true;
+  bookApplyFromUI();
+  jamLoadChart(BOOK.tune, { play: true });
   bookPaint();
 }
 function bookPause() {
-  BOOK.onPlay = false; bookNext = 0;
-  const sun = $('bookSun'); if (sun) sun.classList.remove('is-on');
-  bookMix();
+  BOOK.onPlay = false;
+  if (JAM.chart && JAM.on) jamStop(true);
+  bookPaint();
 }
 function bookChoose(id) {
   const t = chartById(id) || (BOOK_DATA && BOOK_DATA[0]);
   if (!t) return;
   BOOK.blank = false;
   BOOK.tune = t; BOOK.id = t.id; BOOK.kind = t.kind || (t.gate ? 'wing' : 'book');
-  BOOK.bars = normBars(t.bars); BOOK.meter = t.meter || 4; BOOK.events = parseMelody(t.melody);
+  BOOK.bars = normBars(t.bars); BOOK.meter = t.meter || 4; BOOK.events = melodyAllowed(t) ? parseMelody(t.melody) : [];
   BOOK.timbre = t.timbre || ''; BOOK.also = t.also != null ? t.also : null;
-  BOOK.bpm = t.tempo || BOOK.bpm; BOOK.abs = 0; BOOK.bar = 0; BOOK.heard = 0; bookNext = 0;
+  if (!BOOK.bpm) BOOK.bpm = t.tempo || 112;
+  BOOK.bpm = t.tempo && !BOOK.touchedTempo ? t.tempo : BOOK.bpm;
+  if (BOOK.feel === 'swing' && BOOK.meter === 3 && !BOOK.touchedFeel) BOOK.feel = 'waltz';
+  BOOK.loopB = BOOK.loopB && BOOK.loopB <= BOOK.bars.length ? BOOK.loopB : BOOK.bars.length;
+  BOOK.bar = 0;
   bookRender();
   if (!BOOK.holdFace && $('bookOpen')) { $('bookOpen').hidden = false; if ($('wingFace')) $('wingFace').hidden = true; if (typeof WING !== 'undefined') WING.face = false; }
-  if (BOOK.onPlay) bookPlay();
+  if (BOOK.onPlay || (JAM.on && JAM.chart)) bookPlay();
+  else jamLoadChart(t, { play: false });
 }
 function bookBlank() {
   BOOK.blank = true; BOOK.kind = 'book'; BOOK.id = 'yours';
   BOOK.tune = { id: 'yours', title: 'Your page', form: 'an empty sheet', key: 'C', pd: false, basis: 'And so, your turn.', bars: [['·'], ['·'], ['·'], ['·'], ['·'], ['·'], ['·'], ['·']], meter: 4, tempo: BOOK.bpm };
-  BOOK.bars = normBars(BOOK.tune.bars); BOOK.meter = 4; BOOK.events = []; BOOK.timbre = ''; BOOK.also = null; BOOK.abs = 0;
+  BOOK.bars = normBars(BOOK.tune.bars); BOOK.meter = 4; BOOK.events = []; BOOK.loopB = 8;
   bookPause(); bookRender();
 }
-function bookSetSemi(d) { BOOK.semi = ((d % 12) + 12) % 12; bookRenderChart(); bookPaint(); }
+function bookSetSemi(d) {
+  BOOK.semi = ((d % 12) + 12) % 12;
+  bookRenderChart();
+  if (JAM.chart) { JAM.semi = BOOK.semi; if (JAM.chord) jamChange(JAM.chord.id); jamUI(true); }
+  bookPaint();
+}
 function bookNudgeKey(dir) { bookSetSemi(BOOK.semi + dir); }
-function bookSetTempo(bpm) { BOOK.bpm = clamp(+bpm || 112, 40, 240); bookPaint(); }
-function bookSetVoice(v) { BOOK.voice = v === 'guitar' ? 'guitar' : 'piano'; bookPaint(); }
-function bookHearBar(i) {
-  if (!bookEnsure()) return;
-  const chords = BOOK.bars[i] || [];
-  const c = parseChord(chords[0]);
-  if (!c) return;
-  const t0 = A.ac.currentTime + 0.02;
-  const third = c.iv[1] != null ? c.iv[1] : 4;
-  toneAt(t0, 48 + soundPc(c, 'bass'), 0.7, 0.8, 'bass', true);
-  toneAt(t0, 60 + (soundPc(c, 'root') + third) % 12, 0.8, 0.7, 'comp', true);
-  if (c.iv[2] != null) toneAt(t0, 64 + (soundPc(c, 'root') + c.iv[2]) % 12, 0.8, 0.55, 'comp', true);
-  BOOK.bar = i; bookHighlight();
+function bookSetTempo(bpm) { BOOK.touchedTempo = true; BOOK.bpm = clamp(+bpm || 112, 40, 240); if (JAM.chart) JAM.bpm = BOOK.bpm; bookPaint(); }
+function bookApplyFromUI() {
+  const feel = $('bookFeel'); if (feel) BOOK.feel = feel.value;
+  const voi = $('bookVoicing'); if (voi) BOOK.voicing = voi.value;
+  const reh = $('bookReharm'); if (reh) BOOK.reharm = reh.value;
+  const pr = $('bookPractice'); if (pr) BOOK.practice = pr.value;
+  const cnt = $('bookCount'); if (cnt) BOOK.countIn = cnt.checked;
+  const loop = $('bookLoop'); if (loop) BOOK.loop = loop.checked;
+  const a = $('bookFrom'), b = $('bookTo');
+  if (a) BOOK.loopA = clamp(+a.value || 1, 1, BOOK.bars.length || 1);
+  if (b) BOOK.loopB = clamp(+b.value || BOOK.bars.length || 1, BOOK.loopA, BOOK.bars.length || 1);
+  ['bass', 'comp', 'drums', 'melody'].forEach(part => {
+    const el = $('bookPart-' + part); if (el) BOOK.parts[part] = el.checked && !el.disabled;
+  });
+  if (typeof bookApplyJam === 'function' && JAM.chart) bookApplyJam();
+}
+function bookJump(i) {
+  BOOK.bar = i;
+  if (JAM.chart && JAM.chart.play && JAM.chart.play[i]) {
+    JAM.bar = i; JAM.bi = i;
+    jamChange(JAM.chart.play[i][0]);
+    if (JAM.on) jamUI(false);
+  } else if (bookEnsure()) {
+    const c = parseChord((BOOK.bars[i] || [])[0]);
+    if (c) {
+      const t0 = A.ac.currentTime + 0.02;
+      toneAt(t0, 48 + soundPc(c, 'bass'), 0.7, 0.8, 'bass', true);
+      const third = c.iv[1] != null ? c.iv[1] : 4;
+      toneAt(t0, 60 + (soundPc(c, 'root') + third) % 12, 0.8, 0.7, 'comp', true);
+    }
+  }
+  bookHighlight();
 }
 
-function spineHue(form) {
-  const f = (form || '').toLowerCase();
-  if (f.includes('blues') || f.includes('12-bar')) return 'sea';
-  if (f.includes('minor') || f.includes('modal') || f.includes('character')) return 'leaf';
-  if (f.includes('bossa') || f.includes('40-bar') || f.includes('16-bar')) return 'rose';
-  if (f.includes('aaba') || f.includes('abac')) return 'gold';
-  return 'ink';
-}
 function bookMount() {
   const root = $('book'); if (!root || root.dataset.built) return; root.dataset.built = '1';
   root.className = 'book';
   root.setAttribute('role', 'dialog');
   root.setAttribute('aria-label', 'the book');
-  root.innerHTML = '<div class="book-table"><button type="button" class="book-x" id="bookClose" aria-label="close the book">×</button>'
-    + '<button type="button" class="book-cover" id="bookCover"><b>The Book</b><i>and so</i><em>gold on the edge</em></button>'
-    + '<div class="book-open" id="bookOpen">'
-    + '<div class="spines" id="bookSpines" role="listbox" aria-label="tunes"></div>'
-    + '<div class="sheet" id="bookSheet">'
-    + '<p class="sheet-kicker" id="bookKicker"></p><h2 id="bookTitle"></h2>'
-    + '<p class="sheet-form" id="bookForm"></p><p class="sheet-basis" id="bookBasis"></p>'
-    + '<div class="chart" id="bookChart"></div>'
-    + '<div class="sun-row"><button type="button" class="sun" id="bookSun" aria-label="play or stop"><i></i></button>'
-    + '<div class="sun-side"><button type="button" id="bookKeyDn" aria-label="one key down">‹</button><b id="bookKeyN">C</b><button type="button" id="bookKeyUp" aria-label="one key up">›</button></div>'
-    + '<label class="walk">tempo <b id="bookTempoN">112</b><input id="bookTempo" type="range" min="40" max="220" value="112" aria-label="tempo"></label>'
-    + '<button type="button" class="ring" id="bookLoop" aria-pressed="true" aria-label="loop">↻</button>'
-    + '<button type="button" class="voice" id="bookVoice" aria-label="piano or guitar">piano</button></div>'
-    + '<div class="sheet-marks"><button type="button" id="bookToWing" aria-label="the wing">✶</button><button type="button" id="bookDream" aria-label="dream the book">dream</button><button type="button" id="bookKeep" hidden>keep</button></div>'
-    + '<div class="page-pets" id="bookPets" hidden></div></div>'
-    + '<div class="wing-face" id="wingFace" hidden></div></div>';
+  const part = (id, label) => `<label class="bk-part"><input type="checkbox" id="bookPart-${id}" checked> ${label}</label>`;
+  root.innerHTML = '<div class="bk" id="bookOpen">'
+    + '<div class="wh bk-h"><span class="wt">THE BOOK</span><span class="ws" id="bookKicker"></span><button type="button" class="wbtn" id="bookClose" aria-label="close the book">×</button></div>'
+    + '<div class="bk-body">'
+    + '<label class="bk-line">tune <select id="bookTune" aria-label="tune"></select></label>'
+    + '<h2 id="bookTitle"></h2>'
+    + '<p class="bk-form" id="bookForm"></p><p class="bk-basis" id="bookBasis"></p>'
+    + '<div class="bk-chart" id="bookChart" role="list" aria-label="lead sheet"></div>'
+    + '<div class="bk-controls">'
+    + '<button type="button" class="pill" id="bookGo">play</button>'
+    + '<label class="bk-line">tempo <b id="bookTempoN">112</b><input id="bookTempo" type="range" min="40" max="220" value="112" aria-label="tempo"></label>'
+    + '<span class="bk-key"><button type="button" id="bookKeyDn" aria-label="one key down">−</button><b id="bookKeyN">C</b><button type="button" id="bookKeyUp" aria-label="one key up">+</button></span>'
+    + '<label class="bk-line">feel <select id="bookFeel" aria-label="feel"><option value="swing">swing</option><option value="straight">straight</option><option value="bossa">bossa</option><option value="ballad">ballad</option><option value="waltz">waltz</option></select></label>'
+    + '<span class="bk-parts">' + part('bass', 'bass') + part('comp', 'comp') + part('drums', 'drums') + part('melody', 'melody') + '</span>'
+    + '<label class="bk-line">voicing <select id="bookVoicing" aria-label="voicing"><option value="shells">shells</option><option value="rootless">rootless</option><option value="full">full</option></select></label>'
+    + '<label class="bk-line">reharm <select id="bookReharm" aria-label="reharm"><option value="off">off</option><option value="light">light</option></select></label>'
+    + '<label class="bk-line">loop <input id="bookLoop" type="checkbox" checked aria-label="loop"> <input id="bookFrom" type="number" min="1" value="1" aria-label="loop from bar">–<input id="bookTo" type="number" min="1" value="1" aria-label="loop to bar"></label>'
+    + '<label class="bk-line">count-in <input id="bookCount" type="checkbox" checked aria-label="count in"></label>'
+    + '<label class="bk-line">practice <select id="bookPractice" aria-label="practice"><option value="">band plays</option><option value="bass">you play bass</option><option value="comp">you play chords</option><option value="drums">you play drums</option><option value="melody">you play the line</option></select></label>'
+    + '</div>'
+    + '<div class="bk-marks"><button type="button" id="bookToWing">the wing</button><button type="button" id="bookDream">dream</button><button type="button" id="bookKeep" hidden>keep</button></div>'
+    + '<div class="page-pets" id="bookPets" hidden></div>'
+    + '</div><div class="wing-face" id="wingFace" hidden></div></div>';
   on('bookClose', bookClose);
-  on('bookCover', () => bookCover(false));
-  on('bookSun', () => BOOK.onPlay ? bookPause() : bookPlay());
+  on('bookGo', () => BOOK.onPlay ? bookPause() : bookPlay());
   on('bookKeyDn', () => bookNudgeKey(-1));
   on('bookKeyUp', () => bookNudgeKey(1));
-  on('bookLoop', () => { BOOK.loop = !BOOK.loop; bookPaint(); });
-  on('bookVoice', () => bookSetVoice(BOOK.voice === 'guitar' ? 'piano' : 'guitar'));
   on('bookToWing', () => { if (typeof wingOpen === 'function') wingOpen(); });
   on('bookDream', () => { if (typeof dreamStart === 'function') dreamStart('book'); });
   on('bookKeep', () => { try { toggleRec(); } catch (e) {} });
   $('bookTempo').addEventListener('input', e => bookSetTempo(e.target.value));
+  ['bookFeel', 'bookVoicing', 'bookReharm', 'bookPractice', 'bookLoop', 'bookCount', 'bookFrom', 'bookTo'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.addEventListener('change', () => { if (id === 'bookFeel') BOOK.touchedFeel = true; bookApplyFromUI(); bookPaint(); if (BOOK.onPlay) bookPlay(); });
+  });
+  ['bass', 'comp', 'drums', 'melody'].forEach(part => {
+    const el = $('bookPart-' + part); if (!el) return;
+    el.addEventListener('change', () => { bookApplyFromUI(); });
+  });
+  $('bookTune').addEventListener('change', () => bookChoose($('bookTune').value));
   bookSpines();
   if (typeof wingMount === 'function') wingMount();
   if (typeof petSlotsPaint === 'function') petSlotsPaint($('bookPets'));
 }
 function bookSpines() {
-  const host = $('bookSpines'); if (!host || !BOOK_DATA) return; host.textContent = '';
+  const host = $('bookTune'); if (!host || !BOOK_DATA) return;
+  host.innerHTML = '';
   BOOK_DATA.forEach(t => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'spine hue-' + spineHue(t.form) + (t.pd ? ' is-pd' : '');
-    b.setAttribute('role', 'option'); b.dataset.id = t.id; b.setAttribute('aria-label', t.title + (t.pd ? ', public domain' : ''));
-    b.title = t.title;
-    b.addEventListener('click', () => { bookCover(false); bookChoose(t.id); });
-    host.appendChild(b);
+    const o = document.createElement('option');
+    o.value = t.id; o.textContent = t.title + (t.pd ? '' : '');
+    host.appendChild(o);
   });
+  bookSpinesMark();
 }
 function bookRenderChart() {
-  const el = $('bookChart'); if (!el) return; el.textContent = '';
-  const meter = BOOK.meter || 4;
-  BOOK.bars.forEach((chords, i) => {
+  const el = $('bookChart'); if (!el) return;
+  el.textContent = '';
+  const bars = (JAM.chart && JAM.chart.id === BOOK.id && JAM.chart.play) ? JAM.chart.play : BOOK.bars;
+  bars.forEach((chords, i) => {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'stone'; b.dataset.i = String(i);
+    b.type = 'button'; b.className = 'bar'; b.dataset.i = String(i);
+    const n = document.createElement('i'); n.textContent = String(i + 1);
     const name = document.createElement('b');
-    name.textContent = chords.map(c => labelChord(c, BOOK.semi)).filter(Boolean).join(' ') || '·';
-    b.appendChild(name);
-    if (BOOK.tune && BOOK.tune.pd && BOOK.events.length) {
-      const dots = document.createElement('span'); dots.className = 'dots';
-      const a0 = i * meter, a1 = a0 + meter;
-      BOOK.events.forEach(ev => {
-        if (ev.at < a0 || ev.at >= a1) return;
-        const d = document.createElement('i');
-        d.style.left = ((ev.at - a0) / meter * 100) + '%';
-        d.style.bottom = clamp(8 + ev.semi * 2.1, 4, 46) + 'px';
-        dots.appendChild(d);
-      });
-      b.appendChild(dots);
-    }
-    b.addEventListener('click', () => bookHearBar(i));
+    const list = Array.isArray(chords) ? chords : [chords];
+    name.textContent = list.map(c => labelChord(c, BOOK.semi)).filter(Boolean).join(' ') || '·';
+    b.appendChild(n); b.appendChild(name);
+    b.addEventListener('click', () => bookJump(i));
     el.appendChild(b);
   });
   bookHighlight();
 }
 function bookRender() {
   bookMount();
-  const t = BOOK.tune;
-  if (!t) return;
+  const t = BOOK.tune; if (!t) return;
   $('bookKicker').textContent = BOOK.kind === 'wing' ? (t.composer || '') : (t.pd ? 'public domain' : 'changes');
   $('bookTitle').textContent = t.title || '';
-  $('bookForm').textContent = [t.form, shownKey()].filter(Boolean).join(' · ');
-  $('bookBasis').textContent = t.basis || t.pd || '';
+  $('bookForm').textContent = [t.form, shownKey(), (t.meter || 4) + '/4'].filter(Boolean).join(' · ');
+  $('bookBasis').textContent = t.basis || (typeof t.pd === 'string' ? t.pd : '') || '';
   bookRenderChart();
   bookSpinesMark();
   bookPaint();
   if (typeof MAG !== 'undefined') bookShowPets(!!MAG.found);
-  const wing = $('wingFace');
-  if (wing && BOOK.kind !== 'wing-face') { /* sheet stays */ }
 }
 function bookSpinesMark() {
-  const host = $('bookSpines'); if (!host) return;
-  host.querySelectorAll('.spine').forEach(s => s.classList.toggle('is-on', s.dataset.id === BOOK.id));
+  const host = $('bookTune'); if (!host) return;
+  host.value = BOOK.id || host.value;
 }
 function bookHighlight() {
   const el = $('bookChart'); if (!el) return;
-  [...el.children].forEach((n, i) => n.classList.toggle('is-now', i === BOOK.bar));
-  const cur = el.children[BOOK.bar];
-  if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) {} }
+  const bar = JAM.chart && JAM.on ? JAM.bi : BOOK.bar;
+  [...el.children].forEach((n, i) => n.classList.toggle('is-now', i === bar));
+  const cur = el.children[bar];
+  if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: (typeof DEV !== 'undefined' && DEV.reduce) ? 'auto' : 'smooth' }); } catch (e) {} }
 }
 function bookPaint() {
   const k = $('bookKeyN'); if (k) k.textContent = shownKey();
   const n = $('bookTempoN'); if (n) n.textContent = String(BOOK.bpm | 0);
   const r = $('bookTempo'); if (r && document.activeElement !== r) r.value = String(BOOK.bpm | 0);
-  const loop = $('bookLoop'); if (loop) loop.setAttribute('aria-pressed', BOOK.loop ? 'true' : 'false');
-  const v = $('bookVoice'); if (v) v.textContent = BOOK.voice === 'guitar' ? 'guitar' : 'piano';
+  const loop = $('bookLoop'); if (loop) loop.checked = !!BOOK.loop;
+  const feel = $('bookFeel'); if (feel && document.activeElement !== feel) feel.value = BOOK.feel || 'swing';
+  const voi = $('bookVoicing'); if (voi && document.activeElement !== voi) voi.value = BOOK.voicing || 'full';
+  const reh = $('bookReharm'); if (reh && document.activeElement !== reh) reh.value = BOOK.reharm || 'off';
+  const pr = $('bookPractice'); if (pr && document.activeElement !== pr) pr.value = BOOK.practice || '';
+  const cnt = $('bookCount'); if (cnt) cnt.checked = BOOK.countIn !== false;
+  const a = $('bookFrom'); if (a && document.activeElement !== a) a.value = String(BOOK.loopA || 1);
+  const b = $('bookTo'); if (b && document.activeElement !== b) b.value = String(BOOK.loopB || BOOK.bars.length || 1);
+  const mel = $('bookPart-melody');
+  if (mel) { mel.disabled = !melodyAllowed(BOOK.tune); if (mel.disabled) mel.checked = false; }
+  ['bass', 'comp', 'drums', 'melody'].forEach(part => {
+    const el = $('bookPart-' + part); if (el && !el.disabled && document.activeElement !== el) el.checked = BOOK.parts[part] !== false;
+  });
+  const go = $('bookGo'); if (go) go.textContent = BOOK.onPlay ? 'stop' : 'play';
   const keep = $('bookKeep'); if (keep) keep.hidden = BOOK.id !== 'yours';
 }
-function bookCover(closed) {
-  const root = $('book'); if (!root) return;
-  root.classList.toggle('is-closed', !!closed);
-}
+function bookCover() {}
 function bookOpen(id, opt) {
   opt = opt || {};
   if (!entered) { const hold = id, o = opt; $('enter').click(); setTimeout(() => bookOpen(hold, o), 700); return; }
@@ -13208,17 +13759,15 @@ function bookOpen(id, opt) {
   if (id === 'blank') bookBlank();
   else if (id) bookChoose(id);
   else if (!BOOK.tune) bookChoose('st-louis');
-  bookCover(!!opt.cover);
   if (opt.play) bookPlay();
   if (opt.wing && typeof wingShow === 'function') wingShow(opt.wing, { play: !!opt.play });
-  else if ($('wingFace')) $('wingFace').hidden = BOOK.kind !== 'wing-face';
+  else if ($('wingFace')) $('wingFace').hidden = !(typeof WING !== 'undefined' && WING.face);
 }
 function bookClose() {
   bookPause(); BOOK.open = false;
   const root = $('book'); if (root) { root.classList.remove('on'); root.setAttribute('aria-hidden', 'true'); }
   document.body.classList.remove('booking');
   if ($('wingFace')) $('wingFace').hidden = true;
-  bookMix();
 }
 function bookShowPets(on) {
   const el = $('bookPets'); if (!el) return;
@@ -13230,7 +13779,7 @@ window.addEventListener('keydown', e => {
   if (typeof DREAM !== 'undefined' && DREAM.on) return;
   if (!$('book') || !$('book').classList.contains('on')) return;
   const tg = e.target && e.target.tagName;
-  if (tg === 'INPUT' || tg === 'TEXTAREA') return;
+  if (tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT') return;
   if (e.key === 'Escape') { bookClose(); e.stopPropagation(); }
   else if (e.key === ' ') { e.preventDefault(); BOOK.onPlay ? bookPause() : bookPlay(); }
 }, true);
@@ -13294,6 +13843,7 @@ function wingPaint() {
   });
   const p = wingNow();
   const open = p && (WING.step > WING_DATA.indexOf(p) + 1 || BOOK.id === p.id && BOOK.kind === 'wing' && BOOK.onPlay);
+  if (p && typeof wingRoomArt === 'function') wingRoomArt(p.composer);
   if ($('wingKicker')) $('wingKicker').textContent = p ? p.composer : '';
   if ($('wingTitle')) $('wingTitle').textContent = p && (WING.step > WING_DATA.indexOf(p) || open) ? p.title : '';
   if ($('wingInvite')) $('wingInvite').textContent = p && WING.step <= WING_DATA.length ? p.invite : 'The wing is open.';
@@ -13678,6 +14228,7 @@ function magBoot() {
   const base = petBase();
   fetch(base + 'assets/pet/slots.json').then(r => r.ok ? r.json() : null).then(slots => {
     if (!slots) return;
+    if (slots.elphantea) PET_SLOTS.elphantea = slots.elphantea;
     ['mag', 'bunny'].forEach(k => {
       const s = slots[k];
       if (!s) return;
@@ -13764,7 +14315,13 @@ function magArrive() {
   for (let i = 0; i < 16; i++) MAG.petals.push({ x: MAG.x, y: MAG.y - 10, vx: rand(-40, 50), vy: rand(-80, -20), life: rand(1.2, 2.2) });
   document.body.classList.add('mag-home');
   const card = $('magCard');
-  if (card) { card.hidden = false; card.innerHTML = '<div class="pair"></div><p>Mag found you. She does that.</p>'; petSlotsPaint(card.querySelector('.pair')); setTimeout(() => { card.hidden = true; }, 4600); }
+  if (card) {
+    card.hidden = false;
+    const bunny = (typeof ART !== 'undefined' && ART.img && ART.img['pet-bunny'] && ART.img['pet-bunny'].naturalWidth) ? ART.img['pet-bunny'] : null;
+    if (bunny) card.innerHTML = '<figure class="bunny-vignette"><img alt="" src="' + bunny.src + '"></figure><p>Mag found you. The bunny was asleep.</p>';
+    else { card.innerHTML = '<div class="pair"></div><p>Mag found you. She does that.</p>'; petSlotsPaint(card.querySelector('.pair')); }
+    setTimeout(() => { card.hidden = true; }, 4600);
+  }
   caption('Mag found you. She does that.', 3600);
   if (typeof wingOnMag === 'function') wingOnMag();
   persistSoon();

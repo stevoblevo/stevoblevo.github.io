@@ -328,9 +328,11 @@ function rhythmTick() {
   if (!rhyActive()) { rhy.nextT = 0; return; }
   const now = aNow();
   if (!rhy.nextT || rhy.nextT < now - 0.3) { rhy.nextT = now + 0.08; rhy.step = 0; }
-  const n = JAM.on ? 3 : era ? 3 : tuplet, bpm = JAM.on ? JAM.bpm : era ? 152 : clamp((M.easy ? 80 : 68) + 42 * W5[1] + 16 * (effPace() - 0.45) - 10 * W5[3], 58, 132);
+  const grid = JAM.on && JAM.chart ? jamGrid() : null;
+  const n = grid ? grid.n : JAM.on ? 3 : era ? 3 : tuplet, bpm = JAM.on ? JAM.bpm : era ? 152 : clamp((M.easy ? 80 : 68) + 42 * W5[1] + 16 * (effPace() - 0.45) - 10 * W5[3], 58, 132);
   rhy.bpm = bpm;
-  const spb = 60 / bpm / n, N = 4 * n;
+  const meter = grid ? grid.meter : 4;
+  const spb = 60 / bpm / n, N = meter * n;
   let guard = 0;
   while (rhy.nextT < now + 0.15 && guard++ < 64) {
     const i = rhy.step % N;
@@ -339,7 +341,7 @@ function rhythmTick() {
     if (JAM.on) jamStep(i, rhy.nextT, n, spb); else if (era) play55(i, rhy.nextT, spb); else playStep(i, rhy.nextT, n, spb);
     if (plucky() && !JAM.on) pluckStep(i, rhy.nextT, n, spb);
     visQ.push({ t: rhy.nextT, i, n });
-    const sw = !era && !JAM.on && n === 4 ? 0.5 + 0.1 * W5[1] + (M.easy ? 0.05 : 0) : 0.5;
+    const sw = grid ? grid.swing : (!era && !JAM.on && n === 4 ? 0.5 + 0.1 * W5[1] + (M.easy ? 0.05 : 0) : 0.5);
     rhy.nextT += (i % 2 === 0 ? 2 * sw : 2 * (1 - sw)) * spb;
     rhy.step = (i + 1) % N;
   }
