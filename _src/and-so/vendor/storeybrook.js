@@ -139,70 +139,163 @@
   };
   d.addEventListener('keydown', function (e) { nav.key(e); });
 
-  /* ---------- read aloud: English, in an accent that is not the listener's ---------- */
+  /* ---------- read aloud: quality first, then a non-local English accent ---------- */
   var SY = w.speechSynthesis || null;
   var NOVELTY = /albert|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|zarvox|bahh|deranged|hysterical|pipe organ|princess/i;
-  /* clearest foreign English first. The listener's own region is skipped. */
-  var ACCENT_POOL = [
-    { region: 'IE', re: /en-ie|\bmoira\b|\borla\b/i },
-    { region: 'ZA', re: /en-za|\btessa\b/i },
-    { region: 'IN', re: /en-in|\brishi\b|\bveena\b/i },
-    { region: 'AU', re: /en-au|\bkaren\b/i },
-    { region: 'GB', re: /en-gb|\bdaniel\b|\bserena\b/i },
-    { region: 'NZ', re: /en-nz/i },
-    { region: 'SC', re: /fiona|en-gb-sct|en-scot|scotland/i },
-    { region: 'US', re: /en-us|\bsamantha\b|\bava\b|\ballison\b|\baria\b|\bjenny\b|\bguy\b|\bzira\b|\bdavid\b/i }
-  ];
-  function homeRegion() {
-    var lang = String((navigator.languages && navigator.languages[0]) || navigator.language || '').replace(/_/g, '-').toLowerCase();
+  var ACCENT_ORDER = ['IE', 'ZA', 'IN', 'AU', 'GB', 'NZ', 'SC'];
+  function readUA(ua) {
+    ua = String(ua || (navigator.userAgent || ''));
+    var edge = /Edg\//.test(ua), opera = /OPR\//.test(ua), firefox = /Firefox\//.test(ua);
+    var chrome = /Chrome\//.test(ua) && !edge && !opera;
+    var ios = /iPhone|iPad|iPod/.test(ua);
+    var safari = /Safari\//.test(ua) && !chrome && !edge && !firefox && !opera;
+    var android = /Android/.test(ua);
+    var mac = /Macintosh|Mac OS X/.test(ua) && !ios;
+    var windows = /Windows/.test(ua);
+    return {
+      ua: ua,
+      browser: edge ? 'edge' : chrome ? 'chrome' : safari ? 'safari' : firefox ? 'firefox' : 'other',
+      os: ios ? 'ios' : android ? 'android' : windows ? 'windows' : mac ? 'macos' : 'other'
+    };
+  }
+  function listenerLocale(opts) {
+    if (opts && opts.lang) return String(opts.lang);
+    var nav = '';
+    try { nav = String((navigator.languages && navigator.languages[0]) || navigator.language || '').trim(); } catch (e) { /* no navigator */ }
+    var htmlLang = '';
+    try { htmlLang = String(d.documentElement.getAttribute('lang') || '').trim(); } catch (e2) { /* no document */ }
+    return nav || htmlLang || 'en';
+  }
+  function homeRegion(lang) {
+    lang = String(lang || listenerLocale()).replace(/_/g, '-').toLowerCase();
     if (/scotland|scot/.test(lang)) return 'SC';
     var bits = lang.split('-');
     return (bits[1] || '').toUpperCase();
   }
   function voiceRegion(v) {
-    var blob = ((v && v.lang) || '') + ' ' + ((v && v.name) || '');
-    if (/fiona|scotland|en-scot|en-gb-sct/i.test(blob)) return 'SC';
-    for (var i = 0; i < ACCENT_POOL.length; i++) {
-      if (ACCENT_POOL[i].region === 'SC') continue;
-      if (ACCENT_POOL[i].re.test(blob)) return ACCENT_POOL[i].region;
-    }
-    var m = /^en-([a-z]{2})/i.exec((v && v.lang) || '');
-    return m ? m[1].toUpperCase() : '';
+    var blob = ((v && v.lang) || '') + ' ' + ((v && v.name) || '') + ' ' + ((v && v.voiceURI) || '');
+    if (/fiona|scotland|en-scot|en-gb-sct|en-scotland/i.test(blob)) return 'SC';
+    var m = /en-([a-z]{2})/i.exec((v && v.lang) || '');
+    if (m) return m[1].toUpperCase();
+    if (/\bmoira\b|\borla\b/i.test(blob)) return 'IE';
+    if (/\btessa\b/i.test(blob)) return 'ZA';
+    if (/\brishi\b|\bveena\b/i.test(blob)) return 'IN';
+    if (/\bkaren\b/i.test(blob)) return 'AU';
+    if (/\bdaniel\b|\bserena\b/i.test(blob)) return 'GB';
+    if (/\bsamantha\b|\bava\b|\ballison\b|\baria\b|\bjenny\b|\bguy\b|\bzira\b|\bdavid\b/i.test(blob)) return 'US';
+    return '';
   }
-  function voiceQuality(v) {
-    var n = ((v && v.name) || '') + ' ' + ((v && v.voiceURI) || '');
-    var s = 0;
-    if (/premium/i.test(n)) s += 40;
-    if (/enhanced/i.test(n)) s += 28;
-    if (/natural/i.test(n)) s += 24;
-    if (/online/i.test(n)) s += 6;
-    return s;
+  function voiceTier(v, platform) {
+    var blob = ((v && v.name) || '') + ' ' + ((v && v.voiceURI) || '');
+    var neural = /neural|\bnatural\b|\bonline\b/i.test(blob) || /google uk english/i.test(blob);
+    if (!neural && platform && platform.os === 'android' && /google/i.test(blob)) neural = true;
+    if (neural) return { tier: 4, tierName: 'neural' };
+    if (/premium|enhanced/i.test(blob)) return { tier: 3, tierName: 'premium' };
+    if (/siri/i.test(blob)) return { tier: 2, tierName: 'siri' };
+    return { tier: 1, tierName: 'compact' };
   }
-  function englishVoice(v) { return !!(v && /^en/i.test(v.lang || '') && !NOVELTY.test(v.name || '')); }
+  function accentRank(region, home) {
+    if (region && home && region === home) return 80;
+    var i = ACCENT_ORDER.indexOf(region);
+    if (i >= 0) return i;
+    return 40;
+  }
+  function describeVoice(v, opts) {
+    opts = opts || {};
+    var platform = readUA(opts.ua);
+    var home = homeRegion(opts.lang);
+    var name = (v && v.name) || '';
+    var lang = (v && v.lang) || '';
+    var voiceURI = (v && v.voiceURI) || '';
+    var novelty = NOVELTY.test(name);
+    var moira = /\bmoira\b/i.test(name) || /\bmoira\b/i.test(voiceURI);
+    var english = /^en/i.test(lang) && !novelty && !moira;
+    var tier = voiceTier(v, platform);
+    var region = voiceRegion(v);
+    var score = english ? tier.tier * 1000 - accentRank(region, home) : 0;
+    var tierName = moira ? 'excluded' : novelty ? 'novelty' : (english ? tier.tierName : 'other');
+    return { voice: v, name: name, lang: lang, voiceURI: voiceURI, tier: english ? tier.tier : 0, tierName: tierName, region: region, score: score, ok: english, home: home, platform: platform };
+  }
+  function inspectVoices(list, opts) {
+    var src = list || (SY ? (SY.getVoices() || []) : []);
+    return src.map(function (v) { return describeVoice(v, opts); }).sort(function (a, b) { return b.score - a.score || a.name.localeCompare(b.name); });
+  }
+  function voiceTip(platform) {
+    platform = platform || readUA();
+    if (platform.os === 'macos') return "System Settings > Accessibility > Spoken Content > System Voice > Manage Voices, download e.g. 'Serena (Premium)'.";
+    if (platform.os === 'ios') return "Settings > Accessibility > Spoken Content > Voices, and download a Premium or Enhanced voice such as Serena.";
+    if (platform.os === 'windows' || platform.browser === 'edge') return "Settings > Time & language > Speech, and download a Microsoft Natural voice such as Aria or Sonia.";
+    if (platform.os === 'android') return "Settings > System > Languages > Text-to-speech, and install a Google voice.";
+    if (platform.browser === 'chrome') return "Install a higher quality English voice, such as Google UK English, from the browser or system speech settings.";
+    return "Install a Natural, Premium, or Enhanced English voice in the system speech settings.";
+  }
   var read = {
-    supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _timer: 0, _boundary: false,
+    supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _timer: 0, _keep: 0, _hold: false, _boundary: false,
     homeRegion: homeRegion,
-    voices: function () {
-      if (!read.supported) return [];
-      var v = (SY.getVoices() || []).filter(englishVoice);
-      var region = homeRegion();
-      var pool = ACCENT_POOL.filter(function (a) { return a.region !== region; });
-      function rank(x) {
-        var r = voiceRegion(x), idx = -1, i;
-        for (i = 0; i < pool.length; i++) if (pool[i].region === r) { idx = i; break; }
-        if (idx < 0 && r && r !== region) idx = pool.length + 1;
-        if (idx < 0) idx = 80;
-        return idx * 100 - voiceQuality(x);
+    readUA: readUA,
+    describe: describeVoice,
+    inspect: inspectVoices,
+    tip: voiceTip,
+    tier: function (v) { var row = describeVoice(v); return row.tierName; },
+    compactOnly: function (list, opts) {
+      var rows = inspectVoices(list, opts).filter(function (r) { return r.ok; });
+      return !!rows.length && rows.every(function (r) { return r.tierName === 'compact'; });
+    },
+    choose: function (list, opts) {
+      var rows = inspectVoices(list, opts);
+      var english = rows.filter(function (r) { return r.ok; });
+      var high = english.filter(function (r) { return r.tier > 1; });
+      if (high.length) return high[0];
+      if (english.length) return english[0];
+      var device = rows.filter(function (r) {
+        if (r.tierName === 'excluded' || r.tierName === 'novelty') return false;
+        var blob = r.name + ' ' + r.voiceURI;
+        if (!/google|microsoft|\bapple\b/i.test(blob)) return false;
+        if (r.voice && r.voice.localService === false) return false;
+        return true;
+      });
+      if (device.length) return device[0];
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].voice && rows[i].voice.default && rows[i].tierName !== 'excluded' && rows[i].tierName !== 'novelty') return rows[i];
       }
-      return v.slice().sort(function (a, b) { return rank(a) - rank(b) || a.name.localeCompare(b.name); });
+      return null;
+    },
+    whenReady: function (cb) {
+      if (!SY) { cb([]); return; }
+      var done = false;
+      function finish(force) {
+        var v = [];
+        try { v = SY.getVoices() || []; } catch (e) { v = []; }
+        if (!force && !v.length) return;
+        if (done) return;
+        done = true;
+        cleanup();
+        cb(v);
+      }
+      function cleanup() {
+        clearTimeout(timer); clearInterval(poll);
+        if (SY.removeEventListener) SY.removeEventListener('voiceschanged', onChange);
+      }
+      function onChange() { finish(false); }
+      if (SY.addEventListener) SY.addEventListener('voiceschanged', onChange);
+      else SY.onvoiceschanged = onChange;
+      var poll = setInterval(function () { try { SY.getVoices(); } catch (e) { /* not yet */ } finish(false); }, 200);
+      var timer = setTimeout(function () { finish(true); }, 1500);
+      try { SY.getVoices(); } catch (e2) { /* voices arrive later */ }
+      finish(false);
+    },
+    voices: function () {
+      if (!read.supported && !(SY && SY.getVoices)) return [];
+      return inspectVoices().filter(function (r) { return r.ok; }).map(function (r) { return r.voice; });
     },
     pick: function (name) {
-      var v = read.voices(); if (!v.length) return null;
-      function byName(n) { if (!n) return null; for (var i = 0; i < v.length; i++) if (v[i].name === n) return v[i]; return null; }
+      var rows = inspectVoices();
+      function byName(n) { if (!n) return null; for (var i = 0; i < rows.length; i++) if (rows[i].ok && rows[i].name === n) return rows[i].voice; return null; }
       if (name) { var named = byName(name); if (named) return named; }
       var saved = get('sb:voice', null);
       var s = byName(saved); if (s) return s;
-      return v[0];
+      var chosen = read.choose();
+      return chosen ? chosen.voice : null;
     },
     isIrish: function (v) { return voiceRegion(v) === 'IE'; },
     prepare: function (root) {
@@ -239,23 +332,43 @@
     },
     _progress: function (p) { $$('.sb-reader__meter i').forEach(function (x) { x.style.setProperty('--p', p + '%'); }); },
     speak: function (target, opts) {
-      opts = opts || {}; if (!read.supported) { emit('read', { state: 'unsupported' }); return false; }
+      opts = opts || {};
+      var raw = typeof target === 'string' ? String(target) : '';
+      if (!read.supported) {
+        emit('read', { state: 'unsupported' });
+        if (w.andsoVoiceCaption) w.andsoVoiceCaption(raw || 'This browser has no read-aloud voice. The words stay on the page.');
+        return false;
+      }
+      if (read.muted && read.muted()) {
+        read.stop(true);
+        if (w.andsoVoiceCaption) w.andsoVoiceCaption(raw || (target && target.innerText) || '');
+        return false;
+      }
       read.stop(true);
-      var el2 = typeof target === 'string' ? null : target, prep = el2 ? read.prepare(el2) : { words: [], text: String(target) };
+      var el2 = typeof target === 'string' ? null : target, prep = el2 ? read.prepare(el2) : { words: [], text: raw };
       read._el = el2; read._words = prep.words; read._chunks = read._chunk(prep.text); read._i = 0; read._boundary = false;
       read.voice = read.pick(opts.voice); read.rate = opts.rate || get('sb:rate', read.rate); read.pitch = opts.pitch || read.pitch;
+      if (!read.voice) {
+        if (w.andsoVoiceCaption) w.andsoVoiceCaption(prep.text || 'No voice on this device. The words stay on the page.');
+        emit('read', { state: 'unsupported' });
+        return false;
+      }
+      read._hold = false;
       read.state = 'speaking'; emit('read', { state: 'speaking', progress: 0, voice: read.voice && read.voice.name });
       read._next(); read._sync(); return true;
     },
     _next: function () {
       if (read._i >= read._chunks.length) { read._done(); return; }
       var c = read._chunks[read._i], u = new w.SpeechSynthesisUtterance(c.text);
-      if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang; } else u.lang = 'en';
+      var reduce = false;
+      try { reduce = !!(w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { reduce = false; }
+      if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang || listenerLocale(); } else u.lang = listenerLocale();
       u.rate = read.rate; u.pitch = read.pitch;
-      u.onboundary = function (e) { if (e.name && e.name !== 'word') return; read._boundary = true; read._mark(c.start + (e.charIndex || 0)); };
+      u.onboundary = function (e) { if (reduce || (e.name && e.name !== 'word')) return; read._boundary = true; read._mark(c.start + (e.charIndex || 0)); };
       u.onstart = function () {
-        clearInterval(read._timer);
-        if (!read._words.length) return;
+        clearInterval(read._timer); clearInterval(read._keep);
+        read._keep = setInterval(function () { if (read.state === 'speaking') { try { SY.resume(); } catch (err) { /* chrome queue */ } } }, 10000);
+        if (reduce || !read._words.length) return;
         var wps = 2.6 * read.rate, t0 = Date.now(), first = read._words.findIndex(function (x) { return x.start >= c.start; });
         read._timer = setInterval(function () {
           if (read._boundary || read.state !== 'speaking') return;
@@ -263,15 +376,20 @@
           if (wd && wd.start < c.start + c.text.length) read._mark(wd.start);
         }, 120);
       };
-      u.onend = function () { clearInterval(read._timer); if (read.state === 'idle') return; read._i++; read._next(); };
-      u.onerror = function () { clearInterval(read._timer); if (read.state !== 'idle') { read._i++; read._next(); } };
-      read._q = u; SY.speak(u);
+      u.onend = function () { if (read._hold) return; clearInterval(read._timer); if (read.state !== 'speaking') return; read._i++; read._next(); };
+      u.onerror = function () { if (read._hold) return; clearInterval(read._timer); if (read.state === 'speaking') { read._i++; read._next(); } };
+      read._q = u; read._hold = false;
+      try { SY.cancel(); } catch (e2) { /* already idle */ }
+      setTimeout(function () {
+        if (read.state !== 'speaking' || read._q !== u) return;
+        try { SY.resume(); SY.speak(u); } catch (e3) { if (!read._hold) { read._i++; read._next(); } }
+      }, 40);
     },
-    _done: function () { clearInterval(read._timer); read.state = 'idle'; $$('.sb-word.is-reading').forEach(function (x) { x.classList.remove('is-reading'); }); read._progress(100); emit('read', { state: 'done', progress: 100 }); read._sync(); },
-    pause: function () { if (read.state === 'speaking') { SY.pause(); read.state = 'paused'; emit('read', { state: 'paused' }); read._sync(); } },
-    resume: function () { if (read.state === 'paused') { SY.resume(); read.state = 'speaking'; emit('read', { state: 'speaking' }); read._sync(); } },
+    _done: function () { clearInterval(read._timer); clearInterval(read._keep); read.state = 'idle'; $$('.sb-word.is-reading').forEach(function (x) { x.classList.remove('is-reading'); }); read._progress(100); emit('read', { state: 'done', progress: 100 }); read._sync(); },
+    pause: function () { if (read.state === 'speaking') { read._hold = true; clearInterval(read._timer); clearInterval(read._keep); try { SY.cancel(); } catch (e) { /* engine busy */ } read.state = 'paused'; emit('read', { state: 'paused' }); read._sync(); } },
+    resume: function () { if (read.state === 'paused') { read._hold = false; read.state = 'speaking'; emit('read', { state: 'speaking' }); read._next(); read._sync(); } },
     toggle: function (target) { if (read.state === 'speaking') read.pause(); else if (read.state === 'paused') read.resume(); else read.speak(target); },
-    stop: function (quiet) { if (!read.supported) return; clearInterval(read._timer); read.state = 'idle'; try { SY.cancel(); } catch (e) { /* engine busy */ } $$('.sb-word.is-reading').forEach(function (x) { x.classList.remove('is-reading'); }); if (!quiet) { emit('read', { state: 'stopped' }); read._sync(); } },
+    stop: function (quiet) { if (!read.supported) return; read._hold = true; clearInterval(read._timer); clearInterval(read._keep); read.state = 'idle'; try { SY.cancel(); } catch (e) { /* engine busy */ } $$('.sb-word.is-reading').forEach(function (x) { x.classList.remove('is-reading'); }); if (!quiet) { emit('read', { state: 'stopped' }); read._sync(); } },
     _sync: function () {
       $$('.sb-reader').forEach(function (bar) {
         var b = $('.sb-reader__play', bar); if (b) { b.setAttribute('aria-pressed', String(read.state === 'speaking')); b.setAttribute('aria-label', read.state === 'speaking' ? 'Pause reading' : read.state === 'paused' ? 'Keep reading' : 'Read it to me'); b.innerHTML = icon(read.state === 'speaking' ? 'pause' : 'play', 26); }
@@ -284,8 +402,8 @@
       var play = $('.sb-reader__play', bar), sel = $('select[data-sb-voice]', bar), rate = $('select[data-sb-rate]', bar), vname = $('.sb-reader__voice', bar);
       function fill() {
         var vs = read.voices(), cur = read.pick(); if (!sel) { if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || ''); return; }
-        sel.innerHTML = vs.map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name) + '</option>'; }).join('');
-        if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || '');
+        sel.innerHTML = vs.map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name) + ' · ' + read.tier(v) + '</option>'; }).join('');
+        if (vname && cur) vname.textContent = cur.name + ' · ' + read.tier(cur);
       }
       fill(); if (SY.addEventListener) SY.addEventListener('voiceschanged', fill); else SY.onvoiceschanged = fill;
       if (play) play.addEventListener('click', function () { read.toggle(tgt || d.querySelector('[data-sb-story]') || d.body); });

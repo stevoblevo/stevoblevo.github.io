@@ -11,24 +11,44 @@ function elSave(k, v) { try { if (v) localStorage.setItem(k, v); else localStora
 function voiceNote(v) {
   const el = $('sVoiceNote'); if (!el) return;
   const R = window.Storeybrook && Storeybrook.read;
-  const home = R && R.homeRegion ? R.homeRegion() : '';
   if (elOn() && elKey() && elId()) { el.textContent = 'ElevenLabs is on. if it fails, the system voice speaks.'; return; }
   if (!v) { el.textContent = 'no English voice yet. some browsers load them a moment after the page.'; return; }
-  const away = home && v.lang && v.lang.toUpperCase().indexOf(home) < 0;
-  el.textContent = `${v.name} (${v.lang})${home ? `, outside ${home}` : ''}${away ? '' : ', the only English voice here'}.`;
+  if (R && R.compactOnly && R.compactOnly()) { el.textContent = R.tip(); return; }
+  const tier = R && R.tier ? R.tier(v) : '';
+  el.textContent = `${v.name} (${v.lang})${tier ? ' · ' + tier : ''}.`;
 }
 function fillVoiceSelect() {
   const sel = $('sVoice'); if (!sel) return;
   const R = window.Storeybrook && Storeybrook.read;
   if (!R || !R.supported) { sel.innerHTML = '<option value="">this browser has no voices</option>'; voiceNote(null); return; }
   try { speechSynthesis.getVoices(); } catch (e) { /* late */ }
-  const vs = R.voices(), cur = R.pick();
+  const rows = (R.inspect ? R.inspect() : []).filter(r => r.ok);
+  const cur = R.pick();
   const saved = (() => { try { const raw = localStorage.getItem('sb:voice'); return raw ? JSON.parse(raw) : ''; } catch (e) { return ''; } })();
-  const opts = ['<option value="">automatic</option>'].concat(vs.map(v => `<option value="${String(v.name).replace(/"/g, '&quot;')}"${saved === v.name ? ' selected' : ''}>${v.name} · ${v.lang}</option>`));
+  const opts = ['<option value="">automatic</option>'].concat(rows.map(r => `<option value="${String(r.name).replace(/"/g, '&quot;')}"${saved === r.name ? ' selected' : ''}>${r.name} · ${r.lang} · ${r.tierName}</option>`));
   sel.innerHTML = opts.join('');
   if (!saved) sel.value = '';
   voiceNote(cur);
-  voiceFilled = vs.length > 0;
+  voiceFilled = rows.length > 0;
+  voiceDebug();
+}
+function voiceDebug() {
+  if (!/[?&]voices=1(?:&|$)/.test(location.search)) return;
+  const R = window.Storeybrook && Storeybrook.read;
+  if (!R || !R.inspect) return;
+  let box = $('voiceDebug');
+  if (!box) { box = document.createElement('pre'); box.id = 'voiceDebug'; document.body.appendChild(box); }
+  const plat = R.readUA();
+  const rows = R.inspect();
+  const chosen = R.choose();
+  const lines = [
+    `ua: ${plat.browser} on ${plat.os}`,
+    plat.ua,
+    `locale: ${R.homeRegion()} (navigator, then html lang, then en)`,
+    `chosen: ${chosen ? chosen.name + ' · ' + chosen.tierName + ' · ' + chosen.score : 'none'}`
+  ];
+  rows.forEach(r => lines.push(`${r.score}\t${r.tierName}\t${r.lang || '-'}\t${r.name}`));
+  box.textContent = lines.join('\n');
 }
 function stopEleven() {
   if (elAudio) { try { elAudio.pause(); } catch (e) { /* already stopped */ } elAudio = null; }
@@ -66,16 +86,34 @@ function hookEleven() {
   const stop = R.stop.bind(R);
   R.stop = function (quiet) { stopEleven(); return stop(quiet); };
 }
+function voiceMuted() {
+  try { return localStorage.getItem('andso:voice:mute') === '1' || (typeof muted !== 'undefined' && muted); } catch (e) { return typeof muted !== 'undefined' && muted; }
+}
+function voiceCaption(text) {
+  const line = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 240);
+  if (typeof caption === 'function') caption(line || 'The words stay on the page.', 4800);
+}
+window.andsoVoiceCaption = voiceCaption;
 function voiceTest() {
   const R = window.Storeybrook && Storeybrook.read;
-  if (!R || !R.supported) { caption("this browser can't read aloud.", 2200); return; }
   const line = 'Here is a voice from somewhere else.';
+  if (voiceMuted()) { voiceCaption(line); return; }
+  if (!R || !R.supported) { voiceCaption("This browser can't read aloud. The words stay on the page."); return; }
   if (elOn() && elKey() && elId()) {
     speakEleven(line).catch(() => R.speak(line, { rate: 0.96, pitch: 1.02 }));
     return;
   }
   R.speak(line, { rate: 0.96, pitch: 1.02 });
   voiceNote(R.pick());
+}
+function voiceUnlock() {
+  const R = window.Storeybrook && Storeybrook.read;
+  const plat = R && R.readUA && R.readUA();
+  if (!plat || plat.os !== 'ios' || voiceUnlock.done) return;
+  const SY = window.speechSynthesis;
+  if (!SY) return;
+  voiceUnlock.done = true;
+  try { SY.resume(); const u = new SpeechSynthesisUtterance('\u200b'); u.volume = 0; SY.speak(u); } catch (e) { /* already unlocked */ }
 }
 function voiceBoot() {
   hookEleven();
@@ -109,14 +147,27 @@ function voiceBoot() {
     id.value = elId();
     id.addEventListener('change', () => { elSave(EL_ID, id.value.trim()); fillVoiceSelect(); });
   }
+  const mute = $('sVoiceMute');
+  if (mute && !mute.dataset.bound) {
+    mute.dataset.bound = '1';
+    try { mute.checked = localStorage.getItem('andso:voice:mute') === '1'; } catch (e) { /* storage blocked */ }
+    mute.addEventListener('change', () => {
+      elSave('andso:voice:mute', mute.checked ? '1' : '');
+      const R = window.Storeybrook && Storeybrook.read;
+      if (mute.checked && R) R.stop();
+    });
+  }
+  const R = window.Storeybrook && Storeybrook.read;
+  if (R) R.muted = voiceMuted;
   const SY = window.speechSynthesis;
-  if (SY) {
+  if (SY && R && R.whenReady) R.whenReady(() => fillVoiceSelect());
+  else if (SY) {
     const again = () => fillVoiceSelect();
     if (SY.addEventListener) SY.addEventListener('voiceschanged', again);
     else SY.onvoiceschanged = again;
-    // Chrome, Safari and Firefox often hand the list over after the first paint
-    setTimeout(again, 250); setTimeout(again, 1200);
+    setTimeout(again, 1500);
   }
+  window.addEventListener('pointerdown', voiceUnlock, { capture: true });
   if (typeof devApply === 'function') devApply();
 }
 voiceBoot();
