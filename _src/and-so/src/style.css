@@ -150,6 +150,11 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: none; b
 .sel { width: 100%; margin-top: 8px }
 .txt { flex: 1; min-width: 0 }
 body.dev-touch .pill, body.dev-touch .txt, body.dev-touch select.txt { min-height: 42px }
+#voiceDebug { position: fixed; z-index: 80; left: 8px; bottom: 8px; max-width: min(560px, calc(100vw - 16px)); max-height: 42vh; overflow: auto; margin: 0; padding: 8px 10px; white-space: pre-wrap; font: 11px/1.35 ui-monospace, monospace; background: rgba(255,252,246,.96); color: #1c140e; border: 1px solid rgba(28,20,14,.35); border-radius: 8px }
+.voice-row { align-items: center }
+.voice-row .txt { flex: 1; min-width: 0 }
+body.dev-touch #sVoice, body.dev-touch #sVoiceTest { min-height: 44px }
+@media (prefers-reduced-motion: reduce) { #voiceDebug, #sVoiceTest { transition: none } }
 body.dev-reduce #book, body.dev-reduce .jf, body.dev-reduce .jam-phase { animation: none; transition: none }
 .hidden { display: none !important }
 .lock { font-family: var(--f-serif); font-style: italic; font-size: 13px; color: var(--ink-faint); margin-top: 6px }
