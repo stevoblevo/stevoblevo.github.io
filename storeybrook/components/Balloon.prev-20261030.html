@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="daylight" class="sb-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Balloon · Storeybrook</title>
+<meta name="description" content="Speech balloons for characters: a rounded balloon with an inked tail, a thought cloud, and a Comix shout.">
+<meta name="theme-color" content="#f4f6f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components/bundle.css">
+<link rel="stylesheet" href="../site.css">
+<style>.pv{position:relative;padding:24px 32px}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}.stack{display:grid;gap:18px}</style>
+</head>
+<body class="sb-body sb-no-js">
+<header class="site-top"><a class="site-top__mark" href="../index.html"><span data-sb-icon="brook" data-size="22"></span>Storeybrook</a><nav class="site-top__nav" aria-label="Storeybrook"><a class="site-top__link" href="../index.html">Home</a><a class="site-top__link" href="../docs/index.html">Rules</a><a class="site-top__link" aria-current="page" href="../components/index.html">Components</a><a class="site-top__link" href="../index.html#files">Files</a></nav><label class="site-top__look"><span class="sb-visually-hidden">Look</span><span data-sb-icon="look" data-size="20"></span><select data-site-look aria-label="Look"><option value="daylight">Meta Daylight</option><option value="knight">Knight Night</option><option value="inkblot">Ink Blot</option><option value="comix">Comix</option><option value="origami">Origami</option><option value="skein">Skein silk</option></select></label></header>
+<main class="site-comp"><p class="site-crumb"><a class="sb-ink-link" href="index.html">Components</a> · Story</p><section class="site-live" aria-label="Balloon, live"><div class="pv row" style="gap:30px;align-items:flex-start;padding-bottom:40px">
+<p class="sb-balloon" style="margin:0">Is that a nougat in the brook?</p>
+<p class="sb-balloon sb-balloon--right" style="margin:0">It is a stone. Probably.</p>
+<p class="sb-balloon sb-balloon--think" style="margin:0">it is warm from the sun</p>
+<p class="sb-balloon sb-balloon--shout" style="margin:0">NOUGAT!</p>
+</div></section><article class="sb-page site-page"><div class="sb-prose site-prose"><h1 id="balloon">Balloon</h1>
+<p>Speech balloons for characters: a rounded balloon with an inked tail, a thought cloud, and a Comix shout.</p>
+<p><strong>Provide</strong> <code>&lt;p class="sb-balloon"&gt;</code> with what is said. Variants: <code>sb-balloon--right</code> (tail toward the right; set <code>--tail-x</code> for any other place), <code>sb-balloon--think</code> (a cloud with two bubbles, italic, in the story face), <code>sb-balloon--shout</code> (a <code>gamboge</code> burst in Bangers, for sound and surprise).</p>
+<ul>
+<li>Balloons are <code>page</code> with a <code>border-ink</code> line in <code>art-line</code> and Comic Neue bold, up to 22em. Comix thickens the line to 3px and drops the shadow.</li>
+<li>Balloons sit near the speaker, never covering faces or the text of the page.</li>
+</ul>
+<p><strong>Do / Don't</strong>
+- Do keep a balloon to one or two short sentences.
+- Do keep exclamation marks for shouts; a Comix shout may have one.
+- Don't use a balloon for system messages; that is a Toast.</p></div></article></main>
+<footer class="site-foot"><p>Storeybrook 1.1.0. Shipped first in <a class="sb-ink-link" href="../../and-so/">AND SO 7</a> and <a class="sb-ink-link" href="../../gg/">the 99¢ Shelf</a>. Its dark counterpart is Depthfield.</p><p><a class="sb-ink-link" href="../../index.html">stevoblevo.github.io</a> · <a class="sb-ink-link" href="../../saelion-atlas/">Saelion Atlas</a></p></footer>
+<script src="../dist/components/bundle.js"></script>
+<script src="../site.js"></script>
+<script>var S=window.Storeybrook;if(S){S.ensureDefs();S.mountIcons();}</script>
+</body>
+</html>
