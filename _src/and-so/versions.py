@@ -13,7 +13,7 @@ REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
     dict(id="8.1.1", short="AND SO 8.1.1", name="AND SO 8.1.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.1/", latest=True, source="dist",
-         line="8.1.1 voice fix. Quality first (Natural, Premium, Siri, then compact). Moira is not in the pool. ?voices=1 lists the choice."),
+         line="8.1.1 voice fix. The listener's language first, then the OS and browser, with quality inside each step. Inside that language, an accent from another region. Moira is not in the pool. ?voices=1 lists the choice."),
     dict(id="8.1", short="AND SO 8.1", name="AND SO 8.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1/", source="a283e581fcc9be3da84e1d59789cc4e0bfa5dee8",
          line="The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region."),
     dict(id="8", short="AND SO 8", name="AND SO 8 · The Book", date="2026-10-30", path="/and-so/v8/", source="471c3b3ccdcf06902cad03940a4d5c5b96990cf7",

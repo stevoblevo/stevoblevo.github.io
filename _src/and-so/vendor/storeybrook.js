@@ -139,7 +139,7 @@
   };
   d.addEventListener('keydown', function (e) { nav.key(e); });
 
-  /* ---------- read aloud: locale, then the OS and browser, quality inside each step ---------- */
+  /* ---------- read aloud: the listener's language, then the OS and browser, quality inside each step ---------- */
   var SY = w.speechSynthesis || null;
   var NOVELTY = /albert|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|zarvox|bahh|deranged|hysterical|pipe organ|princess/i;
   var ACCENT_ORDER = ['IE', 'ZA', 'IN', 'AU', 'GB', 'NZ', 'SC'];
@@ -203,31 +203,11 @@
     if (i >= 0) return i;
     return 40;
   }
-  function localeChain(opts) {
-    var out = [], seen = {};
-    function add(s) {
-      s = String(s || '').trim();
-      if (!s) return;
-      var key = s.replace(/_/g, '-').toLowerCase();
-      if (seen[key]) return;
-      seen[key] = 1;
-      out.push(key);
-    }
-    if (opts && opts.lang) add(opts.lang);
-    else {
-      try { add((navigator.languages && navigator.languages[0]) || navigator.language); } catch (e) { /* no navigator */ }
-      try { add(d.documentElement.getAttribute('lang')); } catch (e2) { /* no document */ }
-    }
-    add('en');
-    return out;
+  function voiceLangCode(lang) {
+    return String(lang || '').replace(/_/g, '-').toLowerCase().split('-')[0];
   }
-  function langHit(voiceLang, locale) {
-    var vl = String(voiceLang || '').replace(/_/g, '-').toLowerCase();
-    var loc = String(locale || '').replace(/_/g, '-').toLowerCase();
-    if (!vl || !loc) return 0;
-    if (vl === loc) return 2;
-    if (vl.split('-')[0] === loc.split('-')[0]) return 1;
-    return 0;
+  function listenerLang(opts) {
+    return voiceLangCode(listenerLocale(opts)) || 'en';
   }
   function osVoice(row, platform) {
     if (!row || row.tierName === 'excluded' || row.tierName === 'novelty') return false;
@@ -250,26 +230,38 @@
     var voiceURI = (v && v.voiceURI) || '';
     var novelty = NOVELTY.test(name);
     var moira = /\bmoira\b/i.test(name) || /\bmoira\b/i.test(voiceURI);
-    var english = /^en/i.test(lang) && !novelty && !moira;
+    var code = voiceLangCode(lang);
+    var speakable = !moira && !novelty && !!code;
     var tier = voiceTier(v, platform);
     var region = voiceRegion(v);
-    var tierName = moira ? 'excluded' : novelty ? 'novelty' : (english ? tier.tierName : 'other');
-    var row = { voice: v, name: name, lang: lang, voiceURI: voiceURI, tier: english ? tier.tier : 0, tierName: tierName, region: region, ok: english, home: home, platform: platform };
-    var chain = localeChain(opts), step = 3, stepName = 'other', i;
-    if (moira || novelty) { step = 3; stepName = moira ? 'excluded' : 'novelty'; }
-    else {
-      for (i = 0; i < chain.length; i++) if (langHit(lang, chain[i])) { step = 0; stepName = 'locale'; break; }
-      if (step === 3 && osVoice(row, platform)) { step = 1; stepName = 'os'; }
-      else if (step === 3 && v && v.default) { step = 2; stepName = 'default'; }
-    }
+    var tierName = moira ? 'excluded' : novelty ? 'novelty' : (speakable ? tier.tierName : 'other');
+    var row = { voice: v, name: name, lang: lang, voiceURI: voiceURI, tier: speakable ? tier.tier : 0, tierName: tierName, region: region, ok: speakable, home: home, platform: platform };
+    var want = listenerLang(opts);
+    var step = 3, stepName = moira ? 'excluded' : novelty ? 'novelty' : 'other';
+    if (speakable && code === want) { step = 0; stepName = 'locale'; }
+    else if (speakable && opts.enFallback && code === 'en') { step = 0; stepName = 'locale'; }
+    else if (speakable && osVoice(row, platform)) { step = 1; stepName = 'os'; }
+    else if (speakable && v && v.default) { step = 2; stepName = 'default'; }
     row.step = step;
     row.stepName = stepName;
-    row.score = step < 3 ? (3 - step) * 100000 + tier.tier * 1000 - accentRank(region, home) : 0;
+    var penalty = step === 0 ? accentRank(region, home) : 0;
+    row.score = step < 3 ? (3 - step) * 100000 + tier.tier * 1000 - penalty : 0;
     return row;
   }
   function inspectVoices(list, opts) {
     var src = list || (SY ? (SY.getVoices() || []) : []);
-    return src.map(function (v) { return describeVoice(v, opts); }).sort(function (a, b) { return b.score - a.score || a.name.localeCompare(b.name); });
+    opts = opts || {};
+    var want = listenerLang(opts);
+    var rows = src.map(function (v) { return describeVoice(v, opts); });
+    var hasWant = false, i;
+    for (i = 0; i < rows.length; i++) if (rows[i].ok && voiceLangCode(rows[i].lang) === want) { hasWant = true; break; }
+    if (!hasWant && want !== 'en') {
+      var fallback = {};
+      for (var k in opts) fallback[k] = opts[k];
+      fallback.enFallback = true;
+      rows = src.map(function (v) { return describeVoice(v, fallback); });
+    }
+    return rows.sort(function (a, b) { return b.score - a.score || a.name.localeCompare(b.name); });
   }
   function voiceTip(platform) {
     platform = platform || readUA();

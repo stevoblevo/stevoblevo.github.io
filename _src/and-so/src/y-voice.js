@@ -12,7 +12,7 @@ function voiceNote(v) {
   const el = $('sVoiceNote'); if (!el) return;
   const R = window.Storeybrook && Storeybrook.read;
   if (elOn() && elKey() && elId()) { el.textContent = 'ElevenLabs is on. if it fails, the system voice speaks.'; return; }
-  if (!v) { el.textContent = 'no English voice yet. some browsers load them a moment after the page.'; return; }
+  if (!v) { el.textContent = 'no voice yet. some browsers load them a moment after the page.'; return; }
   if (R && R.compactOnly && R.compactOnly()) { el.textContent = R.tip(); return; }
   const tier = R && R.tier ? R.tier(v) : '';
   el.textContent = `${v.name} (${v.lang})${tier ? ' · ' + tier : ''}.`;
@@ -51,7 +51,7 @@ function voiceDebug() {
   const lines = [
     `ua: ${plat.browser} on ${plat.os}`,
     plat.ua,
-    `locale: ${R.homeRegion()} (navigator, then html lang, then en)`,
+    `locale: ${R.homeRegion()} (the listener's language, then English only if that language has no voice)`,
     `chosen: ${chosen ? chosen.name + ' · ' + chosen.tierName + ' · ' + chosen.score : 'none'}`
   ];
   rows.forEach(r => lines.push(`${r.score}\t${r.stepName || ''}\t${r.tierName}\t${r.lang || '-'}\t${r.name}`));

@@ -8,11 +8,11 @@
    "short": "AND SO 8.1.1",
    "name": "AND SO 8.1.1 · The Book, in the jam",
    "date": "2026-10-30",
-   "line": "8.1.1 voice fix. Quality first (Natural, Premium, Siri, then compact). Moira is not in the pool. ?voices=1 lists the choice.",
+   "line": "8.1.1 voice fix. The listener's language first, then the OS and browser, with quality inside each step. Inside that language, an accent from another region. Moira is not in the pool. ?voices=1 lists the choice.",
    "path": "/and-so/v8.1.1/",
    "latest": true,
    "commit": "current build",
-   "sha256": "c075a8825e4a0b9a2b14235dc7769455a84eba32d5084a97cdf740d3c29a0dde"
+   "sha256": "29d6ae6fed3ee6c680fcb49afcc38ef9ce693c21c432d265e71cb5678a795dc1"
   },
   {
    "id": "8.1",
