@@ -12,24 +12,26 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="8.1.1", short="AND SO 8.1.1", name="AND SO 8.1.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.1/", latest=True, source="dist",
-         line="8.1.1 voice fix. The listener's language first, then the OS and browser, with quality inside each step. Inside that language, an accent from another region. Moira is not in the pool. ?voices=1 lists the choice."),
+    dict(id="8.1.2", short="AND SO 8.1.2", name="AND SO 8.1.2 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.2/", latest=True, source="dist",
+         line="8.1.2 full screen."),
+    dict(id="8.1.1", short="AND SO 8.1.1", name="AND SO 8.1.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.1/", source="eca23d0a44601de2a49fd36498972e47b4a5d5d6",
+         line="8.1.1 voice fix. The listener's language first, then the OS and browser, with quality inside each step. Inside that language, an accent from another region. Moira is not in the pool. ?voices=1 lists the choice. Full screen."),
     dict(id="8.1", short="AND SO 8.1", name="AND SO 8.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1/", source="a283e581fcc9be3da84e1d59789cc4e0bfa5dee8",
-         line="The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region."),
-    dict(id="8", short="AND SO 8", name="AND SO 8 · The Book", date="2026-10-30", path="/and-so/v8/", source="471c3b3ccdcf06902cad03940a4d5c5b96990cf7",
-         line="A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her."),
-    dict(id="7", short="AND SO 7", name="AND SO 7 · Everfallen", date="2026-10-27", path="/and-so/v7/", source="c691e5ac2b205ebde26b4f0eb99edbc10f4d0374", corner="bl",
-         line="Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look."),
-    dict(id="6.1", short="AND SO 6.1", name="AND SO 6.1", date="2026-10-24", path="/and-so/v6.1/", source="aa8cbe6", corner="bl",
-         line="Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks."),
-    dict(id="6", short="AND SO 6", name="AND SO 6", date="2026-10-23", path="/and-so/v6/", source="bb58990", corner="bl",
-         line="Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks."),
+         line="The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region. Full screen."),
+    dict(id="8", short="AND SO 8.0.1", name="AND SO 8.0.1 · The Book", date="2026-10-30", path="/and-so/v8/", source="471c3b3ccdcf06902cad03940a4d5c5b96990cf7",
+         line="A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her. 8.0.1 full screen."),
+    dict(id="7", short="AND SO 7.0.1", name="AND SO 7.0.1 · Everfallen", date="2026-10-27", path="/and-so/v7/", source="c691e5ac2b205ebde26b4f0eb99edbc10f4d0374", corner="bl",
+         line="Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look. 7.0.1 full screen."),
+    dict(id="6.1", short="AND SO 6.1.1", name="AND SO 6.1.1", date="2026-10-24", path="/and-so/v6.1/", source="aa8cbe6", corner="bl",
+         line="Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks. 6.1.1 full screen."),
+    dict(id="6", short="AND SO 6.0.1", name="AND SO 6.0.1", date="2026-10-23", path="/and-so/v6/", source="bb58990", corner="bl",
+         line="Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks. 6.0.1 full screen."),
     dict(id="2026-10-22", short="AND SO, 22 Oct", name="AND SO, 22 October", date="2026-10-22", path="/and-so/2026-10-22/", source="60ed2e8", corner="bl",
-         line="Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks."),
+         line="Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks. Full screen."),
     dict(id="2026-10-12", short="AND SO, 12 Oct", name="AND SO, 12 October", date="2026-10-12", path="/and-so/2026-10-12/", source="cf63f5c", corner="bl",
-         line="The first AND SO: a microtonal instrument you can hum to."),
+         line="The first AND SO: a microtonal instrument you can hum to. Full screen."),
     dict(id="gamut-43", short="Gamut Field Guide", name="Gamut Field Guide", date="2026-10-22", path="/and-so/gamut-43/", source="06690c7:and-so/gamut-43/index.html", edition=True, corner="bl",
-         line="The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings."),
+         line="The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings. Full screen."),
 ]
 
 
@@ -106,7 +108,7 @@ a.ver:hover, a.ver:focus-visible {{ transform: translateY(-2px); }}
 <h1 class="display-l">Every AND SO</h1>
 <p class="sb-lede">A short changelog, newest first. Each line opens that version, and the one before stays where it was. They keep separate saves.</p>
 <ol>{items}</ol>
-<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1.1</a>
+<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1.2</a>
 </main>
 <script src="/storeybrook/dist/components/bundle.js"></script>
 <script>if (window.Storeybrook) Storeybrook.init();</script>
