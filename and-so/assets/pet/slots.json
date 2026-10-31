@@ -2,6 +2,10 @@
   "mag": { "src": "assets/pet/mag.png", "ready": false },
   "bunny": { "src": "assets/pet/bunny.png", "ready": false },
   "bunnyVignette": { "src": "assets/art/pet-bunny.webp", "ready": false, "vignette": true },
+  "chip": { "src": "assets/pet/chip.webp", "ready": false, "keep": "3bc23121" },
+  "cuppa": { "src": "assets/pet/cuppa.webp", "ready": false },
+  "nibs": { "src": "assets/pet/nibs.webp", "ready": false },
+  "lil": { "src": "assets/pet/elphantea/lil.webp", "ready": false, "hold": "628fd459" },
   "elphantea": {
     "looks": {
       "glasshouse": { "src": "assets/pet/elphantea/glasshouse.webp", "ready": false },

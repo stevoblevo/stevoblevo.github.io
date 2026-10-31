@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="8.1.3", short="AND SO 8.1.3", name="AND SO 8.1.3 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.3/", latest=True, source="dist",
+    dict(id="8.2.0", short="AND SO 8.2.0", name="AND SO 8.2.0 · Lil Elphan-tea", date="2026-10-31", path="/and-so/v8.2.0/", latest=True, source="dist",
+         line="8.2.0 Lil Elphan-tea's ear training. She hums, you sing or pick it, and Chip, Cuppa, and Nibs come along."),
+    dict(id="8.1.3", short="AND SO 8.1.3", name="AND SO 8.1.3 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.3/", source="273656db47c46a51bcd059d36741b4ac71cb19bf",
          line="8.1.3 fake book: 331 standards, chord changes only except public-domain melodies."),
     dict(id="8.1.2", short="AND SO 8.1.2", name="AND SO 8.1.2 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1.2/", source="bc7db7cb7bd59f695ae29ab738006d6538d99635",
          line="8.1.2 full screen."),
@@ -110,7 +112,7 @@ a.ver:hover, a.ver:focus-visible {{ transform: translateY(-2px); }}
 <h1 class="display-l">Every AND SO</h1>
 <p class="sb-lede">A short changelog, newest first. Each line opens that version, and the one before stays where it was. They keep separate saves.</p>
 <ol>{items}</ol>
-<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1.3</a>
+<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.2.0</a>
 </main>
 <script src="/storeybrook/dist/components/bundle.js"></script>
 <script>if (window.Storeybrook) Storeybrook.init();</script>
