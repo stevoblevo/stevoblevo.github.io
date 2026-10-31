@@ -48,7 +48,8 @@
     "D7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "W. C. Handy"
  },
  {
   "id": "tiger",
@@ -112,7 +113,8 @@
     "Bb"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Nick LaRocca"
  },
  {
   "id": "after-youve-gone",
@@ -223,7 +225,8 @@
     "Bb"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Turner Layton"
  },
  {
   "id": "royal-garden",
@@ -274,7 +277,8 @@
     "F7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Clarence Williams"
  },
  {
   "id": "indiana",
@@ -387,7 +391,8 @@
     "F"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "James F. Hanley"
  },
  {
   "id": "sweet-georgia",
@@ -498,7 +503,8 @@
     "Ab"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Maceo Pinkard"
  },
  {
   "id": "bye-blackbird",
@@ -609,7 +615,8 @@
     "F"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Ray Henderson"
  },
  {
   "id": "man-i-love",
@@ -722,7 +729,8 @@
     "Ebmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "George Gershwin"
  },
  {
   "id": "someone",
@@ -835,7 +843,8 @@
     "Ebmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "George Gershwin"
  },
  {
   "id": "swonderful",
@@ -948,7 +957,8 @@
     "Ebmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "George Gershwin"
  },
  {
   "id": "anything-but-love",
@@ -1060,7 +1070,8 @@
     "G"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Jimmy McHugh"
  },
  {
   "id": "aint-misbehavin",
@@ -1171,7 +1182,8 @@
     "Ebmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Fats Waller"
  },
  {
   "id": "honeysuckle",
@@ -1282,7 +1294,8 @@
     "Fmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Fats Waller"
  },
  {
   "id": "stardust",
@@ -1393,7 +1406,8 @@
     "Dbmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Hoagy Carmichael"
  },
  {
   "id": "basin",
@@ -1456,7 +1470,8 @@
     "Bb"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Spencer Williams"
  },
  {
   "id": "what-is-this",
@@ -1567,7 +1582,8 @@
     "Cm"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Cole Porter"
  },
  {
   "id": "rhythm",
@@ -1575,11 +1591,9 @@
   "form": "32-bar AABA",
   "key": "Bb",
   "tempo": 176,
-  "pd": true,
+  "pd": false,
   "year": 1930,
   "basis": "George and Ira Gershwin, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
-  "lyric": "I got rhythm, I got music",
-  "melody": "0:1 2:1 4:1 5:1 7:1.5 5:0.5 4:1 0:2",
   "bars": [
    [
     "Bbmaj7",
@@ -1697,7 +1711,8 @@
     "Bbmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "George Gershwin"
  },
  {
   "id": "embraceable",
@@ -1705,11 +1720,9 @@
   "form": "32-bar ABAC",
   "key": "G",
   "tempo": 80,
-  "pd": true,
+  "pd": false,
   "year": 1930,
   "basis": "George and Ira Gershwin, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
-  "lyric": "Embrace me, my sweet embraceable you",
-  "melody": "4:1 7:1 9:1 11:1 9:1 7:1 4:2",
   "bars": [
    [
     "Gmaj7"
@@ -1808,7 +1821,8 @@
     "Gmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "George Gershwin"
  },
  {
   "id": "body",
@@ -1816,11 +1830,9 @@
   "form": "32-bar AABA",
   "key": "Db",
   "tempo": 70,
-  "pd": true,
+  "pd": false,
   "year": 1930,
   "basis": "Heyman, Sour, Eyton, and Green, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
-  "lyric": "My heart is sad and lonely",
-  "melody": "9:1 8:1 5:1 4:1 2:1 0:1 -2:2",
   "bars": [
    [
     "Dbmaj7"
@@ -1919,7 +1931,8 @@
     "Dbmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Johnny Green"
  },
  {
   "id": "georgia",
@@ -1927,11 +1940,9 @@
   "form": "32-bar AABA",
   "key": "F",
   "tempo": 66,
-  "pd": true,
+  "pd": false,
   "year": 1930,
   "basis": "Hoagy Carmichael and Stuart Gorrell, 1930. Public domain in the United States. Our chart, not a published fake-book page.",
-  "lyric": "Georgia, Georgia, the whole day through",
-  "melody": "9:1.5 7:0.5 5:1 4:1 2:1 0:2",
   "bars": [
    [
     "Fmaj7"
@@ -2030,7 +2041,8 @@
     "Fmaj7"
    ]
   ],
-  "meter": 4
+  "meter": 4,
+  "composer": "Hoagy Carmichael"
  },
  {
   "id": "summertime",
@@ -2090,7 +2102,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "George Gershwin",
+  "year": 1935
  },
  {
   "id": "all-the-things",
@@ -2213,7 +2227,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Jerome Kern",
+  "year": 1939
  },
  {
   "id": "a-train",
@@ -2321,7 +2337,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Billy Strayhorn",
+  "year": 1941
  },
  {
   "id": "misty",
@@ -2432,7 +2450,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Erroll Garner",
+  "year": 1954
  },
  {
   "id": "autumn-leaves",
@@ -2540,7 +2560,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Joseph Kosma",
+  "year": 1946
  },
  {
   "id": "blue-bossa",
@@ -2601,7 +2623,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Kenny Dorham",
+  "year": 1963
  },
  {
   "id": "so-what",
@@ -2709,7 +2733,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Miles Davis",
+  "year": 1959
  },
  {
   "id": "footprints",
@@ -2757,7 +2783,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Wayne Shorter",
+  "year": 1966
  },
  {
   "id": "cantaloupe",
@@ -2817,7 +2845,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Herbie Hancock",
+  "year": 1964
  },
  {
   "id": "maiden",
@@ -2925,7 +2955,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Herbie Hancock",
+  "year": 1965
  },
  {
   "id": "watermelon",
@@ -2985,7 +3017,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Herbie Hancock",
+  "year": 1962
  },
  {
   "id": "blue-monk",
@@ -3033,7 +3067,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Thelonious Monk",
+  "year": 1954
  },
  {
   "id": "satin-doll",
@@ -3159,7 +3195,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Duke Ellington",
+  "year": 1953
  },
  {
   "id": "fly-me",
@@ -3267,7 +3305,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Bart Howard",
+  "year": 1954
  },
  {
   "id": "ipanema",
@@ -3399,7 +3439,9 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "Antonio Carlos Jobim",
+  "year": 1962
  },
  {
   "id": "giant-steps",
@@ -3469,6 +3511,8 @@
    ]
   ],
   "meter": 4,
-  "pd": false
+  "pd": false,
+  "composer": "John Coltrane",
+  "year": 1960
  }
 ]

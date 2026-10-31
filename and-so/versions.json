@@ -4,14 +4,24 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "8.1.3",
+   "short": "AND SO 8.1.3",
+   "name": "AND SO 8.1.3 · The Book, in the jam",
+   "date": "2026-10-30",
+   "line": "8.1.3 fake book: 331 standards, chord changes only except public-domain melodies.",
+   "path": "/and-so/v8.1.3/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "b0527f7ddea24f4fbe17e382ba68925b5c699a2dedd2cf339a3c83bff0aa2fd7"
+  },
+  {
    "id": "8.1.2",
    "short": "AND SO 8.1.2",
    "name": "AND SO 8.1.2 · The Book, in the jam",
    "date": "2026-10-30",
    "line": "8.1.2 full screen.",
    "path": "/and-so/v8.1.2/",
-   "latest": true,
-   "commit": "current build",
+   "commit": "bc7db7cb7bd59f695ae29ab738006d6538d99635",
    "sha256": "1fd9f22223ab6b8ccda8c2fd448968d34175c674fb1fd93978f42937917a27a2"
   },
   {

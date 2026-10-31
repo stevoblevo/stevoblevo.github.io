@@ -256,7 +256,7 @@ function bookMount() {
 function bookSpines() {
   const host = $('bookTune'); if (!host || !BOOK_DATA) return;
   host.innerHTML = '';
-  BOOK_DATA.forEach(t => {
+  BOOK_DATA.slice().sort((a, b) => a.title.localeCompare(b.title)).forEach(t => {
     const o = document.createElement('option');
     o.value = t.id; o.textContent = t.title + (t.pd ? '' : '');
     host.appendChild(o);
