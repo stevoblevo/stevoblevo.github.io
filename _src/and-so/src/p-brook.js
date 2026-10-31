@@ -3,6 +3,7 @@
 // tuning, the view and the mood at once (a scene). "Open everything" is the early-access door: all of it, now.
 const STONES = [
   { id: 'morning', name: 'Morning paper', line: 'Meta Daylight, easy listening, the mandala.', need: 0, go: () => scene({ skin: 'sb-daylight', mode: 'easy', view: 'mandala', mood: 'light' }) },
+  { id: 'listening', name: 'Listening', line: 'Lil Elphan-tea hums a note. Sing it back, or pick it.', need: 0, go: () => { closeBrook(); if (typeof earsOpen === 'function') earsOpen(); } },
   { id: 'jam1', name: 'Jam: one chord', line: 'A seventh chord in 4:5:6:7 and a band that waits for you.', need: 2, go: () => { closeBrook(); jamStart(1); } },
   { id: 'glass', name: 'The glasshouse', line: 'Mint haze, just intonation, sand on a plate.', need: 4, go: () => scene({ skin: 'glasshouse', mode: 'just', view: 'cymatics', mood: 'light' }) },
   { id: 'knight', name: 'Knight Night', line: 'A cobalt paper theatre in thirty-one steps.', need: 6, go: () => scene({ skin: 'sb-knight', mode: 'tet31', view: 'cube', mood: 'light' }) },

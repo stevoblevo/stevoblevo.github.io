@@ -43,6 +43,13 @@ const TOURS = {
     { d: 4.8, cap: 'There\'s always room for one more.', go() { if (typeof mirOpen === 'function' && MIR.wins.length < 2) mirOpen('self', 'tablet'); } },
     { d: 5.0, cap: 'Together, it\'s bigger than any one of us.', go() { document.body.classList.add('ens-glow'); } },
     { d: 4.2, cap: 'And so, we played.', go() { document.body.classList.remove('ens-glow'); if (typeof mirCloseAll === 'function') mirCloseAll(); mirrorTable(false); if (typeof ensSaveTake === 'function') ensSaveTake(); bookShowPets(true); }, hand() { const c = $('ensSave'); if (c) c.hidden = false; } }
+  ],
+  ears: [
+    { d: 3.4, cap: 'Lil Elphan-tea hums a note.', go() { if (typeof bookClose === 'function') bookClose(); earsOpen(); } },
+    { d: 3.6, cap: 'Loo-loo. You can sing it, or pick it.', go() { if (window.andsoEars) window.andsoEars.answer(EARS.hz); } },
+    { d: 3.4, cap: 'We did it! My ears are flapping.', go() { earsMark(); } },
+    { d: 3.6, cap: 'Chip runs ahead. Cuppa keeps the next one warm.', go() { earsRound(); } },
+    { d: 3.2, cap: 'And so, your ears.', go() { earsClose(); } }
   ]
 };
 

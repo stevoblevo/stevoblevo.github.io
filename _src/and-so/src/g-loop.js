@@ -126,7 +126,7 @@ function update(dt) {
   if (bird.alpha > 0.02) { bird.trail.push([bird.x, bird.y]); if (bird.trail.length > 36) bird.trail.shift(); }
   else { bird.trail.length = 0; if (!singing) { bird.x = bird.tx = -100; bird.y = bird.ty = -100; } }
   petTick(dt); pluckFree(); brookTick(dt); jamTick(); guardTick(dt); heardTick();
-  bookTick(); wingTick(dt); ensTick(); dreamTick(); magTick(dt);
+  bookTick(); wingTick(dt); ensTick(); dreamTick(); magTick(dt); if (typeof earsTick === 'function') earsTick(dt);
   if (era && era.endAt) {
     if (!era.cap && t > era.endAt + 1.3) { era.cap = true; caption("1955 isn't ready for that yet. its kids will be.", 5200); discover('x-1955'); }
     if (t > era.endAt + 4.2) { const pv = era.prev, pr = era.prevRhy; era = null; for (const v of voices) { v.target = null; v.locked = false; v.temp = 0.2; } if (pv !== M.key) setMode(pv, true); rhy.on = pr; rhy.nextT = 0; syncUI(); }
@@ -184,12 +184,14 @@ function startVoices() {
 }
 
 // ---------- boot ----------
-var wantPlay = false, wantDream = '';
+var wantPlay = false, wantDream = '', wantEars = false;
 try {
   const q = location.search;
   if (/[?&]play=1/.test(q)) wantPlay = true;
+  if (/[?&]ears=1/.test(q)) wantEars = true;
   if (/[?&]dreamwalk=book/.test(q)) wantDream = 'book';
   else if (/[?&]dreamwalk=tune/.test(q)) wantDream = 'tune';
+  else if (/[?&]dreamwalk=ears/.test(q)) wantDream = 'ears';
   else if (/[?&]dreamwalk=(?:1|main)(?:&|$)/.test(q)) wantDream = 'main';
 } catch (e) {}
 function boot(hotData) {
@@ -209,7 +211,7 @@ function boot(hotData) {
   if (MIR.depth === 0) initCaps(); else capsUI();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
   jarPaint(false); landing(); mirBoot();
-  if ((wantDream || wantPlay) && MIR.depth === 0) setTimeout(() => { if (!entered) $('enter').click(); }, 350);
+  if ((wantDream || wantPlay || wantEars) && MIR.depth === 0) setTimeout(() => { if (!entered) $('enter').click(); }, 350);
   requestAnimationFrame(frame);
 }
 $('enterReel').addEventListener('click', () => { $('enter').click(); setTimeout(reelStart, 1400); });
@@ -230,6 +232,7 @@ $('enter').addEventListener('click', e => {
   setTimeout(() => { if (!draggedOnce) showHint(phone ? 'drag a voice · tap the terrain to add one · drag the scale' : 'drag a voice off its rest · tap the terrain to add one · scroll the scale · tap the sky to ' + (LIGHT() ? 'glide' : 'lean'), 16); }, 1600);
   jlog('entered');
   if (wantDream) { const tour = wantDream; wantDream = ''; setTimeout(() => dreamStart(tour), 700); }
+  else if (wantEars) { wantEars = false; setTimeout(() => { if (typeof earsOpen === 'function') earsOpen(); }, 700); }
   else if (wantPlay) { wantPlay = false; setTimeout(() => bookOpen('st-louis', { play: true }), 800); }
 });
 try {
