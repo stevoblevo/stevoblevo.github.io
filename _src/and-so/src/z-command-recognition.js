@@ -15,11 +15,11 @@ const ANDSO_COMMANDS = (() => {
 
   function createSession({ createRecognition, apply, report, blocked = () => false,
     now = () => performance.now(), later = setTimeout, cancel = clearTimeout }) {
-    let current = null, timer = null, state = 'off', last = '', lastAt = -Infinity;
+    let current = null, timer = null, state = 'off', last = '', lastAt = -Infinity, revision = 0;
     const publish = message => report({ state, message });
     function stop(message = 'Voice commands off.') {
       const r = current;
-      current = null; state = 'off'; cancel(timer); timer = null;
+      current = null; state = 'off'; revision++; cancel(timer); timer = null;
       // Invalidate first: abort may synchronously dispatch end/result in an adapter.
       if (r) { try { r.abort(); } catch (_) { /* browser has already ended */ } }
       publish(message);
@@ -52,8 +52,15 @@ const ANDSO_COMMANDS = (() => {
           if (command === last && now() - lastAt < 1200) continue;
           last = command; lastAt = now();
           if (command === 'listen:off') { stop(); return; }
-          try { publish(apply(command)); }
-          catch (_) { stop('Command unavailable. Use the sound controls.'); return; }
+          const actionRevision = ++revision;
+          try {
+            const outcome = apply(command);
+            if (outcome && typeof outcome.then === 'function') {
+              publish('Muting sound here and current mirrors…');
+              outcome.then(message => { if (current === r && revision === actionRevision) publish(message); })
+                .catch(() => { if (current === r && revision === actionRevision) stop('Command unavailable. Use the sound controls.'); });
+            } else publish(outcome);
+          } catch (_) { stop('Command unavailable. Use the sound controls.'); return; }
         }
       };
       r.onnomatch = () => { if (current === r) publish('No clear command. Use the sound controls.'); };

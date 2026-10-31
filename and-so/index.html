@@ -1279,7 +1279,7 @@ body.booking #hud { opacity: .15 }
       <p id="vcPrivacy">Your browser may send microphone audio to its speech provider; offline use is not guaranteed. AND SO saves no command audio or transcripts.</p>
       <p>Use headphones. Listening lasts up to 45 seconds and never restarts itself. Starting commands switches off singing and overhearing; narration stops commands.</p>
       <p id="vcExamples">English: “hummer on/off”, “rain on/off”, “notes mode”, “drone mode”, “mute all”, “stop listening”. Bare names do nothing.</p>
-      <p>“Mute all” silences sound here and keeps listening. Stop listening closes command input. The usual sound controls always work.</p>
+      <p>“Mute all” silences this page and its current mirrors, and keeps listening. Stop listening closes command input. The usual sound controls always work.</p>
       <div class="btns"><button type="button" class="pill" id="vcStart" aria-describedby="vcPrivacy vcExamples">Start listening</button><button type="button" class="pill" id="vcMute">Mute all here</button></div>
     </div>
   </details><button type="button" id="vcStop" disabled>Stop listening</button></div>
@@ -11885,6 +11885,10 @@ function cycleLook() {
 const MIR = { depth: 0, look: '', wins: [], deep: 0, z: 30, open: false, n: 0, v61: null, seeded: false, wasMuted: null };
 try { const m = /^andso-mirror:(\d)(?::([a-z0-9-]+))?$/.exec(window.name || ''); if (m) { MIR.depth = +m[1]; MIR.look = m[2] || ''; } } catch (e) {}
 const MIR_MAX = 3;
+// Current copies are opaque sandbox origins. The creator records its actual serialized origin in srcdoc.
+const MIR_PARENT_ORIGIN = document.documentElement.getAttribute('data-andso-parent-origin');
+const MIR_MUTES = new Map(), MIR_PARENT_MUTES = new Map();
+let mirMuteSerial = 0;
 const DEVICES = {
   phone: { name: 'phone', w: 390, h: 844, r: 46 },
   fold: { name: 'foldable, open', w: 768, h: 840, r: 26 },
@@ -11903,7 +11907,7 @@ const mirPost = (w, msg) => { try { if (w.frame && w.frame.contentWindow) w.fram
 function mirSrc() {
   const S = SELF_SRC; if (!S) return null;
   const q = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;'), end = '<' + '/script>';
-  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' +
+  return '<!doctype html><html lang="en" data-andso-parent-origin="' + q(window.origin) + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' +
     (S.fonts ? '<link rel="stylesheet" href="' + q(S.fonts) + '">' : '') + '<style id="andso-css">' + S.css + '</style></head><body>' + S.app +
     '<script id="sb-js">' + S.sbj + end + '<script id="andso-js">' + S.js + end + '</body></html>';
 }
@@ -12008,13 +12012,70 @@ function mirSound(w, on) {
   } else if (MIR.wasMuted !== null) { muted = MIR.wasMuted; MIR.wasMuted = null; audio.applyMix(); }
   w.sound = on; mirPost(w, { andso: 'mute', v: !on }); w.el.querySelector('[data-a="snd"]').setAttribute('aria-pressed', String(on)); syncUI();
 }
+// Full-output mute travels only down owned current-version frames; acknowledgements travel up one edge.
+function mirMuteAll() {
+  const targets = MIR.wins.filter(w => w.kind === 'self' && w.frame && w.frame.isConnected);
+  MIR.wasMuted = null; // Closing a previously audible mirror must not restore pre-mute sound.
+  if (!targets.length) return Promise.resolve({ ok: true, count: 0 });
+  const id = String(++mirMuteSerial);
+  return new Promise(resolve => {
+    const request = { waiting: new Set(targets), results: [], timer: null, finish: null };
+    request.finish = () => {
+      clearTimeout(request.timer); MIR_MUTES.delete(id);
+      for (const w of targets) {
+        const busy = [...MIR_MUTES.values()].some(r => r.waiting.has(w));
+        const button = w.el.querySelector('[data-a="snd"]');
+        button.disabled = busy; button.setAttribute('aria-busy', String(busy));
+      }
+      resolve({ ok: request.waiting.size === 0 && request.results.every(r => r.ok),
+        count: request.results.reduce((n, r) => n + (r.ok ? 1 + r.count : 0), 0) });
+    };
+    MIR_MUTES.set(id, request);
+    request.timer = setTimeout(request.finish, 4000);
+    for (const w of targets) {
+      w.sound = false;
+      const button = w.el.querySelector('[data-a="snd"]');
+      button.setAttribute('aria-pressed', 'false'); button.setAttribute('aria-busy', 'true'); button.disabled = true;
+      if (w.ready) mirPost(w, { andso: 'mute-all', id });
+    }
+  });
+}
+function mirMuteClosed(w) {
+  // A removed frame has no remaining outputs; don't wait for a message from its destroyed document.
+  for (const request of MIR_MUTES.values()) if (request.waiting.delete(w)) {
+    request.results.push({ ok: true, count: 0 });
+    if (!request.waiting.size) request.finish();
+  }
+}
+function mirMuteMessage(e, d, w) {
+  if (d.andso !== 'mute-all' && d.andso !== 'muted-all') return false;
+  if (typeof d.id !== 'string' || !/^[1-9][0-9]{0,8}$/.test(d.id)) return true;
+  if (d.andso === 'muted-all') {
+    const request = MIR_MUTES.get(d.id);
+    if (!w || w.kind !== 'self' || !w.frame.isConnected || e.origin !== 'null' || !request || !request.waiting.has(w)) return true;
+    if (typeof d.ok !== 'boolean' || !Number.isInteger(d.count) || d.count < 0 || d.count > 64) return true;
+    request.waiting.delete(w); request.results.push({ ok: d.ok, count: d.count });
+    if (!request.waiting.size) request.finish();
+  } else if (MIR.depth > 0 && MIR_PARENT_ORIGIN !== null && e.source === window.parent && e.origin === MIR_PARENT_ORIGIN) {
+    // Repeated delivery acknowledges the same operation; it never starts another downward broadcast.
+    if (!MIR_PARENT_MUTES.has(d.id)) {
+      MIR_PARENT_MUTES.set(d.id, muteAllHere());
+      if (MIR_PARENT_MUTES.size > 16) MIR_PARENT_MUTES.delete(MIR_PARENT_MUTES.keys().next().value);
+    }
+    MIR_PARENT_MUTES.get(d.id).then(result => {
+      window.parent.postMessage({ andso: 'muted-all', id: d.id, ok: result.ok, count: result.count }, MIR_PARENT_ORIGIN === 'null' ? '*' : MIR_PARENT_ORIGIN);
+    }).catch(() => { /* parent will report an unconfirmed mirror, never success */ });
+  }
+  return true;
+}
+
 function mirClose(w) {
   if (w.sound) mirSound(w, false);
   try { w.frame && w.frame.remove(); } catch (e) {}
-  w.el.remove(); MIR.wins = MIR.wins.filter(x => x !== w); mirDeep();
+  w.el.remove(); mirMuteClosed(w); MIR.wins = MIR.wins.filter(x => x !== w); mirDeep();
   if (!MIR.wins.length && MIR.open) mirrorTable(false);
 }
-function mirCloseAll() { MIR.wins.slice().forEach(w => { if (w.sound) mirSound(w, false); try { w.frame && w.frame.remove(); } catch (e) {} w.el.remove(); }); MIR.wins = []; mirDeep(); }
+function mirCloseAll() { MIR.wins.slice().forEach(w => { if (w.sound) mirSound(w, false); try { w.frame && w.frame.remove(); } catch (e) {} w.el.remove(); mirMuteClosed(w); }); MIR.wins = []; mirDeep(); }
 function mirDeep() {
   MIR.deep = MIR.wins.filter(w => w.kind === 'self' && w.ready).reduce((m, w) => Math.max(m, 1 + w.deep), 0);
   mirUp({ andso: 'deep', v: MIR.deep });
@@ -12025,9 +12086,10 @@ function mirDeep() {
 window.addEventListener('message', e => {
   const d = e.data; if (!d || typeof d !== 'object' || typeof d.andso !== 'string') return;
   const w = MIR.wins.find(x => x.frame && x.frame.contentWindow === e.source);
+  if (mirMuteMessage(e, d, w)) return;
   if (w) {
     if (d.andso === 'ens') { if (typeof ensRecv === 'function') ensRecv(d, e.source); return; }
-    if (d.andso === 'hello') { w.ready = true; mirPost(w, { andso: 'seed', save: snapshot() }); mirPost(w, { andso: 'mute', v: !w.sound }); mirDeep(); discover('x-mirror'); }
+    if (d.andso === 'hello') { w.ready = true; mirPost(w, { andso: 'seed', save: snapshot() }); mirPost(w, { andso: 'mute', v: !w.sound }); for (const [id, request] of MIR_MUTES) if (request.waiting.has(w)) mirPost(w, { andso: 'mute-all', id }); mirDeep(); discover('x-mirror'); }
     else if (d.andso === 'deep') { w.deep = clamp(+d.v || 0, 0, 9); mirDeep(); }
     else if (d.andso === 'found' && typeof d.id === 'string' && CATI.has(d.id)) discover(d.id);
     else if (d.andso === 'nougat') { const r = w.el.getBoundingClientRect(); nougat(clamp(+d.n || 1, 1, 3), r.left + r.width / 2, r.top + 24, 'found inside the mirror'); }
@@ -14484,11 +14546,11 @@ const ANDSO_COMMANDS = (() => {
 
   function createSession({ createRecognition, apply, report, blocked = () => false,
     now = () => performance.now(), later = setTimeout, cancel = clearTimeout }) {
-    let current = null, timer = null, state = 'off', last = '', lastAt = -Infinity;
+    let current = null, timer = null, state = 'off', last = '', lastAt = -Infinity, revision = 0;
     const publish = message => report({ state, message });
     function stop(message = 'Voice commands off.') {
       const r = current;
-      current = null; state = 'off'; cancel(timer); timer = null;
+      current = null; state = 'off'; revision++; cancel(timer); timer = null;
       // Invalidate first: abort may synchronously dispatch end/result in an adapter.
       if (r) { try { r.abort(); } catch (_) { /* browser has already ended */ } }
       publish(message);
@@ -14521,8 +14583,15 @@ const ANDSO_COMMANDS = (() => {
           if (command === last && now() - lastAt < 1200) continue;
           last = command; lastAt = now();
           if (command === 'listen:off') { stop(); return; }
-          try { publish(apply(command)); }
-          catch (_) { stop('Command unavailable. Use the sound controls.'); return; }
+          const actionRevision = ++revision;
+          try {
+            const outcome = apply(command);
+            if (outcome && typeof outcome.then === 'function') {
+              publish('Muting sound here and current mirrors…');
+              outcome.then(message => { if (current === r && revision === actionRevision) publish(message); })
+                .catch(() => { if (current === r && revision === actionRevision) stop('Command unavailable. Use the sound controls.'); });
+            } else publish(outcome);
+          } catch (_) { stop('Command unavailable. Use the sound controls.'); return; }
         }
       };
       r.onnomatch = () => { if (current === r) publish('No clear command. Use the sound controls.'); };
@@ -14561,8 +14630,7 @@ function commandNarrating() {
 function applyVoiceCommand(command) {
   if (!entered) return 'Enter AND SO first.';
   if (command === 'sound:off') {
-    muteAllHere();
-    return 'All sound here muted. Voice commands are still listening.';
+    return muteAllHere().then(result => muteAllMessage(result) + ' Voice commands are still listening.');
   }
   // Take over from a tour just as an ordinary sound control does. Never restart playback/unmute.
   if (REEL.on) reelStop(false);
@@ -14586,14 +14654,38 @@ function applyVoiceCommand(command) {
   }
   return 'No command applied.';
 }
-function muteAllHere() {
+function localOutputsMuted() {
+  const sb = window.Storeybrook, sy = window.speechSynthesis;
+  return muted && (!A.vol || A.vol.gain.value === 0 || (A.ac && A.ac.state === 'suspended')) && capture.replays.size === 0 && !elAudio && !elPending &&
+    !(sy && (sy.speaking || sy.pending)) && (!sb || ((!sb.read || sb.read.state === 'idle') &&
+    !sb.sound.on && (!sb.sound.ctx || sb.sound.ctx.state !== 'running')));
+}
+function muteAllMessage(result) {
+  return result.ok ? `Sound here${result.count ? ' and ' + result.count + ' current mirror' + (result.count === 1 ? '' : 's') : ''} muted.`
+    : 'Mute requested; some sound could not be confirmed stopped. Close any unconfirmed mirrors.';
+}
+async function muteAllHere() {
   // Replay bypasses the music bus; narration and paper sounds have their own outputs.
-  for (const w of MIR.wins) if (w.sound) mirSound(w, false);
+  const mirrors = mirMuteAll();
   muted = true; audio.applyMix(); capture.stopReplay();
-  try { if (window.Storeybrook) { Storeybrook.read.stop(true); Storeybrook.sound.enable(false); if (Storeybrook.sound.ctx) Storeybrook.sound.ctx.suspend(); } } catch (_) {}
+  if (A.ac && A.vol) { A.vol.gain.cancelScheduledValues(A.ac.currentTime); A.vol.gain.setValueAtTime(0, A.ac.currentTime); }
+  let paperStopped = Promise.resolve();
+  try {
+    if (window.Storeybrook) {
+      Storeybrook.read.stop(true); Storeybrook.sound.enable(false);
+      const ctx = Storeybrook.sound.ctx;
+      if (ctx && ctx.state !== 'closed') paperStopped = ctx.suspend();
+    }
+  } catch (_) { /* final output check prevents a false confirmation */ }
   stopEleven();
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (_) {}
   syncUI();
+  // Never confirm the complete tree before descendants acknowledge and local outputs are actually quiet.
+  Promise.resolve(paperStopped).catch(() => {}); // Don't let a stalled engine promise hold the status forever.
+  const tree = await mirrors;
+  // Engines may expose cancellation/gain changes on the next audio task rather than this microtask.
+  for (let i = 0; i < 20 && !localOutputsMuted(); i++) await new Promise(resolve => setTimeout(resolve, 25));
+  return { ok: tree.ok && localOutputsMuted(), count: tree.count };
 }
 function commandBoot() {
   const panel = $('voiceCommands'), start = $('vcStart'), stop = $('vcStop'), badge = $('vcBadge'), status = $('vcStatus');
@@ -14630,7 +14722,11 @@ function commandBoot() {
     if (commandSession.active()) { $('vcHelp').open = false; stop.focus(); }
   });
   stop.addEventListener('click', () => voiceCommandsStop());
-  $('vcMute').addEventListener('click', muteAllHere);
+  $('vcMute').addEventListener('click', () => {
+    const pending = 'Muting sound here and current mirrors…'; status.textContent = pending;
+    muteAllHere().then(result => { if (status.textContent === pending) status.textContent = muteAllMessage(result); })
+      .catch(() => { if (status.textContent === pending) status.textContent = 'Mute could not be confirmed. Use the sound controls or close the mirrors.'; });
+  });
   document.addEventListener('visibilitychange', () => { if (document.hidden) voiceCommandsStop('Voice commands off while this page is hidden.'); });
   window.addEventListener('pagehide', () => voiceCommandsStop());
   window.addEventListener('offline', () => { voiceCommandsStop('Offline. Use the sound controls.'); available(); });

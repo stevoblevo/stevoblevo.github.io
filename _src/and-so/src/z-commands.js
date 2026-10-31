@@ -11,8 +11,7 @@ function commandNarrating() {
 function applyVoiceCommand(command) {
   if (!entered) return 'Enter AND SO first.';
   if (command === 'sound:off') {
-    muteAllHere();
-    return 'All sound here muted. Voice commands are still listening.';
+    return muteAllHere().then(result => muteAllMessage(result) + ' Voice commands are still listening.');
   }
   // Take over from a tour just as an ordinary sound control does. Never restart playback/unmute.
   if (REEL.on) reelStop(false);
@@ -36,14 +35,38 @@ function applyVoiceCommand(command) {
   }
   return 'No command applied.';
 }
-function muteAllHere() {
+function localOutputsMuted() {
+  const sb = window.Storeybrook, sy = window.speechSynthesis;
+  return muted && (!A.vol || A.vol.gain.value === 0 || (A.ac && A.ac.state === 'suspended')) && capture.replays.size === 0 && !elAudio && !elPending &&
+    !(sy && (sy.speaking || sy.pending)) && (!sb || ((!sb.read || sb.read.state === 'idle') &&
+    !sb.sound.on && (!sb.sound.ctx || sb.sound.ctx.state !== 'running')));
+}
+function muteAllMessage(result) {
+  return result.ok ? `Sound here${result.count ? ' and ' + result.count + ' current mirror' + (result.count === 1 ? '' : 's') : ''} muted.`
+    : 'Mute requested; some sound could not be confirmed stopped. Close any unconfirmed mirrors.';
+}
+async function muteAllHere() {
   // Replay bypasses the music bus; narration and paper sounds have their own outputs.
-  for (const w of MIR.wins) if (w.sound) mirSound(w, false);
+  const mirrors = mirMuteAll();
   muted = true; audio.applyMix(); capture.stopReplay();
-  try { if (window.Storeybrook) { Storeybrook.read.stop(true); Storeybrook.sound.enable(false); if (Storeybrook.sound.ctx) Storeybrook.sound.ctx.suspend(); } } catch (_) {}
+  if (A.ac && A.vol) { A.vol.gain.cancelScheduledValues(A.ac.currentTime); A.vol.gain.setValueAtTime(0, A.ac.currentTime); }
+  let paperStopped = Promise.resolve();
+  try {
+    if (window.Storeybrook) {
+      Storeybrook.read.stop(true); Storeybrook.sound.enable(false);
+      const ctx = Storeybrook.sound.ctx;
+      if (ctx && ctx.state !== 'closed') paperStopped = ctx.suspend();
+    }
+  } catch (_) { /* final output check prevents a false confirmation */ }
   stopEleven();
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (_) {}
   syncUI();
+  // Never confirm the complete tree before descendants acknowledge and local outputs are actually quiet.
+  Promise.resolve(paperStopped).catch(() => {}); // Don't let a stalled engine promise hold the status forever.
+  const tree = await mirrors;
+  // Engines may expose cancellation/gain changes on the next audio task rather than this microtask.
+  for (let i = 0; i < 20 && !localOutputsMuted(); i++) await new Promise(resolve => setTimeout(resolve, 25));
+  return { ok: tree.ok && localOutputsMuted(), count: tree.count };
 }
 function commandBoot() {
   const panel = $('voiceCommands'), start = $('vcStart'), stop = $('vcStop'), badge = $('vcBadge'), status = $('vcStatus');
@@ -80,7 +103,11 @@ function commandBoot() {
     if (commandSession.active()) { $('vcHelp').open = false; stop.focus(); }
   });
   stop.addEventListener('click', () => voiceCommandsStop());
-  $('vcMute').addEventListener('click', muteAllHere);
+  $('vcMute').addEventListener('click', () => {
+    const pending = 'Muting sound here and current mirrors…'; status.textContent = pending;
+    muteAllHere().then(result => { if (status.textContent === pending) status.textContent = muteAllMessage(result); })
+      .catch(() => { if (status.textContent === pending) status.textContent = 'Mute could not be confirmed. Use the sound controls or close the mirrors.'; });
+  });
   document.addEventListener('visibilitychange', () => { if (document.hidden) voiceCommandsStop('Voice commands off while this page is hidden.'); });
   window.addEventListener('pagehide', () => voiceCommandsStop());
   window.addEventListener('offline', () => { voiceCommandsStop('Offline. Use the sound controls.'); available(); });

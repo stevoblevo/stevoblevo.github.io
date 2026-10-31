@@ -95,3 +95,28 @@ test('recognizer start/constructor exceptions and action errors fail closed', ()
     assert.equal(s.active(), false); assert.equal(last.state, 'off');
   }
 });
+
+test('async mute reports pending until completion and discards results after Stop', async () => {
+  let r, resolveMute; const messages = [];
+  const session = createSession({ createRecognition: () => r = { start() {}, abort() {} },
+    apply: () => new Promise(resolve => resolveMute = resolve), report: value => messages.push(value),
+    now: () => 0, later: () => 1, cancel() {} });
+  session.start(); r.onstart();
+  r.onresult({ resultIndex: 0, results: [Object.assign([{ transcript: 'mute all', confidence: .9 }], { isFinal: true })] });
+  assert.match(messages.at(-1).message, /^Muting/); assert.ok(!messages.some(m => m.message === 'All outputs muted.'));
+  session.stop(); resolveMute('All outputs muted.'); await Promise.resolve();
+  assert.equal(messages.at(-1).message, 'Voice commands off.');
+});
+test('async mute confirms completion or stops on rejection', async () => {
+  for (const fail of [false, true]) {
+    let r, finish; const messages = [];
+    const session = createSession({ createRecognition: () => r = { start() {}, abort() {} },
+      apply: () => new Promise((resolve, reject) => finish = fail ? reject : resolve), report: value => messages.push(value),
+      now: () => 0, later: () => 1, cancel() {} });
+    session.start(); r.onstart();
+    r.onresult({ resultIndex: 0, results: [Object.assign([{ transcript: 'mute all', confidence: .9 }], { isFinal: true })] });
+    finish(fail ? Error('unavailable') : 'All outputs muted.'); await Promise.resolve(); await Promise.resolve();
+    assert.equal(session.active(), !fail);
+    assert.equal(messages.at(-1).message, fail ? 'Command unavailable. Use the sound controls.' : 'All outputs muted.');
+  }
+});

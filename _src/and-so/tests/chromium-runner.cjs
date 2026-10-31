@@ -9,7 +9,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'andso-browser-'));
   const child = spawn(process.env.ANDSO_CHROMIUM || '/usr/lib/chromium/chromium', [
     '--headless', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--mute-audio',
-    '--no-first-run', '--disable-background-networking', '--deny-permission-prompts',
+    '--no-first-run', '--disable-popup-blocking', '--disable-background-timer-throttling', '--autoplay-policy=no-user-gesture-required', '--disable-background-networking', '--deny-permission-prompts',
     '--disable-crash-reporter', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'
   ], { stdio: 'ignore' });
   let ws;

@@ -19,7 +19,7 @@ Commands target existing actions/settings:
 | `hummer on` / `hummer off` | Start/stop the demo hummer, idempotently; never request the singing microphone. |
 | `rain on` / `rain off` | Set the existing rain layer. |
 | `notes mode` / `drone mode` | Select plucked notes or held drones. `switch to notes`, `use drones`, and `notes on`/`drone on` also work. |
-| `mute all` / `stop all` / `sound off` | Mute this page's music, stop its replay and narration, and disable its paper sounds. Command input remains on. Restore music with the ordinary sound button. Other tabs and legacy embedded players retain their own sound controls. |
+| `mute all` / `stop all` / `sound off` | Mute this page and its owned current-version mirrors, including nested copies: music, replay, narration and paper sounds. Command input remains on. Restore music with the ordinary sound button. Other tabs and legacy embedded players retain their own sound controls. |
 | `stop listening` / `voice commands off` | Abort command recognition without changing audio settings. |
 
 Optional `please`, explicit `turn`/`switch on/off`, `demo hummer`, `hum her`, and `reign` are bounded aliases. Bare channel/mode names, negations, combined commands and fuzzy matches do nothing. Only final results with a finite browser confidence of at least 0.75 are accepted. Repeated commands are debounced and explicit settings are idempotent. A browser reporting no usable confidence must use the ordinary controls. Layer/mode commands preserve master mute.
@@ -27,6 +27,10 @@ Optional `please`, explicit `turn`/`switch on/off`, `demo hummer`, `hum her`, an
 Recognition uses the same browser `SpeechRecognition`/`webkitSpeechRecognition` mechanism as existing overhearing, with a separate session that never feeds the guardian/journal/Claude path. AND SO does not store or log command transcripts/audio. No new hosted speech service, key, storage preference, or permission policy is added. Browser processing may send audio to its provider; offline operation is not promised ([Web Speech API documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API)). HTTPS and browser support are required. The help panel and ordinary controls remain usable when unsupported, denied, or offline.
 
 Narration stops command listening before speaking, including the existing optional ElevenLabs output. Cancellation guards prevent an in-flight narration response from playing or falling back to speech after mute. This does not change voice selection, credentials, speech quality, or the separate narration PR. Headphones and short sessions reduce feedback from game audio; physical recognition accuracy and external room audio remain unverified.
+
+The full-output mute protocol addresses only owned `kind: self` frames. Each srcdoc records its creator's serialized origin; requests require that origin and the exact parent WindowProxy. Acknowledgements require an owned current-version frame, its opaque `null` origin, and the pending request ID. Requests travel down and replies travel up, with duplicate requests sharing one operation. No broadcast or unrelated-tab control is used. A pending message stays visible until local outputs are quiet and all descendants acknowledge; missing replies time out after four seconds with an unconfirmed warning. Closing a muted mirror cannot restore the outer window's earlier sound state.
+
+The mirror regression reproduces the prior `3a6f483` failure with native Web Audio replay sources still running after outer mute, while synthetic narration and paper audio also remain active. Its repaired-case checks include nested mirrors, actual source stops/disconnections, paper AudioContext suspension, wrong source/origin/request IDs, acknowledgement timeouts, and an unrelated top-level test tab retaining its outputs. The fixture supplies mock speech in every owned frame and serves only its temporary HTML over loopback.
 
 ### Build and verify
 
@@ -37,6 +41,7 @@ python3 _src/and-so/build.py
 node --check _src/and-so/check.js
 node _src/and-so/tests/commands.test.cjs
 python3 _src/and-so/tests/browser_commands.py
+python3 _src/and-so/tests/browser_mirrors.py
 cmp _src/and-so/dist/and-so.html and-so/index.html
 ```
 
