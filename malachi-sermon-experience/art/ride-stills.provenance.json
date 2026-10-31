@@ -1,0 +1,108 @@
+{
+  "kind": "Rendered still previews, not interactive scenes",
+  "source": "ride/ride.js",
+  "sourceSha256": "fdd1f53303443c8dfe3105087d83bb76b1caca21e8680a16131e5c977a202b38",
+  "method": "Chromium screenshot of actual Three.js scene in quiet motion, UI hidden; no raster edits",
+  "viewport": [
+    1200,
+    800
+  ],
+  "files": [
+    {
+      "path": "art/ride-driver.png",
+      "bytes": 332118,
+      "sha256": "eeff652c848f380204caf8613331ad0ec337571ebe18d9626438a0c4c51e2e4a",
+      "sceneState": {
+        "ready": true,
+        "seat": "driver",
+        "quiet": true,
+        "parked": true,
+        "time": 13.2,
+        "playing": false,
+        "frames": 3,
+        "graphicsState": "ready",
+        "software": true,
+        "quality": "balanced",
+        "qualityChoice": "balanced",
+        "budget": {
+          "pixels": 1400000,
+          "fps": 30,
+          "rain": 420,
+          "hail": 170
+        },
+        "pixels": 960000,
+        "lastRenderMs": 21.69999998807907,
+        "averageIntervalMs": null,
+        "triangles": 6254,
+        "calls": 70,
+        "three": "187",
+        "hail": true,
+        "weatherMix": 0
+      }
+    },
+    {
+      "path": "art/ride-passenger.png",
+      "bytes": 344552,
+      "sha256": "4685e6ed984912532608cee286d9fbb45f46662297def305fffff7f3ac2da438",
+      "sceneState": {
+        "ready": true,
+        "seat": "passenger",
+        "quiet": true,
+        "parked": true,
+        "time": 13.2,
+        "playing": false,
+        "frames": 4,
+        "graphicsState": "ready",
+        "software": true,
+        "quality": "balanced",
+        "qualityChoice": "balanced",
+        "budget": {
+          "pixels": 1400000,
+          "fps": 30,
+          "rain": 420,
+          "hail": 170
+        },
+        "pixels": 960000,
+        "lastRenderMs": 183.19999998807907,
+        "averageIntervalMs": null,
+        "triangles": 6638,
+        "calls": 83,
+        "three": "187",
+        "hail": true,
+        "weatherMix": 0
+      }
+    },
+    {
+      "path": "art/ride-rear.png",
+      "bytes": 380849,
+      "sha256": "01936336de7271229395f03cbc4788a3e215d5e8e906b4306812868292b7fb65",
+      "sceneState": {
+        "ready": true,
+        "seat": "rear",
+        "quiet": true,
+        "parked": true,
+        "time": 13.2,
+        "playing": false,
+        "frames": 5,
+        "graphicsState": "ready",
+        "software": true,
+        "quality": "balanced",
+        "qualityChoice": "balanced",
+        "budget": {
+          "pixels": 1400000,
+          "fps": 30,
+          "rain": 420,
+          "hail": 170
+        },
+        "pixels": 960000,
+        "lastRenderMs": 116.40000000596046,
+        "averageIntervalMs": null,
+        "triangles": 6850,
+        "calls": 91,
+        "three": "187",
+        "hail": true,
+        "weatherMix": 0
+      }
+    }
+  ]
+}

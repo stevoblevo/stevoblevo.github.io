@@ -1,5 +1,6 @@
-import {mount} from './vendor/four-styles.js';
-import {mountTV} from './tv.js';
+import {mount} from './vendor/four-styles.js?v=0.4.1';
+import {mountTV} from './tv.js?v=0.4.1';
+import {mountTour} from './tour.js?v=0.4.1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const data=window.SERMON, audio=$('#audio'), status=$('#world-status'), root=document.body;
 const asset=p=>window.LOCAL_ASSETS?.[p]||p;
@@ -11,8 +12,9 @@ const chapters=[
  {name:'morning',title:'A cross.<br>An open <em>tomb.</em>',lede:'The sermon’s hope<br>has a particular name.',eyebrow:'Christ’s death and resurrection',art:asset('art/morning.svg'),start:178.35,end:237.8,ids:['gospel'],alt:'A quiet folded-paper landscape holds a cross and an empty tomb, its stone rolled aside and a pale path leading out.',spot:['pause here','The Christian centre of this sermon.','Malachi speaks of Christ freely going through death, bearing God’s wrath in our place, and rising again. This scene holds that claim without turning it into a puzzle to win.'],prompt:'What does this passage invite you to consider? You can simply listen, or leave a question.'},
  {name:'still here',title:'Questions remain.<br>So do <em>we.</em>',lede:'A next faithful step.<br>Even with a dent in the story.',eyebrow:'Trust, without every explanation',art:originalArt,start:238.15,end:277.62,ids:['trust','faithful'],alt:'The same smiling paper Malachi stands by the sage Bronco and lantern. The world remains imperfect, warm and open.',spot:['make room','Unanswered is not abandoned.','The closing calls for faithful life amid mystery. It also keeps an essential caveat: suffering is not always the result of personal folly.'],prompt:'What is one small next step? What question can remain open beside it?'}
 ];
-// Warm the same-origin scene cache before a page fold reveals the next material.
-const cachedArt=[...new Set(chapters.map(c=>c.art))].map(src=>{const image=new Image();image.decoding='async';image.src=src;return image;});
+// Warm one upcoming scene at a time; avoid decoding every diorama at startup.
+let nextArt=null,nextArtPath='';
+function warmNext(i){const path=chapters[i+1]?.art||'';if(path===nextArtPath)return;nextArtPath=path;if(nextArt)nextArt.src='';nextArt=null;if(path){nextArt=new Image();nextArt.decoding='async';nextArt.src=path;}}
 let current=0,foldBusy=false,captionOn=true,lastOpener=null,entered=false,activePlayer=audio,activeOffset=0;
 const media=matchMedia('(prefers-reduced-motion:reduce)');
 const quiet=()=>media.matches||root.dataset.fsReduced==='true';
@@ -20,13 +22,13 @@ const fs=mount(root,{storeybrook:window.Storeybrook,preferences:{style:'gen4',th
 Storeybrook.ensureDefs();Storeybrook.mountIcons();
 const announce=t=>status.textContent=t;
 function time(n){return `${Math.floor(n/60)}:${String(Math.floor(n%60)).padStart(2,'0')}`;}
-function openDialog(sel,opener){lastOpener=opener||document.activeElement;$(sel).showModal();}
+function openDialog(sel,opener){lastOpener=opener||document.activeElement;if(!$(sel).open)$(sel).showModal();else $(sel).focus();}
 $$('.close-dialog').forEach(b=>b.onclick=()=>b.closest('dialog').close());
-$$('dialog').forEach(d=>d.addEventListener('close',()=>{if(lastOpener?.isConnected)lastOpener.focus({preventScroll:true});}));
+$$('dialog').forEach(d=>d.addEventListener('close',()=>{if(!root.classList.contains('tour-active')&&lastOpener?.isConnected)lastOpener.focus({preventScroll:true});}));
 function sourceText(){const host=$('#source-excerpts');host.replaceChildren();for(const clip of data.timeline.filter(c=>chapters[current].ids.includes(c.id))){const p=document.createElement('p'),mark=document.createElement('strong');mark.textContent=`Original ${time(clip.source_in)}–${time(clip.source_out)} · `;p.append(mark,document.createTextNode(clip.transcript));host.append(p);}}
 function setScene(i,{fold=false,seek=false}={}){
  i=Math.max(0,Math.min(4,i));if(foldBusy)return;
- const c=chapters[i],swap=()=>{current=i;$('#world').dataset.scene=String(i);$('#scene-title').innerHTML=c.title;$('#scene-lede').innerHTML=c.lede;$('#eyebrow').textContent=`0${i+1} / 05 · ${c.eyebrow}`;$('#scene-art').src=c.art;$('#scene-art').alt=c.alt;$('#art-description').textContent=i===0||i===4?'Aesthete reference supplied by Steven. Original illustration displayed without pixel edits.':'Original vector paper scenery; a creative visual adaptation, not historical evidence.';$('#hotspot-label').textContent=c.spot[0];$('#discover').setAttribute('aria-label',`Discover: ${c.spot[0]}`);$('#discover').style.setProperty('--x',i===0||i===4?'83%':'72%');$('#discover').style.setProperty('--y',i===1?'67%':i===3?'65%':'58%');$('#notebook-open').style.setProperty('--x',i===0||i===4?'37%':'49%');$('#notebook-open').style.setProperty('--y',i===0||i===4?'80%':'72%');$('#reflection-prompt').textContent=c.prompt;$('#begin').innerHTML=i===4?'Stay a little <span aria-hidden="true">✦</span>':'Unfold the next scene <span aria-hidden="true">↗</span>';$('#listen').innerHTML=activePlayer.paused?'<span aria-hidden="true">▷</span> Listen to this chapter':'<span aria-hidden="true">Ⅱ</span> Pause recording';$('.art-credit').innerHTML=(i===0||i===4?'Aesthete’s paper Malachi':'Original paper scenery')+' <span aria-hidden="true">✦</span>';$$('[data-chapter]').forEach(b=>{if(+b.dataset.chapter===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});$('#reveal-note').hidden=true;sourceText();updateWorkshop();announce(`Chapter ${i+1}: ${c.name}. ${c.lede.replace(/<br>/g,' ')}`);};
+ const c=chapters[i],swap=()=>{current=i;$('#world').dataset.scene=String(i);$('#scene-title').innerHTML=c.title;$('#scene-lede').innerHTML=c.lede.replace(/<br>/g,'<br> ');$('#eyebrow').textContent=`0${i+1} / 05 · ${c.eyebrow}`;$('#scene-art').src=c.art;$('#scene-art').alt=c.alt;$('#art-description').textContent=i===0||i===4?'Aesthete reference supplied by Steven. Original illustration displayed without pixel edits.':'Original vector paper scenery; a creative visual adaptation, not historical evidence.';$('#hotspot-label').textContent=c.spot[0];$('#discover').setAttribute('aria-label',`Discover: ${c.spot[0]}`);$('#discover').style.setProperty('--x',i===0||i===4?'83%':'72%');$('#discover').style.setProperty('--y',i===1?'67%':i===3?'65%':'58%');$('#notebook-open').style.setProperty('--x',i===0||i===4?'37%':'49%');$('#notebook-open').style.setProperty('--y',i===0||i===4?'80%':'72%');$('#reflection-prompt').textContent=c.prompt;$('#begin').innerHTML=i===4?'Stay a little <span aria-hidden="true">✦</span>':'Unfold the next scene <span aria-hidden="true">↗</span>';$('#listen').innerHTML=activePlayer.paused?'<span aria-hidden="true">▷</span> Listen to this chapter':'<span aria-hidden="true">Ⅱ</span> Pause recording';$('.art-credit').innerHTML=(i===0||i===4?'Aesthete’s paper Malachi':'Original paper scenery')+' <span aria-hidden="true">✦</span>';$$('[data-chapter]').forEach(b=>{if(+b.dataset.chapter===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});$('#reveal-note').hidden=true;sourceText();updateWorkshop();warmNext(i);announce(`Chapter ${i+1}: ${c.name}. ${c.lede.replace(/<br>/g,' ')}`);};
  if(fold&&!quiet()){foldBusy=true;Storeybrook.fold($('#stage'),swap).then(()=>{foldBusy=false;});$$('.sb-fold-half').forEach(el=>el.inert=true);setTimeout(()=>{foldBusy=false;$$('.sb-fold-half,.sb-fold-crease').forEach(n=>n.remove());},1000);}else swap();
  if(seek){audio.currentTime=c.start;updateCaption();}
 }
@@ -74,4 +76,8 @@ document.documentElement.dataset.appReady='true';document.getElementById('startu
 
 mountTV({audio,title:"What’s Going On? · Malachi’s paper world"});
 
+mountTour({audio,chapters,setScene,quiet,getStyle:()=>fs.getState().style,style:s=>{if(fs.getState().style!==s)$(`[data-fs-mode="${s}"]`).click();},discover:()=>{const c=chapters[current];$('#reveal-title').textContent=c.spot[1];$('#reveal-copy').textContent=c.spot[2];$('#reveal-note').hidden=false;},pauseMedia:()=>{$$('audio').forEach(a=>a.pause());},announce});
+
 if(location.protocol==='file:'||window.LOCAL_ASSETS)document.querySelector('.ride-invitation').hidden=true;
+
+setTimeout(()=>warmNext(current),1000);

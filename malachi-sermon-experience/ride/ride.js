@@ -1,5 +1,5 @@
-import * as THREE from './vendor/three.module.js';
-import {mountTV} from '../tv.js';
+import * as THREE from './vendor/three.module.js?v=0.4.1';
+import {mountTV} from '../tv.js?v=0.4.1';
 const $=s=>document.querySelector(s),audio=$('#audio'),canvas=$('#world');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const query=new URLSearchParams(location.search);
@@ -93,7 +93,7 @@ $('#about-open').onclick=()=>$('#about').showModal();$('#about-close').onclick=(
 mountTV({audio,canvas,title:'Rain on paper · Malachi’s radio'});
 function applyQuality(value){quality=value;dirty=true;const b=budgets[value];renderer?.setPixelRatio(Math.min(devicePixelRatio,1.5,Math.sqrt(b.pixels/(innerWidth*innerHeight))));renderer?.setSize(innerWidth,innerHeight);rainGeo.setDrawRange(0,Math.min(b.rain,rainCount)*2);hail.count=Math.min(b.hail,hailCount);}
 $('#quality').onchange=()=>{qualityChoice=$('#quality').value;applyQuality(qualityChoice==='auto'?(software?'light':'balanced'):qualityChoice);};
-function resize(){dirty=true;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();applyQuality(quality);}addEventListener('resize',resize);resize();setSeat('driver');syncQuiet();
+function resize(){dirty=true;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();applyQuality(quality);}addEventListener('resize',resize);resize();setSeat(query.get('seat')||'driver');syncQuiet();
 let last=performance.now(),elapsed=0,distance=0,lastFrame=0;
 function animate(now){if(graphicsState==='fallback'||!renderer)return;raf=requestAnimationFrame(animate);if(document.hidden){last=now;return;}if(quiet&&ready&&!dirty)return;const interval=now-lastFrame;if(interval<1000/budgets[quality].fps)return;const dt=Math.min((now-last)/1000,.1);last=lastFrame=now;if(!quiet)elapsed+=dt;
  if(!quiet&&frames>2){frameIntervals.push(interval);if(frameIntervals.length>60)frameIntervals.shift();if(interval>250)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);if(slowFrames>=5&&quality==='balanced'){qualityChoice='auto';$('#quality').value='auto';applyQuality('light');slowFrames=0;}if(slowFrames>=8&&quality==='light'){quiet=true;syncQuiet();$('#scene-note').textContent='Motion paused to keep your radio responsive.';announce('Motion paused for performance. All seats and audio remain available.');}}
