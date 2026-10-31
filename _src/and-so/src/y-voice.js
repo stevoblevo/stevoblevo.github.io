@@ -17,17 +17,24 @@ function voiceNote(v) {
   const tier = R && R.tier ? R.tier(v) : '';
   el.textContent = `${v.name} (${v.lang})${tier ? ' · ' + tier : ''}.`;
 }
+function voiceOption(sel, value, label, selected) {
+  const o = document.createElement('option');
+  o.value = value;
+  o.textContent = label;
+  if (selected) o.selected = true;
+  sel.appendChild(o);
+}
 function fillVoiceSelect() {
   const sel = $('sVoice'); if (!sel) return;
   const R = window.Storeybrook && Storeybrook.read;
-  if (!R || !R.supported) { sel.innerHTML = '<option value="">this browser has no voices</option>'; voiceNote(null); return; }
+  sel.textContent = '';
+  if (!R || !R.supported) { voiceOption(sel, '', 'this browser has no voices', true); voiceNote(null); return; }
   try { speechSynthesis.getVoices(); } catch (e) { /* late */ }
   const rows = (R.inspect ? R.inspect() : []).filter(r => r.ok);
   const cur = R.pick();
   const saved = (() => { try { const raw = localStorage.getItem('sb:voice'); return raw ? JSON.parse(raw) : ''; } catch (e) { return ''; } })();
-  const opts = ['<option value="">automatic</option>'].concat(rows.map(r => `<option value="${String(r.name).replace(/"/g, '&quot;')}"${saved === r.name ? ' selected' : ''}>${r.name} · ${r.lang} · ${r.tierName}</option>`));
-  sel.innerHTML = opts.join('');
-  if (!saved) sel.value = '';
+  voiceOption(sel, '', 'automatic', !saved);
+  rows.forEach(r => voiceOption(sel, r.name, r.name + ' · ' + r.lang + ' · ' + r.tierName, saved === r.name));
   voiceNote(cur);
   voiceFilled = rows.length > 0;
   voiceDebug();
@@ -47,7 +54,7 @@ function voiceDebug() {
     `locale: ${R.homeRegion()} (navigator, then html lang, then en)`,
     `chosen: ${chosen ? chosen.name + ' · ' + chosen.tierName + ' · ' + chosen.score : 'none'}`
   ];
-  rows.forEach(r => lines.push(`${r.score}\t${r.tierName}\t${r.lang || '-'}\t${r.name}`));
+  rows.forEach(r => lines.push(`${r.score}\t${r.stepName || ''}\t${r.tierName}\t${r.lang || '-'}\t${r.name}`));
   box.textContent = lines.join('\n');
 }
 function stopEleven() {
@@ -78,13 +85,15 @@ function hookEleven() {
     if (!(elOn() && elKey() && elId()) || R.state === 'idle') return next();
     if (R._i >= R._chunks.length) { R._done(); return; }
     const c = R._chunks[R._i];
-    speakEleven(c.text).then(() => {
-      if (R.state === 'idle') return;
-      R._i++; R._next();
-    }).catch(() => { if (R.state !== 'idle') next(); });
+    speakEleven(c.text.slice(R._at || 0)).then(() => {
+      if (R.state !== 'speaking') return;
+      R._at = 0; R._i++; R._next();
+    }).catch(() => { if (R.state === 'speaking') next(); });
   };
   const stop = R.stop.bind(R);
   R.stop = function (quiet) { stopEleven(); return stop(quiet); };
+  const pause = R.pause.bind(R);
+  R.pause = function () { stopEleven(); return pause(); };
 }
 function voiceMuted() {
   try { return localStorage.getItem('andso:voice:mute') === '1' || (typeof muted !== 'undefined' && muted); } catch (e) { return typeof muted !== 'undefined' && muted; }
@@ -94,6 +103,7 @@ function voiceCaption(text) {
   if (typeof caption === 'function') caption(line || 'The words stay on the page.', 4800);
 }
 window.andsoVoiceCaption = voiceCaption;
+window.andsoElReady = () => !!(elOn() && elKey() && elId());
 function voiceTest() {
   const R = window.Storeybrook && Storeybrook.read;
   const line = 'Here is a voice from somewhere else.';
@@ -160,12 +170,12 @@ function voiceBoot() {
   const R = window.Storeybrook && Storeybrook.read;
   if (R) R.muted = voiceMuted;
   const SY = window.speechSynthesis;
-  if (SY && R && R.whenReady) R.whenReady(() => fillVoiceSelect());
-  else if (SY) {
+  if (SY) {
     const again = () => fillVoiceSelect();
     if (SY.addEventListener) SY.addEventListener('voiceschanged', again);
     else SY.onvoiceschanged = again;
-    setTimeout(again, 1500);
+    if (R && R.whenReady) R.whenReady(again);
+    else setTimeout(again, 1500);
   }
   window.addEventListener('pointerdown', voiceUnlock, { capture: true });
   if (typeof devApply === 'function') devApply();

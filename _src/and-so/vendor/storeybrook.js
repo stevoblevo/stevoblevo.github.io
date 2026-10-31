@@ -139,7 +139,7 @@
   };
   d.addEventListener('keydown', function (e) { nav.key(e); });
 
-  /* ---------- read aloud: quality first, then a non-local English accent ---------- */
+  /* ---------- read aloud: locale, then the OS and browser, quality inside each step ---------- */
   var SY = w.speechSynthesis || null;
   var NOVELTY = /albert|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|zarvox|bahh|deranged|hysterical|pipe organ|princess/i;
   var ACCENT_ORDER = ['IE', 'ZA', 'IN', 'AU', 'GB', 'NZ', 'SC'];
@@ -150,12 +150,15 @@
     var ios = /iPhone|iPad|iPod/.test(ua);
     var safari = /Safari\//.test(ua) && !chrome && !edge && !firefox && !opera;
     var android = /Android/.test(ua);
-    var mac = /Macintosh|Mac OS X/.test(ua) && !ios;
+    var cros = /CrOS/.test(ua);
+    var linux = /Linux/.test(ua) && !android && !cros;
+    var mac = /Macintosh|Mac OS X/.test(ua) && !ios && !cros;
     var windows = /Windows/.test(ua);
+    var os = ios ? 'ios' : android ? 'android' : cros ? 'chromeos' : windows ? 'windows' : mac ? 'macos' : linux ? 'linux' : 'other';
     return {
       ua: ua,
       browser: edge ? 'edge' : chrome ? 'chrome' : safari ? 'safari' : firefox ? 'firefox' : 'other',
-      os: ios ? 'ios' : android ? 'android' : windows ? 'windows' : mac ? 'macos' : 'other'
+      os: os
     };
   }
   function listenerLocale(opts) {
@@ -200,6 +203,44 @@
     if (i >= 0) return i;
     return 40;
   }
+  function localeChain(opts) {
+    var out = [], seen = {};
+    function add(s) {
+      s = String(s || '').trim();
+      if (!s) return;
+      var key = s.replace(/_/g, '-').toLowerCase();
+      if (seen[key]) return;
+      seen[key] = 1;
+      out.push(key);
+    }
+    if (opts && opts.lang) add(opts.lang);
+    else {
+      try { add((navigator.languages && navigator.languages[0]) || navigator.language); } catch (e) { /* no navigator */ }
+      try { add(d.documentElement.getAttribute('lang')); } catch (e2) { /* no document */ }
+    }
+    add('en');
+    return out;
+  }
+  function langHit(voiceLang, locale) {
+    var vl = String(voiceLang || '').replace(/_/g, '-').toLowerCase();
+    var loc = String(locale || '').replace(/_/g, '-').toLowerCase();
+    if (!vl || !loc) return 0;
+    if (vl === loc) return 2;
+    if (vl.split('-')[0] === loc.split('-')[0]) return 1;
+    return 0;
+  }
+  function osVoice(row, platform) {
+    if (!row || row.tierName === 'excluded' || row.tierName === 'novelty') return false;
+    var blob = ((row.name || '') + ' ' + (row.voiceURI || '')).toLowerCase();
+    var google = /google/.test(blob), ms = /microsoft/.test(blob), apple = /com\.apple|\bapple\b/.test(blob);
+    var offline = !(row.voice && row.voice.localService === false);
+    var os = platform.os, br = platform.browser;
+    if (os === 'chromeos' || os === 'android' || (os === 'linux' && br === 'chrome')) return google && offline;
+    if (os === 'windows' || br === 'edge') return ms;
+    if (os === 'macos' || os === 'ios' || br === 'safari') return apple || /com\.apple/.test(blob);
+    if (br === 'chrome') return google && offline;
+    return false;
+  }
   function describeVoice(v, opts) {
     opts = opts || {};
     var platform = readUA(opts.ua);
@@ -212,9 +253,19 @@
     var english = /^en/i.test(lang) && !novelty && !moira;
     var tier = voiceTier(v, platform);
     var region = voiceRegion(v);
-    var score = english ? tier.tier * 1000 - accentRank(region, home) : 0;
     var tierName = moira ? 'excluded' : novelty ? 'novelty' : (english ? tier.tierName : 'other');
-    return { voice: v, name: name, lang: lang, voiceURI: voiceURI, tier: english ? tier.tier : 0, tierName: tierName, region: region, score: score, ok: english, home: home, platform: platform };
+    var row = { voice: v, name: name, lang: lang, voiceURI: voiceURI, tier: english ? tier.tier : 0, tierName: tierName, region: region, ok: english, home: home, platform: platform };
+    var chain = localeChain(opts), step = 3, stepName = 'other', i;
+    if (moira || novelty) { step = 3; stepName = moira ? 'excluded' : 'novelty'; }
+    else {
+      for (i = 0; i < chain.length; i++) if (langHit(lang, chain[i])) { step = 0; stepName = 'locale'; break; }
+      if (step === 3 && osVoice(row, platform)) { step = 1; stepName = 'os'; }
+      else if (step === 3 && v && v.default) { step = 2; stepName = 'default'; }
+    }
+    row.step = step;
+    row.stepName = stepName;
+    row.score = step < 3 ? (3 - step) * 100000 + tier.tier * 1000 - accentRank(region, home) : 0;
+    return row;
   }
   function inspectVoices(list, opts) {
     var src = list || (SY ? (SY.getVoices() || []) : []);
@@ -225,12 +276,13 @@
     if (platform.os === 'macos') return "System Settings > Accessibility > Spoken Content > System Voice > Manage Voices, download e.g. 'Serena (Premium)'.";
     if (platform.os === 'ios') return "Settings > Accessibility > Spoken Content > Voices, and download a Premium or Enhanced voice such as Serena.";
     if (platform.os === 'windows' || platform.browser === 'edge') return "Settings > Time & language > Speech, and download a Microsoft Natural voice such as Aria or Sonia.";
-    if (platform.os === 'android') return "Settings > System > Languages > Text-to-speech, and install a Google voice.";
+    if (platform.os === 'android' || platform.os === 'chromeos') return "Settings > System > Languages > Text-to-speech, and install a Google voice.";
+    if (platform.os === 'linux') return "Install a Natural or Premium English voice in the desktop speech settings, or a Google voice in Chrome.";
     if (platform.browser === 'chrome') return "Install a higher quality English voice, such as Google UK English, from the browser or system speech settings.";
     return "Install a Natural, Premium, or Enhanced English voice in the system speech settings.";
   }
   var read = {
-    supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _timer: 0, _keep: 0, _hold: false, _boundary: false,
+    supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _at: 0, _seq: 0, _timer: 0, _keep: 0, _hold: false, _boundary: false,
     homeRegion: homeRegion,
     readUA: readUA,
     describe: describeVoice,
@@ -243,22 +295,9 @@
     },
     choose: function (list, opts) {
       var rows = inspectVoices(list, opts);
-      var english = rows.filter(function (r) { return r.ok; });
-      var high = english.filter(function (r) { return r.tier > 1; });
-      if (high.length) return high[0];
-      if (english.length) return english[0];
-      var device = rows.filter(function (r) {
-        if (r.tierName === 'excluded' || r.tierName === 'novelty') return false;
-        var blob = r.name + ' ' + r.voiceURI;
-        if (!/google|microsoft|\bapple\b/i.test(blob)) return false;
-        if (r.voice && r.voice.localService === false) return false;
-        return true;
-      });
-      if (device.length) return device[0];
-      for (var i = 0; i < rows.length; i++) {
-        if (rows[i].voice && rows[i].voice.default && rows[i].tierName !== 'excluded' && rows[i].tierName !== 'novelty') return rows[i];
-      }
-      return null;
+      var best = null, i;
+      for (i = 0; i < rows.length; i++) if (rows[i].step < 3) { best = rows[i]; break; }
+      return best;
     },
     whenReady: function (cb) {
       if (!SY) { cb([]); return; }
@@ -348,7 +387,8 @@
       var el2 = typeof target === 'string' ? null : target, prep = el2 ? read.prepare(el2) : { words: [], text: raw };
       read._el = el2; read._words = prep.words; read._chunks = read._chunk(prep.text); read._i = 0; read._boundary = false;
       read.voice = read.pick(opts.voice); read.rate = opts.rate || get('sb:rate', read.rate); read.pitch = opts.pitch || read.pitch;
-      if (!read.voice) {
+      read._at = 0;
+      if (!read.voice && !(w.andsoElReady && w.andsoElReady())) {
         if (w.andsoVoiceCaption) w.andsoVoiceCaption(prep.text || 'No voice on this device. The words stay on the page.');
         emit('read', { state: 'unsupported' });
         return false;
@@ -359,12 +399,20 @@
     },
     _next: function () {
       if (read._i >= read._chunks.length) { read._done(); return; }
-      var c = read._chunks[read._i], u = new w.SpeechSynthesisUtterance(c.text);
+      var c = read._chunks[read._i], from = read._at || 0, spoken = c.text.slice(from);
+      if (!spoken.trim()) { read._at = 0; read._i++; read._next(); return; }
+      var seq = ++read._seq;
+      var u = new w.SpeechSynthesisUtterance(spoken);
       var reduce = false;
       try { reduce = !!(w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { reduce = false; }
       if (read.voice) { u.voice = read.voice; u.lang = read.voice.lang || listenerLocale(); } else u.lang = listenerLocale();
       u.rate = read.rate; u.pitch = read.pitch;
-      u.onboundary = function (e) { if (reduce || (e.name && e.name !== 'word')) return; read._boundary = true; read._mark(c.start + (e.charIndex || 0)); };
+      u.onboundary = function (e) {
+        if (e.name && e.name !== 'word') return;
+        read._at = from + (e.charIndex || 0);
+        if (reduce) return;
+        read._boundary = true; read._mark(c.start + read._at);
+      };
       u.onstart = function () {
         clearInterval(read._timer); clearInterval(read._keep);
         read._keep = setInterval(function () { if (read.state === 'speaking') { try { SY.resume(); } catch (err) { /* chrome queue */ } } }, 10000);
@@ -376,8 +424,8 @@
           if (wd && wd.start < c.start + c.text.length) read._mark(wd.start);
         }, 120);
       };
-      u.onend = function () { if (read._hold) return; clearInterval(read._timer); if (read.state !== 'speaking') return; read._i++; read._next(); };
-      u.onerror = function () { if (read._hold) return; clearInterval(read._timer); if (read.state === 'speaking') { read._i++; read._next(); } };
+      u.onend = function () { if (read._hold || seq !== read._seq) return; clearInterval(read._timer); if (read.state !== 'speaking') return; read._at = 0; read._i++; read._next(); };
+      u.onerror = function () { if (read._hold || seq !== read._seq) return; clearInterval(read._timer); if (read.state === 'speaking') { read._at = 0; read._i++; read._next(); } };
       read._q = u; read._hold = false;
       try { SY.cancel(); } catch (e2) { /* already idle */ }
       setTimeout(function () {
@@ -402,7 +450,14 @@
       var play = $('.sb-reader__play', bar), sel = $('select[data-sb-voice]', bar), rate = $('select[data-sb-rate]', bar), vname = $('.sb-reader__voice', bar);
       function fill() {
         var vs = read.voices(), cur = read.pick(); if (!sel) { if (vname && cur) vname.textContent = cur.name + ' · ' + (cur.lang || ''); return; }
-        sel.innerHTML = vs.map(function (v) { return '<option value="' + esc(v.name) + '"' + (cur && v.name === cur.name ? ' selected' : '') + '>' + esc(v.name) + ' · ' + read.tier(v) + '</option>'; }).join('');
+        sel.textContent = '';
+        vs.forEach(function (v) {
+          var o = d.createElement('option');
+          o.value = v.name;
+          o.textContent = v.name + ' · ' + read.tier(v);
+          if (cur && v.name === cur.name) o.selected = true;
+          sel.appendChild(o);
+        });
         if (vname && cur) vname.textContent = cur.name + ' · ' + read.tier(cur);
       }
       fill(); if (SY.addEventListener) SY.addEventListener('voiceschanged', fill); else SY.onvoiceschanged = fill;
