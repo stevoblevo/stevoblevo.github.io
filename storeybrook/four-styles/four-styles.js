@@ -45,8 +45,16 @@ export function mount(root, options = {}) {
   const reduced = () => prefs.quiet || media.reduced.matches;
   const announce = text => { if (status) status.textContent = text; };
   function save() {
-    try { prefs.remember ? win.localStorage.setItem(key, JSON.stringify(prefs)) : win.localStorage.removeItem(key); }
-    catch { announce('This browser could not remember the choice. It still works for this visit.'); }
+    try {
+      prefs.remember ? win.localStorage.setItem(key, JSON.stringify(prefs)) : win.localStorage.removeItem(key);
+      return '';
+    } catch {
+      const message = prefs.remember
+        ? 'This choice works for this visit, but the browser could not save it.'
+        : 'This choice works for this visit, but the browser could not clear its saved preferences.';
+      announce(message);
+      return message;
+    }
   }
   function stopMotion() {
     root.getAnimations?.({subtree:true}).forEach(a => a.cancel());
@@ -95,10 +103,10 @@ export function mount(root, options = {}) {
   function changeStyle(mode) {
     if (!MODES.includes(mode) || mode === prefs.style) return;
     const position = {left:win.scrollX, top:win.scrollY};
-    prefs.style = mode; apply(); showArt(); save();
+    prefs.style = mode; apply(); showArt(); const saveError = save();
     // The semantic DOM, open details, note, bookmark and focused control survive.
     win.scrollTo({...position, behavior:'instant'});
-    announce(`${NAMES[mode]}. Same story; your place is kept.`);
+    announce([`${NAMES[mode]}. Same story; your place is kept.`, saveError].filter(Boolean).join(' '));
     root.dispatchEvent(new CustomEvent('fourstyles:change',{bubbles:true,detail:{style:mode,theme:prefs.theme,view}}));
   }
   root.querySelectorAll('[data-fs-mode]').forEach(button => {
@@ -143,28 +151,42 @@ export function mount(root, options = {}) {
   listen($('[data-fs-settings-close]'),'click',()=>settings.close());
   listen(settings,'close',()=>lastFocus?.focus({preventScroll:true}));
   options.storeybrook?.mountIcons(root);
-  const input = installInput(root, options.storeybrook, reduced, () => prefs.density, abort.signal);
+  const input = installInput(root, options.storeybrook, reduced, () => prefs.density, abort.signal, announce);
   apply(); showArt();
+  root.dataset.fsReady = 'true';
   return {
     setStyle:changeStyle,
     setAssets(value) { assets=assetMap(value,doc.baseURI);showArt(); },
     getState() { return {...prefs,view}; },
-    destroy() { epoch++;if(pending)pending.onload=pending.onerror=null;abort.abort();input?.();ownedURLs.forEach(url=>win.URL.revokeObjectURL(url));delete root.dataset.fsMounted; },
+    destroy() { epoch++;if(pending)pending.onload=pending.onerror=null;abort.abort();input?.();ownedURLs.forEach(url=>win.URL.revokeObjectURL(url));delete root.dataset.fsMounted;delete root.dataset.fsReady; },
   };
 }
 
 /* Storeybrook spatial scoring and controller mapping, scoped to this component.
    Its nav.candidates supplies shared input semantics; the adapter adds summaries,
    modal containment, runtime Quiet, and cleans up its own listeners. */
-function installInput(root, storeybrook, reduced, density, signal) {
+function installInput(root, storeybrook, reduced, density, signal, announce) {
   if (!storeybrook?.nav) return;
   const doc=root.ownerDocument, win=doc.defaultView;
   root.querySelectorAll('summary').forEach(s=>s.setAttribute('data-sb-focus',''));
+  let editing = null;
+  const field = target => target.closest('input,textarea,select,[contenteditable=true]');
+  const editable = el => el && (['TEXTAREA','SELECT'].includes(el.tagName) || el.isContentEditable ||
+    (el.tagName === 'INPUT' && !['checkbox','radio','button','submit','reset','file','range','color'].includes(el.type)));
+  function edit(el) {
+    editing?.removeAttribute('data-fs-editing');
+    editing = el;
+    if (el) {
+      el.setAttribute('data-fs-editing','true');
+      announce('Editing this field. Escape or Back returns to navigation; your changes stay.');
+    }
+  }
   function candidates() {
     const modal=root.querySelector('dialog[open]');
     return storeybrook.nav.candidates().filter(el=>root.contains(el)&&(!modal||modal.contains(el)));
   }
   function move(dir) {
+    edit(null);
     const list=candidates(), current=doc.activeElement;if(!list.length)return;
     if(!list.includes(current)){list[0].focus({preventScroll:true});return;}
     const a=current.getBoundingClientRect(), ax=a.left+a.width/2, ay=a.top+a.height/2;
@@ -174,21 +196,52 @@ function installInput(root, storeybrook, reduced, density, signal) {
       if(main>4&&main+side*2.2<score){best=el;score=main+side*2.2;}}
     if(best){best.focus({preventScroll:true});best.scrollIntoView({block:'nearest',inline:'nearest',behavior:reduced()?'instant':'smooth'});}
   }
-  function back(){const details=doc.activeElement.closest?.('details[open]');if(details&&root.contains(details)){details.open=false;details.querySelector('summary')?.focus({preventScroll:true});return;}const dialog=root.querySelector('dialog[open]');if(dialog)dialog.close();}
+  function back(){
+    if(editing){const el=editing;edit(null);el.focus({preventScroll:true});announce('Navigation. D-pad moves to another control; Enter edits this field.');return true;}
+    const details=doc.activeElement.closest?.('details[open]');
+    if(details&&root.contains(details)){details.open=false;details.querySelector('summary')?.focus({preventScroll:true});return true;}
+    const dialog=root.querySelector('dialog[open]');if(dialog){dialog.close();return true;}return false;
+  }
+  root.addEventListener('focusin',e=>{if(editing&&e.target!==editing)edit(null);},{signal});
+  root.addEventListener('pointerdown',e=>{const el=field(e.target);if(density()==='tv'&&editable(el))edit(el);},{signal});
   root.addEventListener('keydown',e=>{
-    if(e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select,[contenteditable=true]'))return;
+    if(e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey)return;
+    const el=field(e.target), tv=density()==='tv';
+    if(!tv&&editing)edit(null);
+    // Backspace is text editing, not a navigation command, inside form fields.
+    if(['Escape','BrowserBack'].includes(e.key)||(e.key==='Backspace'&&!el)){
+      if(back()){e.preventDefault();e.stopPropagation();}return;
+    }
+    if(tv&&editable(el)){
+      if(editing===el)return; // Native arrows, typing and select behavior while editing.
+      if(e.key==='Enter'||e.key==='F2'){
+        edit(el);
+        if(el.tagName!=='SELECT'||e.key==='F2')e.preventDefault();
+        return;
+      }
+      if(e.key.length===1){edit(el);return;} // Typing also enters edit mode.
+    }
     const dir={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'}[e.key];
-    if(dir&&density()==='tv'){e.preventDefault();e.stopPropagation();move(dir);}
-    if(['Escape','BrowserBack','Backspace'].includes(e.key)){const modal=root.querySelector('dialog[open]'),details=e.target.closest('details[open]');if(modal||details){e.preventDefault();e.stopPropagation();back();}}
+    if(dir&&tv){e.preventDefault();e.stopPropagation();move(dir);}
+    if(tv&&el?.tagName==='INPUT'&&['checkbox','radio'].includes(el.type)&&e.key==='Enter'){e.preventDefault();el.click();}
   },{signal});
+  function padMove(dir){
+    if(editing?.tagName==='SELECT'&&['up','down'].includes(dir)){
+      const el=editing, step=dir==='down'?1:-1;
+      let index=el.selectedIndex+step;
+      while(index>=0&&index<el.options.length&&el.options[index].disabled)index+=step;
+      if(index>=0&&index<el.options.length){el.selectedIndex=index;el.dispatchEvent(new Event('change',{bubbles:true}));}
+    }else move(dir);
+  }
+  function activate(){const el=field(doc.activeElement);if(editable(el)){edit(el);el.focus({preventScroll:true});}else doc.activeElement.click();}
   let raf=0, prev={}, repeated=0;
   function poll(time){
     if(signal.aborted)return;
     const pad=[...(win.navigator.getGamepads?.()||[])].find(Boolean);
     if(pad&&density()==='tv'&&root.contains(doc.activeElement)){
       const b=n=>!!pad.buttons[n]?.pressed, now={up:b(12)||pad.axes[1]<-.6,down:b(13)||pad.axes[1]>.6,left:b(14)||pad.axes[0]<-.6,right:b(15)||pad.axes[0]>.6,a:b(0),b:b(1)};
-      for(const dir of ['up','down','left','right'])if(now[dir]&&(!prev[dir]||time-repeated>240)){move(dir);repeated=time;}
-      if(now.a&&!prev.a)doc.activeElement.click();if(now.b&&!prev.b)back();prev=now;
+      for(const dir of ['up','down','left','right'])if(now[dir]&&(!prev[dir]||time-repeated>240)){padMove(dir);repeated=time;}
+      if(now.a&&!prev.a)activate();if(now.b&&!prev.b)back();prev=now;
     }
     raf=win.requestAnimationFrame(poll);
   }

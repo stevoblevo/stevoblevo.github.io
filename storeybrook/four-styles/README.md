@@ -42,12 +42,12 @@ Use one page-level controller for the included demo. The shared Storeybrook navi
 ## Choices and accessibility
 
 - Appearance is independent of visual style: system, light or dark. A changing system preference is observed during the visit.
-- Persistence is opt-in. Only style/appearance/control preferences are saved under this package's own key. Turning Remember off removes that key. Notes, bookmarks and local file selections remain visit-only.
+- Persistence is opt-in. Only style/appearance/control preferences are saved under this package's own key. Turning Remember off removes that key. A failed save or removal remains visible alongside a successful temporary style change. Notes, bookmarks and local file selections remain visit-only.
 - Quiet and OS reduced motion suppress transitions and cancel active motion. No sound starts. No sensor, microphone or camera is requested.
-- Regular targets are at least 48px. Across the room sets 64px targets and 5px focus rings.
-- Tab and native Enter/Space work throughout. Left/right and Home/End select styles when a style button is focused. In TV mode, D-pad/left-stick move, A activates and B returns; Escape/Back closes the focused disclosure before its dialog.
+- Regular targets are at least 48px. Across the room sets 64px targets, 5px focus rings, at least 24px control/supporting text and at least 28px story copy. Component typography scales explicitly without changing the host document's root size.
+- Tab and native Enter/Space work throughout. Left/right and Home/End select styles when a style button is focused. In TV mode, D-pad/left-stick moves between controls, including form fields. Enter/A edits a field; typing or pointing also starts editing. Native keyboard arrows and text editing then work normally. Escape/Back/B leaves editing without losing changes; a second Back closes the focused disclosure or dialog. Gamepad up/down changes a select's option during editing. Checkbox Enter/A toggles, and arrows move away. Backspace remains text editing inside fields.
 - Semiotic strict hides optional copy with opacity, preserving both layout and accessible text. Words restores it. Required control labels remain visible. No state depends on color alone.
-- No JavaScript still leaves readable semantic content and a clear explanation. Missing artwork keeps a stable frame and a retry/file-selection path.
+- No JavaScript still leaves readable semantic content and native links, with inert script-only controls hidden until mounting succeeds. Missing artwork keeps a stable frame and a retry/file-selection path.
 
 ## Artwork and private preview
 
@@ -78,4 +78,4 @@ Before public activation, approve the exact image/derivative scope, select publi
 node storeybrook/four-styles/four-styles.test.mjs
 ```
 
-The tests exercise actual controller code with a small DOM harness: four modes, semantic state/focus/position retention, keyboard switching, opt-in persistence and storage failure, independent/changing theme and motion preferences, stale-image callbacks, retry, asset URL restrictions, source links and the public asset boundary. They are not a substitute for browser or physical-device acceptance. See `REVIEW.md` for the delivered candidate's actual verification and remaining limitations.
+The tests exercise actual controller code with a small DOM harness: four modes, semantic state/focus/position retention, keyboard switching, opt-in persistence and distinct save/removal failures, independent/changing theme and motion preferences, stale-image callbacks, retry, form-field navigation/editing, simulated gamepad select/Back, asset URL restrictions, source links and the public asset boundary. Source-contract checks cover TV typography and the uninitialized fallback. They are not a substitute for browser or physical-device acceptance. See `REVIEW.md` for the delivered candidate's actual verification and remaining limitations.

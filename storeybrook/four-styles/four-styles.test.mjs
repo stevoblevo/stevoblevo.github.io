@@ -28,7 +28,8 @@ class Element {
   focus(){this.ownerDocument.activeElement=this;}
   showModal(){this.open=true;}
   close(){this.open=false;this.fire('close');}
-  dispatchEvent(){}
+  dispatchEvent(event){this.fire(event.type,event);}
+  click(){if(this.type==='checkbox'){this.checked=!this.checked;this.fire('change');}this.fire('click');}
   getAnimations(){return[];}
   scrollIntoView(value){this.lastScroll=value;}
   closest(){return null;}
@@ -41,6 +42,11 @@ function fixture({saved,blocked=false,input=false}={}){
     matchMedia:q=>media[q]||=(Object.assign(new Element(doc),{matches:false})),scrollTo:o=>scrolls.push(o),URL,};doc.defaultView=win;
   const root=new Element(doc),nodes=new Map();
   const node=s=>{if(!nodes.has(s))nodes.set(s,new Element(doc));return nodes.get(s);};
+  const fields=[['[data-fs-remember]','INPUT','checkbox'],['[data-fs-theme]','SELECT','select-one'],['#story-note','TEXTAREA','textarea']].map(([selector,tagName,type],i)=>{
+    const el=node(selector);el.tagName=tagName;el.type=type;
+    el.closest=s=>s==='input,textarea,select,[contenteditable=true]'?el:null;
+    el.getBoundingClientRect=()=>({left:0,top:220+i*110,width:300,height:64});return el;
+  });
   const modes=MODES.map(mode=>Object.assign(new Element(doc),{dataset:{fsMode:mode}}));
   const views=['scene','keyframes','symbols'].map(view=>Object.assign(new Element(doc),{dataset:{fsView:view}}));
   const summary=new Element(doc),details=new Element(doc);details.open=false;details.querySelector=()=>summary;
@@ -48,15 +54,17 @@ function fixture({saved,blocked=false,input=false}={}){
   summary.addEventListener('click',()=>{details.open=!details.open;});
   summary.getBoundingClientRect=()=>({left:0,top:110,width:300,height:64});
   modes.forEach((el,i)=>{el.getBoundingClientRect=()=>({left:i*110,top:0,width:100,height:64});});
-  win.navigator={getGamepads:()=>[]};win.addEventListener=()=>{};win.cancelAnimationFrame=()=>{};
+  const frames=[],windowEvents={};
+  win.navigator={getGamepads:()=>[]};win.addEventListener=(name,fn)=>{windowEvents[name]=fn;};win.cancelAnimationFrame=()=>{};
+  win.requestAnimationFrame=fn=>{frames.push(fn);return frames.length;};
   root.querySelector=s=>s==='dialog[open]'?(node('[data-fs-settings]').open?node('[data-fs-settings]'):null):s.startsWith('[data-fs-mode="')?modes.find(b=>s.includes('"'+b.dataset.fsMode+'"')):node(s);
   root.querySelectorAll=s=>s==='[data-fs-mode]'?modes:s==='[data-fs-view]'?views:s==='summary'?[summary]:[];
   root.children=[...nodes.values(),...modes,...views];
   const assets=Object.fromEntries(MODES.map(mode=>[mode,{scene:'/assets/'+mode+'.png',symbols:'/assets/'+mode+'-symbols.png'}]));
   const oldEvent=globalThis.CustomEvent;globalThis.CustomEvent=class{};
   root.contains=el=>el===root||el===details||el===summary||modes.includes(el)||[...nodes.values()].includes(el);
-  const api=mount(root,{assets,...(input?{storeybrook:{nav:{candidates:()=>[...modes,summary]},mountIcons(){}}}:{})});globalThis.CustomEvent=oldEvent||class{};
-  return{api,root,node,modes,views,requests,data,scrolls,media,win,doc,summary,details};
+  const api=mount(root,{assets,...(input?{storeybrook:{nav:{candidates:()=>[...modes,summary,...fields]},mountIcons(){}}}:{})});globalThis.CustomEvent=oldEvent||class{};
+  return{api,root,node,modes,views,requests,data,scrolls,media,win,doc,summary,details,fields,frames,windowEvents};
 }
 test('four modes keep semantic nodes, note, bookmark, focus and scroll position',()=>{
   const f=fixture();const story=f.node('[data-story-text]'),note=f.node('#story-note'),bookmark=f.node('[data-bookmark]');
@@ -77,6 +85,17 @@ test('preference persistence is opt-in; disabling it removes only this key',()=>
   const next=fixture({saved});assert.equal(next.api.getState().style,'skeptic');
   remember.checked=false;remember.fire('change');assert.equal(f.data.has(STORAGE_KEY),false);
   const blocked=fixture({blocked:true});blocked.api.setStyle('gen2');assert.equal(blocked.api.getState().style,'gen2');
+});
+test('a temporary style change keeps failed save and failed removal messages visible',()=>{
+  const f=fixture({saved:{style:'gen4',remember:true},blocked:true});
+  f.api.setStyle('gen2');
+  assert.equal(f.api.getState().style,'gen2');
+  assert.equal(JSON.parse(f.data.get(STORAGE_KEY)).style,'gen4');
+  assert.match(f.node('[data-fs-status]').textContent,/Gen 2\. Same story; your place is kept\..*works for this visit.*could not save it/);
+  const remember=f.node('[data-fs-remember]');remember.checked=false;remember.fire('change');
+  assert.match(f.node('[data-fs-status]').textContent,/could not clear its saved preferences/);
+  f.api.setStyle('skeptic');
+  assert.match(f.node('[data-fs-status]').textContent,/Skeptic.*could not clear its saved preferences/);
 });
 test('system appearance and reduced motion respond during a visit; Quiet is independent',()=>{
   const f=fixture(),dark=f.media['(prefers-color-scheme: dark)'],motion=f.media['(prefers-reduced-motion: reduce)'];
@@ -104,4 +123,71 @@ test('TV spatial input reaches summaries, respects Quiet and returns from disclo
   f.summary.fire('click');assert.equal(f.details.open,true);
   f.root.fire('keydown',{target:f.summary,key:'Escape',preventDefault(){},stopPropagation(){}});
   assert.equal(f.details.open,false);assert.equal(f.doc.activeElement,f.summary);assert.equal(f.root.dataset.density,'tv');
+});
+
+test('TV keyboard navigation enters and leaves checkbox, select and notes without a mouse',()=>{
+  const f=fixture({input:true});f.node('[data-fs-density]').fire('click');
+  const key=value=>{let prevented=false;f.root.fire('keydown',{target:f.doc.activeElement,key:value,preventDefault(){prevented=true;},stopPropagation(){}});return prevented;};
+  f.summary.focus();key('ArrowDown');assert.equal(f.doc.activeElement,f.fields[0]);
+  key('Enter');assert.equal(f.fields[0].checked,true);
+  key('ArrowDown');assert.equal(f.doc.activeElement,f.fields[1]);
+  assert.equal(key('Enter'),false); // Preserve the select's native open action.
+  assert.equal(key('ArrowDown'),false); // Native selection while editing.
+  assert.equal(f.doc.activeElement,f.fields[1]);
+  assert.equal(key('Escape'),true);assert.equal(f.fields[1].getAttribute('data-fs-editing'),null);
+  key('ArrowDown');assert.equal(f.doc.activeElement,f.fields[2]);
+  f.fields[2].value='Keep my thought';assert.equal(key('Enter'),true);
+  assert.equal(key('ArrowLeft'),false);assert.equal(key('Backspace'),false);
+  assert.equal(key('BrowserBack'),true);assert.equal(f.fields[2].value,'Keep my thought');
+  key('ArrowUp');assert.equal(f.doc.activeElement,f.fields[1]);
+  key('ArrowUp');assert.equal(f.doc.activeElement,f.fields[0]);
+  const dialog=f.node('[data-fs-settings]');dialog.open=true;
+  assert.equal(key('Escape'),true);assert.equal(dialog.open,false);
+});
+
+test('regular form editing keeps native arrows, typing, and Backspace',()=>{
+  const f=fixture({input:true});f.fields[2].focus();
+  for(const key of ['ArrowLeft','ArrowDown','Enter','Backspace','x']){
+    let prevented=false;f.root.fire('keydown',{target:f.fields[2],key,preventDefault(){prevented=true;},stopPropagation(){}});assert.equal(prevented,false,key);
+  }
+});
+
+test('simulated gamepad can edit a select, return with B, then navigate away',()=>{
+  const f=fixture({input:true});f.node('[data-fs-density]').fire('click');
+  const select=f.fields[1];select.options=[{value:'system'},{value:'light'},{value:'dark'}];let selected=0;
+  Object.defineProperty(select,'selectedIndex',{get:()=>selected,set:value=>{selected=value;select.value=select.options[value].value;}});
+  select.selectedIndex=0;select.focus();
+  const pad={buttons:Array.from({length:16},()=>({pressed:false})),axes:[0,0]};
+  f.win.navigator.getGamepads=()=>[pad];f.windowEvents.gamepadconnected();let time=0;
+  const press=index=>{pad.buttons.forEach((b,i)=>{b.pressed=i===index;});f.frames.shift()(time+=300);};
+  press(0);assert.equal(select.getAttribute('data-fs-editing'),'true');
+  press(13);assert.equal(select.selectedIndex,1);assert.equal(f.api.getState().theme,'light');
+  press(1);assert.equal(select.getAttribute('data-fs-editing'),null);assert.equal(f.doc.activeElement,select);
+  press(13);assert.equal(f.doc.activeElement,f.fields[2]);
+});
+
+test('TV typography scales all formerly small rem labels with a 24px minimum',()=>{
+  const css=fs.readFileSync(path.join(dir,'four-styles.css'),'utf8');
+  const rules=[...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([,selectors,body])=>({selectors:selectors.replace(/\/\*[\s\S]*?\*\//g,'').split(',').map(s=>s.trim()),body}));
+  const scope='[data-four-styles][data-density="tv"]';
+  const rule=selector=>rules.find(r=>r.selectors.includes(selector))?.body||'';
+  const rootRule=rule(scope);
+  for(const token of ['ui','small','story']){
+    const match=rootRule.match(new RegExp('--fs-tv-'+token+':clamp\\((\\d+)px,'));
+    assert.ok(match,token);assert.ok(Number(match[1])>=24,token);
+  }
+  assert.match(rootRule,/--fs-target:64px/);assert.match(rootRule,/--fs-ring:5px/);
+  for(const selector of ['.fs-kicker','.fs-subtle','.fs-notebook label','.fs-footer','.fs-status','.fs-reference'])assert.match(rule(scope+' '+selector),/font-size:var\(--fs-tv-small\)/,selector);
+  assert.match(rule(scope+' .fs-switch button'),/font-size:var\(--fs-tv-ui\)/);
+  assert.match(rule(scope+' .fs-story'),/font-size:var\(--fs-tv-story\)/);
+});
+
+test('uninitialized demos hide inert controls while preserving readable story and native links',()=>{
+  const html=fs.readFileSync(path.join(dir,'index.html'),'utf8'),css=fs.readFileSync(path.join(dir,'four-styles.css'),'utf8');
+  for(const selector of ['fs-header-actions','fs-switch','fs-file','fs-views','fs-status'])assert.match(html,new RegExp('class="'+selector+'" data-fs-needs-js'));
+  assert.match(html,/<button[^>]*data-fs-needs-js[^>]*data-bookmark/);
+  assert.match(html,/<button[^>]*data-fs-needs-js[^>]*data-fs-retry/);
+  assert.match(css,/:not\(\[data-fs-ready="true"\]\) \[data-fs-needs-js\],[\s\S]*?display:none!important/);
+  assert.match(html,/data-story-text>Anna waits/);assert.match(html,/<a href="#notebook"/);
+  const f=fixture();assert.equal(f.root.dataset.fsReady,'true');f.api.destroy();assert.equal(f.root.dataset.fsReady,undefined);
 });
