@@ -1,0 +1,64 @@
+[
+  {
+    "repo": "stevoblevo/stevoblevo.github.io",
+    "revision": "c890e6ccffae2a1455012eafb931587254e732d1",
+    "path": "storeybrook/dist/embed/storeybrook-tokens.css",
+    "local": "storeybrook-tokens.css",
+    "sha256": "37ebf6f6c7ddce94e36120aba1fc0cd4c4754a9588770328fd7d9a5cc5fbad36",
+    "modifications": "none",
+    "vendored_sha256": "37ebf6f6c7ddce94e36120aba1fc0cd4c4754a9588770328fd7d9a5cc5fbad36"
+  },
+  {
+    "repo": "stevoblevo/stevoblevo.github.io",
+    "revision": "c890e6ccffae2a1455012eafb931587254e732d1",
+    "path": "storeybrook/dist/embed/storeybrook.css",
+    "local": "storeybrook.css",
+    "sha256": "da90e0d5a3d9dd77c94f8a23531429ff987a3f659be3db993cc610ca51936106",
+    "modifications": "none",
+    "vendored_sha256": "da90e0d5a3d9dd77c94f8a23531429ff987a3f659be3db993cc610ca51936106"
+  },
+  {
+    "repo": "stevoblevo/stevoblevo.github.io",
+    "revision": "c890e6ccffae2a1455012eafb931587254e732d1",
+    "path": "storeybrook/dist/embed/storeybrook.js",
+    "local": "storeybrook.js",
+    "sha256": "9e31f3e500698f668925a868145a185caf025d6c3e6d0a7dc1f00be1a5c4b1e4",
+    "modifications": "none",
+    "vendored_sha256": "9e31f3e500698f668925a868145a185caf025d6c3e6d0a7dc1f00be1a5c4b1e4"
+  },
+  {
+    "repo": "stevoblevo/stevoblevo.github.io",
+    "revision": "c890e6ccffae2a1455012eafb931587254e732d1",
+    "path": "storeybrook/four-styles/four-styles.js",
+    "local": "four-styles.js",
+    "sha256": "ee2279afe0a655ab59f835664141fedcceec91bf9fc7818ffc327ee2262a61ec",
+    "modifications": "Demo-specific alt text replaced with options.imageAlt and neutral fallback.",
+    "vendored_sha256": "7476b1b5fd35fff205335d7e42880c5a11c4cb0dc8c186a94d93db24116a75c2"
+  },
+  {
+    "repo": "stevoblevo/stevoblevo.github.io",
+    "revision": "c890e6ccffae2a1455012eafb931587254e732d1",
+    "path": "storeybrook/four-styles/four-styles.css",
+    "local": "four-styles.css",
+    "sha256": "99ff9a9a3269e31e151cb2f35d290d62931935a449122ea1505d2f5e6499e3c0",
+    "modifications": "none",
+    "vendored_sha256": "99ff9a9a3269e31e151cb2f35d290d62931935a449122ea1505d2f5e6499e3c0"
+  },
+  {
+    "repo": "stevoblevo/stevoblevo.github.io",
+    "revision": "c890e6ccffae2a1455012eafb931587254e732d1",
+    "path": "storeybrook/four-styles/vendor/depthfield-tokens.css",
+    "local": "depthfield-tokens.css",
+    "sha256": "6e31866ea83e6e502989d0e315bfc592c32b064485f12ce7e4eedcd01b4f4b0c",
+    "modifications": "none",
+    "vendored_sha256": "6e31866ea83e6e502989d0e315bfc592c32b064485f12ce7e4eedcd01b4f4b0c"
+  },
+  {
+    "repo": "stevoblevo/depthfield",
+    "revision": "41eac2256b994b8830f2255d5ab95a81d502bb26",
+    "path": "project/components/bundle.css",
+    "local": "depthfield-components.css",
+    "modifications": "Remote Google Fonts import removed; local fonts supplied by host.",
+    "vendored_sha256": "f82c44e3b66000f438854a1eae277c18dcfc0ef8364f46e76907a0bdf370a9b1"
+  }
+]
