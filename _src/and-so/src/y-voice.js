@@ -1,7 +1,7 @@
 // ===== the narrator: a clear English accent from outside the listener's region, plus an optional ElevenLabs reading =====
 // The key, when someone pastes one, stays in localStorage. Nothing in the repo holds a key.
 const EL_ON = 'andso:el:on', EL_KEY = 'andso:el:key', EL_ID = 'andso:el:id';
-let elAudio = null, voiceFilled = false;
+let elAudio = null, voiceFilled = false, elPending = false, elGeneration = 0, elRequest = null, elUrl = null, elReject = null;
 
 function elOn() { try { return localStorage.getItem(EL_ON) === '1'; } catch (e) { return false; } }
 function elKey() { try { return localStorage.getItem(EL_KEY) || ''; } catch (e) { return ''; } }
@@ -31,23 +31,41 @@ function fillVoiceSelect() {
   voiceFilled = vs.length > 0;
 }
 function stopEleven() {
+  elGeneration++; elPending = false;
+  if (elRequest) { elRequest.abort(); elRequest = null; }
+  if (elReject) { const reject = elReject; elReject = null; reject(Object.assign(new Error('cancelled'), { cancelled: true })); }
+  if (elUrl) { URL.revokeObjectURL(elUrl); elUrl = null; }
   if (elAudio) { try { elAudio.pause(); } catch (e) { /* already stopped */ } elAudio = null; }
 }
 function speakEleven(text) {
+  voiceCommandsStop('Voice commands off while narration plays.');
   const key = elKey(), id = elId();
   if (!elOn() || !key || !id) return Promise.reject(new Error('off'));
   stopEleven();
+  const generation = elGeneration, request = new AbortController();
+  elRequest = request; elPending = true;
+  const cancelled = () => Object.assign(new Error('cancelled'), { cancelled: true });
   return fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(id)}/stream?output_format=mp3_44100_128`, {
-    method: 'POST',
+    method: 'POST', signal: request.signal,
     headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({ text: String(text || '').slice(0, 2500), model_id: 'eleven_turbo_v2_5' })
   }).then(res => { if (!res.ok) throw new Error('el'); return res.blob(); }).then(blob => new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(blob), a = new Audio(url);
+    if (generation !== elGeneration) { reject(cancelled()); return; }
+    elPending = false; elRequest = null; elReject = reject;
+    const url = URL.createObjectURL(blob), a = new Audio(url); elUrl = url;
     elAudio = a;
-    a.onended = () => { URL.revokeObjectURL(url); if (elAudio === a) elAudio = null; resolve(); };
-    a.onerror = () => { URL.revokeObjectURL(url); reject(new Error('play')); };
-    const p = a.play(); if (p && p.catch) p.catch(reject);
-  }));
+    a.onended = () => { if (generation !== elGeneration) { reject(cancelled()); return; } elReject = null; elUrl = null; URL.revokeObjectURL(url); if (elAudio === a) elAudio = null; resolve(); };
+    a.onerror = () => { if (generation !== elGeneration) { reject(cancelled()); return; } elReject = null; elUrl = null; elAudio = null; URL.revokeObjectURL(url); reject(new Error('play')); };
+    const p = a.play(); if (p && p.catch) p.catch(error => {
+      URL.revokeObjectURL(url);
+      if (elAudio === a) { elAudio = null; elUrl = null; elReject = null; }
+      reject(error);
+    });
+  })).catch(error => {
+    if (generation !== elGeneration) throw cancelled();
+    elPending = false; elRequest = null;
+    throw error;
+  });
 }
 function hookEleven() {
   const R = window.Storeybrook && Storeybrook.read;
@@ -61,7 +79,7 @@ function hookEleven() {
     speakEleven(c.text).then(() => {
       if (R.state === 'idle') return;
       R._i++; R._next();
-    }).catch(() => { if (R.state !== 'idle') next(); });
+    }).catch(error => { if (!error.cancelled && R.state !== 'idle') next(); });
   };
   const stop = R.stop.bind(R);
   R.stop = function (quiet) { stopEleven(); return stop(quiet); };
@@ -71,7 +89,7 @@ function voiceTest() {
   if (!R || !R.supported) { caption("this browser can't read aloud.", 2200); return; }
   const line = 'Here is a voice from somewhere else.';
   if (elOn() && elKey() && elId()) {
-    speakEleven(line).catch(() => R.speak(line, { rate: 0.96, pitch: 1.02 }));
+    speakEleven(line).catch(error => { if (!error.cancelled) R.speak(line, { rate: 0.96, pitch: 1.02 }); });
     return;
   }
   R.speak(line, { rate: 0.96, pitch: 1.02 });

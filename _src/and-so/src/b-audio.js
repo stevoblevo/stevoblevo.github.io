@@ -333,7 +333,7 @@ function trainPass() {
 
 // ---------- capture: the last ten seconds, and recordings ----------
 const capture = {
-  ringL: null, ringR: null, pos: 0, len: 0, proc: null, rec: null, chunks: [], dest: null,
+  replays: new Set(), ringL: null, ringR: null, pos: 0, len: 0, proc: null, rec: null, chunks: [], dest: null,
   setup() {
     if (!A.ac || this.proc) return;
     const ac = A.ac;
@@ -342,8 +342,15 @@ const capture = {
     this.proc.onaudioprocess = e => { const a = e.inputBuffer.getChannelData(0), b = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : a, L = this.ringL, R = this.ringR, n = this.len; let p = this.pos; for (let i = 0; i < a.length; i++) { L[p] = a[i]; R[p] = b[i]; p = (p + 1) % n; } this.pos = p; };
     const z = ac.createGain(); z.gain.value = 0; A.vol.connect(this.proc); this.proc.connect(z); z.connect(ac.destination);
   },
+  stopReplay() {
+    for (const { sources, gain } of this.replays) {
+      for (const source of sources) { try { source.stop(); source.disconnect(); } catch (_) {} }
+      gain.disconnect();
+    }
+    this.replays.clear();
+  },
   replay() {
-    if (!A.ac || !this.ringL) return false;
+    if (muted || !A.ac || !this.ringL) return false;
     const ac = A.ac, sr = ac.sampleRate, n = Math.min(this.len, Math.floor(sr * 10)), L = new Float32Array(n), R = new Float32Array(n);
     let p = (this.pos - n + this.len) % this.len; for (let i = 0; i < n; i++) { L[i] = this.ringL[p]; R[i] = this.ringR[p]; p = (p + 1) % this.len; }
     const buf = ac.createBuffer(2, n, sr); buf.copyToChannel(L, 0); buf.copyToChannel(R, 1);
@@ -352,6 +359,8 @@ const capture = {
     const now = ac.currentTime, g = ac.createGain(); g.gain.value = 0.95 * SET.vol; g.connect(ac.destination);
     const s1 = ac.createBufferSource(); s1.buffer = rb; s1.connect(g); s1.start(now);
     const s2 = ac.createBufferSource(); s2.buffer = buf; s2.connect(g); s2.start(now + 0.72);
+    const replay = { sources: [s1, s2], gain: g }; this.replays.add(replay);
+    s2.onended = () => { this.replays.delete(replay); g.disconnect(); };
     A.vol.gain.setTargetAtTime(0.1 * SET.vol, now, 0.1); setTimeout(() => audio.applyMix(), (0.75 + n / sr) * 1000);
     return true;
   },

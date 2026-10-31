@@ -17,7 +17,7 @@ VENDOR = ROOT / "vendor"
 JS = ["a-core.js", "b-audio.js", "c-music.js", "d-game.js", "d2-world.js", "e-input.js", "f-draw.js", "f2-terrain.js",
       "h-listen.js", "i-views.js", "j-motion.js", "k-world.js", "l-reel.js", "m-paper.js", "n-mirror.js", "o-jam.js",
       "p-brook.js", "y-voice.js", "q-guard.js", "r-versions.js", "s-hide.js",
-      "t-book.js", "u-wing.js", "v-tune.js", "w-dream.js", "x-mag.js", "g-loop.js"]
+      "t-book.js", "u-wing.js", "v-tune.js", "w-dream.js", "x-mag.js", "z-command-recognition.js", "z-commands.js", "g-loop.js"]
 FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
          "&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600"
          "&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800"

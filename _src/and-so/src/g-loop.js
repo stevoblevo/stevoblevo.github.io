@@ -240,6 +240,7 @@ try {
 try {
   if (/[?&]debug\b/.test(location.search)) window.__andso = {
     voices: () => voices.filter(v => v.wT > 0).map(v => ({ x: +v.x.toFixed(2), c: +v.c.toFixed(2), lab: v.lab, locked: v.locked, glide: !!v.glide, echo: v.echo, drag: !!v.dragging })),
+    sound: () => ({ muted, audioState: A.ac && A.ac.state, rain: SET.rain, artic: SET.artic, hummer: LS.src === 'demo', masterGain: A.vol && A.vol.gain.value, replays: capture.replays.size }),
     ls: () => ({ src: LS.src, f: +LS.f.toFixed(2), conf: +LS.conf.toFixed(3), phrases: LS.phrases, lines: LS.lines.slice(), note: !!LS.note, roomC: LS.roomC, act: LS.lastAction, rms: +LS.rms.toFixed(4), dispX: LS.dispX }),
     state: () => ({ t: +t.toFixed(2), root: +fRoot.toFixed(3), tune: +TUNE.toFixed(5), Rs: +Rs.toFixed(4), chord: chordNow && chordNow.str, mood: moodNow(), mode: M.key, skin, found: [...found], score: GAME.score }),
     listenStart, listenStop, setFollow, lean, setMood, setMode, setSkin, setViewMode, setX5d, reelStart, reelStop,

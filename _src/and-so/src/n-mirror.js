@@ -5,6 +5,10 @@
 const MIR = { depth: 0, look: '', wins: [], deep: 0, z: 30, open: false, n: 0, v61: null, seeded: false, wasMuted: null };
 try { const m = /^andso-mirror:(\d)(?::([a-z0-9-]+))?$/.exec(window.name || ''); if (m) { MIR.depth = +m[1]; MIR.look = m[2] || ''; } } catch (e) {}
 const MIR_MAX = 3;
+// Current copies are opaque sandbox origins. The creator records its actual serialized origin in srcdoc.
+const MIR_PARENT_ORIGIN = document.documentElement.getAttribute('data-andso-parent-origin');
+const MIR_MUTES = new Map(), MIR_PARENT_MUTES = new Map();
+let mirMuteSerial = 0;
 const DEVICES = {
   phone: { name: 'phone', w: 390, h: 844, r: 46 },
   fold: { name: 'foldable, open', w: 768, h: 840, r: 26 },
@@ -23,7 +27,7 @@ const mirPost = (w, msg) => { try { if (w.frame && w.frame.contentWindow) w.fram
 function mirSrc() {
   const S = SELF_SRC; if (!S) return null;
   const q = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;'), end = '<' + '/script>';
-  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' +
+  return '<!doctype html><html lang="en" data-andso-parent-origin="' + q(window.origin) + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' +
     (S.fonts ? '<link rel="stylesheet" href="' + q(S.fonts) + '">' : '') + '<style id="andso-css">' + S.css + '</style></head><body>' + S.app +
     '<script id="sb-js">' + S.sbj + end + '<script id="andso-js">' + S.js + end + '</body></html>';
 }
@@ -128,13 +132,70 @@ function mirSound(w, on) {
   } else if (MIR.wasMuted !== null) { muted = MIR.wasMuted; MIR.wasMuted = null; audio.applyMix(); }
   w.sound = on; mirPost(w, { andso: 'mute', v: !on }); w.el.querySelector('[data-a="snd"]').setAttribute('aria-pressed', String(on)); syncUI();
 }
+// Full-output mute travels only down owned current-version frames; acknowledgements travel up one edge.
+function mirMuteAll() {
+  const targets = MIR.wins.filter(w => w.kind === 'self' && w.frame && w.frame.isConnected);
+  MIR.wasMuted = null; // Closing a previously audible mirror must not restore pre-mute sound.
+  if (!targets.length) return Promise.resolve({ ok: true, count: 0 });
+  const id = String(++mirMuteSerial);
+  return new Promise(resolve => {
+    const request = { waiting: new Set(targets), results: [], timer: null, finish: null };
+    request.finish = () => {
+      clearTimeout(request.timer); MIR_MUTES.delete(id);
+      for (const w of targets) {
+        const busy = [...MIR_MUTES.values()].some(r => r.waiting.has(w));
+        const button = w.el.querySelector('[data-a="snd"]');
+        button.disabled = busy; button.setAttribute('aria-busy', String(busy));
+      }
+      resolve({ ok: request.waiting.size === 0 && request.results.every(r => r.ok),
+        count: request.results.reduce((n, r) => n + (r.ok ? 1 + r.count : 0), 0) });
+    };
+    MIR_MUTES.set(id, request);
+    request.timer = setTimeout(request.finish, 4000);
+    for (const w of targets) {
+      w.sound = false;
+      const button = w.el.querySelector('[data-a="snd"]');
+      button.setAttribute('aria-pressed', 'false'); button.setAttribute('aria-busy', 'true'); button.disabled = true;
+      if (w.ready) mirPost(w, { andso: 'mute-all', id });
+    }
+  });
+}
+function mirMuteClosed(w) {
+  // A removed frame has no remaining outputs; don't wait for a message from its destroyed document.
+  for (const request of MIR_MUTES.values()) if (request.waiting.delete(w)) {
+    request.results.push({ ok: true, count: 0 });
+    if (!request.waiting.size) request.finish();
+  }
+}
+function mirMuteMessage(e, d, w) {
+  if (d.andso !== 'mute-all' && d.andso !== 'muted-all') return false;
+  if (typeof d.id !== 'string' || !/^[1-9][0-9]{0,8}$/.test(d.id)) return true;
+  if (d.andso === 'muted-all') {
+    const request = MIR_MUTES.get(d.id);
+    if (!w || w.kind !== 'self' || !w.frame.isConnected || e.origin !== 'null' || !request || !request.waiting.has(w)) return true;
+    if (typeof d.ok !== 'boolean' || !Number.isInteger(d.count) || d.count < 0 || d.count > 64) return true;
+    request.waiting.delete(w); request.results.push({ ok: d.ok, count: d.count });
+    if (!request.waiting.size) request.finish();
+  } else if (MIR.depth > 0 && MIR_PARENT_ORIGIN !== null && e.source === window.parent && e.origin === MIR_PARENT_ORIGIN) {
+    // Repeated delivery acknowledges the same operation; it never starts another downward broadcast.
+    if (!MIR_PARENT_MUTES.has(d.id)) {
+      MIR_PARENT_MUTES.set(d.id, muteAllHere());
+      if (MIR_PARENT_MUTES.size > 16) MIR_PARENT_MUTES.delete(MIR_PARENT_MUTES.keys().next().value);
+    }
+    MIR_PARENT_MUTES.get(d.id).then(result => {
+      window.parent.postMessage({ andso: 'muted-all', id: d.id, ok: result.ok, count: result.count }, MIR_PARENT_ORIGIN === 'null' ? '*' : MIR_PARENT_ORIGIN);
+    }).catch(() => { /* parent will report an unconfirmed mirror, never success */ });
+  }
+  return true;
+}
+
 function mirClose(w) {
   if (w.sound) mirSound(w, false);
   try { w.frame && w.frame.remove(); } catch (e) {}
-  w.el.remove(); MIR.wins = MIR.wins.filter(x => x !== w); mirDeep();
+  w.el.remove(); mirMuteClosed(w); MIR.wins = MIR.wins.filter(x => x !== w); mirDeep();
   if (!MIR.wins.length && MIR.open) mirrorTable(false);
 }
-function mirCloseAll() { MIR.wins.slice().forEach(w => { if (w.sound) mirSound(w, false); try { w.frame && w.frame.remove(); } catch (e) {} w.el.remove(); }); MIR.wins = []; mirDeep(); }
+function mirCloseAll() { MIR.wins.slice().forEach(w => { if (w.sound) mirSound(w, false); try { w.frame && w.frame.remove(); } catch (e) {} w.el.remove(); mirMuteClosed(w); }); MIR.wins = []; mirDeep(); }
 function mirDeep() {
   MIR.deep = MIR.wins.filter(w => w.kind === 'self' && w.ready).reduce((m, w) => Math.max(m, 1 + w.deep), 0);
   mirUp({ andso: 'deep', v: MIR.deep });
@@ -145,9 +206,10 @@ function mirDeep() {
 window.addEventListener('message', e => {
   const d = e.data; if (!d || typeof d !== 'object' || typeof d.andso !== 'string') return;
   const w = MIR.wins.find(x => x.frame && x.frame.contentWindow === e.source);
+  if (mirMuteMessage(e, d, w)) return;
   if (w) {
     if (d.andso === 'ens') { if (typeof ensRecv === 'function') ensRecv(d, e.source); return; }
-    if (d.andso === 'hello') { w.ready = true; mirPost(w, { andso: 'seed', save: snapshot() }); mirPost(w, { andso: 'mute', v: !w.sound }); mirDeep(); discover('x-mirror'); }
+    if (d.andso === 'hello') { w.ready = true; mirPost(w, { andso: 'seed', save: snapshot() }); mirPost(w, { andso: 'mute', v: !w.sound }); for (const [id, request] of MIR_MUTES) if (request.waiting.has(w)) mirPost(w, { andso: 'mute-all', id }); mirDeep(); discover('x-mirror'); }
     else if (d.andso === 'deep') { w.deep = clamp(+d.v || 0, 0, 9); mirDeep(); }
     else if (d.andso === 'found' && typeof d.id === 'string' && CATI.has(d.id)) discover(d.id);
     else if (d.andso === 'nougat') { const r = w.el.getBoundingClientRect(); nougat(clamp(+d.n || 1, 1, 3), r.left + r.width / 2, r.top + 24, 'found inside the mirror'); }
