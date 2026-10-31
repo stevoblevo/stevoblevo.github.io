@@ -1,0 +1,15 @@
+{
+  "schema": "four-styles.semantic.v1",
+  "title": "Save Anna",
+  "story": "Anna waits in a garden with a fox and a star-cloaked guide. A lantern lights the way.",
+  "core": "The same care, in four visual languages.",
+  "modes": {
+    "gen4": { "name": "Gen 4", "purpose": "Cinematic detail", "use": "Key art and story moments" },
+    "gen2": { "name": "Gen 2", "purpose": "Expressive storybook", "use": "Game assets and storyboards" },
+    "skeptic": { "name": "Skeptic", "purpose": "Question and verify", "use": "Review, planning and design decisions" },
+    "semiotic": { "name": "Semiotic strict", "purpose": "Symbols with fewer words", "use": "Icons and guidance, with readable alternatives" }
+  },
+  "questions": ["What is shown?", "What is still uncertain?", "What would we check next?"],
+  "evidence": "This is an illustrated story concept. No safety, outcome or real-world claim has been verified by this demo.",
+  "symbol_caveat": "Symbols may mean different things to different people. Accessible labels and optional visible words stay available."
+}

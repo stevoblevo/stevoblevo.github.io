@@ -1,0 +1,9 @@
+# Reference artwork is a separate, explicitly approved asset pack.
+private/
+local-assets/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.zip
+manifest.private.json

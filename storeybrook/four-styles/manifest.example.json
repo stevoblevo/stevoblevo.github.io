@@ -1,0 +1,11 @@
+{
+  "schema": "four-styles.assets.v1",
+  "publication": "No reference artwork is included in this public package.",
+  "source": { "sha256": null, "dimensions": null, "provenance": "Supply the reviewed crop manifest alongside authorized local assets." },
+  "styles": {
+    "gen4": { "scene": null, "column": null, "keyframes": null, "symbols": null },
+    "gen2": { "scene": null, "column": null, "keyframes": null, "symbols": null },
+    "skeptic": { "scene": null, "column": null, "keyframes": null, "symbols": null },
+    "semiotic": { "scene": null, "column": null, "keyframes": null, "symbols": null }
+  }
+}
