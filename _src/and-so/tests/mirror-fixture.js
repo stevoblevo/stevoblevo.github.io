@@ -1,6 +1,6 @@
 // Test-only inspection bridge, copied into the real sandboxed srcdoc mirrors by SELF_SRC.
 // No native recognition, microphone, synthesis, or provider fetch is used.
-qa.protocol = []; qa.replayNodes = []; qa.requests = new Map(); qa.sequence = 0;
+qa.heldMutes = new Map(); qa.protocol = []; qa.replayNodes = []; qa.requests = new Map(); qa.sequence = 0;
 const nativeBufferSource = AudioContext.prototype.createBufferSource;
 AudioContext.prototype.createBufferSource = function (...args) {
   const node = nativeBufferSource.apply(this, args);
@@ -30,8 +30,8 @@ window.qaSnapshot = async () => ({
 window.addEventListener('message', async e => {
   const d = e.data;
   if (d?.andso === 'mute-all' || d?.andso === 'muted-all') {
-    qa.protocol.push({ type: d.andso, id: d.id, origin: e.origin });
-    if (qa.blockMute && d.andso === 'mute-all') { e.stopImmediatePropagation(); return; }
+    qa.protocol.push({ type: d.andso, id: d.id, origin: e.origin, ok: d.ok });
+    if (qa.blockMute && d.andso === 'mute-all' && qa.releasing !== d.id) { qa.heldMutes.set(d.id, { data: d, source: e.source, origin: e.origin }); e.stopImmediatePropagation(); return; }
   }
   if (d?.qaMirror === 'reply') {
     const request = qa.requests.get(d.id);
@@ -59,6 +59,12 @@ window.addEventListener('message', async e => {
       await qaAsk(qa.nested.frame.contentWindow, 'prepare');
     }
     if (d.command === 'block') qa.blockMute = d.args.on;
+    if (d.command === 'release') {
+      const held = qa.heldMutes.get(d.args.id);
+      if (!held) throw Error('No held mute request: ' + d.args.id);
+      qa.heldMutes.delete(d.args.id); qa.releasing = d.args.id;
+      window.dispatchEvent(new MessageEvent('message', held)); qa.releasing = null;
+    }
     if (d.command === 'spoof') window.dispatchEvent(new MessageEvent('message', {
       data: { andso: 'mute-all', id: '888888888' }, source: d.args.wrongSource ? window : window.parent,
       origin: d.args.wrongSource ? document.documentElement.getAttribute('data-andso-parent-origin') : 'https://unrelated.invalid'

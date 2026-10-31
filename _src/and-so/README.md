@@ -32,6 +32,8 @@ The full-output mute protocol addresses only owned `kind: self` frames. Each src
 
 The mirror regression reproduces the prior `3a6f483` failure with native Web Audio replay sources still running after outer mute, while synthetic narration and paper audio also remain active. Its repaired-case checks include nested mirrors, actual source stops/disconnections, paper AudioContext suspension, wrong source/origin/request IDs, acknowledgement timeouts, and an unrelated top-level test tab retaining its outputs. The fixture supplies mock speech in every owned frame and serves only its temporary HTML over loopback.
 
+Mute status belongs to the latest invocation, including overlap between the button and a voice command. An older success or timeout cannot replace it. Stop, hiding and navigation invalidate pending status even when recognition is already off. The status regression holds and releases real owned-frame requests in both completion orders; it reproduces the stale-success bug on `e9c897c` before checking the fix.
+
 ### Build and verify
 
 From the repository root:
@@ -42,6 +44,7 @@ node --check _src/and-so/check.js
 node _src/and-so/tests/commands.test.cjs
 python3 _src/and-so/tests/browser_commands.py
 python3 _src/and-so/tests/browser_mirrors.py
+python3 _src/and-so/tests/browser_mirrors.py --script browser-mute-status.js
 cmp _src/and-so/dist/and-so.html and-so/index.html
 ```
 

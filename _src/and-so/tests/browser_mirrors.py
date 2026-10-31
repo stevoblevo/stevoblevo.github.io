@@ -4,6 +4,7 @@ import argparse, functools, http.server, json, subprocess, tempfile, threading
 from pathlib import Path
 TESTS = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
+parser.add_argument('--script', choices=['browser-mirrors.js', 'browser-mute-status.js'], default='browser-mirrors.js')
 parser.add_argument('--page', type=Path, default=TESTS.parent / 'dist/and-so.html')
 args = parser.parse_args()
 page = args.page.read_text()
@@ -16,7 +17,7 @@ page = page.replace('<script id="sb-js">', '<script id="sb-js">\n' + mocks, 1)
 page = page.replace("if (/[?&]debug\\b/.test(location.search)) window.__andso", "if (window.qa) window.__andso")
 page = page.replace('<head>', '<head><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; frame-src \'self\' about:; script-src \'unsafe-inline\'; style-src \'unsafe-inline\'; img-src data:; media-src blob:">', 1)
 before, after = page.rsplit('</body>', 1)
-page = before + '<script>' + (TESTS / 'browser-mirrors.js').read_text() + '</script></body>' + after
+page = before + '<script>' + (TESTS / args.script).read_text() + '</script></body>' + after
 with tempfile.TemporaryDirectory(prefix='andso-mirror-') as tmp:
     file = Path(tmp) / 'mirror.html'; file.write_text(page)
     class Handler(http.server.SimpleHTTPRequestHandler):

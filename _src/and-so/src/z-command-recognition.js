@@ -81,7 +81,8 @@ const ANDSO_COMMANDS = (() => {
       publish('Starting microphone…');
       try { r.start(); } catch (_) { stop('Microphone could not start. Use the sound controls.'); }
     }
-    return { start, stop, active: () => current !== null };
+    // A manual command can own the status without ending microphone input.
+    return { start, stop, active: () => current !== null, invalidatePendingStatus: () => { revision++; } };
   }
   return { parse, createSession };
 })();

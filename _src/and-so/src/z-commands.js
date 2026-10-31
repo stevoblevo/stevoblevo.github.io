@@ -2,7 +2,8 @@
 // Only one input mode at a time; an ended recognition session is never restarted automatically.
 let commandSession = null;
 function voiceCommandsStop(message) {
-  if (commandSession && commandSession.active()) commandSession.stop(message);
+  // Also invalidate pending manual-command status when input was already off.
+  if (commandSession) commandSession.stop(message);
 }
 function commandNarrating() {
   const r = window.Storeybrook && Storeybrook.read, s = window.speechSynthesis;
@@ -71,6 +72,8 @@ async function muteAllHere() {
 function commandBoot() {
   const panel = $('voiceCommands'), start = $('vcStart'), stop = $('vcStop'), badge = $('vcBadge'), status = $('vcStatus');
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let statusRevision = 0;
+  function setStatus(message) { status.textContent = message; return ++statusRevision; }
   function available() {
     const ok = !!SR && window.isSecureContext && navigator.onLine !== false && MIR.depth === 0;
     start.disabled = !ok;
@@ -79,7 +82,7 @@ function commandBoot() {
         : !window.isSecureContext ? 'Voice commands need HTTPS. Use the sound controls.'
         : MIR.depth > 0 ? 'Use voice commands in the outer AND SO window.'
         : navigator.onLine === false ? 'Offline. Use the sound controls.' : 'Voice commands off.';
-      status.textContent = message;
+      setStatus(message);
     }
     return ok;
   }
@@ -90,13 +93,13 @@ function commandBoot() {
       panel.dataset.listening = String(active);
       badge.textContent = state === 'starting' ? 'Starting…' : active ? '● Listening' : 'Off';
       start.disabled = active || !SR || !window.isSecureContext || navigator.onLine === false || MIR.depth > 0;
-      stop.disabled = !active; status.textContent = message;
+      stop.disabled = !active; setStatus(message);
     }
   });
   start.addEventListener('click', () => {
     if (!entered || !available()) return;
-    if (LS.pending) { status.textContent = 'Finish the singing microphone request first.'; return; }
-    if (commandNarrating()) { status.textContent = 'Stop narration before starting voice commands.'; return; }
+    if (LS.pending) { setStatus('Finish the singing microphone request first.'); return; }
+    if (commandNarrating()) { setStatus('Stop narration before starting voice commands.'); return; }
     earsOn(false);
     if (LS.src === 'mic') listenStop(true);
     commandSession.start();
@@ -104,9 +107,11 @@ function commandBoot() {
   });
   stop.addEventListener('click', () => voiceCommandsStop());
   $('vcMute').addEventListener('click', () => {
-    const pending = 'Muting sound here and current mirrors…'; status.textContent = pending;
-    muteAllHere().then(result => { if (status.textContent === pending) status.textContent = muteAllMessage(result); })
-      .catch(() => { if (status.textContent === pending) status.textContent = 'Mute could not be confirmed. Use the sound controls or close the mirrors.'; });
+    commandSession.invalidatePendingStatus();
+    const requestRevision = setStatus('Muting sound here and current mirrors…');
+    // Equal pending text does not imply the same request. Only its owner may finish it.
+    muteAllHere().then(result => { if (statusRevision === requestRevision) setStatus(muteAllMessage(result)); })
+      .catch(() => { if (statusRevision === requestRevision) setStatus('Mute could not be confirmed. Use the sound controls or close the mirrors.'); });
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) voiceCommandsStop('Voice commands off while this page is hidden.'); });
   window.addEventListener('pagehide', () => voiceCommandsStop());
