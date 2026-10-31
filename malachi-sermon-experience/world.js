@@ -1,4 +1,5 @@
 import {mount} from './vendor/four-styles.js';
+import {mountTV} from './tv.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const data=window.SERMON, audio=$('#audio'), status=$('#world-status'), root=document.body;
 const asset=p=>window.LOCAL_ASSETS?.[p]||p;
@@ -70,3 +71,7 @@ window.paperWorld={setScene,getState:()=>({chapter:current,time:audio.currentTim
 const qp=new URLSearchParams(location.search);if(qp.has('scene'))setScene(+qp.get('scene'));if(qp.get('quiet')==='1')$('button[data-fs-quiet]').click();
 
 document.documentElement.dataset.appReady='true';document.getElementById('startup-help').hidden=true;
+
+mountTV({audio,title:"What’s Going On? · Malachi’s paper world"});
+
+if(location.protocol==='file:'||window.LOCAL_ASSETS)document.querySelector('.ride-invitation').hidden=true;

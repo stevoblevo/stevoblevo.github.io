@@ -1,0 +1,19 @@
+{
+  "package": "three",
+  "version": "0.187.0",
+  "source": "https://registry.npmjs.org/three/-/three-0.187.0.tgz",
+  "files": [
+    {
+      "path": "three.core.js",
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "THREE-LICENSE.txt",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "three.module.js",
+      "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
+    }
+  ]
+}
