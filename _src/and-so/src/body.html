@@ -205,8 +205,11 @@
       <button type="button" id="magCarrot" class="mag-carrot" hidden aria-label="a loose carrot"></button></div>
 
     <div class="sec">read aloud</div>
-    <label class="row"><span>voice</span><select id="sVoice" class="txt" aria-label="read-aloud voice"></select></label>
-    <div class="btns"><button class="pill" id="sVoiceTest" type="button">hear it</button></div>
+    <div class="btns voice-row">
+      <select id="sVoice" class="txt" aria-label="read-aloud voice"></select>
+      <button class="pill" id="sVoiceTest" type="button">Test voice</button>
+    </div>
+    <label class="row"><span>mute the voice</span><input type="checkbox" class="sw" id="sVoiceMute"></label>
     <div class="note" id="sVoiceNote">an English accent from outside this device's own region. the choice stays in this browser.</div>
     <label class="row"><span>ElevenLabs experiment</span><input type="checkbox" class="sw" id="sElOn"></label>
     <input class="txt" id="sElKey" type="password" autocomplete="off" spellcheck="false" placeholder="your ElevenLabs API key, kept in this browser" aria-label="ElevenLabs API key">
