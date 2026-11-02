@@ -1051,6 +1051,13 @@ html[data-sb="inkblot"] .jk[data-role="chord"] { background: #000; color: #fff }
 .ver-btn:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px }
 #versions { position: fixed; inset: 0; z-index: 46; display: none; padding: 16px; overflow: auto; background: var(--scrim) }
 #versions.on { display: block }
+/* before & after: the light-look diff over the whole screen, under a strip of paper with its own close button */
+#diffSheet { position: fixed; inset: 0; z-index: 70; display: none; flex-direction: column; background: var(--paper); color: var(--ink); padding-top: env(safe-area-inset-top, 0px) }
+#diffSheet.on { display: flex }
+.df-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 14px; padding: 8px max(12px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)); background: var(--page); border-bottom: 2px solid var(--line) }
+.df-bar h2 { margin: 0; font: var(--sb-display-weight) clamp(20px, .8vw + 14px, 34px)/1.1 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth) }
+.df-sub { flex: 1; min-width: 10em; font: 400 clamp(14px, .3vw + 11px, 19px)/1.3 var(--sb-story); color: var(--ink-muted) }
+#diffFrame { flex: 1; width: 100%; min-height: 0; border: 0; background: var(--paper) }
 .vs-sheet { position: relative; width: min(720px, 100%); margin: 5vh auto; padding: clamp(18px, 3vw, 48px); background: var(--page); color: var(--ink); border: 2px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-page); font-family: var(--sb-ui) }
 .vs-lede { margin: 0 0 1em; font: 400 clamp(15px, .5vw + 11px, 24px)/1.45 var(--sb-story); color: var(--ink-muted) }
 .vs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px }
@@ -1340,7 +1347,9 @@ body.booking #hud { opacity: .15 }
     <div class="sec">looks</div>
     <div class="btns" id="lookBtns"><button class="pill" data-look="sb-daylight">Meta Daylight</button><button class="pill" data-look="sb-knight">Knight Night</button><button class="pill" data-look="sb-inkblot">Ink Blot</button><button class="pill" data-look="sb-comix">Comix</button><button class="pill" data-look="sb-origami">Origami</button><button class="pill" data-look="sb-skein">Skein silk</button></div>
     <div class="btns" id="themeBtns"><button class="pill" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight 6</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook 6</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
-    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one. the older looks last for the visit: AND SO 7 always reopens on paper, in the Storeybrook look you picked last.</div>
+    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one. the older looks last for the visit: AND SO always reopens on paper, in the Storeybrook look you picked last.</div>
+    <label class="row" id="diffRow"><span>before &amp; after: the light looks, then and now</span><input type="checkbox" class="sw" id="sDiff"></label>
+    <div class="note">the diff from 27 October, when the light looks got their ink: both builds running, with a line to wipe across, side by side, or one at a time. it opens in the look you're in. Esc closes it.</div>
 
     <div class="sec">words</div>
     <label class="row"><span>hide the words</span><input type="checkbox" class="sw" id="sQuiet"></label>
@@ -1367,7 +1376,7 @@ body.booking #hud { opacity: .15 }
 
     <div class="sec">versions</div>
     <div class="btns"><button class="pill" id="gVersions">every version</button></div>
-    <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 7 is still there, and so are 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
+    <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 8.1 and 8 are still there, and so are 7, 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
 
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
@@ -1583,6 +1592,11 @@ body.booking #hud { opacity: .15 }
       <li><a href="https://en.wikipedia.org/wiki/Flying_Microtonal_Banana" target="_blank" rel="noopener">Flying Microtonal Banana</a>, Wikipedia</li>
     </ul>
   </div>
+</div>
+
+<div id="diffSheet" class="sbi" role="dialog" aria-modal="true" aria-labelledby="dfTitle" aria-hidden="true">
+  <div class="df-bar"><h2 id="dfTitle">Before &amp; after</h2><span class="df-sub">the light looks, 27 October</span><button class="bm-x" id="diffClose" aria-label="close before and after" title="close (Esc)">×</button></div>
+  <iframe id="diffFrame" title="AND SO's light looks, before and after" allow="autoplay"></iframe>
 </div>
 
 <div id="versions" class="sbi" role="dialog" aria-modal="true" aria-labelledby="vsTitle">
@@ -13345,6 +13359,51 @@ if (MIR.depth > 0) { $('verBtn').disabled = true; $('gVersions').closest('.btns'
 // while the sheet is open, keys belong to it: Escape closes it, and nothing reaches the instrument underneath
 window.addEventListener('keydown', e => { if (!$('versions').classList.contains('on')) return; e.stopImmediatePropagation(); if (e.key === 'Escape') versionsClose(); }, true);
 
+// ===== before & after: the light-look diff from 27 October, switched on from the gamut =====
+// The diff runs two builds of AND SO 7 side by side (before and after the light looks were made readable) with a
+// line to wipe across. On github.io it lives next door at /and-so/diff/; the artifact carries its own copy as
+// diff/index.html; anywhere else (the Field, a file on disk) it opens on github.io in a new tab. While it is open
+// this page holds still and quiet, so the two builds inside get the machine to themselves; closing it unloads them.
+const DIFF = { open: false, held: false, wasPaused: false };
+function diffSrc() {
+  const q = new URLSearchParams({ embed: '1', look: skin, view: viewOn(), tuning: M.key }).toString();
+  if (VER_ON_PAGES) return '/and-so/diff/?' + q;
+  if (!CAP.selfHost) return 'diff/index.html?' + q;
+  return '';
+}
+function diffOpen() {
+  if (DIFF.open || MIR.depth > 0) { syncDiffUI(); return; }
+  const src = diffSrc();
+  if (!src) { try { window.open(VER_HOST + '/and-so/diff/?' + new URLSearchParams({ look: skin }), '_blank', 'noopener'); } catch (e) {} syncDiffUI(); jlog('opened before and after on github.io'); return; }
+  if (REEL.on) reelStop(false);
+  if (JAM.on) jamStop(true);
+  DIFF.open = true;
+  const f = $('diffFrame'); f.src = src;
+  const el = $('diffSheet'); el.classList.add('on'); el.setAttribute('aria-hidden', 'false');
+  DIFF.wasPaused = paused;   // the game underneath holds still: no frames, no sound
+  if (A.ac && !paused) { paused = true; DIFF.held = true; try { A.ac.suspend(); } catch (e) {} }
+  syncDiffUI(); jlog('opened before and after');
+  setTimeout(() => { try { $('diffClose').focus(); } catch (e) {} }, 40);
+}
+function diffClose() {
+  if (!DIFF.open) { syncDiffUI(); return; }
+  DIFF.open = false;
+  const el = $('diffSheet'); el.classList.remove('on'); el.setAttribute('aria-hidden', 'true');
+  $('diffFrame').src = 'about:blank';   // unload both builds so nothing keeps running in the background
+  if (DIFF.held) { DIFF.held = false; paused = DIFF.wasPaused; if (!paused && A.ac) try { A.ac.resume(); } catch (e) {} }
+  last = performance.now();
+  syncDiffUI(); syncUI(); jlog('closed before and after');
+  setTimeout(() => { try { $('sDiff').focus({ preventScroll: true }); } catch (e) {} }, 40);
+}
+function syncDiffUI() { const s = $('sDiff'); if (s) s.checked = DIFF.open; }
+$('sDiff').addEventListener('change', e => { if (e.target.checked) diffOpen(); else diffClose(); });
+on('diffClose', diffClose);
+// Escape from inside the diff comes up as a message; from here it is a key. Either way, while it is open the keys
+// belong to it, not to the instrument underneath
+window.addEventListener('message', e => { const d = e.data; if (DIFF.open && d && d.andso === 'diff-close' && e.source === $('diffFrame').contentWindow) diffClose(); });
+window.addEventListener('keydown', e => { if (!DIFF.open) return; e.stopImmediatePropagation(); if (e.key === 'Escape') { e.preventDefault(); diffClose(); } }, true);
+if (MIR.depth > 0) { const r = $('diffRow'); if (r) r.classList.add('hidden'); }
+
 // ===== the chimera hide: Saelion on a light page =====
 // At night Saelion is pale pink against the dark. On paper the same pink vanished into the page, so in the light looks
 // she is drawn the way Storeybrook draws its creatures, with an ink line around every shape, and she wears a chimera's
@@ -14554,6 +14613,7 @@ function update(dt) {
 }
 let einkT = 0;
 function frame(now) {
+  if (DIFF.open) { last = now; requestAnimationFrame(frame); return; }   // before & after is open over everything: hold still
   if (window.innerWidth !== W || window.innerHeight !== H) resize();
   let dt = (now - last) / 1000; last = now;
   if (!(dt > 0)) dt = 0.016;
@@ -14658,6 +14718,7 @@ try {
       watched: GAME.reels.slice(), reelFound: GAME.reelFound.slice(), auto: !!SET.reelAuto, share: REEL_SHARE, gives: [...REEL_GIVES], card: $('reelCard').classList.contains('on'), news: REEL.news.slice() }),
     reels: () => REELS.concat(CUT).map(r => ({ id: r.id, name: r.name, total: r.total, gives: [...r.gives], shots: r.shots.map(s => ({ n: s.n, d: s.d, gives: s.gives || [] })) })),
     reelSkip, reelNow: () => { if (REEL.on && !REEL.done && REEL.i >= 0) REEL.next = t; }, reelAuto: on => { SET.reelAuto = !!on; reelUI(); },
+    diffOpen, diffClose, diff: () => ({ open: DIFF.open, held: DIFF.held, paused, src: $('diffFrame').getAttribute('src') || '', t: +t.toFixed(2) }),
     quests: () => GAME.quests.map(a => ({ id: a.id, p: a.p, done: a.done })), setQuests: ids => { GAME.quests = ids.map(id => ({ id, p: 0, done: false })); renderQuests(); },
     view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
     box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),

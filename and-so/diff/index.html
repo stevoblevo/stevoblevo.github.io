@@ -7,6 +7,7 @@
 <meta name="description" content="AND SO 7 before and after the light-look fix, both builds running live: wipe across them, see them side by side, or flip between them.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Light Looks Diff</title>
+<script>if (/[?&]embed\b/.test(location.search)) document.documentElement.classList.add('embed');</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=DynaPuff:wdth,wght@75..100,500..700&display=swap">
@@ -23,6 +24,8 @@
 :root[data-theme="dark"] { --paper: #1c2838; --page: #24334a; --ink: #f4efe6; --muted: #b7c2d2; --line: #3d4f6b; --focus: #f0c75e; --press: #35475f; --before: #e3b27a; --after: #8fb4e8; color-scheme: dark }
 html, body { height: 100% }
 body { display: flex; flex-direction: column; gap: 10px; background: var(--paper); color: var(--ink); font: 15px/1.4 var(--f-ui); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px }
+html.embed h1 { display: none }
+html.embed body { padding-block: 8px 10px }
 header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px }
 h1 { margin: 0; font: 600 22px/1.15 var(--f-display); font-variation-settings: "wdth" 85; text-wrap: balance }
 .lede { margin: 0; color: var(--muted); max-width: 76ch }
@@ -86,7 +89,7 @@ kbd { font: inherit; font-weight: 700; color: var(--ink); border: 1px solid var(
 <body>
 <header>
   <h1>Light looks, before and after</h1>
-  <p class="lede">Both builds of AND SO 7 run live here, on your own screen. <b class="b">Before</b> is what github.io served until 1:44 pm today (build a6ac2d2). <b class="a">After</b> is what it serves now (a9888b5).</p>
+  <p class="lede">Both builds of AND SO 7 run live here, on your own screen. <b class="b">Before</b> is how github.io drew the light looks until 1:44 pm on 27 October (build a6ac2d2). <b class="a">After</b> is the fix that went up that afternoon (a9888b5), which every AND SO since has kept.</p>
 </header>
 
 <div class="bar" role="toolbar" aria-label="Compare the builds">
@@ -124,11 +127,11 @@ kbd { font: inherit; font-weight: 700; color: var(--ink); border: 1px solid var(
 
 <main class="stage" id="stage">
   <section class="pane is-loading" id="pBefore" style="--c: var(--before)" aria-label="Before">
-    <div class="tag"><b><span class="dot"></span>Before</b><span>github.io until 1:44 pm today · a6ac2d2</span><span class="zoom"></span></div>
+    <div class="tag"><b><span class="dot"></span>Before</b><span>until 1:44 pm, 27 October · a6ac2d2</span><span class="zoom"></span></div>
     <div class="screen"><div class="fit"><iframe id="fBefore" title="AND SO 7 before the fix" allow="autoplay"></iframe></div><div class="loading">Loading the before build…</div></div>
   </section>
   <section class="pane is-loading" id="pAfter" style="--c: var(--after)" aria-label="After">
-    <div class="tag"><b><span class="dot"></span>After</b><span>github.io now · a9888b5</span><span class="zoom"></span></div>
+    <div class="tag"><b><span class="dot"></span>After</b><span>27 October on · a9888b5</span><span class="zoom"></span></div>
     <div class="screen"><div class="fit"><iframe id="fAfter" title="AND SO 7 after the fix" allow="autoplay"></iframe></div><div class="loading">Loading the after build…</div></div>
   </section>
   <div class="wipe" id="wipe">
@@ -150,8 +153,11 @@ kbd { font: inherit; font-weight: 700; color: var(--ink); border: 1px solid var(
   const small = Math.min(screen.width || innerWidth, innerWidth) < 700;
   // the look you last played in this browser (AND SO's own save), so both builds open the way you saw them
   const LOOKS = [...document.querySelectorAll('#sLook option')].map(o => o.value);
-  const saved = (() => { for (const key of ['andso:v7', 'andso:v2']) { try { const s = JSON.parse(localStorage.getItem(key) || 'null'); if (s && typeof s === 'object') return s; } catch (e) {} } return null; })();
-  const S = { mode: small ? 'before' : 'wipe', look: saved && LOOKS.includes(saved.skin) ? saved.skin : 'sb-daylight', screen: small ? 'fill' : 'yours', place: 'game', view: 'mandala', tuning: 'easy', sound: 'off', cut: 0.5 };
+  const saved = (() => { for (const key of ['andso:v8', 'andso:v7', 'andso:v2']) { try { const s = JSON.parse(localStorage.getItem(key) || 'null'); if (s && typeof s === 'object') return s; } catch (e) {} } return null; })();
+  const Q = new URLSearchParams(location.search), EMBED = Q.has('embed'), pick = (v, list, d) => (list.includes(v) ? v : d);
+  if (EMBED) document.documentElement.classList.add('embed');
+  const S = { mode: small ? 'before' : 'wipe', look: pick(Q.get('look'), LOOKS, saved && LOOKS.includes(saved.skin) ? saved.skin : 'sb-daylight'), screen: small ? 'fill' : 'yours', place: 'game',
+    view: pick(Q.get('view'), ['mandala', 'cymatics', 'cube'], 'mandala'), tuning: pick(Q.get('tuning'), ['easy', 'just', 'bp', 'tet31', 'gamelan'], 'easy'), sound: 'off', cut: 0.5 };
   const NOTES = {
     wipe: 'Drag the line across: left of it is before, right of it is after. Both copies share this tab, so each may draw a little softer than github.io does on its own.',
     side: 'Both copies share this tab, so each may draw a little softer than github.io does on its own. Before or After alone runs one copy at full speed and pauses the other.',
@@ -289,8 +295,9 @@ kbd { font: inherit; font-weight: 700; color: var(--ink); border: 1px solid var(
   addEventListener('resize', () => requestAnimationFrame(layout));
   if (window.ResizeObserver) new ResizeObserver(() => layout()).observe($('#stage'));
 
-  if (saved) $('#start').textContent = 'Click inside either build to play it. Both start from a copy of your AND SO save in this browser, in the look you last used; nothing they do is saved back.';
-  $('#sLook').value = S.look; $('#sScreen').value = S.screen;
+  if (saved) $('#start').textContent = `Click inside either build to play it. Both start from a copy of your AND SO save in this browser, in ${Q.get('look') ? 'the look you were just in' : 'the look you last used'}; nothing they do is saved back.`;
+  $('#sLook').value = S.look; $('#sScreen').value = S.screen; $('#sView').value = S.view; $('#sTuning').value = S.tuning;
+  if (EMBED && window.parent !== window) addEventListener('keydown', e => { if (e.key === 'Escape') { try { window.parent.postMessage({ andso: 'diff-close' }, '*'); } catch (er) {} } });
   setMode(S.mode);
   KEYS.forEach(load);
 })();

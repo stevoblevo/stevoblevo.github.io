@@ -56,6 +56,61 @@
           "h": 2160
         }
       ]
+    },
+    {
+      "name": "and-so",
+      "version": "8.1",
+      "title": "AND SO",
+      "note": "AND SO 8.1 as shipped on 30 October: the fake book inside the jam, on the same clock, with a lead sheet and real controls. Frozen before the before-and-after switch went in.",
+      "source": "and-so/index.html",
+      "sha256": "0848e5e7372ca105a170e4c15f6bbaf82143529bcb010b710d45803e80223c5b",
+      "bytes": 941201,
+      "frozen_at": "2026-11-02T06:49:40Z",
+      "sheet": "sheet.jpg",
+      "shots": [
+        {
+          "view": "phone",
+          "state": "title",
+          "file": "phone-title.jpg",
+          "w": 390,
+          "h": 844
+        },
+        {
+          "view": "phone",
+          "state": "play",
+          "file": "phone-play.jpg",
+          "w": 390,
+          "h": 844
+        },
+        {
+          "view": "laptop",
+          "state": "title",
+          "file": "laptop-title.jpg",
+          "w": 1440,
+          "h": 900
+        },
+        {
+          "view": "laptop",
+          "state": "play",
+          "file": "laptop-play.jpg",
+          "w": 1440,
+          "h": 900
+        },
+        {
+          "view": "4k",
+          "state": "title",
+          "file": "4k-title.jpg",
+          "w": 3840,
+          "h": 2160
+        },
+        {
+          "view": "4k",
+          "state": "play",
+          "file": "4k-play.jpg",
+          "w": 3840,
+          "h": 2160
+        }
+      ]
     }
   ]
 }

@@ -111,7 +111,9 @@
     <div class="sec">looks</div>
     <div class="btns" id="lookBtns"><button class="pill" data-look="sb-daylight">Meta Daylight</button><button class="pill" data-look="sb-knight">Knight Night</button><button class="pill" data-look="sb-inkblot">Ink Blot</button><button class="pill" data-look="sb-comix">Comix</button><button class="pill" data-look="sb-origami">Origami</button><button class="pill" data-look="sb-skein">Skein silk</button></div>
     <div class="btns" id="themeBtns"><button class="pill" data-th="obsidian">obsidian</button><button class="pill" data-th="dawn">dawn</button><button class="pill" data-th="daybreak">daylight 6</button><button class="pill" data-th="hmp">hypermetapunk</button><button class="pill" data-th="story">storybook 6</button><button class="pill" data-th="eink">e-ink</button><button class="pill" data-th="bw2">bw2 · 1-bit</button><button class="pill" data-th="fieldstone">fieldstone</button><button class="pill" data-th="glasshouse">glasshouse</button><button class="pill" data-th="peachfall">peachfall</button></div>
-    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one. the older looks last for the visit: AND SO 7 always reopens on paper, in the Storeybrook look you picked last.</div>
+    <div class="note">the Storeybrook looks print the same world in ink on paper. E turns the page to the next one. the older looks last for the visit: AND SO always reopens on paper, in the Storeybrook look you picked last.</div>
+    <label class="row" id="diffRow"><span>before &amp; after: the light looks, then and now</span><input type="checkbox" class="sw" id="sDiff"></label>
+    <div class="note">the diff from 27 October, when the light looks got their ink: both builds running, with a line to wipe across, side by side, or one at a time. it opens in the look you're in. Esc closes it.</div>
 
     <div class="sec">words</div>
     <label class="row"><span>hide the words</span><input type="checkbox" class="sw" id="sQuiet"></label>
@@ -138,7 +140,7 @@
 
     <div class="sec">versions</div>
     <div class="btns"><button class="pill" id="gVersions">every version</button></div>
-    <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 7 is still there, and so are 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
+    <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 8.1 and 8 are still there, and so are 7, 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
 
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
@@ -354,6 +356,11 @@
       <li><a href="https://en.wikipedia.org/wiki/Flying_Microtonal_Banana" target="_blank" rel="noopener">Flying Microtonal Banana</a>, Wikipedia</li>
     </ul>
   </div>
+</div>
+
+<div id="diffSheet" class="sbi" role="dialog" aria-modal="true" aria-labelledby="dfTitle" aria-hidden="true">
+  <div class="df-bar"><h2 id="dfTitle">Before &amp; after</h2><span class="df-sub">the light looks, 27 October</span><button class="bm-x" id="diffClose" aria-label="close before and after" title="close (Esc)">×</button></div>
+  <iframe id="diffFrame" title="AND SO's light looks, before and after" allow="autoplay"></iframe>
 </div>
 
 <div id="versions" class="sbi" role="dialog" aria-modal="true" aria-labelledby="vsTitle">
