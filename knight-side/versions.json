@@ -1,6 +1,6 @@
 {
  "game": "Anewgam: Knight Side",
- "latest": "/knight-side/v10/",
+ "latest": "/knight-side/v11/",
  "versions": [
   {
    "version": "v1",
@@ -71,6 +71,13 @@
    "name": "Gravity",
    "path": "/knight-side/v10/",
    "sha256": "72263ff3b21b2753da5cba26d68bee3240a5b34b464a65e4aa8dcf435f31dab7"
+  },
+  {
+   "version": "v11",
+   "door": "XI",
+   "name": "Depths & Company",
+   "path": "/knight-side/v11/",
+   "sha256": "7e4019f9c7bb5bbfec8b9ea02e15ec9e978f33a27a33fb02b9933e8f321c07b5"
   }
  ]
 }
