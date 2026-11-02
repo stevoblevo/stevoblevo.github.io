@@ -1,6 +1,6 @@
 {
   "schema": "saelion-atlas-public-v1",
-  "updated": "2026-10-27",
+  "updated": "2026-11-02",
   "scope": "curated public wayfinding, not an exhaustive private archive",
   "phases": {
     "open": "Observed public entry; some may need browser features and save locally.",
@@ -720,6 +720,23 @@
       ],
       "featured": false,
       "sort": 5
+    },
+    {
+      "id": "reignfawn",
+      "title": "Reignfawn",
+      "kind": "play",
+      "phase": "open",
+      "description": "Ride a fawn along a lantern valley, raise a kingdom coin by coin, and keep the crown through the night. The valley earns while you rest.",
+      "url": "https://stevoblevo.github.io/reignfawn/",
+      "image": "https://stevoblevo.github.io/reignfawn/art/cover.jpg",
+      "tags": [
+        "kingdom",
+        "idle",
+        "side-scroller",
+        "fawn"
+      ],
+      "featured": true,
+      "sort": 0
     }
   ]
 }
