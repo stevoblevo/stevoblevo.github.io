@@ -483,10 +483,11 @@ $('sX5dSpeed').addEventListener('input', e => { SET.x5dSpeed = e.target.value / 
 $('sX5dDepth').addEventListener('input', e => { SET.x5dDepth = e.target.value / 100; }); $('sX5dDepth').addEventListener('change', persistSoon);
 $('sDetect').addEventListener('change', e => { SET.detect = e.target.checked; persistSoon(); });
 document.querySelectorAll('#tabs .tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; syncUI(); }));
-on('pbPlay', () => { if (!A.ac) return; paused = !paused; if (paused) A.ac.suspend(); else A.ac.resume(); syncUI(); jlog(paused ? 'paused' : 'resumed'); });
-on('pbStop', () => { if (!A.ac) return; paused = true; A.ac.suspend(); if ('speechSynthesis' in window) speechSynthesis.cancel(); caption('stopped. press play to pick it back up.', 2600); syncUI(); jlog('stopped'); });
+on('pbPlay', () => { if (!A.ac) return; paused = !paused; if (paused) A.ac.suspend(); else A.ac.resume(); if (typeof coverSync === 'function') coverSync(); syncUI(); jlog(paused ? 'paused' : 'resumed'); });
+on('pbStop', () => { if (!A.ac) return; paused = true; A.ac.suspend(); if (typeof coverSync === 'function') coverSync(); if ('speechSynthesis' in window) speechSynthesis.cancel(); caption('stopped. press play to pick it back up.', 2600); syncUI(); jlog('stopped'); });
 $('pbVol').addEventListener('input', e => { SET.vol = e.target.value / 100; audio.applyMix(); $('pbVolP').textContent = e.target.value + '%'; });
 $('pbScene').addEventListener('change', e => { const v = e.target.value; if (!v) return; const n = v.slice(2); applyPreset(v[0] === 'b' ? BUILTIN[n] : userP[n], n); });
 on('pbRec', toggleRec);
 on('pbRep', doReplay);
 window.addEventListener('resize', resize);
+

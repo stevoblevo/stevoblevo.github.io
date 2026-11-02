@@ -142,6 +142,7 @@ const audio = {
     } catch (e) { A.ac = null; }
   },
   applyMix() {
+    if (typeof coverSync === 'function') coverSync();
     if (!A.ac) return;
     const now = A.ac.currentTime;
     glide(A.vol.gain, muted ? 0 : 0.95 * SET.vol, 0.15);
@@ -370,3 +371,4 @@ const capture = {
   },
   stop() { if (this.recording()) this.rec.stop(); }
 };
+

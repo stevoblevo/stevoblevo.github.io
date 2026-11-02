@@ -1,3 +1,5 @@
+> Historical reducer-only checkpoint. The later source integration is documented in [COVER-PLAYER-CANDIDATE.md](COVER-PLAYER-CANDIDATE.md); no generated page or deployment is changed.
+
 # Audio-first cover gate: isolated candidate, not a shipped feature
 
 Base: `stevoblevo/stevoblevo.github.io` master `6739c8a9bdf1938a68b39697278cae1180401914` (AND SO 8.1).
