@@ -33,6 +33,16 @@
 html, body { height: 100%; margin: 0; background: var(--night); color: var(--paper); overflow: hidden; font-family: var(--f-body); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 #app { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--night); touch-action: none; }
 #game { position: absolute; left: 0; top: 0; }
+#glview { position: absolute; left: 0; top: 0; display: none; }
+body.lens #glview { display: block; }
+body.lens #game { visibility: hidden; }
+body.lens #vignette, body.lens #grain { display: none; }
+.looks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.looks .lk { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px 6px 7px; border-radius: 999px; border: 1px solid rgba(255,240,220,0.22); background: rgba(16,10,20,0.42); color: var(--paper-dim); font: inherit; font-size: 14px; cursor: pointer; }
+.looks .lk[aria-pressed="true"] { border-color: var(--ember); color: var(--paper); background: rgba(40,22,26,0.7); }
+.looks .lk i { display: inline-flex; border-radius: 50%; overflow: hidden; width: 18px; height: 18px; box-shadow: 0 0 0 1px rgba(255,255,255,0.25); }
+.looks .lk i b { flex: 1; }
+.lookLine { margin: 0; font-size: 14px; color: var(--paper-dim); min-height: 1.3em; }
 #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.11; mix-blend-mode: overlay; background-size: 160px 160px; }
 #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, transparent 58%, rgba(10, 6, 14, 0.5)); }
 
@@ -46,8 +56,8 @@ button { font: inherit; color: inherit; }
 .btn.warn { border-color: var(--rose); color: var(--rose); }
 
 /* HUD */
-#hud { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-top: max(10px, env(safe-area-inset-top, 0px)); padding-left: var(--gut-l); padding-right: var(--gut-r); pointer-events: none; }
-#hud .l { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; font-family: var(--f-sc); font-size: 17px; letter-spacing: 0.06em; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }
+#hud { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-top: max(10px, env(safe-area-inset-top, 0px)); padding-left: var(--gut-l); padding-right: var(--gut-r); padding-bottom: 26px; pointer-events: none; background: linear-gradient(to bottom, rgba(10, 6, 16, 0.36), rgba(10, 6, 16, 0)); }
+#hud .l { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; font-family: var(--f-sc); font-size: 17px; letter-spacing: 0.06em; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 0, 0, 0.35); }
 #hud .l em { font-family: var(--f-display); font-style: italic; letter-spacing: 0; color: var(--paper-dim); }
 #hud .coins { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-display); font-size: 19px; font-variant-numeric: tabular-nums; }
 #hud .coins i { width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff2b0 0 22%, #f2c94c 24% 70%, #b8862c 72%); box-shadow: 0 0 8px rgba(242, 201, 76, 0.5); }
@@ -152,6 +162,7 @@ h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clam
 
 <div id="app">
   <canvas id="game" aria-label="The valley"></canvas>
+  <canvas id="glview" aria-hidden="true"></canvas>
   <div id="grain"></div>
   <div id="vignette"></div>
 
@@ -187,9 +198,11 @@ h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clam
         <button class="btn" id="bLedgerT" type="button">Ledger</button>
         <button class="btn" id="bSetT" type="button">Settings</button>
       </div>
+      <div class="looks" id="looksT" role="group" aria-label="Look"></div>
+      <p class="lookLine" id="lookLineT"></p>
       <label class="toggle" for="optFrolicT"><input type="checkbox" id="optFrolicT"> Frolic mode: no night raids, only building, riding and fireflies</label>
-      <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
-      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 2, folded from paper. The first, pixel version is still at <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">reignfawn/v1</a>.</span></p>
+      <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>V</kbd> change the look &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
+      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 3, seven looks through one lens. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">v2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">v1 pixel</a>.</span></p>
     </div>
   </section>
 
@@ -214,6 +227,7 @@ h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clam
       <div class="row"><label for="optMusic">Music</label><input type="range" id="optMusic" min="0" max="1" step="0.05"></div>
       <div class="row"><label for="optSfx">Effects</label><input type="range" id="optSfx" min="0" max="1" step="0.05"></div>
       <div class="row"><label for="optTuning">Tuning<small>Just intonation leans the night scale toward 7/6 and 7/4.</small></label><select id="optTuning"><option value="just">Just intonation</option><option value="even">Equal temperament</option></select></div>
+      <div class="row" id="lookRow"><label for="optLook">Look<small id="lookLineM"></small></label><select id="optLook"></select></div>
       <div class="row"><label for="optReduce">Calmer motion<small>Less shake and fewer particles.</small></label><input type="checkbox" id="optReduce"></div>
       <div class="row"><label for="optHud">Show coin count</label><input type="checkbox" id="optHud"></div>
       <div class="row"><label for="optSail">Lean back may sail on<small>When the boat is ready, let your mount board it.</small></label><input type="checkbox" id="optSail"></div>
@@ -424,7 +438,7 @@ function defaultMeta() {
   return {
     v: 1, mounts: ['fawn'], crossed: 0, bestDay: 0, crownsLost: 0, nights: 0, recruits: 0, earned: 0, built: 0,
     seen: {}, lastGift: '',
-    settings: { music: 0.55, sfx: 0.8, cycle: 240, frolic: false, hud: true, reduce: false, tuning: 'just', touch: 'auto' }
+    settings: { music: 0.55, sfx: 0.8, cycle: 240, frolic: false, hud: true, reduce: false, tuning: 'just', touch: 'auto', look: 'origami' }
   };
 }
 
@@ -1544,12 +1558,12 @@ function update(dt) {
    through paper at night. Everything is vector, drawn at the screen's full resolution. */
 
 const cv = document.getElementById('game');
-const mctx = cv.getContext('2d', { alpha: false });
+const mctx = cv.getContext('2d');
 let ctx = mctx;
 const land = document.createElement('canvas'), lctx = land.getContext('2d');
 const dark = document.createElement('canvas'), dctx = dark.getContext('2d');
 const refl = document.createElement('canvas'), rctx = refl.getContext('2d');
-const VIEW_H = 250, LWU = 960;
+const VIEW_H = 200, LWU = 960;
 let W = 444, H = 250, K = 4, DW = 1, DH = 1, GY = 160, WT = 162, DPR = 1;
 let LAYERS = null, layerKey = '', STARS = [], CLOUDS = [], REEDS = [];
 const LIGHTS = [];
@@ -1560,9 +1574,9 @@ function resize() {
   const cw = Math.max(320, box.width || window.innerWidth), ch = Math.max(200, box.height || window.innerHeight);
   DW = Math.round(cw * DPR); DH = Math.round(ch * DPR);
   cv.width = DW; cv.height = DH; cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
-  K = Math.min(DH / VIEW_H, DW / 230);
+  K = Math.min(DH / VIEW_H, DW / 210);
   W = DW / K; H = DH / K;
-  GY = Math.round(H * (H > W ? 0.6 : 0.64)); WT = GY + 2;
+  GY = Math.round(H * (H > W ? 0.6 : 0.68)); WT = GY + 6;
   land.width = DW; land.height = Math.ceil((WT + 2) * K);
   dark.width = Math.ceil(DW / 4); dark.height = Math.ceil((WT + 2) * K / 4);
   refl.width = Math.ceil(DW / 3); refl.height = Math.ceil(GY * K / 3);
@@ -1574,6 +1588,7 @@ function resize() {
   for (let i = 0; i < 7; i++) CLOUDS.push({ x: R() * (W + 200), y: GY * (0.1 + R() * 0.3), w: 16 + R() * 26, s: 0.4 + R() * 0.8, seed: Math.floor(R() * 1e6) });
   REEDS = [];
   for (let x = 0; x < 1600; x += 110 + R() * 160) REEDS.push({ x, n: 4 + Math.floor(R() * 4), h: 9 + R() * 9, seed: Math.floor(R() * 1e6) });
+  if (typeof postResize === 'function') postResize();
 }
 
 /* ---------- paper primitives (world units) ---------- */
@@ -1617,74 +1632,112 @@ function seasonalGrass(V, season) {
 }
 
 /* ---------- cut-paper hills, folded into facets, built once per valley ---------- */
-const PARA = [0.1, 0.22, 0.42, 0.66];
-const AERIAL = [0.5, 0.32, 0.16, 0.05];
+const PARA = [0.08, 0.2, 0.4, 0.64];
+const AERIAL = [0.26, 0.15, 0.07, 0];
+// four sheets of folded paper, back to front. Each peak is creased down its middle and once more on each side,
+// lit from the upper left, and casts a soft shadow on the sheet behind it.
+const LDEF = [
+  { hmin: 26, hmax: 86, wm: [0.75, 1.6], gap: [22, 68], lit: 0.15, shd: 0.2, rim: 0.2, snow: true },
+  { hmin: 14, hmax: 48, wm: [0.85, 1.7], gap: [20, 56], lit: 0.16, shd: 0.24, rim: 0.24, ruins: true },
+  { hmin: 8, hmax: 27, wm: [1.0, 2.0], gap: [16, 44], lit: 0.17, shd: 0.27, rim: 0.28, trees: 2 },
+  { hmin: 5, hmax: 12, wm: [1.7, 2.6], gap: [16, 28], lit: 0.18, shd: 0.3, rim: 0.32, trees: 3 }
+];
 function buildLayers(w) {
-  const V = valleyCfg(w.vi), seed = w.seed % 100000, bot = hexRGB(V.sky.day[1]);
-  const defs = [
-    { base: 52, amp: 70, step: 30, res: 0.5, snow: V.key !== 'gold' && V.key !== 'red' },
-    { base: 32, amp: 34, step: 24, res: 0.6, ruins: true },
-    { base: 15, amp: 16, step: 18, res: 0.8, trees: 1 },
-    { base: 5, amp: 7, step: 14, res: 1, trees: 2 }
-  ];
-  LAYERS = defs.map((d, li) => {
-    const kl = clamp(K * d.res, 1, 3.2);
+  const V = valleyCfg(w.vi), seed = w.seed % 100000, sky = hexRGB(V.sky.day[1]);
+  const snowy = V.key !== 'gold' && V.key !== 'red';
+  const accent = hexRGB(V.accent);
+  LAYERS = LDEF.map((d, li) => {
+    const kl = clamp(K * (li === 0 ? 0.6 : li === 1 ? 0.75 : 1), 0.8, 3.2);
     const c = document.createElement('canvas');
-    c.width = Math.ceil(LWU * kl); c.height = Math.ceil((GY + 3) * kl);
+    c.width = Math.ceil(LWU * kl); c.height = Math.ceil((GY + 4) * kl);
     const g = c.getContext('2d');
     g.setTransform(kl, 0, 0, kl, 0, 0);
+    g.lineJoin = 'round';
     const R = rng(seed + li * 977);
-    const hAt = x => lerp(fbm(x / 180, seed + li * 31, 3), fbm((x - LWU) / 180, seed + li * 31, 3), x / LWU);
-    const pts = [];
-    let zi = 0;
-    for (let x = 0; x < LWU - d.step * 0.6; x += d.step * (0.7 + R() * 0.6), zi++) {
-      const peak = zi % 2 === 0, lift = peak ? (li === 0 ? 10 + R() * 22 : 3 + R() * 7) : 0;
-      pts.push([x, GY - (d.base + hAt(x) * d.amp + lift + (li === 0 ? Math.pow(Math.max(0, hAt(x) - 0.42), 2) * 140 : 0))]);
+    const base0 = mixRGB(hexRGB(V.layers[li]), sky, AERIAL[li]);
+    const nb = hexRGB(V.layers[Math.min(3, li + 1)]);
+    const B = GY + 4;
+    // lay out the peaks
+    const peaks = [];
+    for (let x = R() * 20; x < LWU; x += lerp(d.gap[0], d.gap[1], R())) {
+      const n = fbm(x / 140, seed + li * 53, 2);
+      const h = lerp(d.hmin, d.hmax, clamp(R() * 0.55 + n * 0.75, 0, 1)) * (R() < 0.28 ? 0.6 : 1);
+      const wl = h * lerp(d.wm[0], d.wm[1], R()), wr = h * lerp(d.wm[0], d.wm[1], R());
+      let col = mixRGB(base0, nb, R() * 0.18);
+      if (R() < 0.22) col = mixRGB(col, accent, 0.1 + R() * 0.08);
+      col = mixRGB(col, R() < 0.5 ? [255, 255, 255] : [0, 0, 0], R() * 0.05);
+      peaks.push({ x, y: GY + 2 - h, wl, wr, h, col, f: (R() - 0.45) * 0.55, t1: 0.3 + R() * 0.3, t2: 0.3 + R() * 0.3, u1: 0.4 + R() * 0.3, u2: 0.35 + R() * 0.3 });
     }
-    if (pts.length % 2) pts.pop();
-    pts.push([LWU, pts[0][1]]);
-    const col = css(mixRGB(hexRGB(V.layers[li]), bot, AERIAL[li]));
-    const path = (dx) => { g.beginPath(); g.moveTo(dx + pts[0][0], GY + 3); for (const p of pts) g.lineTo(dx + p[0], p[1]); g.lineTo(dx + LWU, GY + 3); g.closePath(); };
-    // the soft shadow this sheet casts on the sheet behind it
-    g.save(); g.shadowColor = 'rgba(24,12,34,0.32)'; g.shadowBlur = (5 + li * 3) * kl; g.shadowOffsetY = -0.6 * kl;
-    for (const dx of [-LWU, 0, LWU]) { path(dx); g.fillStyle = col; g.fill(); }
-    g.restore();
-    // low-poly folds: an upper facet between each pair of ridge points, a lower facet under each point
-    const feet = [];
-    for (let i = 0; i < pts.length - 1; i++) feet.push([(pts[i][0] + pts[i + 1][0]) / 2 + (R() - 0.5) * d.step * 0.3, GY + 3]);
-    const tri = (a, b, c, f) => { g.fillStyle = shade(col, f); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.lineTo(c[0], c[1]); g.closePath(); g.fill(); g.strokeStyle = g.fillStyle; g.lineWidth = 0.25; g.stroke(); };
-    for (let i = 0; i < pts.length - 1; i++) {
-      const A = pts[i], B = pts[i + 1], F = feet[i];
-      const slope = (B[1] - A[1]) / Math.max(1, B[0] - A[0]);
-      tri(A, B, F, clamp(-slope * 0.35, -0.16, 0.16) + (R() - 0.5) * 0.05);
-      if (i > 0) tri(A, feet[i - 1], F, (pts[i][1] < pts[i - 1][1] ? -0.07 : -0.13) + (R() - 0.5) * 0.04);
-      if (d.snow && i % 2 === 0 && A[1] < GY - d.base - d.amp * 0.55) {
-        const s2 = Math.min(9, (GY - A[1]) * 0.12);
-        g.fillStyle = '#f4f2fa'; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(A[0] - s2, A[1] + s2 * 0.9); g.lineTo(A[0] - s2 * 0.3, A[1] + s2 * 0.6); g.lineTo(A[0], A[1] + s2 * 0.95); g.closePath(); g.fill();
-        g.fillStyle = '#d8d6e6'; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(A[0], A[1] + s2 * 0.95); g.lineTo(A[0] + s2 * 0.4, A[1] + s2 * 0.5); g.lineTo(A[0] + s2, A[1] + s2 * 0.85); g.closePath(); g.fill();
+    peaks.sort((p, q) => q.h - p.h + (R() - 0.5) * 18);
+    const P = (pts, f) => { g.fillStyle = f; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.closePath(); g.fill(); };
+    const L2 = (a, b2, st, lw) => { g.strokeStyle = st; g.lineWidth = lw; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b2[0], b2[1]); g.stroke(); };
+    const mix2 = (a, b2, t) => [lerp(a[0], b2[0], t), lerp(a[1], b2[1], t)];
+    const lite = (cc, k) => css(mixRGB(cc, k > 0 ? [255, 248, 236] : [14, 8, 30], Math.abs(k)));
+    const drawPeak = (pk, dx) => {
+      const A = [pk.x + dx, pk.y], BL = [pk.x + dx - pk.wl, B], BR = [pk.x + dx + pk.wr, B];
+      const F = [pk.x + dx + pk.f * Math.min(pk.wl, pk.wr), B];
+      // the shadow this sheet casts on the one behind
+      g.save(); g.shadowColor = 'rgba(16,8,28,0.34)'; g.shadowBlur = (3 + li * 2.2) * kl; g.shadowOffsetX = (1.2 + li * 0.6) * kl; g.shadowOffsetY = -0.4 * kl;
+      P([A, BL, BR], css(pk.col)); g.restore();
+      const E1 = mix2(A, BL, pk.t1), G1 = mix2(BL, F, pk.u1), E2 = mix2(A, BR, pk.t2), G2 = mix2(BR, F, pk.u2);
+      P([A, E1, G1, F], lite(pk.col, d.lit));
+      P([E1, BL, G1], lite(pk.col, d.lit * 0.35));
+      P([A, F, G2, E2], lite(pk.col, -d.shd));
+      P([E2, G2, BR], lite(pk.col, -d.shd * 0.55));
+      if (d.snow && snowy && pk.h > d.hmin + (d.hmax - d.hmin) * 0.45) {
+        const s1 = 0.2 + (pk.h % 7) * 0.012, C1 = mix2(A, BL, s1), C2 = mix2(A, BR, s1 * 0.85), Cf = mix2(A, F, s1 * 1.25);
+        const z1 = mix2(C1, Cf, 0.5); z1[1] -= 1.6;
+        const z2 = mix2(Cf, C2, 0.5); z2[1] -= 1.2;
+        P([A, C1, z1, Cf], 'rgba(252,250,255,0.95)');
+        P([A, Cf, z2, C2], 'rgba(196,200,226,0.92)');
       }
+      // creases catch the light; the sunlit edge glows a little
+      L2(A, F, `rgba(255,250,240,${(d.rim * 0.9).toFixed(2)})`, 0.32);
+      L2(E1, G1, `rgba(255,250,240,${(d.rim * 0.45).toFixed(2)})`, 0.22);
+      L2(E2, G2, `rgba(20,10,30,${(d.rim * 0.5).toFixed(2)})`, 0.22);
+      L2(A, BL, `rgba(255,248,232,${d.rim.toFixed(2)})`, 0.4);
+    };
+    for (const pk of peaks) for (const dx of [-LWU, 0, LWU]) {
+      if (pk.x + dx + pk.wr < -2 || pk.x + dx - pk.wl > LWU + 2) continue;
+      drawPeak(pk, dx);
     }
-    tri(pts[0], [pts[0][0] - 30, GY + 3], feet[0], -0.1);
-    g.fillStyle = shade(col, 0.22); g.globalAlpha = 0.6;
-    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (const p of pts) g.lineTo(p[0], p[1]); g.lineWidth = 0.5; g.strokeStyle = shade(col, 0.28); g.stroke(); g.globalAlpha = 1;
+    // the bottom of every sheet sinks into shade, as paper does where it meets the table
+    g.save(); g.globalCompositeOperation = 'source-atop';
+    const ao = g.createLinearGradient(0, GY - d.hmin * 0.8, 0, B);
+    ao.addColorStop(0, 'rgba(20,10,34,0)'); ao.addColorStop(1, `rgba(20,10,34,${0.16 + li * 0.04})`);
+    g.fillStyle = ao; g.fillRect(0, GY - d.hmax, LWU, d.hmax + 6);
+    g.restore();
+    const topAt = x => {
+      let y = B;
+      for (const pk of peaks) for (const dx of [-LWU, 0, LWU]) {
+        const px = pk.x + dx;
+        if (x < px - pk.wl || x > px + pk.wr) continue;
+        const yy = x < px ? lerp(pk.y, B, (px - x) / pk.wl) : lerp(pk.y, B, (x - px) / pk.wr);
+        if (yy < y) y = yy;
+      }
+      return y;
+    };
     if (d.ruins) {
       for (let k = 0; k < 2; k++) {
-        const x = 60 + R() * (LWU - 120), y = GY - (d.base + hAt(x) * d.amp) + 1.5, rc = shade(col, -0.06);
+        const x = 60 + R() * (LWU - 120), y = topAt(x) + 1.5, rc = css(mixRGB(base0, [20, 10, 30], 0.2)), rl = css(mixRGB(base0, [255, 248, 236], 0.08));
         g.fillStyle = rc; g.fillRect(x, y - 15, 5, 15); g.fillRect(x + 5, y - 8, 10, 8); g.fillRect(x + 11, y - 12, 4, 12);
-        g.fillStyle = shade(col, -0.16); g.beginPath(); g.moveTo(x - 1, y - 15); g.lineTo(x + 2.5, y - 21); g.lineTo(x + 6, y - 15); g.fill();
+        g.fillStyle = rl; g.fillRect(x, y - 15, 2, 15); g.fillRect(x + 11, y - 12, 1.6, 12);
+        g.fillStyle = rc;
+        g.beginPath(); g.moveTo(x - 1, y - 15); g.lineTo(x + 2.5, y - 21); g.lineTo(x + 6, y - 15); g.fill();
         g.beginPath(); g.moveTo(x + 10.5, y - 12); g.lineTo(x + 13, y - 16); g.lineTo(x + 15.5, y - 12); g.fill();
       }
     }
     if (d.trees) {
       let x = R() * 8;
+      const tc = css(mixRGB(base0, [16, 10, 30], d.trees === 3 ? 0.16 : 0.1));
       while (x < LWU) {
-        const y = GY - (d.base + hAt(x) * d.amp) + 1;
-        const th = d.trees === 1 ? 8 + R() * 14 : 18 + R() * 30;
-        if (R() < (d.trees === 1 ? 0.75 : 0.6)) paperPine(g, x, y, th, shade(col, d.trees === 1 ? 0.02 : -0.03), 0);
-        x += d.trees === 1 ? 5 + R() * 9 : 7 + R() * 12;
+        const y = topAt(x) + 1.2;
+        const th = d.trees === 2 ? 7 + R() * 9 : 11 + R() * 16;
+        if (y < B - 0.5 && R() < (d.trees === 3 ? 0.55 : 0.32)) paperPine(g, x, y, th, tc, 0);
+        x += d.trees === 2 ? 6 + R() * 12 : 7 + R() * 12;
       }
     }
-    return { c, kl };
+    return { c, kl, haze: GY - d.hmin * 0.9 - (d.hmax - d.hmin) * 0.3 };
   });
 }
 function paperPine(g, x, y, h, col, sway) {
@@ -1697,9 +1750,33 @@ function paperPine(g, x, y, h, col, sway) {
     g.fillStyle = darkc; g.beginPath(); g.moveTo(ax, top); g.lineTo(x + wv * 0.08, bot); g.lineTo(x + wv, bot); g.closePath(); g.fill();
   }
 }
-function drawLayers() {
+function facetBall(x, y, r, c, rot) {
+  // a folded paper ball: an outer ring of ten facets around a five-sided crown, lit from the upper left
+  const n = 10, inner = [];
+  for (let i = 0; i < 5; i++) { const a = rot + i * TAU / 5 - Math.PI / 2; inner.push([x + Math.cos(a) * r * 0.48, y + Math.sin(a) * r * 0.48]); }
+  for (let i = 0; i < n; i++) {
+    const a0 = rot + i * TAU / n - Math.PI / 2, a1 = a0 + TAU / n, am = (a0 + a1) / 2;
+    const k = Math.cos(am + Math.PI * 0.75) * 0.16 + (i % 2 ? -0.03 : 0.03);
+    const p0 = [x + Math.cos(a0) * r, y + Math.sin(a0) * r], p1 = [x + Math.cos(a1) * r, y + Math.sin(a1) * r];
+    const q = inner[Math.floor(i / 2) % 5];
+    poly(css(mixRGB(c, k > 0 ? [255, 255, 255] : [120, 70, 60], Math.abs(k))), [p0[0], p0[1], p1[0], p1[1], q[0], q[1]]);
+    if (i % 2) { const q2 = inner[(Math.floor(i / 2) + 1) % 5]; poly(css(mixRGB(c, [150, 90, 70], 0.1)), [p1[0], p1[1], q2[0], q2[1], q[0], q[1]]); }
+  }
+  for (let i = 0; i < 5; i++) {
+    const a = inner[i], b = inner[(i + 1) % 5];
+    const k = Math.cos(rot + (i + 0.5) * TAU / 5 - Math.PI / 2 + Math.PI * 0.75) * 0.1 + 0.08;
+    poly(css(mixRGB(c, [255, 255, 255], clamp(k, 0, 1))), [x, y, a[0], a[1], b[0], b[1]]);
+  }
+}
+function drawLayers(V) {
+  const hz = skyPair(V)[1];
   for (let i = 0; i < 4; i++) {
     const L = LAYERS[i];
+    if (i > 0) {
+      const top = LAYERS[i - 1].haze, gg = ctx.createLinearGradient(0, top, 0, GY + 2);
+      gg.addColorStop(0, css(hz, 0)); gg.addColorStop(1, css(hz, G.w.rain ? 0.28 : 0.13));
+      ctx.fillStyle = gg; ctx.fillRect(0, top, W, GY + 2 - top);
+    }
     const off = ((G.camR * PARA[i] - W / 2) % LWU + LWU) % LWU;
     for (let k = 0; k < 3; k++) {
       const x = -off + k * LWU;
@@ -1732,9 +1809,8 @@ function drawSky(V, L) {
     g2.addColorStop(0, 'rgba(255,240,205,0.5)'); g2.addColorStop(1, 'rgba(255,240,205,0)');
     ctx.fillStyle = g2; ctx.fillRect(x - 46, y - 46, 92, 92);
     const warm = t > 0.6 || t < 0.05;
-    star(x, y, 11, 12, 0.62, warm ? 'rgba(255,190,140,0.45)' : 'rgba(255,240,200,0.42)', G.time * 0.05);
-    circ(x, y, 6.4, warm ? '#ffc890' : '#fff3d2');
-    poly(warm ? '#ffb47a' : '#fbe6b8', [x, y - 6.4, x + 6.4, y, x, y + 6.4]);
+    star(x, y, 13, 12, 0.6, warm ? 'rgba(255,190,140,0.32)' : 'rgba(255,240,200,0.3)', G.time * 0.05);
+    facetBall(x, y, 7.5, warm ? [255, 196, 140] : [255, 236, 196], G.time * 0.02);
     G.celest = { x, y, sun: true };
   }
   if (t > 0.6 || t < 0.08) {
@@ -1745,7 +1821,7 @@ function drawSky(V, L) {
     ctx.fillStyle = g2; ctx.fillRect(x - 32, y - 32, 64, 64);
     const mc = red ? '#f08a7a' : '#f4f0e4';
     ctx.save(); ctx.beginPath(); ctx.arc(x, y, 5.4, 0, TAU); ctx.clip();
-    circ(x, y, 5.4, mc); poly(sh(mc, -0.08), [x, y - 6, x + 6, y, x, y + 6]);
+    facetBall(x, y, 5.6, hexRGB(mc), 0.3);
     const ph = ((G.w.day % 8) / 8) * 2 - 1;
     if (Math.abs(ph) > 0.12) circ(x + ph * 7.5, y - 0.8, 5.4, css(top));
     ctx.restore();
@@ -1758,13 +1834,12 @@ function drawSky(V, L) {
     const x = ((c.x - G.camR * 0.05 + G.time * c.s * 2) % (W + 200) + W + 200) % (W + 200) - 100;
     const R = rng(c.seed), blobs = [];
     for (let k = 0; k < 4; k++) blobs.push([x + R() * c.w, c.y - R() * 4, 3 + R() * c.w * 0.22]);
-    ctx.globalAlpha = G.w.rain ? 0.85 : 0.78;
-    ctx.save(); ctx.beginPath(); ctx.rect(x - 20, c.y - 40, c.w + 60, 40 + 1.4); ctx.clip();
-    for (const [bx, by, br] of blobs) circ(bx + 0.8, by + 1.4, br, cs);
-    ctx.restore();
-    ctx.save(); ctx.beginPath(); ctx.rect(x - 20, c.y - 40, c.w + 60, 40); ctx.clip();
+    ctx.globalAlpha = (G.w.rain ? 0.6 : 0.4);
+    for (const [bx, by, br] of blobs) circ(bx + 0.9, by + 1.3, br, cs);
+    ctx.globalAlpha = G.w.rain ? 0.9 : 0.82;
     for (const [bx, by, br] of blobs) circ(bx, by, br, cc);
-    ctx.restore();
+    ctx.globalAlpha = 0.5;
+    for (const [bx, by, br] of blobs) circ(bx - br * 0.25, by - br * 0.3, br * 0.55, '#ffffff');
     ctx.globalAlpha = 1;
   }
 }
@@ -1776,8 +1851,14 @@ function drawGround(V, season) {
   ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, WT + 2);
   for (let x = -2; x <= W + 4; x += 3) { const wx = x + G.camR - W / 2; ctx.lineTo(x, GY - 0.3 - vnoise(wx * 0.3, 3) * 1.1); }
   ctx.lineTo(W + 4, WT + 2); ctx.closePath(); ctx.fill();
-  rect(0, GY + 0.9, W, WT + 2 - GY - 0.9, sh(V.ground, 0.05));
+  rect(0, GY + 0.9, W, WT + 2 - GY - 0.9, sh(V.ground, 0.02));
+  const fw = 14, off = ((G.camR - W / 2) % fw + fw) % fw, gl = sh(V.ground, 0.06), gd = sh(V.ground, -0.06);
+  for (let x = -off - fw; x < W + fw; x += fw) {
+    const k = Math.floor((x + G.camR - W / 2) / fw + 0.5);
+    poly(k % 2 ? gl : gd, [x, GY + 0.9, x + fw, GY + 0.9, x + fw * 0.5, WT + 2]);
+  }
   rect(0, GY + 0.9, W, 0.35, sh(g, -0.25));
+  rect(0, WT - 0.2, W, 2.2, 'rgba(14,8,26,0.22)');
 }
 function drawDecor(V, season) {
   const w = G.w, x0 = G.camR - W / 2 - 4, x1 = G.camR + W / 2 + 4, gc = seasonalGrass(V, season);
@@ -2472,9 +2553,9 @@ function drawParts(additive) {
 
 /* ---------- night, glow, water ---------- */
 function drawNight(V) {
-  const dk = clamp((1 - LIGHT) * 0.84 + (G.w.rain ? 0.05 : 0), 0, 0.9);
+  const dk = clamp((1 - LIGHT) * 0.68 + (G.w.rain ? 0.05 : 0), 0, 0.74);
   if (dk < 0.02) return;
-  const nc = mixRGB(hexRGB(V.tint.night), [0, 0, 0], 0.35), f = K / 4;
+  const nc = mixRGB(hexRGB(V.tint.night), [0, 0, 0], 0.2), f = K / 4;
   dctx.setTransform(1, 0, 0, 1, 0, 0);
   dctx.globalCompositeOperation = 'source-over';
   dctx.clearRect(0, 0, dark.width, dark.height);
@@ -2501,8 +2582,9 @@ function drawNight(V) {
   }
   ctx.globalCompositeOperation = 'source-over';
 }
+function waterColor(V) { const [a, b, f] = SKYW; const base = hexRGB(V.water); const ca = a === 'day' ? base : mixRGB(base, hexRGB(V.tint[a]), TINT_AMT[a]); const cb = b === 'day' ? base : mixRGB(base, hexRGB(V.tint[b]), TINT_AMT[b]); return mixRGB(ca, cb, f); }
 function drawWater(V) {
-  const wc = (() => { const [a, b, f] = SKYW; const base = hexRGB(V.water); const ca = a === 'day' ? base : mixRGB(base, hexRGB(V.tint[a]), TINT_AMT[a]); const cb = b === 'day' ? base : mixRGB(base, hexRGB(V.tint[b]), TINT_AMT[b]); return mixRGB(ca, cb, f); })();
+  const wc = waterColor(V);
   const gpx = Math.floor(GY * K), wpx = Math.floor(WT * K);
   rctx.setTransform(1, 0, 0, 1, 0, 0);
   rctx.imageSmoothingEnabled = true;
@@ -2676,7 +2758,7 @@ function render() {
   lctx.setTransform(1, 0, 0, 1, 0, 0);
   lctx.clearRect(0, 0, land.width, land.height);
   world();
-  drawLayers();
+  drawLayers(V);
   drawTrees(V, season, true);
   drawGround(V, season);
   const x0 = G.camR - W / 2 - 70, x1 = G.camR + W / 2 + 70;
@@ -2711,7 +2793,7 @@ function render() {
   ctx.globalCompositeOperation = 'lighter';
   drawParts(true);
   ctx.globalCompositeOperation = 'source-over';
-  drawWater(V);
+  if (POST.ok) { mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.clearRect(0, Math.floor(WT * K), DW, DH); world(); } else drawWater(V);
   if (w.sailing) {
     const s = w.sailing, sx = toS(s.x), bob = Math.sin(G.time * 1.8) * 0.8;
     paperBoat(sx, WT + 3, 3, bob);
@@ -2719,6 +2801,274 @@ function render() {
   }
   drawWeather(false);
   drawSlots();
+  if (POST.ok) {
+    const c = G.celest, t = w.t;
+    let sun = [0.5, 0.2, 0], sc = [1, 0.92, 0.8];
+    if (c) {
+      const low = c.sun ? 1 - Math.sin(clamp((t + 0.03) / 0.73, 0, 1) * Math.PI) : 0;
+      sun = [c.x / W, c.y / H, c.sun ? 0.35 + low * 0.75 : 0.28];
+      sc = c.sun ? (low > 0.5 ? [1, 0.72, 0.5] : [1, 0.94, 0.82]) : c.red ? [1, 0.5, 0.45] : [0.78, 0.8, 1];
+    }
+    if (w.rain) sun[2] *= 0.3;
+    const wc = waterColor(V).map(x => x / 255), hz = skyPair(V)[1].map(x => x / 255);
+    postFrame({ water: WT / H, ground: WT / H, day: LIGHT, rain: w.rain ? 1 : 0, sun, sunCol: sc, waterCol: wc, haze: hz });
+  }
+}
+
+/* Reignfawn: the lens. The paper scene is drawn in 2D, then passed through one WebGL pass that adds what paper
+   alone cannot: water that really ripples and mirrors, glow around every flame, shafts of light from a low sun,
+   film grain, a vignette, and the looks (one valley, many faces). Without WebGL the 2D scene shows as it is. */
+
+const LOOKS = [
+  { id: 'origami', name: 'Origami', line: 'Folded paper on a cutting mat. Crisp facets, warm light.', sw: ['#f4ead8', '#d8603a', '#2f4a8a'] },
+  { id: 'daylight', name: 'Meta Daylight', line: 'Watercolor on north-light paper. Pigment pools at every edge.', sw: ['#eef2e6', '#d2577a', '#4f8fc0'] },
+  { id: 'knight', name: 'Knight Night', line: 'A cobalt paper theatre lit by one candle.', sw: ['#1c2838', '#e9b44c', '#f4e8d6'] },
+  { id: 'inkblot', name: 'Ink Blot', line: 'Black ink stippled on white. Only the crown keeps its colour.', sw: ['#fbfaf6', '#111111', '#c42a2a'] },
+  { id: 'comix', name: 'Comix', line: 'Halftone, ink outlines, and a loud palette.', sw: ['#fff6d8', '#e8287a', '#1aa0e0'] },
+  { id: 'skein', name: 'Skein Silk', line: 'Silk and copper thread, stitched around the edge.', sw: ['#f6e4e0', '#b8743a', '#8ec8a8'] },
+  { id: 'depthfield', name: 'Depthfield', line: 'Deep mint night, haze between the ridges, shafts of light.', sw: ['#0c1a17', '#5ef2b8', '#ffb48a'] }
+];
+const POST = { ok: false, look: 0 };
+
+const VS = 'attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;gl_Position=vec4(a,0.0,1.0);}';
+const FS_BLUR = `precision mediump float;uniform sampler2D t;uniform vec2 dir;varying vec2 v;
+void main(){vec3 c=texture2D(t,v).rgb*0.227027;
+c+=texture2D(t,v+dir*1.3846).rgb*0.316216;c+=texture2D(t,v-dir*1.3846).rgb*0.316216;
+c+=texture2D(t,v+dir*3.2307).rgb*0.070270;c+=texture2D(t,v-dir*3.2307).rgb*0.070270;
+gl_FragColor=vec4(c,1.0);}`;
+const FS_FINAL = `precision highp float;
+varying vec2 v;
+uniform sampler2D uScene,uBlur;
+uniform vec2 uRes;
+uniform float uTime,uWater,uGround,uLook,uDay,uRain,uMotion;
+uniform vec3 uSun,uSunCol,uWaterCol,uHaze;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),f.x),mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),f.x),f.y);}
+float fbm(vec2 p){float a=0.0,w=0.5;for(int i=0;i<4;i++){a+=w*noise(p);p*=2.03;w*=0.5;}return a;}
+vec2 tu(vec2 p){return vec2(p.x,1.0-p.y);}
+vec3 S(vec2 p){return texture2D(uScene,tu(clamp(p,0.0,1.0))).rgb;}
+vec3 B(vec2 p){return texture2D(uBlur,tu(clamp(p,0.0,1.0))).rgb;}
+float L(vec3 c){return dot(c,vec3(0.299,0.587,0.114));}
+vec3 sat(vec3 c,float s){return mix(vec3(L(c)),c,s);}
+float edgeAt(vec2 p,float r){vec2 o=r/uRes;
+float a=L(S(p+vec2(o.x,0.0))),b=L(S(p-vec2(o.x,0.0))),c=L(S(p+vec2(0.0,o.y))),d=L(S(p-vec2(0.0,o.y)));
+return length(vec2(a-b,c-d));}
+void main(){
+  vec2 p=vec2(v.x,1.0-v.y);
+  vec2 pix=p*uRes;
+  float t=uTime*uMotion;
+  vec3 col,blr;
+  float d=p.y-uWater;
+  bool water=d>0.0;
+  vec2 q=p;
+  if(water){
+    float depth=clamp(d/(1.0-uWater),0.0,1.0);
+    float amp=0.0012+d*0.022;
+    float wob=sin(d*170.0-t*2.1+fbm(vec2(p.x*5.0,d*38.0-t*0.25))*3.2)+0.6*sin(d*61.0+t*1.3+p.x*9.0);
+    float dx=wob*amp+(noise(vec2(p.x*26.0,d*80.0-t*0.8))-0.5)*amp;
+    q=vec2(p.x+dx,uGround-d*0.93-0.0015);
+    vec3 r=mix(S(q),B(q),clamp(d*3.5,0.0,0.9));
+    col=mix(r,uWaterCol,0.26+depth*0.5);
+    col*=1.0-depth*0.22;
+    float gx=abs(p.x+dx*2.5-uSun.x);
+    float cw=0.006+d*0.22;
+    float sparkle=step(0.62,noise(vec2(p.x*uRes.x*0.09,p.y*uRes.y*0.35+t*2.6)));
+    col+=uSunCol*smoothstep(cw,0.0,gx)*sparkle*uSun.z*0.7;
+    float crease=smoothstep(0.012,0.0,abs(fract(d*7.0+fbm(vec2(p.x*3.0,t*0.05))*0.6)-0.5)-0.47);
+    col+=vec3(0.05)*crease*(1.0-depth);
+    col+=vec3(1.0)*smoothstep(0.004,0.0,d)*0.1;
+    blr=mix(B(q),uWaterCol,0.5);
+    vec4 top=texture2D(uScene,tu(p));
+    col=mix(col,top.rgb,top.a);
+  } else {col=S(p);blr=B(p);}
+  // glow around everything bright
+  float th=mix(0.55,0.9,uDay);
+  vec3 bloom=max(blr-th,0.0)*mix(2.2,0.9,uDay);
+  // shafts of light from a low sun (or the moon)
+  vec3 rays=vec3(0.0);
+  if(uSun.z>0.02&&!water){
+    vec2 dir=(uSun.xy-p)/22.0;vec2 s=p;float dec=1.0;
+    for(int i=0;i<22;i++){s+=dir;vec3 c=B(s);rays+=c*max(L(c)-th*0.95,0.0)*dec;dec*=0.92;}
+    rays*=uSun.z*uSunCol*0.11;
+  }
+  float hz=smoothstep(uGround-0.22,uGround,p.y)*(1.0-step(uWater,p.y));
+  float lk=uLook;
+  vec3 o=col;
+  float vigS=0.32,grainS=0.035,bloomK=1.0,raysK=1.0;
+  if(lk<0.5){ // Origami
+    o=sat(col,1.08);o=(o-0.5)*1.05+0.5;
+    o*=0.965+0.055*fbm(pix/70.0);
+    o+=uHaze*hz*0.05;
+  } else if(lk<1.5){ // Meta Daylight: watercolor. Edges wander, pigment bleeds and pools at its rims, paper shows through
+    vec2 wob=vec2(fbm(pix/38.0),fbm(pix/38.0+7.3))-0.5;
+    vec3 c1=water?col:S(p+wob*6.0/uRes);
+    vec3 soft=water?blr:B(p+wob*16.0/uRes);
+    vec3 base=mix(c1,soft,0.32);
+    float e=length(c1-soft);
+    base*=1.0-smoothstep(0.03,0.2,e)*0.2;
+    base*=0.92+0.12*fbm(pix/2.6);
+    base=mix(base,vec3(0.99,0.98,0.955),0.08+0.1*fbm(pix/90.0));
+    base=sat(base,1.04);
+    o=base;vigS=0.14;grainS=0.0;bloomK=0.45;raysK=0.6;
+  } else if(lk<2.5){ // Knight Night: a cobalt paper theatre; only cream and candle gold break it
+    float l=L(col);
+    float k=pow(l,mix(0.62,1.12,uDay));
+    vec3 c0=vec3(0.05,0.075,0.13),c1=vec3(0.11,0.157,0.22),c2=vec3(0.23,0.35,0.55),c3=vec3(0.96,0.91,0.84);
+    vec3 duo=k<0.35?mix(c0,c1,k/0.35):k<0.78?mix(c1,c2,(k-0.35)/0.43):mix(c2,c3,(k-0.78)/0.22);
+    float warm=clamp((col.r-col.b)*1.6+(col.g-col.b)*0.5,0.0,1.0)*smoothstep(0.32,0.78,l);
+    o=mix(duo,vec3(0.98,0.72,0.28)*(0.55+l*0.6),warm*0.85);
+    o*=0.95+0.07*fbm(pix/60.0);
+    bloomK=1.7;raysK=0.7;vigS=0.5;grainS=0.045;
+  } else if(lk<3.5){ // Ink Blot: stipple and line, red survives
+    float l=L(col);
+    if(water)l=mix(l,1.0,0.3);
+    l=mix(pow(l,0.6),l,uDay);
+    float e=edgeAt(p,1.6);
+    vec2 cell=fract(pix/4.0)-0.5;
+    float jitter=hash(floor(pix/4.0))*0.25;
+    float dotR=sqrt(max(0.0,1.0-l))*0.62+jitter*0.1;
+    float ink=1.0-smoothstep(dotR-0.06,dotR+0.06,length(cell));
+    ink*=smoothstep(0.84,0.25,l);
+    float line=smoothstep(0.06,0.16,e);
+    vec3 paper=vec3(0.985,0.978,0.962)*(0.96+0.05*fbm(pix/40.0));
+    float red=clamp((col.r-max(col.g,col.b))*3.0-0.25,0.0,1.0);
+    vec3 inkc=mix(vec3(0.07,0.065,0.08),vec3(0.78,0.12,0.12),red);
+    o=mix(paper,inkc,max(ink,line));
+    bloomK=0.0;raysK=0.0;vigS=0.0;grainS=0.0;
+  } else if(lk<4.5){ // Comix: three-tone cel shading that keeps each hue, Ben-Day dots in the shade, inked outlines
+    vec3 c=sat(col,1.3);
+    float l=L(c);
+    float band=l<0.22?0.16:l<0.5?0.4:l<0.78?0.68:0.92;
+    band=mix(band,l,0.18);
+    vec3 cel=clamp(c*(band/max(l,0.03)),0.0,1.0);
+    mat2 rot=mat2(0.7071,-0.7071,0.7071,0.7071);
+    vec2 hc=fract(rot*pix/5.0)-0.5;
+    float dr=sqrt(clamp(0.62-l,0.0,1.0))*0.55;
+    float dots=1.0-smoothstep(dr-0.07,dr+0.07,length(hc));
+    cel*=1.0-dots*0.28;
+    float mis=S(p+vec2(1.5/uRes.x,0.0)).r-col.r;
+    cel.r+=mis*0.25;
+    float e=edgeAt(p,1.8);
+    float line=smoothstep(0.07,0.15,e)*(water?0.4:1.0);
+    o=mix(cel,vec3(0.06,0.04,0.09),line);
+    vigS=0.18;grainS=0.015;bloomK=0.6;raysK=0.5;
+  } else if(lk<5.5){ // Skein silk: woven, sheen, copper stitch
+    vec3 base=mix(col,vec3(0.97,0.88,0.86),0.1);
+    float weave=sin(pix.x*1.1)*sin(pix.y*1.1);
+    base*=0.95+0.05*weave;
+    float sheen=pow(max(0.0,sin((p.x+p.y)*9.0+t*0.4+fbm(pix/200.0)*2.0)),24.0);
+    base+=vec3(1.0,0.92,0.86)*sheen*0.08;
+    base=sat(base,0.92);
+    vec2 ed=min(pix,uRes-pix);float edd=min(ed.x,ed.y);
+    float stitch=step(edd,10.0)*step(5.0,edd)*step(0.5,fract((pix.x+pix.y)/14.0));
+    o=mix(base,vec3(0.72,0.45,0.24),stitch*0.9);
+    vigS=0.22;grainS=0.03;
+  } else { // Depthfield: every tone remapped onto a green-black to mint ramp; warm lights stay peach
+    float l=pow(L(col),mix(0.78,1.05,uDay))*mix(1.0,0.84,uDay);
+    vec3 r0=vec3(0.018,0.05,0.042),r1=vec3(0.04,0.15,0.12),r2=vec3(0.12,0.36,0.29),r3=vec3(0.37,0.95,0.72),r4=vec3(0.9,1.0,0.95);
+    vec3 g=l<0.3?mix(r0,r1,l/0.3):l<0.6?mix(r1,r2,(l-0.3)/0.3):l<0.86?mix(r2,r3,(l-0.6)/0.26):mix(r3,r4,(l-0.86)/0.14);
+    float warm=clamp((col.r-col.b)*1.6,0.0,1.0)*smoothstep(0.42,0.85,L(col));
+    g=mix(g,vec3(1.0,0.71,0.54)*(0.45+L(col)*0.65),warm*0.85);
+    float e=edgeAt(p,1.4);
+    g+=vec3(0.37,0.95,0.72)*smoothstep(0.05,0.2,e)*0.2*(water?0.3:1.0);
+    g+=vec3(0.16,0.45,0.37)*hz*0.14;
+    o=g;bloomK=1.5;raysK=2.2;vigS=0.62;grainS=0.04;
+  }
+  o+=bloom*bloomK+rays*raysK;
+  vec2 vc=(p-0.5)*vec2(1.0,0.85);
+  o*=1.0-vigS*smoothstep(0.3,0.85,length(vc));
+  o+=(hash(pix+fract(uTime)*91.0)-0.5)*grainS;
+  gl_FragColor=vec4(clamp(o,0.0,1.0),1.0);
+}`;
+
+function glProgram(gl, fs) {
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const p = gl.createProgram();
+  gl.attachShader(p, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+  gl.bindAttribLocation(p, 0, 'a');
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+  const u = {};
+  const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < n; i++) { const info = gl.getActiveUniform(p, i); u[info.name] = gl.getUniformLocation(p, info.name); }
+  return { p, u };
+}
+function glTex(gl, w, h) {
+  const t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  if (w) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  return t;
+}
+function postInit() {
+  const c = document.getElementById('glview');
+  if (!c) return false;
+  try {
+    const gl = c.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, premultipliedAlpha: false, powerPreference: 'high-performance' });
+    if (!gl) return false;
+    POST.gl = gl; POST.c = c;
+    POST.blur = glProgram(gl, FS_BLUR);
+    POST.fin = glProgram(gl, FS_FINAL);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    POST.scene = glTex(gl);
+    c.addEventListener('webglcontextlost', e => { e.preventDefault(); POST.ok = false; document.body.classList.remove('lens'); });
+    POST.ok = true;
+    document.body.classList.add('lens');
+    postResize();
+    return true;
+  } catch (e) { POST.ok = false; POST.err = String(e); return false; }
+}
+function postResize() {
+  if (!POST.ok) return;
+  const gl = POST.gl, c = POST.c;
+  c.width = DW; c.height = DH; c.style.width = cv.style.width; c.style.height = cv.style.height;
+  POST.lw = Math.max(16, Math.ceil(DW / 4)); POST.lh = Math.max(16, Math.ceil(DH / 4));
+  for (const k of ['a', 'b']) {
+    if (POST['t' + k]) { gl.deleteTexture(POST['t' + k]); gl.deleteFramebuffer(POST['f' + k]); }
+    POST['t' + k] = glTex(gl, POST.lw, POST.lh);
+    POST['f' + k] = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, POST['f' + k]);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, POST['t' + k], 0);
+  }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+}
+function lookIndex() { const i = LOOKS.findIndex(l => l.id === (G.meta && G.meta.settings.look)); return i < 0 ? 0 : i; }
+function postFrame(u) {
+  if (!POST.ok) return;
+  const gl = POST.gl;
+  gl.bindTexture(gl.TEXTURE_2D, POST.scene);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+  // blur: scene to a quarter, across then down
+  gl.useProgram(POST.blur.p);
+  gl.uniform1i(POST.blur.u.t, 0);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, POST.fa); gl.viewport(0, 0, POST.lw, POST.lh);
+  gl.bindTexture(gl.TEXTURE_2D, POST.scene); gl.uniform2f(POST.blur.u.dir, 2.4 / POST.lw, 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, POST.fb);
+  gl.bindTexture(gl.TEXTURE_2D, POST.ta); gl.uniform2f(POST.blur.u.dir, 0, 2.4 / POST.lh);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  // the lens
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, DW, DH);
+  const f = POST.fin, U = f.u;
+  gl.useProgram(f.p);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, POST.scene); gl.uniform1i(U.uScene, 0);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, POST.tb); gl.uniform1i(U.uBlur, 1);
+  gl.uniform2f(U.uRes, DW, DH);
+  gl.uniform1f(U.uTime, G.time); gl.uniform1f(U.uWater, u.water); gl.uniform1f(U.uGround, u.ground);
+  gl.uniform1f(U.uLook, lookIndex()); gl.uniform1f(U.uDay, u.day); gl.uniform1f(U.uRain, u.rain); gl.uniform1f(U.uMotion, G.meta.settings.reduce ? 0.35 : 1);
+  gl.uniform3f(U.uSun, u.sun[0], u.sun[1], u.sun[2]);
+  gl.uniform3f(U.uSunCol, u.sunCol[0], u.sunCol[1], u.sunCol[2]);
+  gl.uniform3f(U.uWaterCol, u.waterCol[0], u.waterCol[1], u.waterCol[2]);
+  gl.uniform3f(U.uHaze, u.haze[0], u.haze[1], u.haze[2]);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.activeTexture(gl.TEXTURE0);
 }
 
 /* Reignfawn: input, the HUD, the storybook pages, and the loop that ties it together. */
@@ -2748,6 +3098,7 @@ addEventListener('keydown', e => {
     if (e.code === 'Escape' || e.code === 'KeyP') { if (G.state === 'play') togglePause(); else if (!$('ledger').hidden) closeLedger(); }
     if (e.code === 'KeyL' && G.state === 'play') setAuto(!G.w.m.auto);
     if (e.code === 'KeyM') toggleSound();
+    if (e.code === 'KeyV') cycleLook(e.shiftKey ? -1 : 1);
     if (e.code === 'KeyF') goFull();
     if ((e.code === 'Enter') && G.state === 'title') startPlay();
   }
@@ -2930,6 +3281,7 @@ function syncSettingsUI() {
   $('optAuto').checked = !!(G.w && G.w.m.auto);
   $('optCycle').value = String(s.cycle);
   $('optMusic').value = s.music; $('optSfx').value = s.sfx;
+  syncLooks();
   $('optTuning').value = s.tuning; $('optReduce').checked = !!s.reduce; $('optHud').checked = !!s.hud; $('optSail').checked = !!s.autoSail;
   $('bSound').setAttribute('aria-pressed', String(s.music + s.sfx > 0 && !G.muted));
 }
@@ -2945,6 +3297,43 @@ bindSetting('optFrolic', 'frolic'); bindSetting('optFrolicT', 'frolic'); bindSet
 bindSetting('optTuning', 'tuning'); bindSetting('optReduce', 'reduce'); bindSetting('optHud', 'hud'); bindSetting('optSail', 'autoSail');
 for (const id of ['optMusic', 'optSfx']) $(id).addEventListener('input', e => { G.meta.settings[id === 'optMusic' ? 'music' : 'sfx'] = Number(e.target.value); G.muted = false; auVolumes(); });
 $('optAuto').addEventListener('change', e => setAuto(e.target.checked));
+
+/* ---------- looks: one valley, many faces ---------- */
+function availableLooks() { return POST.ok ? LOOKS : LOOKS.slice(0, 1); }
+function setLook(id, announce) {
+  const L = availableLooks().find(l => l.id === id) || LOOKS[0];
+  G.meta.settings.look = L.id; saveJSON(META_KEY, G.meta);
+  syncLooks();
+  if (announce) say(L.name, L.line);
+}
+function cycleLook(d) {
+  const ls = availableLooks(); if (ls.length < 2) return;
+  const i = Math.max(0, ls.findIndex(l => l.id === G.meta.settings.look));
+  setLook(ls[(i + d + ls.length) % ls.length].id, true);
+}
+function buildLooks() {
+  const ls = availableLooks(), row = $('looksT'), sel = $('optLook');
+  row.textContent = ''; sel.textContent = '';
+  for (const L of ls) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'lk'; b.dataset.id = L.id;
+    const sw = document.createElement('i');
+    for (const c of L.sw) { const k = document.createElement('b'); k.style.background = c; sw.appendChild(k); }
+    b.appendChild(sw); b.appendChild(document.createTextNode(L.name));
+    b.addEventListener('click', () => setLook(L.id, false));
+    row.appendChild(b);
+    const o = document.createElement('option'); o.value = L.id; o.textContent = L.name; sel.appendChild(o);
+  }
+  row.hidden = $('lookLineT').hidden = $('lookRow').hidden = ls.length < 2;
+  syncLooks();
+}
+function syncLooks() {
+  const id = G.meta.settings.look, L = LOOKS.find(l => l.id === id) || LOOKS[0];
+  for (const b of $('looksT').children) b.setAttribute('aria-pressed', String(b.dataset.id === L.id));
+  $('optLook').value = L.id;
+  $('lookLineT').textContent = L.line; $('lookLineM').textContent = L.line;
+}
+$('optLook').addEventListener('change', e => setLook(e.target.value, false));
 
 function togglePause() {
   if (G.state !== 'play') return;
@@ -3060,7 +3449,7 @@ function updateCamera(dt) {
 }
 let perfT = 0, perfEMA = 1 / 60;
 function adapt(raw) {
-  if (document.hidden || raw > 0.25) return;
+  if (document.hidden || raw > 0.25 || G.fixedScale) return;
   perfEMA = lerp(perfEMA, raw, 0.05);
   perfT += raw;
   if (perfT < 3) return;
@@ -3120,6 +3509,9 @@ function boot(hot) {
   G.meta = loadMeta();
   makeGrain();
   resize();
+  postInit();
+  if (!availableLooks().some(l => l.id === G.meta.settings.look)) G.meta.settings.look = 'origami';
+  buildLooks();
   const saved = hot && hot.w ? hot.w : loadJSON(SAVE_KEY);
   G.w = saved && saved.v === 1 ? saved : newValley(0, { coins: 10, mount: 'fawn' });
   indexSites();
@@ -3129,7 +3521,7 @@ function boot(hot) {
   try { if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') window.claude.hot.snapshot(() => ({ w: G.w, state: G.state })); } catch (e) { /* not in a viewer */ }
   setInterval(() => { try { const pt = matchMedia('(orientation: portrait)').matches; $('rotate').classList.toggle('show', pt && G.state === 'play'); } catch (e) { /* ignore */ } }, 1500);
   requestAnimationFrame(t => { last = t; frame(t); });
-  window.__rf = { G, update, render, startPlay, setAuto, siteCost, siteInfo, newValley };
+  window.__rf = { G, update, render, startPlay, setAuto, siteCost, siteInfo, newValley, setLook, POST, LOOKS, indexSites, mkUnit };
 }
 (function start() {
   const hot = window.claude && window.claude.hot;

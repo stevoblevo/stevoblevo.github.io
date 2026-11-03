@@ -8,10 +8,17 @@ Every version keeps its own address:
 
 | Version | Address | Look |
 | --- | --- | --- |
+| v3 | https://stevoblevo.github.io/reignfawn/v3/ | One valley, seven looks through a WebGL lens: Origami, Meta Daylight, Knight Night, Ink Blot, Comix, Skein Silk, Depthfield |
 | v2 | https://stevoblevo.github.io/reignfawn/v2/ | Folded from paper: origami creatures, cut-paper mountains, full-resolution vector |
 | v1 | https://stevoblevo.github.io/reignfawn/v1/ | The first build, pixel art |
 
-All versions share one save on this site, so a kingdom started in v1 carries into v2.
+All versions share one save on this site, so a kingdom started in v1 carries into v2 and v3.
+
+## What is in v3
+
+- A WebGL lens over the paper scene: rippling mirrored water, glow around flames, light shafts, grain and vignette. Without WebGL the paper scene shows as in v2.
+- Seven looks, from the title, the menu or the V key. The choice is remembered.
+- Refolded paper ridges with lit creases and cast shadows, a folded sun and moon, a closer camera.
 
 ## What is in v1
 
@@ -32,7 +39,7 @@ All versions share one save on this site, so a kingdom started in v1 carries int
 
 `index.html` is the whole game (no build step at runtime). The painted plates live in `art/`.
 
-`reignfawn-source.bundle` is the full git history of the source (split files, build script, changelog), tags `v1.0` and `v2.0`. Restore it with `git clone reignfawn-source.bundle reignfawn`. It stands in until the game has its own repository.
+`reignfawn-source.bundle` is the full git history of the source (split files, build script, changelog), tags `v1.0`, `v2.0` and `v3.0`. Restore it with `git clone reignfawn-source.bundle reignfawn`. It stands in until the game has its own repository.
 
 ## Toward Steam ($25.99, best at the $5.99 sale)
 
