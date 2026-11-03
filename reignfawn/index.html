@@ -43,6 +43,26 @@ body.lens #vignette, body.lens #grain { display: none; }
 .looks .lk i { display: inline-flex; border-radius: 50%; overflow: hidden; width: 18px; height: 18px; box-shadow: 0 0 0 1px rgba(255,255,255,0.25); }
 .looks .lk i b { flex: 1; }
 .lookLine { margin: 0; font-size: 14px; color: var(--paper-dim); min-height: 1.3em; }
+#frame { position: absolute; left: 0; top: 0; pointer-events: none; }
+#letterbox::before, #letterbox::after { content: ""; position: absolute; left: 0; right: 0; height: 9%; background: #07050a; transform: scaleY(0); transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); pointer-events: none; }
+#letterbox::before { top: 0; transform-origin: top; }
+#letterbox::after { bottom: 0; transform-origin: bottom; }
+body.cinema #letterbox::before, body.cinema #letterbox::after { transform: scaleY(1); }
+body.cinema #hud { opacity: 0.4; transition: opacity 1s; }
+body.cinema #caption, body.cinema #hint { opacity: 0 !important; }
+#chron { position: absolute; left: var(--gut-l); bottom: calc(11% + env(safe-area-inset-bottom, 0px)); max-width: min(46ch, 70%); pointer-events: none; opacity: 0; transition: opacity 1s; font-family: var(--f-display); font-style: italic; font-size: 17px; line-height: 1.35; color: var(--paper); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85); }
+#chron p { margin: 0 0 4px; transition: opacity 1s; }
+body.cinema #chron { opacity: 1; }
+body.photo #hud, body.photo #caption, body.photo #hint, body.photo #banner, body.photo #chron, body.photo #touch, body.photo #letterbox { display: none; }
+#photoBar { position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; max-width: calc(100% - 32px); padding: 10px 12px; border-radius: 4px; background: rgba(16, 10, 20, 0.72); backdrop-filter: blur(4px); }
+#photoBar .btn { padding: 8px 14px; font-size: 15px; touch-action: none; }
+#photoBar .ph-t { font-family: var(--f-sc); letter-spacing: 0.18em; color: var(--gold); padding: 0 6px; }
+#photoBar small { flex-basis: 100%; text-align: center; font-family: var(--f-sc); font-size: 13px; letter-spacing: 0.05em; color: var(--paper-dim); }
+body.touch #photoBar small { display: none; }
+body.pad :focus { outline: 2px solid var(--gold); outline-offset: 3px; }
+.padkeys { display: none; }
+body.pad .padkeys { display: block; }
+body.pad .keys:not(.padkeys) { display: none; }
 #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.11; mix-blend-mode: overlay; background-size: 160px 160px; }
 #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, transparent 58%, rgba(10, 6, 14, 0.5)); }
 
@@ -193,6 +213,9 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
 <div id="app">
   <canvas id="game" aria-label="The valley"></canvas>
   <canvas id="glview" aria-hidden="true"></canvas>
+  <canvas id="frame" aria-hidden="true"></canvas>
+  <div id="letterbox" aria-hidden="true"></div>
+  <div id="chron" aria-live="polite"></div>
   <div id="grain"></div>
   <div id="vignette"></div>
 
@@ -224,6 +247,7 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
       <p class="lede">Ride a fawn along a lantern valley. Drop coins to raise a hearth, a hall, a keep. <strong>Keep the crown through the night.</strong> The valley keeps working while you rest.</p>
       <div class="actions">
         <button class="btn primary" id="bPlay" type="button">Ride out</button>
+        <button class="btn" id="bWatch" type="button">Watch</button>
         <button class="btn" id="bNew" type="button">New kingdom</button>
         <button class="btn" id="bLedgerT" type="button">Ledger</button>
         <button class="btn" id="bSetT" type="button">Settings</button>
@@ -231,8 +255,9 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
       <div class="looks" id="looksT" role="group" aria-label="Look"></div>
       <p class="lookLine" id="lookLineT"></p>
       <label class="toggle" for="optFrolicT"><input type="checkbox" id="optFrolicT"> Frolic mode: no night raids, only building, riding and fireflies</label>
-      <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>V</kbd> change the look &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
-      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 0.3.4: seven looks, seven worlds. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v3/" target="_blank" rel="noopener">0.3.3</a>, <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">0.2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">0.1 pixel</a>.</span></p>
+      <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>V</kbd> change the look &middot; <kbd>C</kbd> photo &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
+      <p class="keys padkeys">Gamepad: A choose &middot; B back &middot; stick ride &middot; RT gallop &middot; A pay &middot; Y lean back &middot; LB look &middot; View photo &middot; Start menu</p>
+      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 0.3.5: watch it, play it, hold a controller. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v3/" target="_blank" rel="noopener">0.3.3</a>, <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">0.2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">0.1 pixel</a>.</span></p>
     </div>
   </section>
 
@@ -247,6 +272,16 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
     </div>
   </section>
 
+  <div id="photoBar" hidden role="toolbar" aria-label="Photo mode">
+    <span class="ph-t">Photo</span>
+    <button class="btn" id="phL" type="button" aria-label="Pan left">&#9664;</button><button class="btn" id="phR" type="button" aria-label="Pan right">&#9654;</button>
+    <button class="btn" id="phOut" type="button" aria-label="Zoom out">&minus;</button><button class="btn" id="phIn" type="button" aria-label="Zoom in">+</button>
+    <button class="btn" id="phLook" type="button">Look</button>
+    <button class="btn" id="phSave" type="button">Save</button>
+    <button class="btn primary" id="phDone" type="button">Done</button>
+    <small>&larr; &rarr; pan &middot; Z X zoom &middot; V look &middot; Enter save &middot; Esc done</small>
+  </div>
+
   <section id="menu" class="screen" hidden>
     <div class="panel" role="dialog" aria-labelledby="menuH">
       <h3 id="menuH">Paused</h3>
@@ -260,10 +295,13 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
       <div class="row" id="lookRow"><label for="optLook">Look<small id="lookLineM"></small></label><select id="optLook"></select></div>
       <div class="row"><label for="optReduce">Calmer motion<small>Less shake and fewer particles.</small></label><input type="checkbox" id="optReduce"></div>
       <div class="row"><label for="optHud">Show coin count</label><input type="checkbox" id="optHud"></div>
+      <div class="row"><label for="optCinema">Cinema camera<small>When leaning back, the camera frames builds and fights, with a letterbox and a running chronicle.</small></label><input type="checkbox" id="optCinema"></div>
+      <div class="row"><label for="optRumble">Controller rumble</label><input type="checkbox" id="optRumble"></div>
       <div class="row"><label for="optSail">Lean back may sail on<small>When the boat is ready, let your mount board it.</small></label><input type="checkbox" id="optSail"></div>
       <div class="actions">
         <button class="btn primary" id="bResume" type="button">Resume</button>
         <button class="btn" id="bLedgerM" type="button">Ledger</button>
+        <button class="btn" id="bPhoto" type="button">Photo mode</button>
         <button class="btn" id="bFull" type="button">Full screen</button>
         <button class="btn" id="bTitle" type="button">Title</button>
       </div>
@@ -283,7 +321,7 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
 
 <script>
 'use strict';
-const VERSION = '0.3.4';
+const VERSION = '0.3.5';
 /* Reignfawn: core math, randomness, colour, and the rules of the valley. */
 
 const TAU = Math.PI * 2;
@@ -469,7 +507,7 @@ function defaultMeta() {
   return {
     v: 1, mounts: ['fawn'], crossed: 0, bestDay: 0, crownsLost: 0, nights: 0, recruits: 0, earned: 0, built: 0,
     seen: {}, lastGift: '',
-    settings: { music: 0.55, sfx: 0.8, cycle: 240, frolic: false, hud: true, reduce: false, tuning: 'just', touch: 'auto', look: 'origami' }
+    settings: { music: 0.55, sfx: 0.8, cycle: 240, frolic: false, hud: true, reduce: false, tuning: 'just', touch: 'auto', look: 'origami', cinema: true, rumble: true }
   };
 }
 
@@ -670,7 +708,7 @@ function ratio(scale, i) {
 const SFX = {
   coin(i) { const f = 660 * ratio('day', Math.min(i || 0, 14)); tone(f, 0.16, { type: 'triangle', vol: 0.07 }); tone(f * 2.76, 0.07, { vol: 0.02 }); },
   pay(i) { const f = 520 * ratio('day', Math.min((i || 1) - 1, 12)); tone(f, 0.2, { type: 'triangle', vol: 0.08, send: 0.15 }); tone(f * 3.01, 0.06, { vol: 0.025 }); noise(0.03, { freq: 6000, vol: 0.02 }); },
-  pick() { tone(988, 0.07, { type: 'triangle', vol: 0.05 }); tone(1318, 0.09, { type: 'triangle', vol: 0.04, when: 0.04 }); },
+  pick(i) { const k = ratio('day', Math.min(i || 0, 9)); tone(988 * k, 0.07, { type: 'triangle', vol: 0.05 }); tone(1318 * k, 0.09, { type: 'triangle', vol: 0.04, when: 0.04 }); },
   tick() { tone(1480, 0.05, { vol: 0.03 }); },
   clink() { tone(2200 + Math.random() * 400, 0.04, { vol: 0.015 }); },
   toss() { noise(0.18, { freq: 900, sweep: 2400, vol: 0.03, q: 0.7 }); },
@@ -920,7 +958,7 @@ function completePayment(s) {
   puff(s.x, siteTop(s) + 4, 14, '#ffe08a', { up: 30, spread: 26, life: 0.9 });
   switch (s.kind) {
     case 'hearth':
-      if (s.tier === 0) { s.tier = 1; SFX.build(); lookEvent('build', s.x, siteTop(s)); say('The hearth is kindled.', 'The bow and hammer stalls are open.'); hint('stalls'); G.meta.built++; }
+      if (s.tier === 0) { s.tier = 1; SFX.build(); lookEvent('build', s.x, siteTop(s)); chron('The hearth is kindled.'); say('The hearth is kindled.', 'The bow and hammer stalls are open.'); hint('stalls'); G.meta.built++; }
       else s.job = { to: s.tier + 1, need: HEARTH[s.tier + 1].work, done: 0 };
       break;
     case 'wall': s.job = { to: s.tier + 1, need: WALLS[s.tier + 1].work, done: 0 }; break;
@@ -955,6 +993,7 @@ function finishJob(s) {
   if (s.kind === 'wall') s.hp = wallMax(s);
   G.meta.built++; w.stats.built++;
   SFX.build(); lookEvent('build', s.x, siteTop(s));
+  { const n = siteName(s); chron('The ' + n + (s.kind === 'wall' || s.kind === 'tower' || s.kind === 'farm' ? ' to the ' + sideWord(s.x) : '') + ' stands.'); }
   puff(s.x, siteTop(s), 18, '#f6e2b0', { up: 24, spread: 30, life: 1 });
   if (s.kind === 'hearth') say('The ' + HEARTH[s.tier].n.toLowerCase() + ' stands.', HEARTH[s.tier].line);
   if (s.kind === 'dock') say(DOCK[s.tier].n + ' finished.', s.tier >= 3 ? 'At first light, pay one coin at the dock to sail.' : (3 - s.tier) + ' more to go.');
@@ -984,9 +1023,9 @@ function updateMonarch(dt) {
   for (let i = w.coins.length - 1; i >= 0; i--) {
     const k = w.coins[i];
     if (k.cool > 0 || k.h > 6 || Math.abs(k.x - m.x) > 7) continue;
-    if (k.kind === 'crown') { m.crown = true; w.coins.splice(i, 1); SFX.crown(); lookEvent('crown', m.x, 22); say('The crown is yours again.'); continue; }
+    if (k.kind === 'crown') { m.crown = true; w.coins.splice(i, 1); SFX.crown(); lookEvent('crown', m.x, 22); chron('The crown is back.'); say('The crown is yours again.'); continue; }
     if (m.coins >= purseCap()) continue;
-    w.coins.splice(i, 1); giveCoin(1); SFX.pick(); sparkle(k.x, 6);
+    w.coins.splice(i, 1); giveCoin(1); SFX.pick(pickCombo()); sparkle(k.x, 6);
   }
   // pay
   if (c.pay && m.payLock) { /* a finished payment waits for the key to lift */ }
@@ -1042,7 +1081,7 @@ function updateUnits(dt) {
     switch (u.cls) {
       case 'vagrant': {
         const k = nearestCoin(u.x, 72);
-        if (k) { if (walkTo(u, k.x, 22, dt) || Math.abs(k.x - u.x) < 3) { w.coins.splice(w.coins.indexOf(k), 1); promote(u, 'villager'); w.stats.recruits++; G.meta.recruits++; SFX.recruit(); lookEvent('recruit', u.x, 12); hint('recruited'); } }
+        if (k) { if (walkTo(u, k.x, 22, dt) || Math.abs(k.x - u.x) < 3) { w.coins.splice(w.coins.indexOf(k), 1); promote(u, 'villager'); w.stats.recruits++; G.meta.recruits++; SFX.recruit(); lookEvent('recruit', u.x, 12); chron('A wanderer takes a coin and joins the valley.'); hint('recruited'); } }
         else wander(u, u.home, 34, dt, 8);
         break;
       }
@@ -1139,7 +1178,7 @@ function updateFarmer(u, dt, evening, winter) {
       const rate = (f.tier >= 2 ? 1.3 : 1) * (w.blessings.farmer ? 1.5 : 1);
       f.grow = (f.grow || 0) + dt * rate / 28;
       u.work += dt;
-      if (f.grow >= 1) { f.grow = 0; u.coins = Math.min(6, u.coins + 2); puff(f.x, 6, 16, '#f2d06a', { up: 26, spread: 30, life: 0.9 }); SFX.harvest(); }
+      if (f.grow >= 1) { f.grow = 0; u.coins = Math.min(6, u.coins + 2); puff(f.x, 6, 16, '#f2d06a', { up: 26, spread: 30, life: 0.9 }); SFX.harvest(); chron('A field is harvested.'); }
     }
   }
 }
@@ -1259,6 +1298,7 @@ function killAnimal(a) {
   a.hp--;
   if (a.hp > 0) return;
   a.dead = 0.001;
+  chron(a.kind === 'deer' ? 'The archers bring down a deer.' : 'The archers bring down a rabbit.');
   const n = a.kind === 'deer' ? 2 : 1;
   for (let i = 0; i < n; i++) dropCoin(a.x, 3, (Math.random() - 0.5) * 20, 50, { loot: true });
   puff(a.x, 3, 6, '#e8d8c0', { up: 14, spread: 10, life: 0.5 });
@@ -1317,7 +1357,7 @@ function updateFoes(dt) {
     // steal from the monarch
     if (!w.sailing && Math.abs(m.x - f.x) < 7) {
       if (MOUNTS[m.mount].ward && !m.warded) { m.warded = true; f.state = 'flee'; puff(f.x, 8, 8, '#e8f0ff', { up: 16, spread: 12, life: 0.6 }); SFX.clash(); continue; }
-      if (m.coins > 0) { m.coins--; f.loot = 'coin'; f.state = 'flee'; SFX.steal(); lookEvent('steal', m.x, 16); G.shake = 0.35; hint('stolen'); continue; }
+      if (m.coins > 0) { m.coins--; f.loot = 'coin'; f.state = 'flee'; SFX.steal(); lookEvent('steal', m.x, 16); chron('The hush snatches a coin.'); G.shake = 0.35; hint('stolen'); continue; }
       if (m.crown) { m.crown = false; f.loot = 'crown'; f.state = 'flee'; SFX.crownTaken(); G.shake = 0.8; say('The hush has your crown.', 'Catch it before it reaches the gate.', true); continue; }
     }
     // steal from people who are caught outside
@@ -1342,7 +1382,7 @@ function updateFoes(dt) {
       if (wall.hp <= 0) {
         wall.tier--; wall.hp = wall.tier > 0 ? WALLS[wall.tier].hp * 0.5 : 0; G.shake = 0.4;
         puff(wall.x, 10, 20, '#8a7058', { up: 30, spread: 20, life: 1 });
-        SFX.wallBreak(); lookEvent('wallBreak', wall.x, 16);
+        SFX.wallBreak(); lookEvent('wallBreak', wall.x, 16); chron('The hush breaks a wall to the ' + sideWord(wall.x) + '.');
         if (wall.tier === 0) say('A wall has fallen.', 'Builders can raise it again by day.', true);
       }
       continue;
@@ -1432,6 +1472,7 @@ function onPhase(name) {
     else say('Night is coming.', 'Your people head for the walls.');
     hint('night');
     SFX.dusk();
+    chron(frolic() ? 'Evening. Fireflies.' : isRedNight(w.day) ? 'Red rain. The hush comes thick tonight.' : 'Night. The hush stirs at the gates.');
   }
   if (name === 'night') { startWave(); w.stats.nights++; G.meta.nights++; m_warded(false); }
 }
@@ -1450,7 +1491,7 @@ function newDay() {
     const here = w.units.filter(u => u.cls === 'vagrant' && Math.abs(u.x - c.x) < 80).length;
     if (here < 2 && w.units.filter(u => u.cls === 'vagrant').length < 9) mkUnit(w, 'vagrant', c.x + (Math.random() - 0.5) * 20, c.x);
   }
-  w.treasury = Math.min(treasuryCap(w), w.treasury + 1 + hearthTier(w));
+  { const before = w.treasury; w.treasury = Math.min(treasuryCap(w), w.treasury + 1 + hearthTier(w)); chron('Day ' + w.day + '. ' + (w.treasury > before ? 'The tithe brings ' + (w.treasury - before) + (w.treasury - before === 1 ? ' coin.' : ' coins.') : 'The chest by the fire is full.')); }
   banner('Day ' + w.day, sub);
   SFX.dawn(hearthTier(w));
   saveAll();
@@ -1576,7 +1617,7 @@ function update(dt) {
   updateParts(dt);
   for (const s of w.sites) {
     if (s.kind === 'chest' && !s.open && Math.abs(w.m.x - s.x) < 7) {
-      s.open = true; SFX.chest(); lookEvent('chest', s.x, 10);
+      s.open = true; SFX.chest(); lookEvent('chest', s.x, 10); chron('An old chest spills ' + s.gold + ' coins.');
       for (let i = 0; i < s.gold; i++) dropCoin(s.x, 6, (Math.random() - 0.5) * 50, 70 + Math.random() * 60, { cool: 0.3 });
       say('An old chest.', s.gold + ' coins spill out.');
     }
@@ -1589,6 +1630,7 @@ function update(dt) {
    through paper at night. Everything is vector, drawn at the screen's full resolution. */
 
 const cv = document.getElementById('game');
+const fcv = document.getElementById('frame'), fctx = fcv.getContext('2d');
 const mctx = cv.getContext('2d');
 let ctx = mctx;
 const land = document.createElement('canvas'), lctx = land.getContext('2d');
@@ -1605,6 +1647,7 @@ function resize() {
   const cw = Math.max(320, box.width || window.innerWidth), ch = Math.max(200, box.height || window.innerHeight);
   DW = Math.round(cw * DPR); DH = Math.round(ch * DPR);
   cv.width = DW; cv.height = DH; cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
+  fcv.width = DW; fcv.height = DH; fcv.style.width = cw + 'px'; fcv.style.height = ch + 'px'; LK.framed = true;
   K = Math.min(DH / VIEW_H, DW / 210);
   W = DW / K; H = DH / K;
   GY = Math.round(H * (H > W ? 0.6 : 0.68)); WT = GY + 6;
@@ -2861,8 +2904,9 @@ function render() {
     }
     if (w.rain) sun[2] *= 0.3;
     const wc = waterColor(V).map(x => x / 255), hz = skyPair(V)[1].map(x => x / 255);
-    postFrame({ water: WT / H, ground: WT / H, day: LIGHT, rain: w.rain ? 1 : 0, sun, sunCol: sc, waterCol: wc, haze: hz });
+    postFrame({ water: WT / H, ground: WT / H, day: LIGHT, rain: w.rain ? 1 : 0, sun, sunCol: sc, waterCol: wc, haze: hz, zoom: CINE.zoom, zc: [CINE.zx, CINE.zy] });
   }
+  lookFrame();
 }
 
 /* Reignfawn: the lens. The paper scene is drawn in 2D, then passed through one WebGL pass that adds what paper
@@ -2892,6 +2936,8 @@ uniform sampler2D uScene,uBlur;
 uniform vec2 uRes;
 uniform float uTime,uWater,uGround,uLook,uDay,uRain,uMotion;
 uniform vec3 uSun,uSunCol,uWaterCol,uHaze;
+uniform float uZoom;
+uniform vec2 uZC;
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
 return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),f.x),mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),f.x),f.y);}
@@ -2907,6 +2953,7 @@ return length(vec2(a-b,c-d));}
 void main(){
   vec2 p=vec2(v.x,1.0-v.y);
   vec2 pix=p*uRes;
+  p=uZC+(p-uZC)/uZoom;
   float t=uTime*uMotion;
   vec3 col,blr;
   float d=p.y-uWater;
@@ -3118,6 +3165,7 @@ function postFrame(u) {
   gl.uniform3f(U.uSunCol, u.sunCol[0], u.sunCol[1], u.sunCol[2]);
   gl.uniform3f(U.uWaterCol, u.waterCol[0], u.waterCol[1], u.waterCol[2]);
   gl.uniform3f(U.uHaze, u.haze[0], u.haze[1], u.haze[2]);
+  gl.uniform1f(U.uZoom, u.zoom || 1); gl.uniform2f(U.uZC, (u.zc || [0.5, 0.6])[0], (u.zc || [0.5, 0.6])[1]);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   gl.activeTexture(gl.TEXTURE0);
 }
@@ -3264,6 +3312,7 @@ const BIG_EVENT = { build: 1, chest: 1, crown: 1, wallBreak: 1 };
 const HIT_EVENT = { hit: 1, poof: 1, clash: 1, wallHit: 1, wallBreak: 1, steal: 1 };
 function lookEvent(kind, x, h) {
   if (!G.w || G.state !== 'play') return;
+  playFeel(kind, x);
   const id = LK.id;
   if (id === 'comix' && POP_WORDS[kind]) {
     if (kind === 'bow' && Math.random() < 0.5) return;
@@ -3397,13 +3446,13 @@ function proscenium(night) {
     const x0 = side < 0 ? 0 : W - cw;
     for (let i = 0; i < 6; i++) {
       const x = x0 + i * cw / 6, k = i % 2 ? -0.1 : 0.06;
-      poly(sh('#6a3a5c', k), [x, 0, x + cw / 6 + 0.2, 0, x + cw / 6 + 0.2 + side * Math.sin(G.time * 0.5 + i) * 0.3, H, x, H]);
+      poly(sh('#22324e', k), [x, 0, x + cw / 6 + 0.2, 0, x + cw / 6 + 0.2 + side * Math.sin(G.time * 0.5 + i) * 0.3, H, x, H]);
     }
     rect(side < 0 ? cw - 0.6 : W - cw, 0, 0.6, H, '#e9b44c');
   }
   // the valance: scallops with a gold fringe
-  rect(0, 0, W, vh * 0.55, '#5a2e4c');
-  for (let x = 0; x < W + 10; x += 10) { ctx.fillStyle = '#62334f'; ctx.beginPath(); ctx.arc(x + 5, vh * 0.55, 5, 0, Math.PI); ctx.fill(); }
+  rect(0, 0, W, vh * 0.55, '#1a263c');
+  for (let x = 0; x < W + 10; x += 10) { ctx.fillStyle = '#1e2c44'; ctx.beginPath(); ctx.arc(x + 5, vh * 0.55, 5, 0, Math.PI); ctx.fill(); }
   ctx.strokeStyle = '#e9b44c'; ctx.lineWidth = 0.4;
   ctx.beginPath(); for (let x = 0; x < W + 10; x += 10) { ctx.moveTo(x, vh * 0.55); ctx.arc(x + 5, vh * 0.55, 5, Math.PI, 0, true); } ctx.stroke();
   // footlights along the stage lip
@@ -3445,7 +3494,16 @@ function lookOverlay(V) {
   if (id === 'depthfield') { drawMotes(dt); if (inPlay) hotspotRing(); }
   if (id === 'comix' && inPlay) speedLines();
   drawLookFx(dt);
-  world();
+}
+const FRAMED = { knight: 1, comix: 1, daylight: 1, origami: 1 };
+function lookFrame() {
+  // frames live on their own canvas above the lens, so the cinema zoom never crops them
+  const id = LK.id;
+  if (!FRAMED[id] && !LK.framed) return;
+  fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, fcv.width, fcv.height);
+  LK.framed = !!FRAMED[id];
+  if (!LK.framed) return;
+  const prev = ctx; ctx = fctx; world();
   if (id === 'knight') proscenium(1 - LIGHT);
   else if (id === 'comix') comicPanel();
   else if (id === 'daylight') deckle();
@@ -3453,6 +3511,7 @@ function lookOverlay(V) {
     poly('rgba(255,255,255,0.025)', [W * 0.55, 0, W, 0, W, H * 0.8]);
     line(W * 0.55, 0, W, H * 0.8, 'rgba(255,255,255,0.08)', 0.2);
   }
+  ctx = prev;
 }
 
 /* ---------- the instrument the score is played on ---------- */
@@ -3468,6 +3527,238 @@ function lookVoice(f, dur, when, pan, night) {
     case 'depthfield': tone(f, dur * 1.5, { vol: 0.03, when, attack: 0.004, bus, send: 0.7, pan }); tone(f * 2.756, dur * 0.5, { vol: 0.008, when, bus, send: 0.7, pan }); return;
   }
   tone(f, dur, { type: night ? 'sine' : 'triangle', vol: night ? 0.04 : 0.035, when, attack: 0.008, bus, send: 0.55, pan });
+}
+
+/* Reignfawn: how it feels to play, to watch, and to come back. The chronicle, the away report, the cinema camera
+   for lean back, photo mode, rumble and hit-stop, and a gamepad that can drive every menu. */
+
+/* ---------- the chronicle: a quiet running account of the valley ---------- */
+const CHRON = [];
+function chron(text) {
+  if (!G.w || G.state !== 'play') return;
+  CHRON.push({ text, t: G.time });
+  if (CHRON.length > 40) CHRON.shift();
+  renderChron();
+}
+function renderChron() {
+  const el = document.getElementById('chron');
+  if (!el) return;
+  const recent = CHRON.filter(c => G.time - c.t < 26).slice(-3);
+  const html = recent.map(c => `<p style="opacity:${clamp(1 - (G.time - c.t - 18) / 8, 0, 1).toFixed(2)}">${c.text}</p>`).join('');
+  if (el.innerHTML !== html) el.innerHTML = html;
+}
+const sideWord = x => (x < 0 ? 'west' : 'east');
+function siteName(s) {
+  const T = { hearth: HEARTH, wall: WALLS, tower: TOWERS, farm: FARMS, dock: DOCK }[s.kind];
+  return T && T[s.tier] ? T[s.tier].n.toLowerCase() : s.kind;
+}
+
+/* ---------- away: what the valley did while you rested ---------- */
+function offlineWork(w, seconds) {
+  // builders keep at it while you are gone, at half pace and for at most four hours
+  const builders = w.units.filter(u => u.cls === 'builder').length;
+  const done = [];
+  if (!builders || seconds < 60) return done;
+  let budget = Math.min(seconds, 4 * 3600) * builders * 0.5;
+  const jobs = w.sites.filter(s => s.job).sort((a, b) => (a.job.need - a.job.done) - (b.job.need - b.job.done));
+  for (const s of jobs) {
+    const rem = s.job.need - s.job.done;
+    if (budget >= rem) {
+      budget -= rem; s.tier = s.job.to; s.job = null;
+      if (s.kind === 'wall') s.hp = WALLS[s.tier].hp || s.hp;
+      w.stats.built++; G.meta.built++;
+      done.push(`the ${siteName(s)}${s.kind === 'wall' || s.kind === 'tower' || s.kind === 'farm' ? ' to the ' + sideWord(s.x) : ''}`);
+    } else { s.job.done += budget; break; }
+  }
+  // walls mend themselves when a builder is about
+  for (const s of w.sites) if (s.kind === 'wall' && s.tier > 0 && WALLS[s.tier].hp) s.hp = Math.max(s.hp, WALLS[s.tier].hp);
+  return done;
+}
+function awayText(coins, built, seconds) {
+  const h = seconds / 3600, span = h >= 1.5 ? Math.round(h) + ' hours' : h >= 0.9 ? 'an hour' : Math.max(1, Math.round(seconds / 60)) + ' minutes';
+  const parts = [];
+  if (coins > 0) parts.push(coins + (coins === 1 ? ' coin waits' : ' coins wait') + ' in the chest by the fire');
+  if (built.length) parts.push('the builders finished ' + (built.length === 1 ? built[0] : built.slice(0, -1).join(', ') + ' and ' + built[built.length - 1]));
+  if (!parts.length) return '';
+  const s = parts.join(', and ');
+  return 'You were gone ' + span + '. ' + s.charAt(0).toUpperCase() + s.slice(1) + '.';
+}
+
+/* ---------- the cinema camera: lean back becomes something to watch ---------- */
+const CINE = { zoom: 1, zx: 0.5, zy: 0.62, focus: null, on: false };
+function cinemaOn() { return !!(G.w && G.w.m.auto && G.state === 'play' && !G.paused && G.meta.settings.cinema !== false); }
+function cineEvent(kind, x) {
+  if (!cinemaOn() && !G.photo) return;
+  if (kind === 'build' || kind === 'chest' || kind === 'crown' || kind === 'wallBreak') CINE.focus = { x, until: G.time + (kind === 'build' ? 3.2 : 2.4), punch: kind !== 'wallBreak' };
+}
+function threatenedWall() {
+  const w = G.w; let best = null, bd = 1e9;
+  for (const f of w.foes) {
+    if (f.fade > 0) continue;
+    const d = Math.abs(f.x - w.m.x);
+    if (d < bd) { bd = d; best = f; }
+  }
+  return best && bd < 260 ? best.x : null;
+}
+function cameraTarget(base) {
+  // where the camera should look: the rider, pulled toward a fresh build or a fight
+  const on = cinemaOn();
+  if (on !== CINE.on) { CINE.on = on; document.body.classList.toggle('cinema', on); }
+  let x = base, z = 1;
+  if (G.photo) return { x: base + PHOTO.dx, z: PHOTO.zoom };
+  if (!on) return { x, z };
+  z = 1.07 + Math.sin(G.time * 0.07) * 0.03;
+  if (CINE.focus && G.time < CINE.focus.until) { x = lerp(base, CINE.focus.x, 0.75); if (CINE.focus.punch) z = 1.15; }
+  else {
+    CINE.focus = null;
+    const fx = threatenedWall();
+    if (fx != null) { x = lerp(base, fx, 0.45); z = 1.0; }
+  }
+  return { x, z };
+}
+function updateZoom(dt, zt, focusX) {
+  CINE.zoom = lerp(CINE.zoom, zt, 1 - Math.exp(-dt * (G.photo ? 8 : 1.1)));
+  const sx = clamp((toS(focusX) / W), 0.2, 0.8);
+  CINE.zx = lerp(CINE.zx, sx, 1 - Math.exp(-dt * 2));
+  CINE.zy = (GY - 16) / H;
+}
+
+/* ---------- photo mode ---------- */
+const PHOTO = { dx: 0, zoom: 1.12 };
+function setPhoto(on) {
+  if (!G.w || G.state !== 'play') return;
+  if (on && G.paused) togglePause();
+  G.photo = !!on;
+  PHOTO.dx = 0; PHOTO.zoom = 1.12;
+  document.body.classList.toggle('photo', G.photo);
+  document.getElementById('photoBar').hidden = !G.photo;
+  if (G.photo) document.getElementById('phDone').focus();
+}
+function photoStep(dt) {
+  if (!G.photo) return;
+  let d = 0, z = 0;
+  if (KEYS.has('ArrowLeft') || KEYS.has('KeyA') || PHOTO.hold === 'l') d -= 1;
+  if (KEYS.has('ArrowRight') || KEYS.has('KeyD') || PHOTO.hold === 'r') d += 1;
+  if (KEYS.has('KeyZ') || KEYS.has('Equal') || PHOTO.hold === 'in') z += 1;
+  if (KEYS.has('KeyX') || KEYS.has('Minus') || PHOTO.hold === 'out') z -= 1;
+  d += PAD.ax || 0;
+  z += (PAD.rt || 0) - (PAD.lt || 0);
+  PHOTO.dx = clamp(PHOTO.dx + d * dt * 90, -220, 220);
+  PHOTO.zoom = clamp(PHOTO.zoom + z * dt * 0.6, 1, 1.9);
+}
+function snapPhoto() {
+  try {
+    render();
+    const src = POST.ok ? document.getElementById('glview') : cv, fr = document.getElementById('frame');
+    const c = document.createElement('canvas'); c.width = src.width; c.height = src.height;
+    const g = c.getContext('2d'); g.drawImage(src, 0, 0); if (fr) g.drawImage(fr, 0, 0, c.width, c.height);
+    const a = document.createElement('a');
+    a.download = `reignfawn-${lookId()}-valley${valleyCfg(G.w.vi).num}-day${G.w.day}.png`;
+    a.href = c.toDataURL('image/png');
+    document.body.appendChild(a); a.click(); a.remove();
+    banner('Saved', a.download);
+  } catch (e) { banner('Could not save', 'Your browser kept the picture to itself.'); }
+}
+
+/* ---------- feel: rumble and hit-stop ---------- */
+const RUMBLE = { pay: [0, 0.22, 40], build: [0.45, 0.6, 180], wallBreak: [0.9, 0.7, 320], steal: [0.6, 0.4, 200], crown: [0.5, 0.9, 380], chest: [0.3, 0.6, 220], wallHit: [0.15, 0.1, 60], recruit: [0, 0.3, 80] };
+function rumble(kind) {
+  if (G.meta.settings.rumble === false || !RUMBLE[kind]) return;
+  const p = activePad();
+  const a = p && p.vibrationActuator;
+  if (!a || !a.playEffect) return;
+  const [s, w, ms] = RUMBLE[kind];
+  try { a.playEffect('dual-rumble', { duration: ms, strongMagnitude: s, weakMagnitude: w }).catch(() => {}); } catch (e) { /* no haptics */ }
+}
+function playFeel(kind, x) {
+  rumble(kind);
+  cineEvent(kind, x);
+  if ((kind === 'wallBreak' || kind === 'steal') && !G.meta.settings.reduce) G.hitstop = 0.09;
+}
+let pickT = -9, pickN = 0;
+function pickCombo() { pickN = G.time - pickT < 1.3 ? Math.min(pickN + 1, 12) : 0; pickT = G.time; return pickN; }
+
+/* ---------- a gamepad that drives every menu ---------- */
+function activePad() {
+  let pads = [];
+  try { pads = navigator.getGamepads ? Array.from(navigator.getGamepads()) : []; } catch (e) { pads = []; }
+  return pads.find(x => x && x.connected) || null;
+}
+function topLayer() {
+  if (!$('ledger').hidden) return $('ledger');
+  if (!$('menu').hidden) return $('menu');
+  if (G.photo) return $('photoBar');
+  if (!$('card').hidden) return $('card');
+  if (G.state === 'title' && !$('title').hidden) return $('title');
+  return null;
+}
+function focusables(root) {
+  return [...root.querySelectorAll('button, select, input, a[href]')].filter(el => !el.disabled && el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden');
+}
+function moveFocus(dx, dy) {
+  const root = topLayer(); if (!root) return;
+  const els = focusables(root); if (!els.length) return;
+  const cur = document.activeElement;
+  if (!els.includes(cur)) { els[0].focus(); return; }
+  const r0 = cur.getBoundingClientRect(), cx = r0.left + r0.width / 2, cy = r0.top + r0.height / 2;
+  let best = null, bs = 1e9;
+  for (const el of els) {
+    if (el === cur) continue;
+    const r = el.getBoundingClientRect(), x = r.left + r.width / 2 - cx, y = r.top + r.height / 2 - cy;
+    const along = x * dx + y * dy, across = Math.abs(x * dy - y * dx);
+    if (along <= 4) continue;
+    const score = along + across * 2.2;
+    if (score < bs) { bs = score; best = el; }
+  }
+  if (best) best.focus();
+}
+function padActivate() {
+  const el = document.activeElement;
+  if (!el || !topLayer() || !topLayer().contains(el)) { moveFocus(0, 1); return; }
+  if (el.tagName === 'SELECT') { el.selectedIndex = (el.selectedIndex + 1) % el.options.length; el.dispatchEvent(new Event('change', { bubbles: true })); return; }
+  el.click();
+}
+function padBack() {
+  if (!$('ledger').hidden) { closeLedger(); return; }
+  if (G.photo) { setPhoto(false); return; }
+  if (!$('menu').hidden) { $('bResume').click(); return; }
+}
+function padNudgeRange(d) {
+  const el = document.activeElement;
+  if (!el || el.type !== 'range') return false;
+  el.value = clamp(Number(el.value) + d * Number(el.step || 0.05), Number(el.min), Number(el.max));
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+  return true;
+}
+let padPrev = [], padRep = { k: '', t: 0 };
+function padMenus(p, dt) {
+  // edges and auto-repeat for the d-pad and stick, then the face buttons
+  const b = i => !!(p.buttons[i] && p.buttons[i].pressed);
+  const ax = p.axes[0] || 0, ay = p.axes[1] || 0;
+  const dir = b(12) || ay < -0.6 ? 'u' : b(13) || ay > 0.6 ? 'd' : b(14) || ax < -0.6 ? 'l' : b(15) || ax > 0.6 ? 'r' : '';
+  const edge = i => b(i) && !padPrev[i];
+  const layer = topLayer();
+  if (layer && !G.photo) {
+    if (dir) {
+      if (padRep.k !== dir) { padRep = { k: dir, t: 0.35 }; navDir(dir); }
+      else { padRep.t -= dt; if (padRep.t <= 0) { padRep.t = 0.12; navDir(dir); } }
+    } else padRep.k = '';
+    if (edge(0)) padActivate();
+    if (edge(1)) padBack();
+  } else if (G.photo) {
+    if (edge(0)) snapPhoto();
+    if (edge(1) || edge(8)) setPhoto(false);
+    if (edge(4)) cycleLook(-1);
+    if (edge(5)) cycleLook(1);
+  } else if (G.state === 'play') {
+    if (edge(4)) cycleLook(1);
+    if (edge(8)) setPhoto(true);
+  }
+  padPrev = p.buttons.map(x => x.pressed);
+}
+function navDir(d) {
+  if ((d === 'l' || d === 'r') && padNudgeRange(d === 'l' ? -1 : 1)) return;
+  moveFocus(d === 'l' ? -1 : d === 'r' ? 1 : 0, d === 'u' ? -1 : d === 'd' ? 1 : 0);
 }
 
 /* Reignfawn: input, the HUD, the storybook pages, and the loop that ties it together. */
@@ -3494,6 +3785,8 @@ addEventListener('keydown', e => {
   if (!e.repeat) {
     if (isLeft(e.code)) tapDir(-1);
     if (isRight(e.code)) tapDir(1);
+    if (G.photo) { if (e.code === 'Escape' || e.code === 'KeyC') setPhoto(false); else if (e.code === 'Enter') snapPhoto(); else if (e.code === 'KeyV') cycleLook(e.shiftKey ? -1 : 1); KEYS.add(e.code); return; }
+    if (e.code === 'KeyC' && G.state === 'play' && !G.paused) { setPhoto(true); return; }
     if (e.code === 'Escape' || e.code === 'KeyP') { if (G.state === 'play') togglePause(); else if (!$('ledger').hidden) closeLedger(); }
     if (e.code === 'KeyL' && G.state === 'play') setAuto(!G.w.m.auto);
     if (e.code === 'KeyM') toggleSound();
@@ -3505,6 +3798,7 @@ addEventListener('keydown', e => {
   if (G.w && G.w.m.auto && G.state === 'play' && (isLeft(e.code) || isRight(e.code))) setAuto(false, true);
 });
 addEventListener('keyup', e => { KEYS.delete(e.code); if ((isLeft(e.code) && LATCH < 0) || (isRight(e.code) && LATCH > 0)) LATCH = 0; });
+addEventListener('mousemove', () => document.body.classList.remove('pad'), { passive: true });
 addEventListener('blur', () => { KEYS.clear(); TOUCH.l = TOUCH.r = TOUCH.pay = false; LATCH = 0; });
 
 function bindHold(el, key, dir) {
@@ -3519,19 +3813,22 @@ try { if (matchMedia('(pointer: coarse)').matches) useTouch(); } catch (e) { /* 
 addEventListener('touchstart', useTouch, { passive: true, once: true });
 
 let PAD = { dir: 0, gallop: false, pay: false, start: false, y: false };
-function pollPad() {
+function pollPad(dt) {
   let pads = [];
   try { pads = navigator.getGamepads ? navigator.getGamepads() : []; } catch (e) { pads = []; }
   const p = pads && Array.from(pads).find(x => x && x.connected);
   const prev = PAD;
   if (!p) { PAD = { dir: 0, gallop: false, pay: false, start: false, y: false }; return; }
+  if (p.buttons.some(x => x.pressed)) document.body.classList.add('pad');
   const b = i => !!(p.buttons[i] && p.buttons[i].pressed);
   const ax = p.axes[0] || 0;
   let dir = 0; if (ax < -0.3 || b(14)) dir = -1; if (ax > 0.3 || b(15)) dir = 1;
-  PAD = { dir, gallop: b(7) || b(5) || Math.abs(ax) > 0.9, pay: b(0) || b(13) || b(2), start: b(9), y: b(3) };
-  if (PAD.start && !prev.start) { if (G.state === 'play') togglePause(); else if (G.state === 'title') startPlay(); }
-  if (PAD.y && !prev.y && G.state === 'play') setAuto(!G.w.m.auto);
-  if (PAD.dir && G.w && G.w.m.auto && G.state === 'play') setAuto(false, true);
+  const menuUp = !!topLayer() || G.paused;
+  PAD = { dir: menuUp || G.photo ? 0 : dir, gallop: !G.photo && (b(7) || b(5) || Math.abs(ax) > 0.9), pay: !menuUp && !G.photo && (b(0) || b(13) || b(2)), start: b(9), y: b(3), ax: Math.abs(ax) > 0.2 ? ax : 0, lt: p.buttons[6] ? p.buttons[6].value : 0, rt: p.buttons[7] ? p.buttons[7].value : 0 };
+  padMenus(p, dt || 1 / 60);
+  if (PAD.start && !prev.start) { if (G.photo) setPhoto(false); else if (G.state === 'play') togglePause(); else if (G.state === 'title') startPlay(); }
+  if (PAD.y && !prev.y && G.state === 'play' && !G.paused && !G.photo) setAuto(!G.w.m.auto);
+  if (PAD.dir && G.w && G.w.m.auto && G.state === 'play' && !G.paused) setAuto(false, true);
 }
 function readControls() {
   let dir = 0;
@@ -3553,7 +3850,7 @@ function banner(big, sub, small, urgent) {
   b.classList.toggle('urgent', !!urgent);
   b.classList.add('on');
   clearTimeout(bannerT);
-  bannerT = setTimeout(() => b.classList.remove('on'), urgent ? 4200 : 3400);
+  bannerT = setTimeout(() => b.classList.remove('on'), Math.max(urgent ? 4200 : 3400, (sub || '').length * 60));
 }
 function say(big, sub, urgent) { if (G.state === 'play') banner(big, sub || '', '', urgent); }
 
@@ -3681,6 +3978,7 @@ function syncSettingsUI() {
   $('optCycle').value = String(s.cycle);
   $('optMusic').value = s.music; $('optSfx').value = s.sfx;
   syncLooks();
+  $('optCinema').checked = s.cinema !== false; $('optRumble').checked = s.rumble !== false;
   $('optTuning').value = s.tuning; $('optReduce').checked = !!s.reduce; $('optHud').checked = !!s.hud; $('optSail').checked = !!s.autoSail;
   $('bSound').setAttribute('aria-pressed', String(s.music + s.sfx > 0 && !G.muted));
 }
@@ -3693,6 +3991,7 @@ function bindSetting(id, key, cast) {
   });
 }
 bindSetting('optFrolic', 'frolic'); bindSetting('optFrolicT', 'frolic'); bindSetting('optCycle', 'cycle', Number);
+bindSetting('optCinema', 'cinema'); bindSetting('optRumble', 'rumble');
 bindSetting('optTuning', 'tuning'); bindSetting('optReduce', 'reduce'); bindSetting('optHud', 'hud'); bindSetting('optSail', 'autoSail');
 for (const id of ['optMusic', 'optSfx']) $(id).addEventListener('input', e => { G.meta.settings[id === 'optMusic' ? 'music' : 'sfx'] = Number(e.target.value); G.muted = false; auVolumes(); });
 $('optAuto').addEventListener('change', e => setAuto(e.target.checked));
@@ -3807,9 +4106,10 @@ function toTitle() {
 function startPlay(fresh) {
   auInit();
   let w = fresh ? null : loadJSON(SAVE_KEY);
-  let away = 0;
+  let away = 0, built = [], secs = 0;
   if (w && w.v === 1) {
-    away = grantIdle(w, (Date.now() - (w.savedAt || Date.now())) / 1000);
+    secs = (Date.now() - (w.savedAt || Date.now())) / 1000;
+    away = grantIdle(w, secs); built = offlineWork(w, secs);
   } else w = newValley(0, { coins: 10, mount: G.meta.mounts.includes('fawn') ? 'fawn' : G.meta.mounts[0] });
   G.w = w; indexSites();
   G.cam = w.m.x; G.parts.length = 0; G.flyers.length = 0; G.ap = null; G.paused = false;
@@ -3825,27 +4125,38 @@ function startPlay(fresh) {
   $('hud').hidden = false;
   $('bLean').setAttribute('aria-pressed', String(!!w.m.auto));
   const V = valleyCfg(w.vi);
-  if (away + gift > 0) banner('Welcome back', 'While you rested, the valley kept ' + (away + gift) + ' coins. They wait in the chest by the fire.', 'Valley ' + V.num + ' · Day ' + w.day);
+  const awayLine = awayText(away + gift, built, Math.max(secs, 60));
+  if (awayLine) banner('Welcome back', awayLine, 'Valley ' + V.num + ' · Day ' + w.day);
   else banner(V.name, V.line, 'Valley ' + V.num + ' · Day ' + w.day);
   hint('start');
   if (fresh2) setTimeout(() => hint('kindle'), 6000);
   saveAll();
+  return awayLine;
 }
 $('bPlay').onclick = () => startPlay(false);
+$('bWatch').onclick = () => { const away = startPlay(false); setAuto(true, true); if (!away) banner('Watching', 'Your mount rides herself. Press any direction to take the reins.'); };
+$('bPhoto').onclick = () => { togglePause(); setPhoto(true); };
+$('phDone').onclick = () => setPhoto(false);
+$('phSave').onclick = () => snapPhoto();
+$('phLook').onclick = () => cycleLook(1);
+for (const [id, k] of [['phL', 'l'], ['phR', 'r'], ['phIn', 'in'], ['phOut', 'out']]) { const el = $(id); el.addEventListener('pointerdown', e => { e.preventDefault(); PHOTO.hold = k; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) el.addEventListener(ev, () => { if (PHOTO.hold === k) PHOTO.hold = null; }); }
+if (window.claude) $('phSave').hidden = true;
 $('bNew').onclick = () => {
   if (!newArmed) { newArmed = true; $('bNew').textContent = 'Tap again to start over'; $('bNew').classList.add('warn'); return; }
   dropKey(SAVE_KEY); startPlay(true);
 };
 
 /* ---------- the loop ---------- */
-let last = performance.now(), saveT = 0, hiddenAt = 0, hintClock = 0;
+let last = performance.now(), saveT = 0, hiddenAt = 0, hintClock = 0, chronClock = 0;
 function updateCamera(dt) {
   const w = G.w;
   if (!w) return;
   if (G.state === 'title') { G.cam = Math.sin(G.time * 0.04) * 260; return; }
   const m = w.m;
   const look = w.sailing ? w.sailing.x + w.sailing.dir * 70 : m.x + m.dir * W * 0.1 + m.vx * 0.5;
-  G.cam = lerp(G.cam, look, 1 - Math.exp(-dt * 2.6));
+  const tg = cameraTarget(look);
+  G.cam = lerp(G.cam, tg.x, 1 - Math.exp(-dt * (G.photo ? 6 : CINE.on ? 1.3 : 2.6)));
+  updateZoom(dt, tg.z, tg.x);
 }
 let perfT = 0, perfEMA = 1 / 60;
 function adapt(raw) {
@@ -3863,10 +4174,10 @@ function frame(now) {
   last = now;
   adapt(raw);
   G.time += dt;
-  pollPad();
+  pollPad(dt);
   if (G.w) {
-    if (G.state === 'play' && !G.paused) {
-      update(dt);
+    if (G.state === 'play' && !G.paused && !G.photo) {
+      if (G.hitstop > 0) G.hitstop -= dt; else update(dt);
       tickHints(dt);
       hintClock += dt;
       if (G.w && G.state === 'play') {
@@ -3877,7 +4188,8 @@ function frame(now) {
       saveT += dt;
       if (saveT > 8) { saveT = 0; saveAll(); }
     }
-    if (G.w) { ambient(dt); updateCamera(dt); if (G.state !== 'play') updateParts(dt); }
+    if (G.w) { ambient(dt); updateCamera(dt); photoStep(dt); if (G.state !== 'play') updateParts(dt); }
+    chronClock += dt; if (chronClock > 0.4) { chronClock = 0; renderChron(); }
   }
   render();
   updateHUD();
@@ -3887,8 +4199,8 @@ function frame(now) {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { hiddenAt = Date.now(); saveAll(); return; }
   if (hiddenAt && G.state === 'play' && G.w) {
-    const got = grantIdle(G.w, (Date.now() - hiddenAt) / 1000);
-    if (got > 0) banner('Welcome back', 'The valley kept ' + got + ' coins while you were away. They wait by the fire.');
+    const secs = (Date.now() - hiddenAt) / 1000, got = grantIdle(G.w, secs), built = offlineWork(G.w, secs), line = awayText(got, built, secs);
+    if (line) banner('Welcome back', line);
   }
   hiddenAt = 0; last = performance.now();
 });
@@ -3921,7 +4233,7 @@ function boot(hot) {
   try { if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') window.claude.hot.snapshot(() => ({ w: G.w, state: G.state })); } catch (e) { /* not in a viewer */ }
   setInterval(() => { try { const pt = matchMedia('(orientation: portrait)').matches; $('rotate').classList.toggle('show', pt && G.state === 'play'); } catch (e) { /* ignore */ } }, 1500);
   requestAnimationFrame(t => { last = t; frame(t); });
-  window.__rf = { G, update, render, startPlay, setAuto, siteCost, siteInfo, newValley, setLook, POST, LOOKS, indexSites, mkUnit };
+  window.__rf = { G, update, render, startPlay, setAuto, siteCost, siteInfo, newValley, setLook, POST, LOOKS, indexSites, mkUnit, setPhoto, CINE, offlineWork, awayText, CHRON };
 }
 (function start() {
   const hot = window.claude && window.claude.hot;

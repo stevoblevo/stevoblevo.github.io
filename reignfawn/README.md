@@ -8,6 +8,7 @@ Every version keeps its own address. Versions are numbered 0.x.y from 0.3.3 on; 
 
 | Version | Address | Look |
 | --- | --- | --- |
+| v0.3.5 | https://stevoblevo.github.io/reignfawn/v0.3.5/ | Watch it, play it, hold a controller: cinema lean back with a chronicle, away report, photo mode, gamepad menus and rumble |
 | v0.3.4 | https://stevoblevo.github.io/reignfawn/v0.3.4/ | Seven looks, seven worlds: each look has its own sky, frame, particles, event replies, HUD and instrument |
 | v0.3.3 (v3) | https://stevoblevo.github.io/reignfawn/v0.3.3/ (also /v3/) | One valley, seven looks through a WebGL lens: Origami, Meta Daylight, Knight Night, Ink Blot, Comix, Skein Silk, Depthfield |
 | v0.2 (v2) | https://stevoblevo.github.io/reignfawn/v2/ | Folded from paper: origami creatures, cut-paper mountains, full-resolution vector |
