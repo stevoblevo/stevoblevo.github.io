@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#140f1c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Spectral:ital,wght@0,400;0,600;1,400&family=Bangers&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 /* Layout: a full-bleed pixel valley; the painted plates are storybook pages between valleys; parchment panels float over the night. */
 :root {
@@ -153,6 +153,36 @@ h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clam
   #hud .l { font-size: 15px; gap: 10px; }
 }
 @media (max-height: 460px) { .inner { gap: 10px; } h1 { font-size: clamp(48px, 9vw, 96px); } .lede { font-size: 15.5px; } }
+/* each look sets the HUD in its own type and colour */
+body[data-look="comix"] { --f-display: "Bangers", Impact, "Arial Black", sans-serif; --f-sc: "Bangers", Impact, "Arial Black", sans-serif; }
+body[data-look="comix"] #hud .l, body[data-look="comix"] #banner strong { letter-spacing: 0.04em; }
+body[data-look="comix"] #banner strong { color: #ffe14a; -webkit-text-stroke: 1.5px #151018; text-shadow: 3px 3px 0 #151018; }
+body[data-look="comix"] #caption { background: #fffdf4; color: #151018; border: 2px solid #151018; border-radius: 2px; box-shadow: 4px 4px 0 #151018; }
+body[data-look="comix"] #caption * { color: #151018; }
+body[data-look="comix"] #hud .btn { background: #fffdf4; color: #151018; border: 2px solid #151018; box-shadow: 2px 2px 0 #151018; }
+body[data-look="inkblot"] #hud { color: #141114; background: linear-gradient(to bottom, rgba(251, 249, 242, 0.7), rgba(251, 249, 242, 0)); }
+body[data-look="inkblot"] #hud .l { text-shadow: none; }
+body[data-look="inkblot"] #hud .l em { color: rgba(20, 17, 20, 0.7); }
+body[data-look="inkblot"] #hud .btn { background: rgba(251, 249, 242, 0.85); color: #141114; border-color: #141114; }
+body[data-look="inkblot"] #banner strong, body[data-look="inkblot"] #banner em { color: #141114; text-shadow: 0 0 10px rgba(251, 249, 242, 0.95); }
+body[data-look="inkblot"] #banner small { color: #c42a2a; text-shadow: none; }
+body[data-look="inkblot"] #caption { background: #fbf9f2; border: 1px solid #141114; }
+body[data-look="inkblot"] #caption * { color: #141114; }
+body[data-look="inkblot"] #hint { color: #141114; text-shadow: 0 0 8px rgba(251, 249, 242, 0.95); }
+body[data-look="knight"] #caption { background: rgba(22, 32, 48, 0.92); border: 1px solid #e9b44c; }
+body[data-look="knight"] #hud .btn { border-color: rgba(233, 180, 76, 0.6); background: rgba(22, 32, 48, 0.6); }
+body[data-look="knight"] #banner strong { color: #f4e8d6; }
+body[data-look="depthfield"] { --f-sc: "JetBrains Mono", ui-monospace, Menlo, monospace; --gold: #5ef2b8; }
+body[data-look="depthfield"] #hud .l { font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+body[data-look="depthfield"] #caption { background: rgba(8, 20, 17, 0.88); border: 1px solid rgba(94, 242, 184, 0.5); border-radius: 10px; }
+body[data-look="depthfield"] #hud .btn { font-size: 13px; text-transform: uppercase; border-color: rgba(94, 242, 184, 0.45); background: rgba(8, 20, 17, 0.6); border-radius: 999px; }
+body[data-look="skein"] #caption { border: 1.5px dashed #c98a4e; outline: 4px solid rgba(40, 24, 30, 0.85); }
+body[data-look="daylight"] #hud { color: #2b2a33; background: linear-gradient(to bottom, rgba(251, 248, 241, 0.6), rgba(251, 248, 241, 0)); }
+body[data-look="daylight"] #hud .l { text-shadow: none; }
+body[data-look="daylight"] #hud .l em { color: rgba(43, 42, 51, 0.72); }
+body[data-look="daylight"] #hud .btn { background: rgba(251, 248, 241, 0.8); color: #2b2a33; border-color: rgba(43, 42, 51, 0.4); }
+body[data-look="daylight"] #caption { background: rgba(251, 248, 241, 0.94); }
+body[data-look="daylight"] #caption * { color: #2b2a33; }
 @media (prefers-reduced-motion: reduce) { .plate.drift { animation: none; } .screen, #banner, #caption, #hint { transition: none; } }
 </style>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}</style>
@@ -202,7 +232,7 @@ h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clam
       <p class="lookLine" id="lookLineT"></p>
       <label class="toggle" for="optFrolicT"><input type="checkbox" id="optFrolicT"> Frolic mode: no night raids, only building, riding and fireflies</label>
       <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>V</kbd> change the look &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
-      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 3, seven looks through one lens. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">v2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">v1 pixel</a>.</span></p>
+      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 0.3.4: seven looks, seven worlds. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v3/" target="_blank" rel="noopener">0.3.3</a>, <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">0.2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">0.1 pixel</a>.</span></p>
     </div>
   </section>
 
@@ -253,6 +283,7 @@ h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clam
 
 <script>
 'use strict';
+const VERSION = '0.3.4';
 /* Reignfawn: core math, randomness, colour, and the rules of the valley. */
 
 const TAU = Math.PI * 2;
@@ -683,7 +714,7 @@ function auTick() {
   if (!w) return;
   const t = w.t, night = isEvening(t) && t > T_DUSK + 0.03, red = night && isRedNight(w.day);
   const scale = red ? 'red' : night ? 'night' : 'day';
-  const beatLen = night ? 0.62 : 0.46;
+  const beatLen = (night ? 0.62 : 0.46) * lookTempo();
   while (AU.next < ac.currentTime + 0.25) {
     const when = AU.next - ac.currentTime;
     const b = AU.beat++;
@@ -692,7 +723,7 @@ function auTick() {
     if (Math.random() < (night ? 0.36 : 0.55) && !G.paused) {
       AU.idx = clamp(AU.idx + Math.floor(Math.random() * 5) - 2, 0, 9);
       const f = root * ratio(scale, AU.idx);
-      tone(f, night ? 1.8 : 1.2, { type: night ? 'sine' : 'triangle', vol: night ? 0.04 : 0.035, when, attack: 0.008, bus: AU.mus, send: 0.55, pan: Math.sin(b * 0.7) * 0.4 });
+      lookVoice(f, night ? 1.8 : 1.2, when, Math.sin(b * 0.7) * 0.4, night);
       if (!night && Math.random() < 0.18) tone(f * 2, 0.6, { vol: 0.012, when: when + beatLen / 2, bus: AU.mus, send: 0.5 });
     }
     // pad: root, fifth and the scale's colour tone, every eight beats
@@ -873,7 +904,7 @@ function doPay() {
     m.coins--;
     flyToSite(s, s.paid, cost);
     s.paid++;
-    SFX.pay(s.paid);
+    SFX.pay(s.paid); lookEvent('pay', s.x, siteTop(s));
     if (s.paid >= cost) { s.paid = 0; m.payLock = true; completePayment(s); }
     return;
   }
@@ -889,7 +920,7 @@ function completePayment(s) {
   puff(s.x, siteTop(s) + 4, 14, '#ffe08a', { up: 30, spread: 26, life: 0.9 });
   switch (s.kind) {
     case 'hearth':
-      if (s.tier === 0) { s.tier = 1; SFX.build(); say('The hearth is kindled.', 'The bow and hammer stalls are open.'); hint('stalls'); G.meta.built++; }
+      if (s.tier === 0) { s.tier = 1; SFX.build(); lookEvent('build', s.x, siteTop(s)); say('The hearth is kindled.', 'The bow and hammer stalls are open.'); hint('stalls'); G.meta.built++; }
       else s.job = { to: s.tier + 1, need: HEARTH[s.tier + 1].work, done: 0 };
       break;
     case 'wall': s.job = { to: s.tier + 1, need: WALLS[s.tier + 1].work, done: 0 }; break;
@@ -923,7 +954,7 @@ function finishJob(s) {
   s.tier = s.job.to; s.job = null;
   if (s.kind === 'wall') s.hp = wallMax(s);
   G.meta.built++; w.stats.built++;
-  SFX.build();
+  SFX.build(); lookEvent('build', s.x, siteTop(s));
   puff(s.x, siteTop(s), 18, '#f6e2b0', { up: 24, spread: 30, life: 1 });
   if (s.kind === 'hearth') say('The ' + HEARTH[s.tier].n.toLowerCase() + ' stands.', HEARTH[s.tier].line);
   if (s.kind === 'dock') say(DOCK[s.tier].n + ' finished.', s.tier >= 3 ? 'At first light, pay one coin at the dock to sail.' : (3 - s.tier) + ' more to go.');
@@ -953,7 +984,7 @@ function updateMonarch(dt) {
   for (let i = w.coins.length - 1; i >= 0; i--) {
     const k = w.coins[i];
     if (k.cool > 0 || k.h > 6 || Math.abs(k.x - m.x) > 7) continue;
-    if (k.kind === 'crown') { m.crown = true; w.coins.splice(i, 1); SFX.crown(); say('The crown is yours again.'); continue; }
+    if (k.kind === 'crown') { m.crown = true; w.coins.splice(i, 1); SFX.crown(); lookEvent('crown', m.x, 22); say('The crown is yours again.'); continue; }
     if (m.coins >= purseCap()) continue;
     w.coins.splice(i, 1); giveCoin(1); SFX.pick(); sparkle(k.x, 6);
   }
@@ -1011,7 +1042,7 @@ function updateUnits(dt) {
     switch (u.cls) {
       case 'vagrant': {
         const k = nearestCoin(u.x, 72);
-        if (k) { if (walkTo(u, k.x, 22, dt) || Math.abs(k.x - u.x) < 3) { w.coins.splice(w.coins.indexOf(k), 1); promote(u, 'villager'); w.stats.recruits++; G.meta.recruits++; SFX.recruit(); hint('recruited'); } }
+        if (k) { if (walkTo(u, k.x, 22, dt) || Math.abs(k.x - u.x) < 3) { w.coins.splice(w.coins.indexOf(k), 1); promote(u, 'villager'); w.stats.recruits++; G.meta.recruits++; SFX.recruit(); lookEvent('recruit', u.x, 12); hint('recruited'); } }
         else wander(u, u.home, 34, dt, 8);
         break;
       }
@@ -1145,7 +1176,7 @@ function updateKnight(u, dt, evening) {
     walkTo(u, px, 22, dt);
     for (const f of w.foes) {
       if (f.fade > 0 || Math.abs(f.x - u.x) > 13) continue;
-      if (u.cd <= 0) { u.cd = 0.8; hurtFoe(f, 2); SFX.clash(); puff(f.x, 8, 4, '#f0f0ff', { up: 10, spread: 8, life: 0.3 }); }
+      if (u.cd <= 0) { u.cd = 0.8; hurtFoe(f, 2); SFX.clash(); lookEvent('clash', f.x, 10); puff(f.x, 8, 4, '#f0f0ff', { up: 10, spread: 8, life: 0.3 }); }
       break;
     }
     return;
@@ -1176,7 +1207,7 @@ function shoot(u, target, kind) {
   const x1 = target.x + lead, dist = Math.abs(x1 - u.x);
   G.w.arrows.push({ x0: u.x + u.dir * 3, h0, x1, h1: kind === 'foe' ? 6 : 2, t: 0, dur: clamp(dist / 150, 0.22, 1.0), arc: 6 + dist * 0.22, tid: target.id, kind });
   u.dir = Math.sign(x1 - u.x) || u.dir;
-  SFX.bow();
+  SFX.bow(); lookEvent('bow', u.x, h0 + 6);
 }
 function updateArrows(dt) {
   const w = G.w;
@@ -1286,7 +1317,7 @@ function updateFoes(dt) {
     // steal from the monarch
     if (!w.sailing && Math.abs(m.x - f.x) < 7) {
       if (MOUNTS[m.mount].ward && !m.warded) { m.warded = true; f.state = 'flee'; puff(f.x, 8, 8, '#e8f0ff', { up: 16, spread: 12, life: 0.6 }); SFX.clash(); continue; }
-      if (m.coins > 0) { m.coins--; f.loot = 'coin'; f.state = 'flee'; SFX.steal(); G.shake = 0.35; hint('stolen'); continue; }
+      if (m.coins > 0) { m.coins--; f.loot = 'coin'; f.state = 'flee'; SFX.steal(); lookEvent('steal', m.x, 16); G.shake = 0.35; hint('stolen'); continue; }
       if (m.crown) { m.crown = false; f.loot = 'crown'; f.state = 'flee'; SFX.crownTaken(); G.shake = 0.8; say('The hush has your crown.', 'Catch it before it reaches the gate.', true); continue; }
     }
     // steal from people who are caught outside
@@ -1307,11 +1338,11 @@ function updateFoes(dt) {
     if (wall && Math.abs(f.x) <= Math.abs(wall.x) + 5) {
       f.atkT -= dt;
       wall.hp -= f.dps * dt * (w.blessings.builder ? 0.8 : 1);
-      if (f.atkT <= 0) { f.atkT = 0.7; SFX.wallHit(); puff(wall.x + f.side * 3, 4 + Math.random() * 12, 2, '#3a2a3a', { up: 8, spread: 6, life: 0.4 }); }
+      if (f.atkT <= 0) { f.atkT = 0.7; SFX.wallHit(); lookEvent('wallHit', wall.x, 14); puff(wall.x + f.side * 3, 4 + Math.random() * 12, 2, '#3a2a3a', { up: 8, spread: 6, life: 0.4 }); }
       if (wall.hp <= 0) {
         wall.tier--; wall.hp = wall.tier > 0 ? WALLS[wall.tier].hp * 0.5 : 0; G.shake = 0.4;
         puff(wall.x, 10, 20, '#8a7058', { up: 30, spread: 20, life: 1 });
-        SFX.wallBreak();
+        SFX.wallBreak(); lookEvent('wallBreak', wall.x, 16);
         if (wall.tier === 0) say('A wall has fallen.', 'Builders can raise it again by day.', true);
       }
       continue;
@@ -1323,13 +1354,13 @@ function updateFoes(dt) {
 }
 function hurtFoe(f, d) {
   f.hp -= d; f.hitT = 0.15;
-  if (f.hp > 0) { SFX.hit(); return; }
+  if (f.hp > 0) { SFX.hit(); lookEvent('hit', f.x, 10); return; }
   f.dead = true;
   dropLoot(f);
   G.w.foes.splice(G.w.foes.indexOf(f), 1);
   puff(f.x, 7, f.kind === 'hollow' ? 26 : 12, '#1a1022', { up: 22, spread: 14, life: 0.9 });
   puff(f.x, 7, 6, valleyCfg(G.w.vi).flower, { up: 18, spread: 12, life: 1.3, petal: true });
-  SFX.poof();
+  SFX.poof(); lookEvent('poof', f.x, 10);
 }
 function dropLoot(f) {
   if (f.loot === 'coin') dropCoin(f.x, 8, 0, 30, { cool: 0.2 });
@@ -1545,7 +1576,7 @@ function update(dt) {
   updateParts(dt);
   for (const s of w.sites) {
     if (s.kind === 'chest' && !s.open && Math.abs(w.m.x - s.x) < 7) {
-      s.open = true; SFX.chest();
+      s.open = true; SFX.chest(); lookEvent('chest', s.x, 10);
       for (let i = 0; i < s.gold; i++) dropCoin(s.x, 6, (Math.random() - 0.5) * 50, 70 + Math.random() * 60, { cool: 0.3 });
       say('An old chest.', s.gold + ' coins spill out.');
     }
@@ -1717,6 +1748,13 @@ function buildLayers(w) {
       }
       return y;
     };
+    const edge = { skein: ['rgba(240,214,170,0.75)', 0.35, [2.2, 1.6], 0.9], depthfield: ['rgba(94,242,184,' + (0.16 + li * 0.06).toFixed(2) + ')', 0.45, null, 0], inkblot: ['rgba(14,12,16,0.85)', 0.42, null, 0], comix: ['rgba(14,12,16,0.95)', 0.6, null, 0], knight: ['rgba(255,240,210,0.5)', 0.35, null, 0], daylight: ['rgba(60,55,72,0.32)', 0.24, null, -0.7] }[LK.id];
+    if (edge && li < 3) {
+      g.save(); g.strokeStyle = edge[0]; g.lineWidth = edge[1]; if (edge[2]) g.setLineDash(edge[2]);
+      g.beginPath();
+      for (let x = 0; x <= LWU; x += 2) { const y = topAt(x) + edge[3] + (LK.id === 'daylight' ? Math.sin(x * 0.7) * 0.25 : 0); x ? g.lineTo(x + (LK.id === 'daylight' ? 0.8 : 0), y) : g.moveTo(x, y); }
+      g.stroke(); g.restore();
+    }
     if (d.ruins) {
       for (let k = 0; k < 2; k++) {
         const x = 60 + R() * (LWU - 120), y = topAt(x) + 1.5, rc = css(mixRGB(base0, [20, 10, 30], 0.2)), rl = css(mixRGB(base0, [255, 248, 236], 0.08));
@@ -1790,7 +1828,7 @@ function drawLayers(V) {
 /* ---------- sky ---------- */
 function drawSky(V, L) {
   world();
-  const [top, bot] = skyPair(V);
+  const [top, bot] = lookSkyPair(...skyPair(V));
   let t2 = top, b2 = bot;
   if (G.w.rain) { t2 = mixRGB(top, [110, 110, 122], 0.35); b2 = mixRGB(bot, [150, 146, 156], 0.3); }
   const g = ctx.createLinearGradient(0, 0, 0, GY);
@@ -1809,8 +1847,10 @@ function drawSky(V, L) {
     g2.addColorStop(0, 'rgba(255,240,205,0.5)'); g2.addColorStop(1, 'rgba(255,240,205,0)');
     ctx.fillStyle = g2; ctx.fillRect(x - 46, y - 46, 92, 92);
     const warm = t > 0.6 || t < 0.05;
-    star(x, y, 13, 12, 0.6, warm ? 'rgba(255,190,140,0.32)' : 'rgba(255,240,200,0.3)', G.time * 0.05);
-    facetBall(x, y, 7.5, warm ? [255, 196, 140] : [255, 236, 196], G.time * 0.02);
+    if (!lookSun(x, y, warm, true)) {
+      star(x, y, 13, 12, 0.6, warm ? 'rgba(255,190,140,0.32)' : 'rgba(255,240,200,0.3)', G.time * 0.05);
+      facetBall(x, y, 7.5, warm ? [255, 196, 140] : [255, 236, 196], G.time * 0.02);
+    }
     G.celest = { x, y, sun: true };
   }
   if (t > 0.6 || t < 0.08) {
@@ -1820,20 +1860,27 @@ function drawSky(V, L) {
     g2.addColorStop(0, red ? 'rgba(255,120,110,0.35)' : 'rgba(230,226,255,0.3)'); g2.addColorStop(1, 'rgba(230,226,255,0)');
     ctx.fillStyle = g2; ctx.fillRect(x - 32, y - 32, 64, 64);
     const mc = red ? '#f08a7a' : '#f4f0e4';
+    if (lookSun(x, y, red, false)) { if (lightAt(t) < 0.5) G.celest = { x, y, sun: false, red }; }
+    else {
     ctx.save(); ctx.beginPath(); ctx.arc(x, y, 5.4, 0, TAU); ctx.clip();
     facetBall(x, y, 5.6, hexRGB(mc), 0.3);
     const ph = ((G.w.day % 8) / 8) * 2 - 1;
     if (Math.abs(ph) > 0.12) circ(x + ph * 7.5, y - 0.8, 5.4, css(top));
     ctx.restore();
     if (lightAt(t) < 0.5) G.celest = { x, y, sun: false, red };
+    }
   }
   // paper clouds, lit from above
   const cc = L > 0.4 ? css(mixRGB(bot, [255, 255, 255], 0.6)) : css(mixRGB(top, [200, 200, 230], 0.15));
   const cs = L > 0.4 ? css(mixRGB(bot, [150, 140, 170], 0.35)) : css(mixRGB(top, [10, 10, 20], 0.2));
-  for (const c of CLOUDS) {
+  const ck = lookCloud();
+  if (ck !== 'none') for (const c of CLOUDS) {
     const x = ((c.x - G.camR * 0.05 + G.time * c.s * 2) % (W + 200) + W + 200) % (W + 200) - 100;
+    if (ck === 'brush') { brushCloud(x, c); continue; }
     const R = rng(c.seed), blobs = [];
     for (let k = 0; k < 4; k++) blobs.push([x + R() * c.w, c.y - R() * 4, 3 + R() * c.w * 0.22]);
+    if (ck === 'comic') { for (const [bx, by, br] of blobs) circ(bx, by, br + 0.8, '#151018'); for (const [bx, by, br] of blobs) circ(bx, by, br, L > 0.4 ? '#fffdf4' : '#9aa0c8'); continue; }
+    if (ck === 'flat') { for (const [bx, by, br] of blobs) circ(bx, by + 0.6, br, cs); for (const [bx, by, br] of blobs) circ(bx, by, br, cc); continue; }
     ctx.globalAlpha = (G.w.rain ? 0.6 : 0.4);
     for (const [bx, by, br] of blobs) circ(bx + 0.9, by + 1.3, br, cs);
     ctx.globalAlpha = G.w.rain ? 0.9 : 0.82;
@@ -2553,7 +2600,7 @@ function drawParts(additive) {
 
 /* ---------- night, glow, water ---------- */
 function drawNight(V) {
-  const dk = clamp((1 - LIGHT) * 0.68 + (G.w.rain ? 0.05 : 0), 0, 0.74);
+  const dk = clamp((1 - LIGHT) * 0.68 + (G.w.rain ? 0.05 : 0), 0, 0.74) * (LK.id === 'knight' ? 0.6 : 1);
   if (dk < 0.02) return;
   const nc = mixRGB(hexRGB(V.tint.night), [0, 0, 0], 0.2), f = K / 4;
   dctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -2743,7 +2790,8 @@ function render() {
   LIGHTS.length = 0;
   mctx.setTransform(1, 0, 0, 1, 0, 0);
   if (!w) { mctx.fillStyle = '#120e1a'; mctx.fillRect(0, 0, DW, DH); return; }
-  const key = w.seed + '|' + DW + '|' + DH;
+  lookSync();
+  const key = w.seed + '|' + DW + '|' + DH + '|' + LK.id;
   if (layerKey !== key) { buildLayers(w); layerKey = key; }
   const V = valleyCfg(w.vi), season = seasonOf(w.day);
   SKYW = skyWeights(w.t);
@@ -2752,6 +2800,7 @@ function render() {
   G.camR = G.cam + sh2;
   ctx = mctx;
   drawSky(V, LIGHT);
+  lookSkyDecor(V);
   drawWeather(true);
   // the land: hills, trees, buildings and everyone on them, then graded by the hour
   ctx = lctx;
@@ -2801,6 +2850,7 @@ function render() {
   }
   drawWeather(false);
   drawSlots();
+  lookOverlay(V);
   if (POST.ok) {
     const c = G.celest, t = w.t;
     let sun = [0.5, 0.2, 0], sc = [1, 0.92, 0.8];
@@ -2820,13 +2870,13 @@ function render() {
    film grain, a vignette, and the looks (one valley, many faces). Without WebGL the 2D scene shows as it is. */
 
 const LOOKS = [
-  { id: 'origami', name: 'Origami', line: 'Folded paper on a cutting mat. Crisp facets, warm light.', sw: ['#f4ead8', '#d8603a', '#2f4a8a'] },
-  { id: 'daylight', name: 'Meta Daylight', line: 'Watercolor on north-light paper. Pigment pools at every edge.', sw: ['#eef2e6', '#d2577a', '#4f8fc0'] },
-  { id: 'knight', name: 'Knight Night', line: 'A cobalt paper theatre lit by one candle.', sw: ['#1c2838', '#e9b44c', '#f4e8d6'] },
-  { id: 'inkblot', name: 'Ink Blot', line: 'Black ink stippled on white. Only the crown keeps its colour.', sw: ['#fbfaf6', '#111111', '#c42a2a'] },
-  { id: 'comix', name: 'Comix', line: 'Halftone, ink outlines, and a loud palette.', sw: ['#fff6d8', '#e8287a', '#1aa0e0'] },
-  { id: 'skein', name: 'Skein Silk', line: 'Silk and copper thread, stitched around the edge.', sw: ['#f6e4e0', '#b8743a', '#8ec8a8'] },
-  { id: 'depthfield', name: 'Depthfield', line: 'Deep mint night, haze between the ridges, shafts of light.', sw: ['#0c1a17', '#5ef2b8', '#ffb48a'] }
+  { id: 'origami', name: 'Origami', line: 'Folded paper. Cranes cross the sky, and every build bursts into confetti.', sw: ['#f4ead8', '#d8603a', '#2f4a8a'] },
+  { id: 'daylight', name: 'Meta Daylight', line: 'Watercolor on rough paper: pencil underdrawing, wet blooms, a deckled edge.', sw: ['#eef2e6', '#d2577a', '#4f8fc0'] },
+  { id: 'knight', name: 'Knight Night', line: 'A cobalt paper theatre: curtains, footlights, tin stars on threads, a music box.', sw: ['#1c2838', '#e9b44c', '#f4e8d6'] },
+  { id: 'inkblot', name: 'Ink Blot', line: 'Ink on white. The sun is a red seal, and every blow leaves a blot.', sw: ['#fbfaf6', '#111111', '#c42a2a'] },
+  { id: 'comix', name: 'Comix', line: 'Panels, Ben-Day dots and ink. Every arrow says THWIP.', sw: ['#fff6d8', '#e8287a', '#1aa0e0'] },
+  { id: 'skein', name: 'Skein Silk', line: 'Stitched silk: a yarn-ball sun, running stitches on the hills, a harp.', sw: ['#f6e4e0', '#b8743a', '#8ec8a8'] },
+  { id: 'depthfield', name: 'Depthfield', line: 'Green-black and mint. Motes part as you ride, and what you can pay for glows.', sw: ['#0c1a17', '#5ef2b8', '#ffb48a'] }
 ];
 const POST = { ok: false, look: 0 };
 
@@ -2947,6 +2997,7 @@ void main(){
     float dr=sqrt(clamp(0.62-l,0.0,1.0))*0.55;
     float dots=1.0-smoothstep(dr-0.07,dr+0.07,length(hc));
     cel*=1.0-dots*0.28;
+    if(water)cel=mix(cel,c*0.9,0.55);
     float mis=S(p+vec2(1.5/uRes.x,0.0)).r-col.r;
     cel.r+=mis*0.25;
     float e=edgeAt(p,1.8);
@@ -3069,6 +3120,354 @@ function postFrame(u) {
   gl.uniform3f(U.uHaze, u.haze[0], u.haze[1], u.haze[2]);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   gl.activeTexture(gl.TEXTURE0);
+}
+
+/* Reignfawn: the looks. Each look is its own world, not a filter laid over one: its own sky and sun, its own frame,
+   its own drift of particles, its own way of answering what you do, its own HUD and its own instrument for the score.
+   The lens in gl.js then grades the finished frame to match. */
+
+const LK = { id: 'origami', fx: [], motes: [], last: 0 };
+function lookId() { return (G.meta && G.meta.settings.look) || 'origami'; }
+function lookSync() {
+  const id = lookId();
+  if (document.body.dataset.look !== id) document.body.dataset.look = id;
+  if (LK.id === id) return;
+  LK.id = id; LK.fx.length = 0; LK.motes.length = 0;
+}
+
+/* ---------- sky ---------- */
+function lookSkyPair(top, bot) {
+  const L = LIGHT;
+  switch (LK.id) {
+    case 'inkblot': { const p = [250, 247, 238]; return [mixRGB(top, p, 0.8 * L + 0.08), mixRGB(bot, p, 0.88 * L + 0.05)]; }
+    case 'daylight': return [mixRGB(top, [250, 248, 240], 0.2), mixRGB(bot, [252, 250, 244], 0.28)];
+    case 'comix': return [mixRGB(top, [40, 150, 230], 0.3 * L), mixRGB(bot, [255, 232, 160], 0.3 * L)];
+  }
+  return [top, bot];
+}
+function lookCloud() { return { depthfield: 'none', inkblot: 'brush', comix: 'comic', knight: 'flat' }[LK.id] || 'paper'; }
+
+function hanko(x, y, r) {
+  // the sun as a red seal, a crown cut into it
+  local(1, x, y, -0.07);
+  ctx.fillStyle = '#c42a2c'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-r, -r, r * 2, r * 2, r * 0.18) : ctx.rect(-r, -r, r * 2, r * 2); ctx.fill();
+  ctx.strokeStyle = '#f7f0e2'; ctx.lineWidth = 0.6; ctx.lineJoin = 'miter';
+  ctx.strokeRect(-r + 1.1, -r + 1.1, r * 2 - 2.2, r * 2 - 2.2);
+  ctx.beginPath(); ctx.moveTo(-r * 0.52, r * 0.28); ctx.lineTo(-r * 0.52, -r * 0.34); ctx.lineTo(-r * 0.2, 0); ctx.lineTo(0, -r * 0.5); ctx.lineTo(r * 0.2, 0); ctx.lineTo(r * 0.52, -r * 0.34); ctx.lineTo(r * 0.52, r * 0.28); ctx.closePath(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-r * 0.52, r * 0.52); ctx.lineTo(r * 0.52, r * 0.52); ctx.stroke();
+  world();
+}
+function yarnBall(x, y, r, c) {
+  circ(x, y, r, css(c));
+  ctx.save(); ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.clip();
+  ctx.lineWidth = 0.32;
+  for (let i = 0; i < 9; i++) {
+    ctx.strokeStyle = css(mixRGB(c, i % 2 ? [255, 255, 255] : [90, 40, 30], 0.28));
+    ctx.beginPath(); ctx.ellipse(x, y, r * 1.05, r * (0.22 + (i % 3) * 0.2), i * 0.7 + G.time * 0.03, 0, TAU); ctx.stroke();
+  }
+  ctx.restore();
+  ctx.strokeStyle = css(c); ctx.lineWidth = 0.35;
+  ctx.beginPath(); ctx.moveTo(x + r * 0.7, y + r * 0.7); ctx.bezierCurveTo(x + r * 1.6, y + r * 1.8, x + r * 0.2, y + r * 2.4, x + r * 1.4, y + r * 3.4); ctx.stroke();
+}
+function wetBlot(x, y, r, c, a) {
+  a = a == null ? 1 : a;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, css(c, 0.7 * a)); g.addColorStop(0.78, css(c, 0.82 * a)); g.addColorStop(0.92, css(mixRGB(c, [110, 60, 50], 0.35), 0.9 * a)); g.addColorStop(1, css(c, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+}
+// returns true when the look drew its own sun (or moon)
+function lookSun(x, y, warm, sun) {
+  switch (LK.id) {
+    case 'inkblot': if (!sun) return false; hanko(x, y, 6.6); return true;
+    case 'skein': yarnBall(x, y, sun ? 7 : 5.2, sun ? (warm ? [236, 150, 96] : [240, 196, 120]) : [228, 224, 242]); return true;
+    case 'comix':
+      if (!sun) return false;
+      star(x, y, 16, 14, 0.62, '#151018', G.time * 0.2); star(x, y, 14.6, 14, 0.6, warm ? '#ffcf4a' : '#fff27a', G.time * 0.2);
+      circ(x, y, 7.4, '#151018'); circ(x, y, 6.5, warm ? '#ff9a3c' : '#ffe14a'); return true;
+    case 'depthfield':
+      circ(x, y, 5.6, sun ? '#ffe6cc' : '#dcfff2');
+      ctx.strokeStyle = 'rgba(94,242,184,0.75)'; ctx.lineWidth = 0.45; ctx.beginPath(); ctx.arc(x, y, 9.5 + Math.sin(G.time) * 0.4, 0, TAU); ctx.stroke();
+      ctx.strokeStyle = 'rgba(94,242,184,0.3)'; ctx.beginPath(); ctx.arc(x, y, 14, 0, TAU); ctx.stroke(); return true;
+    case 'daylight': if (!sun) return false; wetBlot(x, y, 8, warm ? [248, 168, 118] : [250, 210, 120]); return true;
+    case 'knight': line(x, -4, x, y - 6.5, 'rgba(240,230,210,0.6)', 0.22); return false;
+  }
+  return false;
+}
+function brushCloud(x, c) {
+  const R = rng(c.seed);
+  for (let k = 0; k < 3; k++) {
+    const y = c.y - k * 2.4, len = c.w * (1.1 - k * 0.28), x0 = x + k * c.w * 0.12;
+    for (let j = 0; j < 7; j++) {
+      if (R() < 0.25) continue;
+      const a = 0.18 + R() * 0.3;
+      line(x0 + R() * 2, y + j * 0.28, x0 + len * (0.6 + R() * 0.4), y + j * 0.28 + (R() - 0.5) * 0.5, `rgba(24,20,26,${a.toFixed(2)})`, 0.28);
+    }
+  }
+}
+
+/* ---------- things in the sky ---------- */
+function crane(x, y, s, flap, c) {
+  const wy = Math.sin(flap) * 3.2 * s;
+  poly(sh(c, -0.12), [x - 4 * s, y + 0.4 * s, x + 4.5 * s, y - 0.3 * s, x + 0.6 * s, y + 1.4 * s]);
+  poly(sh(c, 0.06), [x - 0.6 * s, y, x + 1.2 * s, y - 0.2 * s, x - 1.6 * s, y - 3 * s - wy]);
+  poly(sh(c, -0.02), [x + 4.5 * s, y - 0.3 * s, x + 6 * s, y - 2.4 * s, x + 5 * s, y - 0.5 * s]);
+  poly(sh(c, 0.14), [x - 0.2 * s, y + 0.2 * s, x + 1.6 * s, y, x + 0.4 * s, y - 2.6 * s + wy * 0.6]);
+}
+function lookSkyDecor(V) {
+  world();
+  const id = LK.id, T = G.time, night = 1 - LIGHT;
+  if (id === 'origami') {
+    // the sky is one folded sheet: a diagonal crease, light on one side
+    poly('rgba(255,255,255,0.045)', [0, 0, W * 0.62, 0, 0, GY * 0.75]);
+    line(W * 0.62, 0, 0, GY * 0.75, 'rgba(255,255,255,0.12)', 0.25);
+    const c = night > 0.5 ? '#c8c4dc' : '#fbf6ee';
+    for (let i = 0; i < 3; i++) {
+      const x = ((i * 157 + T * (5 + i * 1.5) - G.camR * 0.12) % (W + 80) + W + 80) % (W + 80) - 40;
+      const y = GY * (0.22 + i * 0.11) + Math.sin(T * 0.6 + i) * 3;
+      crane(x, y, 0.8 + i * 0.12, Math.floor(T * 8) * 0.9 + i, c);
+    }
+  } else if (id === 'daylight') {
+    const R = rng(G.w.seed % 977);
+    for (let i = 0; i < 5; i++) {
+      const x = ((R() * (W + 120) - G.camR * 0.04) % (W + 120) + W + 120) % (W + 120) - 60;
+      wetBlot(x, GY * (0.1 + R() * 0.45), 18 + R() * 22, mixRGB(skyPair(V)[0], [120, 140, 200], 0.25), 0.12);
+    }
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 4; i++) {
+      const x = ((i * 113 + T * (7 + i) - G.camR * 0.1) % (W + 40) + W + 40) % (W + 40) - 20, y = GY * (0.18 + (i % 2) * 0.12) + Math.sin(T + i * 2) * 2;
+      const f = Math.sin(T * 6 + i) * 0.8;
+      ctx.strokeStyle = 'rgba(52,48,60,0.55)'; ctx.lineWidth = 0.4;
+      ctx.beginPath(); ctx.moveTo(x - 2.4, y - 0.6 - f); ctx.quadraticCurveTo(x - 1, y - 1.4, x, y); ctx.quadraticCurveTo(x + 1, y - 1.4, x + 2.4, y - 0.6 - f); ctx.stroke();
+    }
+  } else if (id === 'knight') {
+    // tin stars hung on threads from the fly loft
+    for (let i = 0; i < 6; i++) {
+      const x = W * (0.12 + i * 0.155) + Math.sin(i * 7.1) * 6, len = 14 + (i * 37 % 5) * 7, sw = Math.sin(T * 0.8 + i) * 0.06;
+      const sx = x + Math.sin(sw) * len, sy = Math.cos(sw) * len;
+      line(x, -2, sx, sy, 'rgba(240,230,210,0.45)', 0.18);
+      star(sx, sy + 2, 2.6, 5, 0.45, css(mixRGB([200, 196, 210], [255, 236, 190], night)), sw * 3);
+    }
+  } else if (id === 'inkblot') {
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 3; i++) {
+      const x = ((i * 191 + T * (6 + i * 2) - G.camR * 0.1) % (W + 40) + W + 40) % (W + 40) - 20, y = GY * (0.2 + i * 0.07);
+      const f = Math.sin(T * 5 + i * 2) * 1.2;
+      ctx.strokeStyle = 'rgba(16,14,18,0.85)'; ctx.lineWidth = 0.55;
+      ctx.beginPath(); ctx.moveTo(x - 3, y - 0.4 - f); ctx.quadraticCurveTo(x - 1.2, y - 1.6, x, y); ctx.quadraticCurveTo(x + 1.2, y - 1.6, x + 3, y - 0.4 - f); ctx.stroke();
+    }
+  }
+}
+
+/* ---------- the valley answers: every look has its own reply to what you do ---------- */
+const POP_WORDS = { pay: 'CLINK!', build: 'KA-CHUNK!', bow: 'THWIP!', clash: 'KLANG!', hit: 'WHAP!', poof: 'POOF!', steal: 'SNATCH!', wallHit: 'THUD!', wallBreak: 'KRAK-A-BOOM!', chest: 'TA-DA!', recruit: 'HUP!', crown: 'HUZZAH!' };
+const BIG_EVENT = { build: 1, chest: 1, crown: 1, wallBreak: 1 };
+const HIT_EVENT = { hit: 1, poof: 1, clash: 1, wallHit: 1, wallBreak: 1, steal: 1 };
+function lookEvent(kind, x, h) {
+  if (!G.w || G.state !== 'play') return;
+  const id = LK.id;
+  if (id === 'comix' && POP_WORDS[kind]) {
+    if (kind === 'bow' && Math.random() < 0.5) return;
+    LK.fx.push({ k: 'word', x, y: GY - (h || 14) - Math.random() * 6, t: 0, life: BIG_EVENT[kind] ? 1.3 : 0.8, word: POP_WORDS[kind], big: !!BIG_EVENT[kind], rot: (Math.random() - 0.5) * 0.3 });
+  } else if (id === 'inkblot' && (HIT_EVENT[kind] || BIG_EVENT[kind])) {
+    LK.fx.push({ k: BIG_EVENT[kind] && kind !== 'wallBreak' ? 'seal' : 'splat', x, y: GY - (h || 8) * (0.4 + Math.random() * 0.6), t: 0, life: BIG_EVENT[kind] ? 1.8 : 1.2, seed: Math.floor(Math.random() * 1e6) });
+  } else if (id === 'depthfield' && (kind === 'pay' || BIG_EVENT[kind] || kind === 'recruit')) {
+    LK.fx.push({ k: 'ring', x, y: GY, t: 0, life: BIG_EVENT[kind] ? 1.4 : 0.9, big: !!BIG_EVENT[kind] });
+  } else if (id === 'origami' && (BIG_EVENT[kind] || kind === 'recruit') && kind !== 'wallBreak') {
+    const V = valleyCfg(G.w.vi), cols = [V.banner, V.accent, '#fbf6ee', '#e9b44c'];
+    for (let i = 0; i < (kind === 'recruit' ? 8 : 22); i++) LK.fx.push({ k: 'confetti', x, y: GY - (h || 16), vx: (Math.random() - 0.5) * 40, vy: -30 - Math.random() * 40, t: 0, life: 1.6 + Math.random(), c: cols[i % cols.length], r: Math.random() * TAU, vr: (Math.random() - 0.5) * 12 });
+  } else if (id === 'knight' && (BIG_EVENT[kind] || kind === 'recruit') && kind !== 'wallBreak') {
+    LK.fx.push({ k: 'spot', x, y: GY, t: 0, life: 2.4 });
+  } else if (id === 'skein' && (BIG_EVENT[kind] || kind === 'pay')) {
+    LK.fx.push({ k: kind === 'pay' ? 'stitch' : 'thread', x: x + (Math.random() - 0.5) * 6, y: GY - (h || 12) * (0.3 + Math.random() * 0.7), t: 0, life: kind === 'pay' ? 1.4 : 2, seed: Math.floor(Math.random() * 1e6) });
+  } else if (id === 'daylight' && (BIG_EVENT[kind] || kind === 'pay' || HIT_EVENT[kind])) {
+    const V = valleyCfg(G.w.vi);
+    LK.fx.push({ k: 'bloom', x, y: GY - (h || 10) * 0.6, t: 0, life: 1.8, c: hexRGB(HIT_EVENT[kind] ? '#6a6a80' : (BIG_EVENT[kind] ? V.banner : V.accent)), r: BIG_EVENT[kind] ? 16 : 6 });
+  }
+  if (LK.fx.length > 160) LK.fx.splice(0, LK.fx.length - 160);
+}
+function drawLookFx(dt) {
+  world();
+  for (let i = LK.fx.length - 1; i >= 0; i--) {
+    const f = LK.fx[i];
+    f.t += dt;
+    if (f.t >= f.life) { LK.fx.splice(i, 1); continue; }
+    const p = f.t / f.life, sx = toS(f.x), fade = p > 0.7 ? 1 - (p - 0.7) / 0.3 : 1;
+    if (sx < -40 || sx > W + 40) continue;
+    ctx.globalAlpha = fade;
+    switch (f.k) {
+      case 'word': {
+        const s = (p < 0.12 ? p / 0.12 * 1.18 : p < 0.22 ? 1.18 - (p - 0.12) / 0.1 * 0.18 : 1) * (f.big ? 1.25 : 1);
+        local(1, sx, f.y - p * 5, f.rot);
+        ctx.scale(s, s);
+        const n = f.word.length, R = 4 + n * 1.85;
+        star(0, 0, R * 1.08, 12, 0.7, '#151018', 0.2); star(0, 0, R, 12, 0.7, f.big ? '#ffe14a' : '#fffaf0', 0.2);
+        ctx.font = `${f.big ? 6.6 : 5.6}px Bangers, Impact, "Arial Black", sans-serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.lineWidth = 1.4; ctx.strokeStyle = '#151018'; ctx.lineJoin = 'round'; ctx.strokeText(f.word, 0, 0.3);
+        ctx.fillStyle = f.big ? '#e8287a' : '#ff5a3c'; ctx.fillText(f.word, 0, 0.3);
+        world(); break;
+      }
+      case 'splat': {
+        const R = rng(f.seed), g = Math.min(1, p * 8);
+        circ(sx, f.y, 2.2 * g, 'rgba(14,12,16,0.92)');
+        for (let k = 0; k < 7; k++) { const a = R() * TAU, d = (2.5 + R() * 4) * g; circ(sx + Math.cos(a) * d, f.y + Math.sin(a) * d * 0.7, 0.3 + R() * 0.8, 'rgba(14,12,16,0.9)'); }
+        break;
+      }
+      case 'seal': { const g = p < 0.08 ? 1.6 - p / 0.08 * 0.6 : 1; hanko(sx, f.y - 8, 3.4 * g); break; }
+      case 'ring': {
+        ctx.strokeStyle = `rgba(94,242,184,${(0.85 * (1 - p)).toFixed(3)})`; ctx.lineWidth = f.big ? 0.7 : 0.45;
+        ctx.beginPath(); ctx.ellipse(sx, f.y, 3 + p * (f.big ? 40 : 18), (3 + p * (f.big ? 40 : 18)) * 0.22, 0, 0, TAU); ctx.stroke();
+        if (f.big) { ctx.beginPath(); ctx.ellipse(sx, f.y, 2 + p * 24, (2 + p * 24) * 0.22, 0, 0, TAU); ctx.stroke(); }
+        break;
+      }
+      case 'confetti': {
+        f.vy += 70 * dt; f.vx *= 1 - dt * 1.2; f.x += f.vx * dt; f.y = Math.min(GY - 0.3, f.y + f.vy * dt); f.r += f.vr * dt;
+        local(1, toS(f.x), f.y, f.r);
+        const fl = Math.abs(Math.cos(f.r * 2));
+        poly(f.c, [-1.2, -0.8 * fl, 1.2, -0.3 * fl, -0.2, 0.9 * fl]);
+        world(); break;
+      }
+      case 'spot': {
+        const a = Math.sin(Math.min(1, p * 3) * Math.PI / 2) * (1 - Math.max(0, p - 0.6) / 0.4);
+        const g = ctx.createLinearGradient(0, 0, 0, GY);
+        g.addColorStop(0, `rgba(255,236,190,${(0.05 * a).toFixed(3)})`); g.addColorStop(1, `rgba(255,236,190,${(0.3 * a).toFixed(3)})`);
+        ctx.globalAlpha = 1; ctx.fillStyle = g;
+        poly(g, [sx - 4, 0, sx + 4, 0, sx + 20, GY, sx - 20, GY]);
+        ell(sx, GY + 0.6, 20, 2.4, `rgba(255,236,190,${(0.35 * a).toFixed(3)})`);
+        break;
+      }
+      case 'stitch': {
+        const g = Math.min(1, p * 4);
+        ctx.strokeStyle = '#d08a4c'; ctx.lineWidth = 0.5; ctx.lineCap = 'round';
+        line(sx - 1.6 * g, f.y - 1.6 * g, sx + 1.6 * g, f.y + 1.6 * g, '#d08a4c', 0.5); line(sx + 1.6 * g, f.y - 1.6 * g, sx - 1.6 * g, f.y + 1.6 * g, '#d08a4c', 0.5);
+        break;
+      }
+      case 'thread': {
+        const R = rng(f.seed), g = Math.min(1, p * 2.2);
+        ctx.lineWidth = 0.35; ctx.lineCap = 'round';
+        for (let k = 0; k < 5; k++) {
+          const a0 = R() * TAU, turns = 1.2 + R();
+          ctx.strokeStyle = ['#d08a4c', '#8ec8a8', '#f0c0b8', '#e8d29a', '#b8743a'][k];
+          ctx.beginPath();
+          for (let j = 0; j <= 24; j++) { const q = j / 24 * g, a = a0 + q * turns * TAU, r = q * (10 + k * 2); const X = sx + Math.cos(a) * r, Y = f.y + Math.sin(a) * r * 0.7 - q * 6; j ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
+          ctx.stroke();
+        }
+        break;
+      }
+      case 'bloom': wetBlot(sx, f.y, f.r * (0.5 + Math.min(1, p * 3) * 0.5), f.c, 0.5); break;
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* ---------- motes that part as you ride (Depthfield) ---------- */
+function drawMotes(dt) {
+  if (LK.motes.length === 0) { const R = rng(7); for (let i = 0; i < 80; i++) LK.motes.push({ x: R() * W, y: R() * GY, vx: 0, vy: 0, s: 0.3 + R() * 0.7, p: R() * TAU }); }
+  const m = G.w.m, mx = toS(m.x), my = GY - 12, cdx = LK.camPrev == null ? 0 : G.camR - LK.camPrev;
+  LK.camPrev = G.camR;
+  world();
+  for (const o of LK.motes) {
+    const dx = o.x - mx, dy = o.y - my, d2 = dx * dx + dy * dy;
+    if (d2 < 22 * 22 && d2 > 0.01) { const d = Math.sqrt(d2), k = (22 - d) / 22 * 60; o.vx += dx / d * k * dt; o.vy += dy / d * k * dt; }
+    o.vx *= 1 - dt * 1.5; o.vy *= 1 - dt * 1.5;
+    o.x += o.vx * dt + Math.sin(G.time * 0.4 + o.p) * 2 * dt - cdx * (0.3 + o.s * 0.6); o.y += (o.vy - 1.2 * o.s) * dt;
+    if (o.y < -2) o.y = GY; if (o.x < -4) o.x += W + 8; if (o.x > W + 4) o.x -= W + 8;
+    const tw = 0.5 + 0.5 * Math.sin(G.time * 1.7 + o.p);
+    circ(o.x, o.y, 0.25 + o.s * 0.35, `rgba(200,255,232,${(0.35 + tw * 0.5).toFixed(2)})`);
+  }
+}
+
+/* ---------- frames ---------- */
+function deckle() {
+  const R = (x, k) => vnoise(x * 0.35, k) * 2.2 + vnoise(x * 1.7, k + 3) * 0.9;
+  ctx.fillStyle = '#fbf8f1';
+  ctx.beginPath(); ctx.rect(-2, -2, W + 4, H + 4);
+  ctx.moveTo(2 + R(0, 1), 2 + R(0, 2));
+  for (let x = 0; x <= W; x += 2) ctx.lineTo(x, 1.6 + R(x, 2));
+  for (let y = 0; y <= H; y += 2) ctx.lineTo(W - 1.6 - R(y, 4), y);
+  for (let x = W; x >= 0; x -= 2) ctx.lineTo(x, H - 1.6 - R(x, 6));
+  for (let y = H; y >= 0; y -= 2) ctx.lineTo(1.6 + R(y, 8), y);
+  ctx.closePath(); ctx.fill('evenodd');
+  ctx.strokeStyle = 'rgba(70,64,80,0.28)'; ctx.lineWidth = 0.22;
+  ctx.strokeRect(6 + vnoise(G.w.seed, 1), 6, W - 12, H - 12);
+}
+function proscenium(night) {
+  const cw = Math.max(9, W * 0.05), vh = Math.max(7, H * 0.055);
+  for (const side of [-1, 1]) {
+    const x0 = side < 0 ? 0 : W - cw;
+    for (let i = 0; i < 6; i++) {
+      const x = x0 + i * cw / 6, k = i % 2 ? -0.1 : 0.06;
+      poly(sh('#6a3a5c', k), [x, 0, x + cw / 6 + 0.2, 0, x + cw / 6 + 0.2 + side * Math.sin(G.time * 0.5 + i) * 0.3, H, x, H]);
+    }
+    rect(side < 0 ? cw - 0.6 : W - cw, 0, 0.6, H, '#e9b44c');
+  }
+  // the valance: scallops with a gold fringe
+  rect(0, 0, W, vh * 0.55, '#5a2e4c');
+  for (let x = 0; x < W + 10; x += 10) { ctx.fillStyle = '#62334f'; ctx.beginPath(); ctx.arc(x + 5, vh * 0.55, 5, 0, Math.PI); ctx.fill(); }
+  ctx.strokeStyle = '#e9b44c'; ctx.lineWidth = 0.4;
+  ctx.beginPath(); for (let x = 0; x < W + 10; x += 10) { ctx.moveTo(x, vh * 0.55); ctx.arc(x + 5, vh * 0.55, 5, Math.PI, 0, true); } ctx.stroke();
+  // footlights along the stage lip
+  const n = Math.max(7, Math.round(W / 28));
+  for (let i = 0; i < n; i++) {
+    const x = (i + 0.5) * W / n, y = H - 1.5, fl = 0.85 + Math.sin(G.time * 9 + i * 1.7) * 0.08;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, 16);
+    g.addColorStop(0, `rgba(255,214,140,${(0.28 * fl * (0.5 + night * 0.5)).toFixed(3)})`); g.addColorStop(1, 'rgba(255,214,140,0)');
+    ctx.fillStyle = g; ctx.fillRect(x - 16, y - 16, 32, 16);
+    ell(x, y, 2.4, 1.1, '#1c1418'); ell(x, y - 0.4, 1.4, 0.6, `rgba(255,236,190,${fl.toFixed(2)})`);
+  }
+}
+function comicPanel() {
+  const m = 4;
+  ctx.fillStyle = '#fdf8ec';
+  ctx.beginPath(); ctx.rect(-2, -2, W + 4, H + 4); ctx.rect(m, m, W - m * 2, H - m * 2); ctx.fill('evenodd');
+  ctx.strokeStyle = '#151018'; ctx.lineWidth = 1.1; ctx.strokeRect(m, m, W - m * 2, H - m * 2);
+}
+function speedLines() {
+  const m = G.w.m, v = Math.abs(m.vx || 0), M = MOUNTS[m.mount];
+  if (v < M.walk + 4) return;
+  const a = clamp((v - M.walk - 4) / 12, 0, 1), sx = toS(m.x), R = rng(Math.floor(G.time * 12));
+  for (let i = 0; i < 9; i++) {
+    const y = GY - 4 - R() * 22, len = 10 + R() * 18, x = sx - Math.sign(m.vx) * (12 + R() * 16);
+    line(x, y, x - Math.sign(m.vx) * len, y, `rgba(21,16,24,${(0.6 * a).toFixed(2)})`, 0.35);
+  }
+}
+function hotspotRing() {
+  const s = G.near;
+  if (!s || !siteCost(s)) return;
+  const sx = toS(s.x), pulse = 0.5 + 0.5 * Math.sin(G.time * 3);
+  ctx.strokeStyle = `rgba(94,242,184,${(0.4 + pulse * 0.4).toFixed(2)})`; ctx.lineWidth = 0.45;
+  ctx.beginPath(); ctx.ellipse(sx, GY + 0.4, 9 + pulse * 2, 1.9 + pulse * 0.4, 0, 0, TAU); ctx.stroke();
+}
+function lookOverlay(V) {
+  const dt = clamp(G.time - (LK.last || G.time), 0, 0.1); LK.last = G.time;
+  world();
+  const id = LK.id, inPlay = G.state === 'play' && !G.w.sailing;
+  if (id === 'depthfield') { drawMotes(dt); if (inPlay) hotspotRing(); }
+  if (id === 'comix' && inPlay) speedLines();
+  drawLookFx(dt);
+  world();
+  if (id === 'knight') proscenium(1 - LIGHT);
+  else if (id === 'comix') comicPanel();
+  else if (id === 'daylight') deckle();
+  else if (id === 'origami') {
+    poly('rgba(255,255,255,0.025)', [W * 0.55, 0, W, 0, W, H * 0.8]);
+    line(W * 0.55, 0, W, H * 0.8, 'rgba(255,255,255,0.08)', 0.2);
+  }
+}
+
+/* ---------- the instrument the score is played on ---------- */
+function lookTempo() { return { comix: 0.82, daylight: 1.12, knight: 1.05, depthfield: 1.1 }[LK.id] || 1; }
+function lookVoice(f, dur, when, pan, night) {
+  const bus = AU.mus;
+  switch (LK.id) {
+    case 'daylight': tone(f, dur * 1.4, { type: 'sine', vol: 0.034, when, attack: 0.09, bus, send: 0.7, pan }); tone(f * 2, dur, { vol: 0.008, when: when + 0.05, attack: 0.1, bus, send: 0.7, pan: -pan }); return;
+    case 'knight': tone(f * 2, 0.9, { vol: 0.03, when, attack: 0.002, bus, send: 0.5, pan }); tone(f * 8, 0.25, { vol: 0.005, when, attack: 0.001, bus, send: 0.4, pan }); return;
+    case 'inkblot': tone(f, 0.7, { type: 'triangle', vol: 0.04, when, attack: 0.002, bus, send: 0.35, pan, detune: -4 }); tone(f * 1.003, 0.45, { type: 'sawtooth', vol: 0.005, when, attack: 0.002, bus, send: 0.3, pan }); return;
+    case 'comix': tone(f, 0.22, { type: 'square', vol: 0.012, when, attack: 0.003, bus, send: 0.15, pan }); tone(f, 0.16, { type: 'triangle', vol: 0.03, when, bus, slide: f * 1.06, pan }); return;
+    case 'skein': tone(f, dur * 1.6, { type: 'triangle', vol: 0.034, when, attack: 0.003, bus, send: 0.65, pan }); tone(f * 1.5, dur, { type: 'triangle', vol: 0.011, when: when + 0.07, bus, send: 0.6, pan }); return;
+    case 'depthfield': tone(f, dur * 1.5, { vol: 0.03, when, attack: 0.004, bus, send: 0.7, pan }); tone(f * 2.756, dur * 0.5, { vol: 0.008, when, bus, send: 0.7, pan }); return;
+  }
+  tone(f, dur, { type: night ? 'sine' : 'triangle', vol: night ? 0.04 : 0.035, when, attack: 0.008, bus, send: 0.55, pan });
 }
 
 /* Reignfawn: input, the HUD, the storybook pages, and the loop that ties it together. */
@@ -3299,11 +3698,11 @@ for (const id of ['optMusic', 'optSfx']) $(id).addEventListener('input', e => { 
 $('optAuto').addEventListener('change', e => setAuto(e.target.checked));
 
 /* ---------- looks: one valley, many faces ---------- */
-function availableLooks() { return POST.ok ? LOOKS : LOOKS.slice(0, 1); }
+function availableLooks() { return LOOKS; }
 function setLook(id, announce) {
   const L = availableLooks().find(l => l.id === id) || LOOKS[0];
   G.meta.settings.look = L.id; saveJSON(META_KEY, G.meta);
-  syncLooks();
+  lookSync(); syncLooks();
   if (announce) say(L.name, L.line);
 }
 function cycleLook(d) {
@@ -3332,6 +3731,7 @@ function syncLooks() {
   for (const b of $('looksT').children) b.setAttribute('aria-pressed', String(b.dataset.id === L.id));
   $('optLook').value = L.id;
   $('lookLineT').textContent = L.line; $('lookLineM').textContent = L.line;
+  document.body.dataset.look = L.id;
 }
 $('optLook').addEventListener('change', e => setLook(e.target.value, false));
 
