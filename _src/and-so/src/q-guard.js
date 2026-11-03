@@ -135,16 +135,17 @@ async function claudeMishear(text) {
 }
 // the browser's own speech recognition, only after it is switched on, and never remembered as on
 function earsOn(on) {
+  if (on) voiceCommandsStop('Voice commands off while Saelion overhears.');
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   EAR.want = !!on && !!SR; EAR.err = '';
-  if (!EAR.want) { try { if (EAR.rec) EAR.rec.stop(); } catch (e) {} EAR.rec = null; EAR.on = false; earUI(); return; }
+  if (!EAR.want) { const previous = EAR.rec; EAR.rec = null; EAR.on = false; try { if (previous) previous.abort(); } catch (e) {} earUI(); return; }
   if (EAR.rec) return;
   try {
     const r = new SR(); r.continuous = true; r.interimResults = false; r.lang = navigator.language || 'en-US'; r.maxAlternatives = 1;
-    r.onresult = e => { for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) hearText(e.results[i][0].transcript, 'mic'); };
-    r.onerror = e => { EAR.err = e && e.error || 'error'; if (EAR.err === 'not-allowed' || EAR.err === 'service-not-allowed' || EAR.err === 'audio-capture') { EAR.want = false; caption("words can't be heard here. whisper them into the box instead.", 3200); } earUI(); };
-    r.onend = () => { EAR.rec = null; EAR.on = false; if (EAR.want) setTimeout(() => { if (EAR.want && !EAR.rec) earsOn(true); }, 500); earUI(); };
-    r.onstart = () => { EAR.on = true; earUI(); };
+    r.onresult = e => { if (EAR.rec !== r || !EAR.want) return; for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) hearText(e.results[i][0].transcript, 'mic'); };
+    r.onerror = e => { if (EAR.rec !== r) return; EAR.err = e && e.error || 'error'; if (EAR.err === 'not-allowed' || EAR.err === 'service-not-allowed' || EAR.err === 'audio-capture') { EAR.want = false; caption("words can't be heard here. whisper them into the box instead.", 3200); } earUI(); };
+    r.onend = () => { if (EAR.rec !== r) return; EAR.rec = null; EAR.on = false; if (EAR.want) setTimeout(() => { if (EAR.want && !EAR.rec) earsOn(true); }, 500); earUI(); };
+    r.onstart = () => { if (EAR.rec !== r || !EAR.want) { try { r.abort(); } catch (_) {} return; } EAR.on = true; earUI(); };
     EAR.rec = r; r.start(); discover('x-ears'); jlog('Saelion is overhearing words');
   } catch (e) { EAR.want = false; EAR.rec = null; EAR.err = 'unavailable'; }
   earUI();

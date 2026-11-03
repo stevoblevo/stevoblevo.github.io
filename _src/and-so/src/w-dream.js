@@ -100,6 +100,7 @@ window.addEventListener('pointerdown', e => {
   dreamHand();
 }, true);
 window.addEventListener('keydown', e => {
+  if (e.target && e.target.closest && e.target.closest('#voiceCommands')) return;
   if (!DREAM.on || t < DREAM.arm) return;
   e.preventDefault();
   e.stopImmediatePropagation();

@@ -1,6 +1,6 @@
 // ===== listen: a demo hummer first, your own voice if you want it. pitch is tracked on this page (YIN), the music follows, Saelion ad-libs =====
 const LS = {
-  src: null, used: false, micOk: false, auto: false, autoAt: 0, autoDone: false,
+  src: null, pending: false, request: 0, used: false, micOk: false, auto: false, autoAt: 0, autoDone: false,
   det: null, an: null, sink: null, buf: null, dec: null, cm: null, stream: null, msrc: null, hum: null,
   nextT: 0, rms: 0, floor: 0.002, f: 0, fi: 0, conf: 0, vN: 0, uN: 0, jumpN: 0, hist: [],
   note: null, phrase: [], phrases: 0, lastVoicedT: -99, lastFollowT: -99, lastAction: '', lastShift: 0,
@@ -296,12 +296,14 @@ function humTick() {
 // ---------- start, stop, the tick ----------
 async function listenStart(src, auto) {
   if (!entered) return;
+  if (src === 'mic') voiceCommandsStop('Voice commands off while the singing microphone is in use.');
   if (!A.ac) audio.init();
   if (!A.ac) { caption("this browser can't run the audio here.", 2600); return; }
   if (A.ac.state === 'suspended') A.ac.resume();
   if (!auto) LS.used = true;
   if (LS.src === src) { listenUI(); return; }
   listenStop(true);
+  const request = LS.request;
   earBuild();
   LS.phrase.length = 0; LS.note = null; LS.hist.length = 0; LS.vN = 0; LS.uN = 0; LS.lastAction = ''; LS.roomC = null; LS.echoT = 0; LS.devs.length = 0;
   if (src === 'demo') {
@@ -310,14 +312,19 @@ async function listenStart(src, auto) {
     jlog(auto ? 'the demo hummer joined in' : 'demo hummer on');
   } else {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { micNote('no microphone access in this browser.'); return; }
+    LS.pending = true;
     $('lNote').textContent = 'asking for the microphone…';
     try {
       const st = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false, channelCount: 1 } });
+      if (request !== LS.request) { st.getTracks().forEach(tr => tr.stop()); return; }
+      LS.pending = false;
       LS.stream = st; LS.msrc = A.ac.createMediaStreamSource(st); LS.msrc.connect(LS.det);
       LS.src = 'mic'; LS.auto = false; LS.micOk = true; LS.floor = 0.002; LS.selfF.length = 0;
       caption('listening. hum, sing, or let something in the room hum for a while.', 3600); jlog('microphone on');
       st.getAudioTracks().forEach(tr => tr.addEventListener('ended', () => { if (LS.src === 'mic') listenStop(); }));
     } catch (e) {
+      if (request !== LS.request) return;
+      LS.pending = false;
       const n = e && e.name;
       if (n === 'NotAllowedError' || n === 'SecurityError') micNote(CAP.selfHost ? 'the microphone was declined, or this page is framed without it. the demo hummer still works. the standalone page:' : 'this host keeps the microphone off. open AND SO on its own page to sing to it:', true);
       else if (n === 'NotFoundError' || n === 'OverconstrainedError') micNote('no microphone found. the demo hummer still works.');
@@ -333,6 +340,7 @@ function micNote(msg, link) {
   caption(msg.replace(/:$/, '.'), 3800);
 }
 function listenStop(quiet) {
+  LS.request++; LS.pending = false;
   const was = LS.src;
   if (LS.hum) { humKill(LS.hum); LS.hum = null; }
   if (LS.stream) { LS.stream.getTracks().forEach(tr => tr.stop()); LS.stream = null; }
