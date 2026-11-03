@@ -248,6 +248,7 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
       <div class="actions">
         <button class="btn primary" id="bPlay" type="button">Ride out</button>
         <button class="btn" id="bWatch" type="button">Watch</button>
+        <button class="btn" id="bVRT" type="button" hidden>Enter VR</button>
         <button class="btn" id="bNew" type="button">New kingdom</button>
         <button class="btn" id="bLedgerT" type="button">Ledger</button>
         <button class="btn" id="bSetT" type="button">Settings</button>
@@ -255,9 +256,9 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
       <div class="looks" id="looksT" role="group" aria-label="Look"></div>
       <p class="lookLine" id="lookLineT"></p>
       <label class="toggle" for="optFrolicT"><input type="checkbox" id="optFrolicT"> Frolic mode: no night raids, only building, riding and fireflies</label>
-      <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>V</kbd> change the look &middot; <kbd>C</kbd> photo &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
-      <p class="keys padkeys">Gamepad: A choose &middot; B back &middot; stick ride &middot; RT gallop &middot; A pay &middot; Y lean back &middot; LB look &middot; View photo &middot; Start menu</p>
-      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 0.3.5: watch it, play it, hold a controller. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v3/" target="_blank" rel="noopener">0.3.3</a>, <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">0.2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">0.1 pixel</a>.</span></p>
+      <p class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> ride &middot; <kbd>Shift</kbd> or double-tap to gallop &middot; <kbd>&darr;</kbd> pay &middot; <kbd>L</kbd> lean back &middot; <kbd>V</kbd> change the look &middot; <kbd>C</kbd> photo &middot; <kbd>B</kbd> diorama &middot; <kbd>Esc</kbd> menu &middot; a gamepad works too</p>
+      <p class="keys padkeys">Gamepad: A choose &middot; B back &middot; left stick ride &middot; right stick look around the diorama &middot; RT gallop &middot; A pay &middot; Y lean back &middot; LB look &middot; View photo &middot; Start menu</p>
+      <p class="fine">Free to play here. Someday $25.99 on Steam, and worth it at the $5.99 sale. <span id="verLine">Version 0.3.6: a diorama in depth, and in VR. Earlier versions stay up: <a href="https://stevoblevo.github.io/reignfawn/v3/" target="_blank" rel="noopener">0.3.3</a>, <a href="https://stevoblevo.github.io/reignfawn/v2/" target="_blank" rel="noopener">0.2 paper</a>, <a href="https://stevoblevo.github.io/reignfawn/v1/" target="_blank" rel="noopener">0.1 pixel</a>.</span></p>
     </div>
   </section>
 
@@ -295,6 +296,7 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
       <div class="row" id="lookRow"><label for="optLook">Look<small id="lookLineM"></small></label><select id="optLook"></select></div>
       <div class="row"><label for="optReduce">Calmer motion<small>Less shake and fewer particles.</small></label><input type="checkbox" id="optReduce"></div>
       <div class="row"><label for="optHud">Show coin count</label><input type="checkbox" id="optHud"></div>
+      <div class="row"><label for="optDio">Diorama view<small>The valley as separate paper sheets standing in depth over a mirror of water. Move the mouse or the right stick to look around them. Key B.</small></label><input type="checkbox" id="optDio"></div>
       <div class="row"><label for="optCinema">Cinema camera<small>When leaning back, the camera frames builds and fights, with a letterbox and a running chronicle.</small></label><input type="checkbox" id="optCinema"></div>
       <div class="row"><label for="optRumble">Controller rumble</label><input type="checkbox" id="optRumble"></div>
       <div class="row"><label for="optSail">Lean back may sail on<small>When the boat is ready, let your mount board it.</small></label><input type="checkbox" id="optSail"></div>
@@ -302,6 +304,7 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
         <button class="btn primary" id="bResume" type="button">Resume</button>
         <button class="btn" id="bLedgerM" type="button">Ledger</button>
         <button class="btn" id="bPhoto" type="button">Photo mode</button>
+        <button class="btn" id="bVR" type="button" hidden>Enter VR</button>
         <button class="btn" id="bFull" type="button">Full screen</button>
         <button class="btn" id="bTitle" type="button">Title</button>
       </div>
@@ -321,7 +324,7 @@ body[data-look="daylight"] #caption * { color: #2b2a33; }
 
 <script>
 'use strict';
-const VERSION = '0.3.5';
+const VERSION = '0.3.6';
 /* Reignfawn: core math, randomness, colour, and the rules of the valley. */
 
 const TAU = Math.PI * 2;
@@ -507,7 +510,7 @@ function defaultMeta() {
   return {
     v: 1, mounts: ['fawn'], crossed: 0, bestDay: 0, crownsLost: 0, nights: 0, recruits: 0, earned: 0, built: 0,
     seen: {}, lastGift: '',
-    settings: { music: 0.55, sfx: 0.8, cycle: 240, frolic: false, hud: true, reduce: false, tuning: 'just', touch: 'auto', look: 'origami', cinema: true, rumble: true }
+    settings: { music: 0.55, sfx: 0.8, cycle: 240, frolic: false, hud: true, reduce: false, tuning: 'just', touch: 'auto', look: 'origami', cinema: true, rumble: true, dio: false }
   };
 }
 
@@ -1851,7 +1854,10 @@ function facetBall(x, y, r, c, rot) {
 }
 function drawLayers(V) {
   const hz = skyPair(V)[1];
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 4; i++) drawLayer(i, V, hz);
+}
+function drawLayer(i, V, hz) {
+  {
     const L = LAYERS[i];
     if (i > 0) {
       const top = LAYERS[i - 1].haze, gg = ctx.createLinearGradient(0, top, 0, GY + 2);
@@ -2642,7 +2648,10 @@ function drawParts(additive) {
 }
 
 /* ---------- night, glow, water ---------- */
-function drawNight(V) {
+function nightDark(V) { return clamp((1 - LIGHT) * 0.68 + (G.w.rain ? 0.05 : 0), 0, 0.74) * (LK.id === 'knight' ? 0.6 : 1); }
+function nightColor(V) { return mixRGB(hexRGB(V.tint.night), [0, 0, 0], 0.2); }
+function drawNight(V, tg) {
+  tg = tg || mctx;
   const dk = clamp((1 - LIGHT) * 0.68 + (G.w.rain ? 0.05 : 0), 0, 0.74) * (LK.id === 'knight' ? 0.6 : 1);
   if (dk < 0.02) return;
   const nc = mixRGB(hexRGB(V.tint.night), [0, 0, 0], 0.2), f = K / 4;
@@ -2658,9 +2667,11 @@ function drawNight(V) {
     g.addColorStop(0, `rgba(0,0,0,${l.i})`); g.addColorStop(0.55, `rgba(0,0,0,${l.i * 0.55})`); g.addColorStop(1, 'rgba(0,0,0,0)');
     dctx.fillStyle = g; dctx.fillRect(l.x - l.r, l.y - l.r, l.r * 2, l.r * 2);
   }
-  mctx.setTransform(1, 0, 0, 1, 0, 0);
-  mctx.imageSmoothingEnabled = true;
-  mctx.drawImage(dark, 0, 0, dark.width, dark.height, 0, 0, dark.width * 4, dark.height * 4);
+  tg.setTransform(1, 0, 0, 1, 0, 0);
+  tg.imageSmoothingEnabled = true;
+  if (tg !== mctx) tg.globalCompositeOperation = 'source-atop';
+  tg.drawImage(dark, 0, 0, dark.width, dark.height, 0, 0, dark.width * 4, dark.height * 4);
+  tg.globalCompositeOperation = 'source-over';
   world();
   ctx.globalCompositeOperation = 'lighter';
   const ga = clamp(1 - LIGHT, 0, 1) * 0.16;
@@ -2814,17 +2825,18 @@ function drawSlots() {
 }
 
 /* ---------- the paper grade: everything standing in the valley takes the colour of the hour ---------- */
-function gradeLand(V) {
+function gradeLand(V, g, c) {
+  g = g || lctx; c = c || land;
   const [a, b, f] = SKYW, AMT = { dawn: 0.2, day: 0, dusk: 0.28, night: 0.46 };
   const ca = a === 'day' ? null : hexRGB(V.tint[a]), cb = b === 'day' ? null : hexRGB(V.tint[b]);
   const col = ca && cb ? mixRGB(ca, cb, f) : (ca || cb);
   const amt = lerp(AMT[a], AMT[b], f) + (G.w.rain ? 0.08 : 0);
   if (!col || amt < 0.01) return;
-  lctx.setTransform(1, 0, 0, 1, 0, 0);
-  lctx.globalCompositeOperation = 'source-atop';
-  lctx.fillStyle = css(col, amt);
-  lctx.fillRect(0, 0, land.width, land.height);
-  lctx.globalCompositeOperation = 'source-over';
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.globalCompositeOperation = 'source-atop';
+  g.fillStyle = css(col, amt);
+  g.fillRect(0, 0, c.width, c.height);
+  g.globalCompositeOperation = 'source-over';
 }
 
 /* ---------- the frame ---------- */
@@ -2851,6 +2863,43 @@ function render() {
   lctx.clearRect(0, 0, land.width, land.height);
   world();
   drawLayers(V);
+  drawLand(V, season);
+  gradeLand(V);
+  ctx = mctx;
+  mctx.setTransform(1, 0, 0, 1, 0, 0);
+  mctx.drawImage(land, 0, 0);
+  drawFireflies();
+  drawNight(V);
+  drawFront(V);
+  if (POST.ok) { mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.clearRect(0, Math.floor(WT * K), DW, DH); world(); } else drawWater(V);
+  drawAfloat(V);
+  if (POST.ok) {
+    const c = G.celest, t = w.t;
+    let sun = [0.5, 0.2, 0], sc = [1, 0.92, 0.8];
+    if (c) {
+      const low = c.sun ? 1 - Math.sin(clamp((t + 0.03) / 0.73, 0, 1) * Math.PI) : 0;
+      sun = [c.x / W, c.y / H, c.sun ? 0.35 + low * 0.75 : 0.28];
+      sc = c.sun ? (low > 0.5 ? [1, 0.72, 0.5] : [1, 0.94, 0.82]) : c.red ? [1, 0.5, 0.45] : [0.78, 0.8, 1];
+    }
+    if (w.rain) sun[2] *= 0.3;
+    const wc = waterColor(V).map(x => x / 255), hz = skyPair(V)[1].map(x => x / 255);
+    postFrame({ water: WT / H, ground: WT / H, day: LIGHT, rain: w.rain ? 1 : 0, sun, sunCol: sc, waterCol: wc, haze: hz, zoom: CINE.zoom, zc: [CINE.zx, CINE.zy] });
+  }
+  lookFrame();
+}
+function lensSun(V) {
+  const c = G.celest, t = G.w.t;
+  let sun = [0.5, 0.2, 0], sc = [1, 0.92, 0.8];
+  if (c) {
+    const low = c.sun ? 1 - Math.sin(clamp((t + 0.03) / 0.73, 0, 1) * Math.PI) : 0;
+    sun = [c.x / W, c.y / H, c.sun ? 0.35 + low * 0.75 : 0.28];
+    sc = c.sun ? (low > 0.5 ? [1, 0.72, 0.5] : [1, 0.94, 0.82]) : c.red ? [1, 0.5, 0.45] : [0.78, 0.8, 1];
+  }
+  if (G.w.rain) sun[2] *= 0.3;
+  return { sun, sc };
+}
+function drawLand(V, season) {
+  const w = G.w;
   drawTrees(V, season, true);
   drawGround(V, season);
   const x0 = G.camR - W / 2 - 70, x1 = G.camR + W / 2 + 70;
@@ -2875,17 +2924,15 @@ function render() {
   drawArrows();
   drawParts(false);
   drawReeds(V, season);
-  gradeLand(V);
-  ctx = mctx;
-  mctx.setTransform(1, 0, 0, 1, 0, 0);
-  mctx.drawImage(land, 0, 0);
-  drawFireflies();
-  drawNight(V);
+}
+function drawFront(V) {
   world();
   ctx.globalCompositeOperation = 'lighter';
   drawParts(true);
   ctx.globalCompositeOperation = 'source-over';
-  if (POST.ok) { mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.clearRect(0, Math.floor(WT * K), DW, DH); world(); } else drawWater(V);
+}
+function drawAfloat(V) {
+  const w = G.w;
   if (w.sailing) {
     const s = w.sailing, sx = toS(s.x), bob = Math.sin(G.time * 1.8) * 0.8;
     paperBoat(sx, WT + 3, 3, bob);
@@ -2894,19 +2941,6 @@ function render() {
   drawWeather(false);
   drawSlots();
   lookOverlay(V);
-  if (POST.ok) {
-    const c = G.celest, t = w.t;
-    let sun = [0.5, 0.2, 0], sc = [1, 0.92, 0.8];
-    if (c) {
-      const low = c.sun ? 1 - Math.sin(clamp((t + 0.03) / 0.73, 0, 1) * Math.PI) : 0;
-      sun = [c.x / W, c.y / H, c.sun ? 0.35 + low * 0.75 : 0.28];
-      sc = c.sun ? (low > 0.5 ? [1, 0.72, 0.5] : [1, 0.94, 0.82]) : c.red ? [1, 0.5, 0.45] : [0.78, 0.8, 1];
-    }
-    if (w.rain) sun[2] *= 0.3;
-    const wc = waterColor(V).map(x => x / 255), hz = skyPair(V)[1].map(x => x / 255);
-    postFrame({ water: WT / H, ground: WT / H, day: LIGHT, rain: w.rain ? 1 : 0, sun, sunCol: sc, waterCol: wc, haze: hz, zoom: CINE.zoom, zc: [CINE.zx, CINE.zy] });
-  }
-  lookFrame();
 }
 
 /* Reignfawn: the lens. The paper scene is drawn in 2D, then passed through one WebGL pass that adds what paper
@@ -3109,7 +3143,7 @@ function postInit() {
     POST.gl = gl; POST.c = c;
     POST.blur = glProgram(gl, FS_BLUR);
     POST.fin = glProgram(gl, FS_FINAL);
-    const buf = gl.createBuffer();
+    const buf = gl.createBuffer(); POST.buf = buf;
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
@@ -3139,15 +3173,22 @@ function lookIndex() { const i = LOOKS.findIndex(l => l.id === (G.meta && G.meta
 function postFrame(u) {
   if (!POST.ok) return;
   const gl = POST.gl;
-  gl.bindTexture(gl.TEXTURE_2D, POST.scene);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+  // the lens draws one fullscreen triangle from its own buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, POST.buf);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  gl.disableVertexAttribArray(1); gl.disable(gl.BLEND);
+  const scene = u.tex || POST.scene;
+  if (!u.tex) {
+    gl.bindTexture(gl.TEXTURE_2D, POST.scene);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+  }
   // blur: scene to a quarter, across then down
   gl.useProgram(POST.blur.p);
   gl.uniform1i(POST.blur.u.t, 0);
   gl.activeTexture(gl.TEXTURE0);
   gl.bindFramebuffer(gl.FRAMEBUFFER, POST.fa); gl.viewport(0, 0, POST.lw, POST.lh);
-  gl.bindTexture(gl.TEXTURE_2D, POST.scene); gl.uniform2f(POST.blur.u.dir, 2.4 / POST.lw, 0);
+  gl.bindTexture(gl.TEXTURE_2D, scene); gl.uniform2f(POST.blur.u.dir, 2.4 / POST.lw, 0);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   gl.bindFramebuffer(gl.FRAMEBUFFER, POST.fb);
   gl.bindTexture(gl.TEXTURE_2D, POST.ta); gl.uniform2f(POST.blur.u.dir, 0, 2.4 / POST.lh);
@@ -3156,7 +3197,7 @@ function postFrame(u) {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, DW, DH);
   const f = POST.fin, U = f.u;
   gl.useProgram(f.p);
-  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, POST.scene); gl.uniform1i(U.uScene, 0);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, scene); gl.uniform1i(U.uScene, 0);
   gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, POST.tb); gl.uniform1i(U.uBlur, 1);
   gl.uniform2f(U.uRes, DW, DH);
   gl.uniform1f(U.uTime, G.time); gl.uniform1f(U.uWater, u.water); gl.uniform1f(U.uGround, u.ground);
@@ -3168,6 +3209,302 @@ function postFrame(u) {
   gl.uniform1f(U.uZoom, u.zoom || 1); gl.uniform2f(U.uZC, (u.zc || [0.5, 0.6])[0], (u.zc || [0.5, 0.6])[1]);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   gl.activeTexture(gl.TEXTURE0);
+}
+
+/* Reignfawn: the diorama. The same valley drawn as separate sheets (sky, four ridges, the land) and stood up in
+   real depth over a water floor that mirrors them. On a screen you peek around it with the mouse or the right stick;
+   in a headset (WebXR) it stands in the room in front of you and you ride it with the controllers. */
+
+const DIO = { on: false, peekX: 0, peekY: 0, px: 0, py: 0, fbo: null, ftex: null, fw: 0, fh: 0, prog: null, buf: null, tex: {}, white: null, water: null };
+const XR = { session: null, ref: null, ctl: null, prev: [], supported: false, hudT: 0 };
+const PLANES = {};
+const DEPTH = { sky: -1.7, r0: -1.05, r1: -0.7, r2: -0.42, r3: -0.2, land: 0 };   // in units of the view height
+
+/* ---------- 2D: each sheet onto its own canvas ---------- */
+function planeCanvas(name, s, K0) {
+  let p = PLANES[name];
+  if (!p) { const c = document.createElement('canvas'); p = PLANES[name] = { c, g: c.getContext('2d'), s }; }
+  const w = Math.max(16, Math.ceil(DW * s)), h = Math.max(16, Math.ceil((WT + 2) * K0 * s));
+  if (p.c.width !== w || p.c.height !== h) { p.c.width = w; p.c.height = h; }
+  p.s = s;
+  return p;
+}
+function renderPlanes() {
+  const w = G.w;
+  if (!w) return false;
+  LIGHTS.length = 0;
+  lookSync();
+  const key = w.seed + '|' + DW + '|' + DH + '|' + LK.id;
+  if (layerKey !== key) { buildLayers(w); layerKey = key; }
+  const V = valleyCfg(w.vi), season = seasonOf(w.day);
+  SKYW = skyWeights(w.t); LIGHT = lightAt(w.t);
+  G.camR = G.cam;
+  const K0 = K;
+  const into = p => { ctx = p.g; K = K0 * p.s; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, p.c.width, p.c.height); world(); return p; };
+  try {
+    into(planeCanvas('sky', 0.5, K0)); drawSky(V, LIGHT); lookSkyDecor(V); drawWeather(true);
+    const hz = skyPair(V)[1], dk = nightDark(V), nc = nightColor(V);
+    for (let i = 0; i < 4; i++) {
+      const p = into(planeCanvas('r' + i, i < 2 ? 0.5 : 0.75, K0));
+      drawLayer(i, V, hz);
+      gradeLand(V, p.g, p.c);
+      if (dk > 0.02) { p.g.setTransform(1, 0, 0, 1, 0, 0); p.g.globalCompositeOperation = 'source-atop'; p.g.fillStyle = css(nc, dk); p.g.fillRect(0, 0, p.c.width, p.c.height); p.g.globalCompositeOperation = 'source-over'; }
+    }
+    const L = into(planeCanvas('land', 1, K0));
+    drawLand(V, season);
+    gradeLand(V, L.g, L.c);
+    world(); drawFireflies();
+    drawNight(V, L.g);
+    drawFront(V);
+    drawAfloat(V);
+  } finally { K = K0; ctx = mctx; }
+  return true;
+}
+
+/* ---------- GL: sheets as quads in space ---------- */
+const DIO_VS = 'attribute vec3 aP;attribute vec2 aT;uniform mat4 uM;varying vec2 vT;void main(){vT=aT;gl_Position=uM*vec4(aP,1.0);}';
+const DIO_FS = `precision mediump float;
+uniform sampler2D uTex;uniform vec4 uTint;uniform float uGrade,uLookV;varying vec2 vT;
+float lum(vec3 c){return dot(c,vec3(0.299,0.587,0.114));}
+vec3 grade(vec3 c){
+  float l=lum(c);
+  if(uLookV<0.5)return c;
+  if(uLookV<1.5)return mix(c,vec3(0.98,0.97,0.95),0.08);
+  if(uLookV<2.5){vec3 d=mix(vec3(0.06,0.09,0.15),vec3(0.24,0.36,0.56),smoothstep(0.0,0.75,l));d=mix(d,vec3(0.96,0.91,0.84),smoothstep(0.75,1.0,l));float w=clamp((c.r-c.b)*1.6,0.0,1.0)*smoothstep(0.35,0.8,l);return mix(d,vec3(0.98,0.72,0.28),w*0.8);}
+  if(uLookV<3.5){float r=clamp((c.r-max(c.g,c.b))*3.0-0.25,0.0,1.0);return mix(vec3(smoothstep(0.15,0.85,l)),vec3(0.78,0.12,0.12),r);}
+  if(uLookV<4.5){float b=l<0.22?0.16:l<0.5?0.4:l<0.78?0.68:0.92;return clamp(c*(b/max(l,0.03)),0.0,1.0);}
+  if(uLookV<5.5)return mix(c,vec3(0.97,0.88,0.86),0.1);
+  vec3 g=l<0.3?mix(vec3(0.018,0.05,0.042),vec3(0.04,0.15,0.12),l/0.3):l<0.6?mix(vec3(0.04,0.15,0.12),vec3(0.12,0.36,0.29),(l-0.3)/0.3):mix(vec3(0.12,0.36,0.29),vec3(0.37,0.95,0.72),clamp((l-0.6)/0.3,0.0,1.0));
+  return mix(g,vec3(1.0,0.71,0.54),clamp((c.r-c.b)*1.6,0.0,1.0)*smoothstep(0.42,0.85,l)*0.8);
+}
+void main(){vec4 c=texture2D(uTex,vT);c.rgb*=uTint.rgb;c.a*=uTint.a;if(uGrade>0.5)c.rgb=grade(c.rgb);gl_FragColor=c;}`;
+const M4 = {
+  mul(a, b) { const o = new Float32Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; } return o; },
+  persp(fy, asp, n, f) { const t = 1 / Math.tan(fy / 2), o = new Float32Array(16); o[0] = t / asp; o[5] = t; o[10] = (f + n) / (n - f); o[11] = -1; o[14] = 2 * f * n / (n - f); return o; },
+  look(e, c) {
+    let z = [e[0] - c[0], e[1] - c[1], e[2] - c[2]], zl = Math.hypot(...z); z = z.map(v => v / zl);
+    let x = [z[2], 0, -z[0]], xl = Math.hypot(...x); x = x.map(v => v / xl);
+    const y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]];
+    const d = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    return new Float32Array([x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -d(x, e), -d(y, e), -d(z, e), 1]);
+  },
+  tr(x, y, z) { const o = new Float32Array(16); o[0] = o[5] = o[10] = o[15] = 1; o[12] = x; o[13] = y; o[14] = z; return o; },
+  sc(s) { const o = new Float32Array(16); o[0] = o[5] = o[10] = s; o[15] = 1; return o; }
+};
+function dioInit() {
+  if (!POST.ok || DIO.prog) return !!DIO.prog;
+  const gl = POST.gl;
+  try {
+    const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+    const p = gl.createProgram();
+    gl.attachShader(p, sh(gl.VERTEX_SHADER, DIO_VS)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, DIO_FS));
+    gl.bindAttribLocation(p, 0, 'aP'); gl.bindAttribLocation(p, 1, 'aT');
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    const u = {}; for (const n of ['uM', 'uTex', 'uTint', 'uGrade', 'uLookV']) u[n] = gl.getUniformLocation(p, n);
+    DIO.prog = { p, u };
+    DIO.buf = gl.createBuffer();
+    DIO.white = glTex(gl, 1, 1);
+    gl.bindTexture(gl.TEXTURE_2D, DIO.white); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 255, 255, 255]));
+    return true;
+  } catch (e) { DIO.err = String(e); DIO.prog = null; return false; }
+}
+function uploadPlane(name, src) {
+  const gl = POST.gl;
+  let t = DIO.tex[name];
+  if (!t) t = DIO.tex[name] = glTex(gl);
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+  return t;
+}
+function waterStrip(V) {
+  // the floor's own colour: deep near the viewer, lighter toward the shore, with drifting creases
+  let c = DIO.waterC;
+  if (!c) { c = DIO.waterC = document.createElement('canvas'); c.width = 4; c.height = 64; }
+  const g = c.getContext('2d'), wc = waterColor(V);
+  g.clearRect(0, 0, 4, 64);
+  const gr = g.createLinearGradient(0, 0, 0, 64);
+  gr.addColorStop(0, css(mixRGB(wc, [255, 255, 255], 0.12), 0.5)); gr.addColorStop(1, css(mixRGB(wc, [0, 0, 0], 0.4), 0.88));
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 64);
+  for (let i = 0; i < 5; i++) { const y = ((i * 13 + G.time * 3) % 64); g.fillStyle = 'rgba(255,255,255,0.05)'; g.fillRect(0, y, 4, 1); }
+  return c;
+}
+function glQuad(M, pts, uv, tex, tint, vr) {
+  const gl = POST.gl, P = DIO.prog;
+  const d = new Float32Array(30);
+  const idx = [0, 1, 2, 0, 2, 3];
+  for (let i = 0; i < 6; i++) { const k = idx[i]; d.set([pts[k][0], pts[k][1], pts[k][2], uv[k][0], uv[k][1]], i * 5); }
+  gl.bindBuffer(gl.ARRAY_BUFFER, DIO.buf);
+  gl.bufferData(gl.ARRAY_BUFFER, d, gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 20, 0);
+  gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 20, 12);
+  gl.uniformMatrix4fv(P.u.uM, false, M);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(P.u.uTex, 0);
+  gl.uniform4f(P.u.uTint, tint[0], tint[1], tint[2], tint[3]);
+  gl.uniform1f(P.u.uGrade, vr ? 1 : 0); gl.uniform1f(P.u.uLookV, lookIndex());
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+// stand every sheet in space: scaled so that from the home viewpoint the picture matches the flat frame
+function drawDiorama(M, vr) {
+  const gl = POST.gl, V = valleyCfg(G.w.vi);
+  const D = DIO.D, yWL = H / 2 - WT, top = H / 2, wl = WT + 2;
+  gl.useProgram(DIO.prog.p);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  const order = ['sky', 'r0', 'r1', 'r2', 'r3', 'land'], tex = DIO.tex;
+  const sheet = (n, mirror) => {
+    const z = DEPTH[n] * H, over = 1 + (-DEPTH[n]) * 0.16, f = (D - z) / D * over;
+    // cut each sheet at the water so its foot never shows through the floor
+    const yCut = clamp(H / 2 - yWL / f, 0, wl), vCut = 1 - yCut / wl;
+    const X0 = -W / 2 * f, X1 = W / 2 * f, Yt = top * f, Yb = (H / 2 - yCut) * f;
+    const y = Y => mirror ? 2 * yWL - Y : Y;
+    const shade = mirror ? [0.62, 0.66, 0.74, 0.92] : [1, 1, 1, 1];
+    glQuad(M, [[X0, y(Yt), z], [X1, y(Yt), z], [X1, y(Yb), z], [X0, y(Yb), z]], [[0, 1], [1, 1], [1, vCut], [0, vCut]], tex[n], shade, vr);
+  };
+  for (const n of order) sheet(n, true);
+  // the floor
+  const zf = DEPTH.sky * H, zn = D * 0.62, fs = (D - zf) / D * 1.3;
+  const wt = DIO.tex.water;
+  const nw = vr ? W * 0.56 : W * 0.9;
+  glQuad(M, [[-W / 2 * fs, yWL, zf], [W / 2 * fs, yWL, zf], [nw, yWL, zn], [-nw, yWL, zn]], [[0, 1], [1, 1], [1, 0], [0, 0]], wt, [1, 1, 1, 1], vr);
+  for (const n of order) sheet(n, false);
+  gl.disable(gl.BLEND);
+}
+
+function dioUpload() {
+  // once per frame, however many eyes there are
+  for (const n of ['sky', 'r0', 'r1', 'r2', 'r3', 'land']) uploadPlane(n, PLANES[n].c);
+  uploadPlane('water', waterStrip(valleyCfg(G.w.vi)));
+}
+
+/* ---------- on a screen ---------- */
+function dioResize() {
+  if (!DIO.prog) return;
+  const gl = POST.gl;
+  if (DIO.fw === DW && DIO.fh === DH && DIO.fbo) return;
+  if (DIO.ftex) { gl.deleteTexture(DIO.ftex); gl.deleteFramebuffer(DIO.fbo); }
+  DIO.ftex = glTex(gl, DW, DH); DIO.fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, DIO.fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, DIO.ftex, 0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  DIO.fw = DW; DIO.fh = DH;
+}
+addEventListener('pointermove', e => { DIO.px = e.clientX / innerWidth - 0.5; DIO.py = e.clientY / innerHeight - 0.5; }, { passive: true });
+function dioRender() {
+  if (!G.w || !renderPlanes()) { render(); return; }
+  dioResize();
+  const gl = POST.gl, fov = 40 * Math.PI / 180;
+  DIO.D = (H / 2) / Math.tan(fov / 2);
+  const pad = activePad(), rx = pad ? pad.axes[2] || 0 : 0, ry = pad ? pad.axes[3] || 0 : 0;
+  const tx = (Math.abs(rx) > 0.15 ? rx : DIO.px * 2), ty = (Math.abs(ry) > 0.15 ? ry : DIO.py * 2);
+  const k = 1 - Math.exp(-1 / 60 * 3);
+  DIO.peekX = lerp(DIO.peekX, tx, k); DIO.peekY = lerp(DIO.peekY, ty, k);
+  const z = CINE.zoom, zx = (CINE.zx - 0.5) * W * (1 - 1 / z);
+  const eye = [DIO.peekX * W * 0.09 + zx, -DIO.peekY * H * 0.07 + H * 0.02, DIO.D / z], ctr = [zx, -H * 0.02, 0];
+  const M = M4.mul(M4.persp(fov, W / H, H * 0.05, H * 12), M4.look(eye, ctr));
+  dioUpload();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, DIO.fbo); gl.viewport(0, 0, DW, DH);
+  const [sa] = skyPair(valleyCfg(G.w.vi));
+  gl.clearColor(sa[0] / 255, sa[1] / 255, sa[2] / 255, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+  drawDiorama(M, false);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  const V = valleyCfg(G.w.vi), ls = lensSun(V);
+  postFrame({ tex: DIO.ftex, water: 2, ground: WT / H, day: LIGHT, rain: G.w.rain ? 1 : 0, sun: ls.sun, sunCol: ls.sc, waterCol: waterColor(V).map(x => x / 255), haze: skyPair(V)[1].map(x => x / 255), zoom: 1, zc: [0.5, 0.6] });
+  lookFrame();
+}
+function setDio(on) {
+  if (on && !dioInit()) { banner('Diorama needs WebGL', 'This browser draws the flat valley only.'); on = false; }
+  DIO.on = !!on;
+  G.meta.settings.dio = DIO.on; saveJSON(META_KEY, G.meta);
+  const el = document.getElementById('optDio'); if (el) el.checked = DIO.on;
+  document.body.classList.toggle('dio', DIO.on);
+  if (G.state === 'play') say(DIO.on ? 'Diorama' : 'Flat valley', DIO.on ? 'Move the mouse or the right stick to look around the sheets.' : '');
+}
+
+/* ---------- in a headset ---------- */
+async function xrCheck() {
+  try { XR.supported = !!(navigator.xr && await navigator.xr.isSessionSupported('immersive-vr')); } catch (e) { XR.supported = false; }
+  for (const id of ['bVR', 'bVRT']) { const el = document.getElementById(id); if (el) el.hidden = !XR.supported || !POST.ok; }
+}
+async function enterVR() {
+  if (XR.session || !POST.ok || !dioInit()) return;
+  try {
+    auInit();
+    if (G.state !== 'play') startPlay(false);
+    const gl = POST.gl;
+    if (gl.makeXRCompatible) await gl.makeXRCompatible();
+    const s = await navigator.xr.requestSession('immersive-vr', { optionalFeatures: ['local-floor'] });
+    XR.session = s;
+    s.updateRenderState({ baseLayer: new XRWebGLLayer(s, gl, { antialias: true }) });
+    try { XR.ref = await s.requestReferenceSpace('local-floor'); XR.floor = true; } catch (e) { XR.ref = await s.requestReferenceSpace('local'); XR.floor = false; }
+    s.addEventListener('end', () => { XR.session = null; XR.ctl = null; last = performance.now(); requestAnimationFrame(frame); });
+    XR.last = 0;
+    s.requestAnimationFrame(xrFrame);
+  } catch (e) { XR.session = null; banner('Could not start VR', String(e.message || e)); }
+}
+function xrInput(s) {
+  let dir = 0, gallop = false, pay = false;
+  const now = [];
+  for (const src of s.inputSources) {
+    const gp = src.gamepad; if (!gp) continue;
+    const ax = gp.axes.length > 2 ? gp.axes[2] : gp.axes[0] || 0;
+    if (Math.abs(ax) > 0.3) dir = Math.sign(ax);
+    if (Math.abs(ax) > 0.92 || (gp.buttons[1] && gp.buttons[1].pressed)) gallop = true;
+    if (gp.buttons[0] && gp.buttons[0].pressed) pay = true;
+    now.push(!!(gp.buttons[4] && gp.buttons[4].pressed), !!(gp.buttons[5] && gp.buttons[5].pressed));
+  }
+  // A or X: lean back. B or Y: the next look.
+  if (now[0] && !XR.prev[0] || now[2] && !XR.prev[2]) setAuto(!G.w.m.auto, true);
+  if (now[1] && !XR.prev[1] || now[3] && !XR.prev[3]) cycleLook(1);
+  XR.prev = now;
+  if (dir && G.w.m.auto) setAuto(false, true);
+  XR.ctl = { dir, gallop, pay };
+}
+function xrHud() {
+  // the HUD, painted on a small sheet that floats below the valley
+  let c = XR.hudC;
+  if (!c) { c = XR.hudC = document.createElement('canvas'); c.width = 1024; c.height = 160; }
+  if (G.time - XR.hudT < 0.25) return c;
+  XR.hudT = G.time;
+  const g = c.getContext('2d'), w = G.w;
+  g.clearRect(0, 0, 1024, 160);
+  g.fillStyle = 'rgba(16,10,20,0.72)'; g.fillRect(0, 0, 1024, 160);
+  g.fillStyle = '#f4e8d6'; g.font = '44px "IM Fell English", Georgia, serif'; g.textBaseline = 'top';
+  g.fillText(`Day ${w.day} · ${SEASONS[seasonOf(w.day)]} · ${valleyCfg(w.vi).name}`, 28, 18);
+  g.fillStyle = '#e9b44c'; g.fillText(`${w.m.coins} coins${w.m.auto ? ' · leaning back' : ''}`, 28, 86);
+  const s = G.near, info = s && !w.sailing ? siteInfo(s) : null;
+  if (info && (info.cost || info.line)) { g.fillStyle = '#f4e8d6'; g.font = '34px "IM Fell English", Georgia, serif'; g.textAlign = 'right'; g.fillText(info.title + (info.cost ? ` · ${info.cost} coins` : ''), 1000, 24); g.textAlign = 'left'; }
+  return c;
+}
+function xrFrame(t, xf) {
+  const s = XR.session;
+  if (!s) return;
+  s.requestAnimationFrame(xrFrame);
+  xrInput(s);
+  tick(t);
+  if (!renderPlanes()) return;
+  const pose = xf.getViewerPose(XR.ref);
+  if (!pose) return;
+  const gl = POST.gl, layer = s.renderState.baseLayer;
+  DIO.D = (H / 2) / Math.tan(20 * Math.PI / 180);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, layer.framebuffer);
+  gl.clearColor(0.05, 0.04, 0.07, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+  // the valley stands three metres wide, its horizon at eye height, a little over two metres away
+  // the home viewpoint of the diorama sits where your head is; the horizon a little below eye height
+  const sc = 3.2 / W, eyeY = XR.floor ? 1.55 : 0;
+  const MODEL = M4.mul(M4.tr(0, eyeY - 0.18 - (H / 2 - GY) * sc, -DIO.D * sc), M4.sc(sc));
+  dioUpload();
+  const hud = xrHud();
+  for (const view of pose.views) {
+    const vp = layer.getViewport(view);
+    gl.viewport(vp.x, vp.y, vp.width, vp.height);
+    const M = M4.mul(view.projectionMatrix, M4.mul(view.transform.inverse.matrix, MODEL));
+    drawDiorama(M, true);
+    gl.useProgram(DIO.prog.p); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    const ht = uploadPlane('hud', hud), y0 = H / 2 - WT - 6, hw = W * 0.32;
+    glQuad(M, [[-hw, y0, DIO.D * 0.45], [hw, y0, DIO.D * 0.45], [hw, y0 - hw * 0.156, DIO.D * 0.45], [-hw, y0 - hw * 0.156, DIO.D * 0.45]], [[0, 1], [1, 1], [1, 0], [0, 0]], ht, [1, 1, 1, 1], false);
+    gl.disable(gl.BLEND);
+  }
 }
 
 /* Reignfawn: the looks. Each look is its own world, not a filter laid over one: its own sky and sun, its own frame,
@@ -3785,6 +4122,7 @@ addEventListener('keydown', e => {
   if (!e.repeat) {
     if (isLeft(e.code)) tapDir(-1);
     if (isRight(e.code)) tapDir(1);
+    if (e.code === 'KeyB' && G.w && (G.state === 'play' || G.photo)) setDio(!DIO.on);
     if (G.photo) { if (e.code === 'Escape' || e.code === 'KeyC') setPhoto(false); else if (e.code === 'Enter') snapPhoto(); else if (e.code === 'KeyV') cycleLook(e.shiftKey ? -1 : 1); KEYS.add(e.code); return; }
     if (e.code === 'KeyC' && G.state === 'play' && !G.paused) { setPhoto(true); return; }
     if (e.code === 'Escape' || e.code === 'KeyP') { if (G.state === 'play') togglePause(); else if (!$('ledger').hidden) closeLedger(); }
@@ -3836,8 +4174,9 @@ function readControls() {
   if ([...KEYS].some(isRight) || TOUCH.r) dir += 1;
   if (!dir) dir = PAD.dir;
   const gallop = KEYS.has('ShiftLeft') || KEYS.has('ShiftRight') || (LATCH !== 0 && LATCH === dir) || PAD.gallop;
-  const pay = [...KEYS].some(isPay) || TOUCH.pay || PAD.pay;
-  return { dir, gallop, pay };
+  const pay = [...KEYS].some(isPay) || TOUCH.pay || PAD.pay || !!(XR.ctl && XR.ctl.pay);
+  if (!dir && XR.ctl) dir = XR.ctl.dir;
+  return { dir, gallop: gallop || !!(XR.ctl && XR.ctl.gallop), pay };
 }
 
 /* ---------- HUD bits ---------- */
@@ -3978,7 +4317,7 @@ function syncSettingsUI() {
   $('optCycle').value = String(s.cycle);
   $('optMusic').value = s.music; $('optSfx').value = s.sfx;
   syncLooks();
-  $('optCinema').checked = s.cinema !== false; $('optRumble').checked = s.rumble !== false;
+  $('optDio').checked = DIO.on; $('optCinema').checked = s.cinema !== false; $('optRumble').checked = s.rumble !== false;
   $('optTuning').value = s.tuning; $('optReduce').checked = !!s.reduce; $('optHud').checked = !!s.hud; $('optSail').checked = !!s.autoSail;
   $('bSound').setAttribute('aria-pressed', String(s.music + s.sfx > 0 && !G.muted));
 }
@@ -3995,6 +4334,9 @@ bindSetting('optCinema', 'cinema'); bindSetting('optRumble', 'rumble');
 bindSetting('optTuning', 'tuning'); bindSetting('optReduce', 'reduce'); bindSetting('optHud', 'hud'); bindSetting('optSail', 'autoSail');
 for (const id of ['optMusic', 'optSfx']) $(id).addEventListener('input', e => { G.meta.settings[id === 'optMusic' ? 'music' : 'sfx'] = Number(e.target.value); G.muted = false; auVolumes(); });
 $('optAuto').addEventListener('change', e => setAuto(e.target.checked));
+$('optDio').addEventListener('change', e => setDio(e.target.checked));
+$('bVR').onclick = () => { if (G.paused) togglePause(); enterVR(); };
+$('bVRT').onclick = () => enterVR();
 
 /* ---------- looks: one valley, many faces ---------- */
 function availableLooks() { return LOOKS; }
@@ -4169,10 +4511,10 @@ function adapt(raw) {
   else if (perfEMA < 0.0175 && s < 1) { G.renderScale = Math.min(1, s * 1.12); resize(); perfT = 0; }
   else if (perfT > 6) perfT = 3;
 }
-function frame(now) {
+function tick(now) {
   const raw = Math.max(0, (now - last) / 1000), dt = Math.min(0.05, raw);
   last = now;
-  adapt(raw);
+  if (!XR.session) adapt(raw);
   G.time += dt;
   pollPad(dt);
   if (G.w) {
@@ -4191,9 +4533,13 @@ function frame(now) {
     if (G.w) { ambient(dt); updateCamera(dt); photoStep(dt); if (G.state !== 'play') updateParts(dt); }
     chronClock += dt; if (chronClock > 0.4) { chronClock = 0; renderChron(); }
   }
-  render();
   updateHUD();
   auTick();
+}
+function frame(now) {
+  if (XR.session) return;
+  tick(now);
+  if (DIO.on && G.w) dioRender(); else render();
   requestAnimationFrame(frame);
 }
 document.addEventListener('visibilitychange', () => {
@@ -4222,6 +4568,8 @@ function boot(hot) {
   makeGrain();
   resize();
   postInit();
+  if (G.meta.settings.dio && dioInit()) { DIO.on = true; document.body.classList.add('dio'); }
+  xrCheck();
   if (!availableLooks().some(l => l.id === G.meta.settings.look)) G.meta.settings.look = 'origami';
   buildLooks();
   const saved = hot && hot.w ? hot.w : loadJSON(SAVE_KEY);
@@ -4233,7 +4581,7 @@ function boot(hot) {
   try { if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') window.claude.hot.snapshot(() => ({ w: G.w, state: G.state })); } catch (e) { /* not in a viewer */ }
   setInterval(() => { try { const pt = matchMedia('(orientation: portrait)').matches; $('rotate').classList.toggle('show', pt && G.state === 'play'); } catch (e) { /* ignore */ } }, 1500);
   requestAnimationFrame(t => { last = t; frame(t); });
-  window.__rf = { G, update, render, startPlay, setAuto, siteCost, siteInfo, newValley, setLook, POST, LOOKS, indexSites, mkUnit, setPhoto, CINE, offlineWork, awayText, CHRON };
+  window.__rf = { G, update, render, startPlay, setAuto, siteCost, siteInfo, newValley, setLook, POST, LOOKS, indexSites, mkUnit, setPhoto, CINE, offlineWork, awayText, CHRON, setDio, DIO, renderPlanes, PLANES };
 }
 (function start() {
   const hot = window.claude && window.claude.hot;
