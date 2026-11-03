@@ -2,7 +2,16 @@
 
 A Kingdom-style idle side-scroller in the Saelion world. You ride a fawn along a lantern valley, drop coins to raise a hearth, a hall, a keep and a castle, recruit wanderers, arm them with tools, and keep the crown through the night. The valley keeps earning while you are away.
 
-**Play:** https://stevoblevo.github.io/reignfawn/
+**Play the latest:** https://stevoblevo.github.io/reignfawn/
+
+Every version keeps its own address:
+
+| Version | Address | Look |
+| --- | --- | --- |
+| v2 | https://stevoblevo.github.io/reignfawn/v2/ | Folded from paper: origami creatures, cut-paper mountains, full-resolution vector |
+| v1 | https://stevoblevo.github.io/reignfawn/v1/ | The first build, pixel art |
+
+All versions share one save on this site, so a kingdom started in v1 carries into v2.
 
 ## What is in v1
 
@@ -22,6 +31,8 @@ A Kingdom-style idle side-scroller in the Saelion world. You ride a fawn along a
 ## Source
 
 `index.html` is the whole game (no build step at runtime). The painted plates live in `art/`.
+
+`reignfawn-source.bundle` is the full git history of the source (split files, build script, changelog), tags `v1.0` and `v2.0`. Restore it with `git clone reignfawn-source.bundle reignfawn`. It stands in until the game has its own repository.
 
 ## Toward Steam ($25.99, best at the $5.99 sale)
 
