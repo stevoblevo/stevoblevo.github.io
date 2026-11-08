@@ -1,0 +1,58 @@
+name: everfallen
+# Every Everfallen build keeps its own address. This refuses edits to a published
+# everfallen/vN/, checks every file against versions.json, and plays each build headless.
+on:
+  push: { paths: ['everfallen/**', '.github/workflows/everfallen.yml'] }
+  pull_request: { paths: ['everfallen/**'] }
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Published versions are immutable
+        run: |
+          BASE="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then BASE=HEAD~1; fi
+          git fetch --depth=1 origin "$BASE" 2>/dev/null || true
+          CHANGED=$(git diff --name-only --diff-filter=MD "$BASE" HEAD -- 'everfallen/v[0-9]*/' 2>/dev/null || true)
+          if [ -n "$CHANGED" ]; then echo "$CHANGED"; echo "A published Everfallen version was changed or deleted. Add a new version instead."; exit 1; fi
+      - name: Files match versions.json
+        run: |
+          python3 - <<'PY'
+          import json,hashlib,os,sys
+          d=json.load(open('everfallen/versions.json')); bad=[]
+          for v in d['versions']:
+              for p,h in v['files'].items():
+                  f='everfallen/'+p
+                  if not os.path.exists(f) or hashlib.sha256(open(f,'rb').read()).hexdigest()!=h: bad.append(f)
+          print('\n'.join(bad) or 'all files match'); sys.exit(1 if bad else 0)
+          PY
+      - name: Scripts parse
+        run: |
+          for f in everfallen/v[0-9]*/index.html; do
+            python3 -c "import re,sys;open('/tmp/a.js','w').write(re.search(r'<script>(.*?)</script>',open(sys.argv[1]).read(),re.S).group(1))" "$f"
+            node --check /tmp/a.js && node --check "$(dirname $f)/sw.js" && echo "ok $f"
+          done
+      - name: Play every build headless at three shapes
+        run: |
+          npm i --no-save playwright@1
+          npx playwright install --with-deps chromium
+          (python3 -m http.server 8765 >/dev/null 2>&1 &) ; sleep 1
+          cat > smoke.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+          const vs = JSON.parse(fs.readFileSync('everfallen/versions.json')).versions.map(v => v.id);
+          const b = await chromium.launch(); const errs = [];
+          for (const v of vs) for (const vp of [{width:1440,height:900},{width:1024,height:768},{width:450,height:720}]) {
+            const p = await b.newPage({ viewport: vp }); p.on('pageerror', e => errs.push(v + ' ' + e));
+            await p.goto(`http://localhost:8765/everfallen/${v}/`);
+            await p.click('#play'); await p.keyboard.press('r'); await p.waitForTimeout(1200);
+            await p.evaluate('__ef.skip()'); await p.waitForTimeout(600); await p.evaluate('__ef.end()'); await p.waitForTimeout(400);
+            await p.close();
+          }
+          await b.close(); if (errs.length) { console.error(errs.join('\n')); process.exit(1); } console.log('played', vs.join(', '));
+          JS
+          node smoke.mjs

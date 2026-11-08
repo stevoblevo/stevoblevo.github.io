@@ -1,0 +1,42 @@
+{
+ "game": "Everfallen",
+ "latest": "/everfallen/v5/",
+ "index": "/everfallen/versions/",
+ "versions": [
+  {
+   "id": "v5",
+   "short": "Everfallen v5",
+   "name": "Everfallen v5 · weather and a workbench",
+   "date": "2026-11-02",
+   "line": "Every ground has its own air, a drone that changes key, constellations from your stars, shareable seeds, and a workbench for developers (` or ?dev=1).",
+   "path": "/everfallen/v5/",
+   "latest": true,
+   "artifact": "https://claude.ai/artifact/VEkkpVGn1JuYBUaPS1H4We",
+   "sha256": "9ecc824183ed98b0e4a77053246cf75e48861719aa3228dd21895eb1f983e363",
+   "files": {
+    "v5/icon-192.png": "59fae58c75c71f6eabb399868c26b4e5bd6e17a8e72b5818de74df75980df96c",
+    "v5/icon-512.png": "3c7146967d13743630a435f24174258baa601a7aabbc56367dfd5bdd235145c9",
+    "v5/index.html": "9ecc824183ed98b0e4a77053246cf75e48861719aa3228dd21895eb1f983e363",
+    "v5/manifest.webmanifest": "1fa71afb44ba94df3e862a67d7e28a57fcc216619435adbc2c01d8070d21020e",
+    "v5/sw.js": "d5efdf01ebadae01042518d20de16eefeb77bdf3b98393f214c150f3cd8f1eae"
+   }
+  },
+  {
+   "id": "v4",
+   "short": "Everfallen v4",
+   "name": "Everfallen v4 · strata and four ways to fall",
+   "date": "2026-11-02",
+   "line": "The strata title, checkpoints, a melody in your catches, grazes and bloom chains, the roll, doll knits, and Drift, Daily fall, Night shift and Expedition.",
+   "path": "/everfallen/v4/",
+   "artifact": "https://claude.ai/artifact/9p2L2k4jdSLVydAce5JmgQ",
+   "sha256": "7692d2e0f3ea0b3fffbdc8623c60dfc13e5e3456f6daf23da1006bbecb2c205c",
+   "files": {
+    "v4/icon-192.png": "59fae58c75c71f6eabb399868c26b4e5bd6e17a8e72b5818de74df75980df96c",
+    "v4/icon-512.png": "3c7146967d13743630a435f24174258baa601a7aabbc56367dfd5bdd235145c9",
+    "v4/index.html": "7692d2e0f3ea0b3fffbdc8623c60dfc13e5e3456f6daf23da1006bbecb2c205c",
+    "v4/manifest.webmanifest": "1fa71afb44ba94df3e862a67d7e28a57fcc216619435adbc2c01d8070d21020e",
+    "v4/sw.js": "93139d3955d4030c885e08b4d2a2e2a19657188cb4dfbbe6fe1b455a0ce0e9a8"
+   }
+  }
+ ]
+}
