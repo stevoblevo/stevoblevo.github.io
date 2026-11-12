@@ -522,6 +522,7 @@ body { margin: 0; background: var(--shelf-bg); color: var(--shelf-ink) }
 }
 @media (prefers-reduced-motion: reduce) { .cv { transition: none } }
 </style>
+<script type="module" src="/sae-voice.js?shim=1&v=1.1.0"></script><!-- sae-voice 1.1.0: best device voice or captions only; previous page: index.prev-20261030.html -->
 </head>
 <body>
 <div class="shelf" data-sb="daylight">
@@ -704,7 +705,7 @@ body { margin: 0; background: var(--shelf-bg); color: var(--shelf-ink) }
 
   /* ---------- read aloud: Irish English first, word by word ---------- */
   var SY = w.speechSynthesis || null;
-  var IRISH_NAMES = /moira|orla|emily.*ireland|connor.*ireland|ireland|irish/i;
+  var IRISH_NAMES = /orla|emily.*ireland|connor.*ireland|ireland|irish/i;
   var read = {
     supported: !!(SY && w.SpeechSynthesisUtterance), state: 'idle', voice: null, rate: 0.96, pitch: 1.05, _q: null, _el: null, _words: [], _chunks: [], _i: 0, _timer: 0, _boundary: false,
     voices: function () {
