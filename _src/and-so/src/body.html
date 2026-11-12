@@ -50,6 +50,7 @@
   <button class="ctl" id="bFrol" title="F">lean mood</button>
   <button class="ctl" id="bArtic" title="D">notes</button>
   <button class="ctl hidden" id="bRep" title="T">↺ 10s</button>
+  <button class="ctl" id="bBoard" title="S">✦ board</button>
   <button class="ctl" id="bGam" title="G">gamut</button>
   <button class="ctl" id="bAuto" title="A">saedo: on</button>
   <button class="ctl" id="bSnd" title="M">sound: on</button>
@@ -142,6 +143,10 @@
     <div class="btns"><button class="pill" id="gVersions">every version</button></div>
     <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 8.1 and 8 are still there, and so are 7, 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
 
+    <div class="sec">as an app</div>
+    <div class="btns"><button class="pill hidden" id="gInstall">install AND SO</button></div>
+    <div class="note" id="gInstallNote">at stevoblevo.github.io/and-so, AND SO installs like an app and opens without a connection.</div>
+
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
     <div class="note">light: consonance first; voices glide from one sweet spot to the next. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
@@ -181,6 +186,10 @@
     <div class="sec">rounds</div>
     <div class="btns"><button class="pill on" id="gRound">▶ play a round</button></div>
     <div class="note" id="gStats">cover every target peg with a voice at rest. under 12 seconds earns three stars. every third round is by ear.</div>
+
+    <div class="sec">the board</div>
+    <div class="btns"><button class="pill" id="gBoard">open the board</button></div>
+    <div class="note" id="gBoardNote">put a name next to your resonance and see who's ahead. no password: this browser keeps a key that signs for you, or a Solana wallet signs instead. S opens it too, and so does the ✦ score on a phone's top bar.</div>
 
     <div class="sec">field guide</div>
     <div class="prog"><span id="gProg">0 / 0</span><span class="pbar2"><i id="gBar"></i></span></div>
@@ -369,6 +378,41 @@
     <p class="vs-lede" id="vsLede"></p>
     <ol class="vs-list" id="vsList"></ol>
     <p class="vs-foot"><a id="vsAll" href="https://stevoblevo.github.io/and-so/versions/" target="_blank" rel="noopener">all versions, with notes</a></p>
+  </div>
+</div>
+
+<div id="board" class="sbi" role="dialog" aria-modal="true" aria-labelledby="bdTitle" aria-hidden="true">
+  <div class="vs-sheet bd-sheet">
+    <div class="ln-head"><h2 id="bdTitle">The board</h2><button class="bm-x" id="boardClose" aria-label="close the board">×</button></div>
+    <div id="bdGuest">
+      <p class="vs-lede">Put a name next to your resonance. This browser makes a key that signs for you, so there's no password to remember.</p>
+      <form class="bd-form" id="bdForm" autocomplete="off">
+        <input class="txt" id="bdName" maxlength="20" autocomplete="nickname" spellcheck="false" placeholder="a name for the board" aria-label="a name for the board">
+        <button class="bd-b bd-main" type="submit">sign in</button>
+        <button class="bd-b hidden" type="button" id="bdWallet">sign in with a wallet</button>
+      </form>
+      <p class="bd-note">2 to 20 letters or numbers. Clearing this browser's data loses its key, and the name goes with it.</p>
+      <p class="bd-note hidden" id="bdWalletNote">A wallet keeps the same name on every device. It only signs a line of text; nothing is sent from it.</p>
+    </div>
+    <div id="bdSigned" class="hidden">
+      <p class="bd-me"><b id="bdMe"></b><span id="bdRank"></span></p>
+      <p class="bd-note" id="bdMeKey"></p>
+      <p class="bd-now" id="bdNow"></p>
+      <div class="bd-acts"><button class="bd-b bd-main" id="bdSign">sign my score</button><button class="bd-b" id="bdOutBtn">sign out</button></div>
+    </div>
+    <p class="bd-msg" id="bdMsg" role="status" aria-live="polite"></p>
+    <p class="bd-note hidden" id="bdPending">A signed score is waiting here. It goes out as soon as the board can be reached.</p>
+    <div id="bdBoardPart" class="hidden">
+      <ol class="bd-list" id="bdList" aria-label="the board, most resonance first"></ol>
+      <details class="bd-radio">
+        <summary>carry it by radio</summary>
+        <p>No internet where you are? Copy your signed score and send it as a message to an AND SO relay on Reticulum, from Sideband or any LXMF app, over LoRa or whatever else Reticulum runs on. The relay posts it and answers with your rank. Nobody along the way can change it.</p>
+        <div class="bd-acts"><button class="bd-b" id="bdCopy">copy the signed score</button><a class="bd-b" id="bdRelay" target="_blank" rel="noopener">run a relay</a></div>
+        <textarea class="txt hidden" id="bdRadioText" rows="4" readonly aria-label="your signed score"></textarea>
+      </details>
+      <button class="reset" id="bdLeave">take me off the board</button>
+    </div>
+    <p class="bd-note hidden" id="bdVolatile">This browser won't keep the key after this visit, so the name won't come back with you.</p>
   </div>
 </div>
 

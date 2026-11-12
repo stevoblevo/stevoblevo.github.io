@@ -381,6 +381,7 @@ window.addEventListener('keydown', e => {
   else if (k === 'd') setArtic(SET.artic === 'pluck' ? 'drone' : 'pluck');
   else if (k === 'c') ($('brookMap').classList.contains('on') ? closeBrook() : openBrook());
   else if (k === 'e') cycleLook();
+  else if (k === 's' && MIR.depth === 0) boardOpen();
   else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); if ($('story').classList.contains('on')) closeStory(); }
 });
 
@@ -398,7 +399,7 @@ function toggleRec() {
 const on = (id, fn) => $(id).addEventListener('click', e => { if (!tapOk()) return; fn(e); });
 on('tMode', cycleMode);
 on('tQuest', () => { questsPinned = !questsPinned; if (questsPinned && !QUIET()) $('quests').classList.add('on'); else questsHide(); });
-on('tScore', () => caption(`resonance ${GAME.score.toLocaleString()} · ${GAME.rounds} rounds · ${GAME.stars} stars · best combo ×${GAME.best}`, 3200));
+on('tScore', () => { if (MIR.depth === 0) boardOpen(); else caption(`resonance ${GAME.score.toLocaleString()} · ${GAME.rounds} rounds · ${GAME.stars} stars · best combo ×${GAME.best}`, 3200); });   // the score opens the board (z-board.js)
 on('tSound', toggleMute);
 on('qHide', () => { questsPinned = false; questsHide(); });
 on('bLean', () => { lean(1); userIdleUntil = t + 10; });

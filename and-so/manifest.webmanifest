@@ -1,0 +1,18 @@
+{
+  "id": "/and-so/",
+  "name": "AND SO",
+  "short_name": "AND SO",
+  "description": "A microtonal instrument and game: voices roll into the valleys where notes agree.",
+  "start_url": "/and-so/",
+  "scope": "/and-so/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f6f2",
+  "theme_color": "#f4f6f2",
+  "categories": ["music", "games", "education"],
+  "icons": [
+    { "src": "/and-so/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/and-so/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/and-so/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

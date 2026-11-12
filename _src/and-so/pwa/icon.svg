@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- AND SO's mark: a voice at rest in the bottom of a valley, on Meta Daylight paper, with two more voices on the
+       way down. The art stays inside the middle 80% so the same drawing works as a maskable icon. -->
+  <rect width="512" height="512" fill="#f4f6f2"/>
+  <path d="M70 214 C 160 214, 178 344, 256 344 S 352 214, 442 214" fill="none" stroke="#26323f" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="256" cy="278" r="56" fill="#e7b23a" stroke="#26323f" stroke-width="12"/>
+  <circle cx="238" cy="260" r="13" fill="#ffffff" opacity=".75"/>
+  <circle cx="132" cy="196" r="17" fill="#b8325f" stroke="#26323f" stroke-width="8"/>
+  <circle cx="386" cy="200" r="13" fill="#2a6a9c" stroke="#26323f" stroke-width="8"/>
+</svg>

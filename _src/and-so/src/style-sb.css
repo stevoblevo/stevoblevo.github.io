@@ -312,6 +312,44 @@ html[data-sb="inkblot"] .jk[data-role="chord"] { background: #000; color: #fff }
 .vs-foot a { color: var(--link) }
 @media (max-width: 560px) { .vs-item { grid-template-columns: 1fr } .vs-go { grid-column: 1; grid-row: auto; flex-direction: row; flex-wrap: wrap } }
 
+/* ---------- the board: names, signed scores, who's ahead ---------- */
+#board { position: fixed; inset: 0; z-index: 46; display: none; padding: 16px; overflow: auto; background: var(--scrim) }
+#board.on { display: block }
+.bd-form { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 .5em }
+#board .txt { flex: 1 1 12em; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: 400 clamp(15px, .4vw + 12px, 22px)/1.2 var(--sb-ui) }
+#board .txt:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 2px; border-color: var(--ink) }
+#board textarea.txt { display: block; width: 100%; margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-md); font: 400 12px/1.4 ui-monospace, monospace; resize: vertical; overflow-wrap: anywhere }
+.bd-b { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--ink); background: var(--page); color: var(--ink); font: 700 clamp(13px, .3vw + 11px, 20px)/1 var(--sb-ui); text-decoration: none; cursor: pointer; white-space: nowrap }
+.bd-b:hover { background: var(--cue-soft) }
+.bd-b:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px }
+.bd-b:disabled { opacity: .55; cursor: progress }
+.bd-main { background: var(--ink); color: var(--page) }
+.bd-main:hover { background: var(--ink); color: var(--page); box-shadow: 0 0 0 3px var(--cue-soft) }
+.bd-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: .7em 0 0 }
+.bd-me { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 }
+.bd-me b { font: var(--sb-display-weight) clamp(24px, 1.2vw + 15px, 48px)/1.05 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth); overflow-wrap: anywhere }
+.bd-me span { font: 700 clamp(15px, .4vw + 12px, 24px)/1.2 var(--sb-ui); color: var(--accent) }
+.bd-now { margin: .5em 0 0; font: 400 clamp(15px, .4vw + 11px, 22px)/1.4 var(--sb-story) }
+.bd-msg { min-height: 1.45em; margin: .7em 0 0; font: 400 clamp(14px, .3vw + 11px, 20px)/1.45 var(--sb-story); color: var(--ink) }
+.bd-msg.bad { color: var(--danger, var(--ink)); font-weight: 600 }
+.bd-note { margin: .45em 0 0; font: 400 clamp(13px, .25vw + 11px, 18px)/1.45 var(--sb-ui); color: var(--ink-muted) }
+.bd-list { list-style: none; margin: 1.1em 0 0; padding: 0; display: grid; gap: 6px }
+.bd-list:empty { display: none }
+.bd-row { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 0 12px; align-items: baseline; padding: 10px 16px; border-radius: var(--radius-md); background: var(--surface); border: 2px solid transparent }
+.bd-row[aria-current] { border-color: var(--accent); background: var(--accent-soft) }
+.bd-rank { font: 700 clamp(14px, .3vw + 11px, 20px)/1.2 var(--sb-ui); font-variant-numeric: tabular-nums; color: var(--ink-muted) }
+.bd-name { min-width: 0; font: var(--sb-display-weight) clamp(17px, .5vw + 13px, 28px)/1.15 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth); overflow-wrap: anywhere }
+.bd-name i { font: 700 .5em/1 var(--sb-ui); font-style: normal; margin-left: .6em; padding: .25em .6em; border-radius: 999px; background: var(--page); color: var(--cue); vertical-align: middle }
+.bd-score { font: 700 clamp(16px, .45vw + 12px, 26px)/1.15 var(--sb-ui); font-variant-numeric: tabular-nums; text-align: right }
+.bd-sub { grid-column: 2 / span 2; font: 400 clamp(12px, .25vw + 10px, 17px)/1.35 var(--sb-ui); color: var(--ink-muted) }
+.bd-gap { text-align: center; color: var(--ink-muted); line-height: 1 }
+.bd-radio { margin: 1.3em 0 0; padding: 12px 16px; border-radius: var(--radius-md); border: 2px dashed var(--line) }
+.bd-radio summary { cursor: pointer; font: 700 clamp(14px, .3vw + 11px, 20px)/1.3 var(--sb-ui) }
+.bd-radio summary:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px; border-radius: 4px }
+.bd-radio p { margin: .6em 0 0; font: 400 clamp(14px, .3vw + 11px, 19px)/1.5 var(--sb-story) }
+#board .reset { display: block; margin-top: 1.1em; color: var(--ink-muted); font: 400 clamp(12px, .25vw + 10px, 16px)/1.3 var(--sb-ui) }
+@media (max-width: 560px) { .bd-row { grid-template-columns: 2em 1fr auto; padding: 9px 12px } .bd-acts .bd-b { flex: 1 1 auto } }
+
 /* ---------- the mirror ---------- */
 #mirror { position: fixed; inset: 0; z-index: 26; display: none; background: color-mix(in srgb, var(--paper) 55%, transparent) }
 #mirror.on { display: block }

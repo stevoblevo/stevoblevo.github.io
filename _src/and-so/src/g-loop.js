@@ -259,6 +259,8 @@ try {
     reels: () => REELS.concat(CUT).map(r => ({ id: r.id, name: r.name, total: r.total, gives: [...r.gives], shots: r.shots.map(s => ({ n: s.n, d: s.d, gives: s.gives || [] })) })),
     reelSkip, reelNow: () => { if (REEL.on && !REEL.done && REEL.i >= 0) REEL.next = t; }, reelAuto: on => { SET.reelAuto = !!on; reelUI(); },
     diffOpen, diffClose, diff: () => ({ open: DIFF.open, held: DIFF.held, paused, src: $('diffFrame').getAttribute('src') || '', t: +t.toFixed(2) }),
+    boardOpen, boardClose, board: () => { const s = bdState(); return { open: BD.open, busy: BD.busy, signedIn: !!s.token, name: s.name || '', alg: s.alg || '', pending: !!s.pending, volatile: BD.volatile, last: BD.last }; },
+    app: () => ({ prompt: !!APP.prompt, standalone: APP.standalone, sw: !!(navigator.serviceWorker && navigator.serviceWorker.controller) }),
     quests: () => GAME.quests.map(a => ({ id: a.id, p: a.p, done: a.done })), setQuests: ids => { GAME.quests = ids.map(id => ({ id, p: 0, done: false })); renderQuests(); },
     view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
     box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),

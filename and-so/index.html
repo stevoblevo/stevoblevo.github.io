@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="AND SO 8.1 · The Book, in the jam: a microtonal instrument, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
+<meta name="description" content="AND SO 8.3 · The board: a microtonal instrument with a leaderboard you sign with your own key, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
 <meta name="theme-color" content="#f4f6f2">
+<link rel="manifest" href="/and-so/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/and-so/icons/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%23e7b23a'/%3E%3C/svg%3E">
 <meta name="color-scheme" content="light dark">
-<title>AND SO 8.1</title>
+<title>AND SO 8.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
 <style id="andso-css">
@@ -1075,6 +1077,44 @@ html[data-sb="inkblot"] .jk[data-role="chord"] { background: #000; color: #fff }
 .vs-foot a { color: var(--link) }
 @media (max-width: 560px) { .vs-item { grid-template-columns: 1fr } .vs-go { grid-column: 1; grid-row: auto; flex-direction: row; flex-wrap: wrap } }
 
+/* ---------- the board: names, signed scores, who's ahead ---------- */
+#board { position: fixed; inset: 0; z-index: 46; display: none; padding: 16px; overflow: auto; background: var(--scrim) }
+#board.on { display: block }
+.bd-form { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 .5em }
+#board .txt { flex: 1 1 12em; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: 400 clamp(15px, .4vw + 12px, 22px)/1.2 var(--sb-ui) }
+#board .txt:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 2px; border-color: var(--ink) }
+#board textarea.txt { display: block; width: 100%; margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-md); font: 400 12px/1.4 ui-monospace, monospace; resize: vertical; overflow-wrap: anywhere }
+.bd-b { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--ink); background: var(--page); color: var(--ink); font: 700 clamp(13px, .3vw + 11px, 20px)/1 var(--sb-ui); text-decoration: none; cursor: pointer; white-space: nowrap }
+.bd-b:hover { background: var(--cue-soft) }
+.bd-b:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px }
+.bd-b:disabled { opacity: .55; cursor: progress }
+.bd-main { background: var(--ink); color: var(--page) }
+.bd-main:hover { background: var(--ink); color: var(--page); box-shadow: 0 0 0 3px var(--cue-soft) }
+.bd-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: .7em 0 0 }
+.bd-me { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 }
+.bd-me b { font: var(--sb-display-weight) clamp(24px, 1.2vw + 15px, 48px)/1.05 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth); overflow-wrap: anywhere }
+.bd-me span { font: 700 clamp(15px, .4vw + 12px, 24px)/1.2 var(--sb-ui); color: var(--accent) }
+.bd-now { margin: .5em 0 0; font: 400 clamp(15px, .4vw + 11px, 22px)/1.4 var(--sb-story) }
+.bd-msg { min-height: 1.45em; margin: .7em 0 0; font: 400 clamp(14px, .3vw + 11px, 20px)/1.45 var(--sb-story); color: var(--ink) }
+.bd-msg.bad { color: var(--danger, var(--ink)); font-weight: 600 }
+.bd-note { margin: .45em 0 0; font: 400 clamp(13px, .25vw + 11px, 18px)/1.45 var(--sb-ui); color: var(--ink-muted) }
+.bd-list { list-style: none; margin: 1.1em 0 0; padding: 0; display: grid; gap: 6px }
+.bd-list:empty { display: none }
+.bd-row { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 0 12px; align-items: baseline; padding: 10px 16px; border-radius: var(--radius-md); background: var(--surface); border: 2px solid transparent }
+.bd-row[aria-current] { border-color: var(--accent); background: var(--accent-soft) }
+.bd-rank { font: 700 clamp(14px, .3vw + 11px, 20px)/1.2 var(--sb-ui); font-variant-numeric: tabular-nums; color: var(--ink-muted) }
+.bd-name { min-width: 0; font: var(--sb-display-weight) clamp(17px, .5vw + 13px, 28px)/1.15 var(--sb-display); font-variation-settings: "wdth" var(--sb-display-wdth); overflow-wrap: anywhere }
+.bd-name i { font: 700 .5em/1 var(--sb-ui); font-style: normal; margin-left: .6em; padding: .25em .6em; border-radius: 999px; background: var(--page); color: var(--cue); vertical-align: middle }
+.bd-score { font: 700 clamp(16px, .45vw + 12px, 26px)/1.15 var(--sb-ui); font-variant-numeric: tabular-nums; text-align: right }
+.bd-sub { grid-column: 2 / span 2; font: 400 clamp(12px, .25vw + 10px, 17px)/1.35 var(--sb-ui); color: var(--ink-muted) }
+.bd-gap { text-align: center; color: var(--ink-muted); line-height: 1 }
+.bd-radio { margin: 1.3em 0 0; padding: 12px 16px; border-radius: var(--radius-md); border: 2px dashed var(--line) }
+.bd-radio summary { cursor: pointer; font: 700 clamp(14px, .3vw + 11px, 20px)/1.3 var(--sb-ui) }
+.bd-radio summary:focus-visible { outline: 3px solid var(--focus, #ffd27a); outline-offset: 3px; border-radius: 4px }
+.bd-radio p { margin: .6em 0 0; font: 400 clamp(14px, .3vw + 11px, 19px)/1.5 var(--sb-story) }
+#board .reset { display: block; margin-top: 1.1em; color: var(--ink-muted); font: 400 clamp(12px, .25vw + 10px, 16px)/1.3 var(--sb-ui) }
+@media (max-width: 560px) { .bd-row { grid-template-columns: 2em 1fr auto; padding: 9px 12px } .bd-acts .bd-b { flex: 1 1 auto } }
+
 /* ---------- the mirror ---------- */
 #mirror { position: fixed; inset: 0; z-index: 26; display: none; background: color-mix(in srgb, var(--paper) 55%, transparent) }
 #mirror.on { display: block }
@@ -1286,6 +1326,7 @@ body.booking #hud { opacity: .15 }
   <button class="ctl" id="bFrol" title="F">lean mood</button>
   <button class="ctl" id="bArtic" title="D">notes</button>
   <button class="ctl hidden" id="bRep" title="T">↺ 10s</button>
+  <button class="ctl" id="bBoard" title="S">✦ board</button>
   <button class="ctl" id="bGam" title="G">gamut</button>
   <button class="ctl" id="bAuto" title="A">saedo: on</button>
   <button class="ctl" id="bSnd" title="M">sound: on</button>
@@ -1378,6 +1419,10 @@ body.booking #hud { opacity: .15 }
     <div class="btns"><button class="pill" id="gVersions">every version</button></div>
     <div class="note" id="gVersionsNote">every AND SO stays playable, newest first. 8.1 and 8 are still there, and so are 7, 6.1, 6, the October builds, and the Gamut Field Guide. each keeps its own save.</div>
 
+    <div class="sec">as an app</div>
+    <div class="btns"><button class="pill hidden" id="gInstall">install AND SO</button></div>
+    <div class="note" id="gInstallNote">at stevoblevo.github.io/and-so, AND SO installs like an app and opens without a connection.</div>
+
     <div class="sec">mood</div>
     <div class="btns"><button class="pill on" id="mLight">light</button><button class="pill" id="mLean">lean</button><button class="pill" id="mFrol">frolic</button><button class="pill" id="mNorm">normie</button></div>
     <div class="note">light: consonance first; voices glide from one sweet spot to the next. lean: dissonances hang, then resolve. frolic: everything skips home on the beat. normie: the piano grid and familiar chords.</div>
@@ -1417,6 +1462,10 @@ body.booking #hud { opacity: .15 }
     <div class="sec">rounds</div>
     <div class="btns"><button class="pill on" id="gRound">▶ play a round</button></div>
     <div class="note" id="gStats">cover every target peg with a voice at rest. under 12 seconds earns three stars. every third round is by ear.</div>
+
+    <div class="sec">the board</div>
+    <div class="btns"><button class="pill" id="gBoard">open the board</button></div>
+    <div class="note" id="gBoardNote">put a name next to your resonance and see who's ahead. no password: this browser keeps a key that signs for you, or a Solana wallet signs instead. S opens it too, and so does the ✦ score on a phone's top bar.</div>
 
     <div class="sec">field guide</div>
     <div class="prog"><span id="gProg">0 / 0</span><span class="pbar2"><i id="gBar"></i></span></div>
@@ -1605,6 +1654,41 @@ body.booking #hud { opacity: .15 }
     <p class="vs-lede" id="vsLede"></p>
     <ol class="vs-list" id="vsList"></ol>
     <p class="vs-foot"><a id="vsAll" href="https://stevoblevo.github.io/and-so/versions/" target="_blank" rel="noopener">all versions, with notes</a></p>
+  </div>
+</div>
+
+<div id="board" class="sbi" role="dialog" aria-modal="true" aria-labelledby="bdTitle" aria-hidden="true">
+  <div class="vs-sheet bd-sheet">
+    <div class="ln-head"><h2 id="bdTitle">The board</h2><button class="bm-x" id="boardClose" aria-label="close the board">×</button></div>
+    <div id="bdGuest">
+      <p class="vs-lede">Put a name next to your resonance. This browser makes a key that signs for you, so there's no password to remember.</p>
+      <form class="bd-form" id="bdForm" autocomplete="off">
+        <input class="txt" id="bdName" maxlength="20" autocomplete="nickname" spellcheck="false" placeholder="a name for the board" aria-label="a name for the board">
+        <button class="bd-b bd-main" type="submit">sign in</button>
+        <button class="bd-b hidden" type="button" id="bdWallet">sign in with a wallet</button>
+      </form>
+      <p class="bd-note">2 to 20 letters or numbers. Clearing this browser's data loses its key, and the name goes with it.</p>
+      <p class="bd-note hidden" id="bdWalletNote">A wallet keeps the same name on every device. It only signs a line of text; nothing is sent from it.</p>
+    </div>
+    <div id="bdSigned" class="hidden">
+      <p class="bd-me"><b id="bdMe"></b><span id="bdRank"></span></p>
+      <p class="bd-note" id="bdMeKey"></p>
+      <p class="bd-now" id="bdNow"></p>
+      <div class="bd-acts"><button class="bd-b bd-main" id="bdSign">sign my score</button><button class="bd-b" id="bdOutBtn">sign out</button></div>
+    </div>
+    <p class="bd-msg" id="bdMsg" role="status" aria-live="polite"></p>
+    <p class="bd-note hidden" id="bdPending">A signed score is waiting here. It goes out as soon as the board can be reached.</p>
+    <div id="bdBoardPart" class="hidden">
+      <ol class="bd-list" id="bdList" aria-label="the board, most resonance first"></ol>
+      <details class="bd-radio">
+        <summary>carry it by radio</summary>
+        <p>No internet where you are? Copy your signed score and send it as a message to an AND SO relay on Reticulum, from Sideband or any LXMF app, over LoRa or whatever else Reticulum runs on. The relay posts it and answers with your rank. Nobody along the way can change it.</p>
+        <div class="bd-acts"><button class="bd-b" id="bdCopy">copy the signed score</button><a class="bd-b" id="bdRelay" target="_blank" rel="noopener">run a relay</a></div>
+        <textarea class="txt hidden" id="bdRadioText" rows="4" readonly aria-label="your signed score"></textarea>
+      </details>
+      <button class="reset" id="bdLeave">take me off the board</button>
+    </div>
+    <p class="bd-note hidden" id="bdVolatile">This browser won't keep the key after this visit, so the name won't come back with you.</p>
   </div>
 </div>
 
@@ -2313,8 +2397,8 @@ body.booking #hud { opacity: .15 }
 <script id="andso-js">
 (() => {
 'use strict';
-const ANDSO_VERSION = '8.1';
-const ANDSO_VERSIONS = [{"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/", "latest": true}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
+const ANDSO_VERSION = '8.3';
+const ANDSO_VERSIONS = [{"id": "8.3", "short": "AND SO 8.3", "name": "AND SO 8.3 · The board", "date": "2026-11-12", "line": "A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio.", "path": "/and-so/v8.3/", "latest": true}, {"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/"}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
 const BOOK_DATA = [
  {
   "id": "st-louis",
@@ -8785,6 +8869,7 @@ window.addEventListener('keydown', e => {
   else if (k === 'd') setArtic(SET.artic === 'pluck' ? 'drone' : 'pluck');
   else if (k === 'c') ($('brookMap').classList.contains('on') ? closeBrook() : openBrook());
   else if (k === 'e') cycleLook();
+  else if (k === 's' && MIR.depth === 0) boardOpen();
   else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); if ($('story').classList.contains('on')) closeStory(); }
 });
 
@@ -8802,7 +8887,7 @@ function toggleRec() {
 const on = (id, fn) => $(id).addEventListener('click', e => { if (!tapOk()) return; fn(e); });
 on('tMode', cycleMode);
 on('tQuest', () => { questsPinned = !questsPinned; if (questsPinned && !QUIET()) $('quests').classList.add('on'); else questsHide(); });
-on('tScore', () => caption(`resonance ${GAME.score.toLocaleString()} · ${GAME.rounds} rounds · ${GAME.stars} stars · best combo ×${GAME.best}`, 3200));
+on('tScore', () => { if (MIR.depth === 0) boardOpen(); else caption(`resonance ${GAME.score.toLocaleString()} · ${GAME.rounds} rounds · ${GAME.stars} stars · best combo ×${GAME.best}`, 3200); });   // the score opens the board (z-board.js)
 on('tSound', toggleMute);
 on('qHide', () => { questsPinned = false; questsHide(); });
 on('bLean', () => { lean(1); userIdleUntil = t + 10; });
@@ -14458,6 +14543,263 @@ function drawOnePet(g, x, y, sc, kind) {
 magBoot();
 on('magCarrot', magCarrotTap);
 
+// ===== the board: a name next to your resonance, signed by a key only this browser holds =====
+// The board lives at and-so-board.vercel.app (its source is _src/and-so-board/ in this repository). A player is a
+// key: this browser makes an ECDSA P-256 key with WebCrypto and keeps it in IndexedDB, where its private half can't
+// be read back out, or a Solana wallet signs instead. Every write is one short line of text that key signed, so the
+// board can tell it came from you whichever way it travelled: straight there, later when you're back online, or by
+// radio through a relay. Nothing is sent anywhere until you sign in, and a wallet only ever signs text.
+const BOARD_API = 'https://and-so-board.vercel.app/api/board';
+const BOARD_SAVE = 'andso:board';   // the sign-in and any score waiting to go out: one per site, shared by every version
+const BOARD_RELAY = 'https://github.com/stevoblevo/stevoblevo.github.io/blob/master/_tools/andso-rns-sidecar.py';
+const BMSG = {   // word for word what the board rebuilds and checks (lib/core.js MSG)
+  signin: (name, at) => `AND SO leaderboard\nsign in as ${name}\nat ${at}`,
+  score: p => `AND SO leaderboard\nsign my score: ${p.score} resonance, ${p.finds} finds, ${p.stars} stars, ${p.rounds} rounds, ${p.played}s played\nas ${p.name}\nat ${p.at}`,
+  leave: (name, at) => `AND SO leaderboard\nremove ${name} from the board\nat ${at}`
+};
+const BD = { open: false, busy: false, last: null, kp: null, volatile: false, leaving: 0 };
+
+const bdB64u = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const bdOrd = n => { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+function bdState() { try { return JSON.parse(localStorage.getItem(BOARD_SAVE)) || {}; } catch (e) { return {}; } }
+function bdKeep(s) { try { localStorage.setItem(BOARD_SAVE, JSON.stringify(s)); } catch (e) { /* private window: this visit only */ } }
+function bdName(raw) {   // the board's own rule: 2 to 20 letters, numbers, spaces and . _ ' -, starting with a letter or number
+  const s = String(raw || '').normalize('NFC').replace(/\s+/g, ' ').trim(), n = [...s].length;
+  return n >= 2 && n <= 20 && /^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(s) ? s : '';
+}
+function bdNumbers() { return { score: Math.max(0, Math.floor(GAME.score)), finds: found.size, stars: GAME.stars | 0, rounds: GAME.rounds | 0, played: Math.round(GAME.played) }; }
+
+// ---------- the device key: made once, kept in IndexedDB, never exported ----------
+function bdIdb() {
+  return new Promise((ok, no) => { const r = indexedDB.open('andso-board', 1); r.onupgradeneeded = () => r.result.createObjectStore('keys'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
+}
+async function bdDeviceKey(make) {
+  if (BD.kp) return BD.kp;
+  try {
+    const db = await bdIdb();
+    BD.kp = await new Promise((ok, no) => { const q = db.transaction('keys').objectStore('keys').get('device'); q.onsuccess = () => ok(q.result || null); q.onerror = () => no(q.error); });
+    if (!BD.kp && make) {
+      const kp = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']);
+      await new Promise((ok, no) => { const tx = db.transaction('keys', 'readwrite'); tx.objectStore('keys').put(kp, 'device'); tx.oncomplete = ok; tx.onerror = () => no(tx.error); });
+      BD.kp = kp;
+    }
+  } catch (e) {   // no IndexedDB here (some private windows): a key for this visit only
+    if (make) { BD.kp = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']); BD.volatile = true; }
+  }
+  return BD.kp;
+}
+async function bdDevicePk(kp) { const j = await crypto.subtle.exportKey('jwk', kp.publicKey); return { kty: j.kty, crv: j.crv, x: j.x, y: j.y }; }
+async function bdDeviceSign(kp, text) { return bdB64u(new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, kp.privateKey, new TextEncoder().encode(text)))); }
+
+// ---------- a Solana wallet, if this browser has one: it signs the same line of text, and nothing else ----------
+function bdWallet() {
+  try {
+    const w = window;
+    return (w.phantom && w.phantom.solana && w.phantom.solana.isPhantom && w.phantom.solana) || (w.solflare && w.solflare.isSolflare && w.solflare)
+      || (w.backpack && w.backpack.isBackpack && w.backpack) || (w.solana && typeof w.solana.signMessage === 'function' && w.solana) || null;
+  } catch (e) { return null; }
+}
+async function bdWalletSign(text) {
+  const w = bdWallet(); if (!w) throw new Error('no Solana wallet in this browser');
+  const r = await w.connect(); const pk = (r && r.publicKey) || w.publicKey; if (!pk) throw new Error("the wallet didn't share an address");
+  const out = await w.signMessage(new TextEncoder().encode(text), 'utf8');
+  const sig = out instanceof Uint8Array ? out : out && out.signature; if (!sig) throw new Error("the wallet didn't sign");
+  return { addr: pk.toString(), sig: bdB64u(new Uint8Array(sig)) };
+}
+async function bdSignAs(st, text) {   // with whichever key this player signed in with
+  if (st.alg === 'ed25519') {
+    const w = await bdWalletSign(text);
+    if (w.addr !== st.addr) throw new Error('the wallet is on a different account from the one on the board');
+    return w.sig;
+  }
+  const kp = await bdDeviceKey(false); if (!kp) throw new Error("this browser no longer has the key for that name");
+  return bdDeviceSign(kp, text);
+}
+
+// ---------- talking to the board ----------
+async function bdCall(body) {
+  // text/plain keeps it a simple request, so browsers send it without asking the board first
+  const r = await fetch(BOARD_API, { method: 'POST', headers: { 'content-type': 'text/plain' }, body: JSON.stringify(body), cache: 'no-store', keepalive: body.op === 'score' });
+  let json = {}; try { json = await r.json(); } catch (e) { /* not JSON */ }
+  return { status: r.status, json };
+}
+function bdUnreachable() {
+  if (navigator.onLine === false) return "you're offline. your score stays here and goes out when you're back.";
+  return VER_ON_PAGES ? "the board can't be reached right now. try again in a moment." : "the board can't be reached from here. it works at stevoblevo.github.io/and-so.";
+}
+async function bdScoreBody(st) {
+  const n = bdNumbers(), at = new Date().toISOString();
+  return { op: 'score', id: st.id, ...n, at, sig: await bdSignAs(st, BMSG.score({ ...n, name: st.name, at })) };
+}
+async function bdFlush() {   // a score signed while offline goes out once there is a way
+  const st = bdState(); if (!st.pending || navigator.onLine === false) return;
+  try {
+    const r = await bdCall(st.pending);
+    if (r.status === 429) { setTimeout(bdFlush, 9000); return; }   // the board takes one score every 8 seconds: wait and send it again
+    if (r.status < 500) { const s = bdState(); if (s.pending && s.pending.at === st.pending.at) delete s.pending; bdKeep(s); if (BD.open) bdRefresh(); }
+  } catch (e) { /* still no way */ }
+}
+
+async function bdSignIn(via) {
+  if (BD.busy) return;
+  const name = bdName($('bdName').value);
+  if (!name) { bdSay('pick a name of 2 to 20 letters or numbers.', true); $('bdName').focus(); return; }
+  bdBusy(true, via === 'wallet' ? 'waiting for the wallet…' : 'signing in…');
+  try {
+    const at = new Date().toISOString(); let body;
+    if (via === 'wallet') { const w = await bdWalletSign(BMSG.signin(name, at)); body = { op: 'signin', name, alg: 'ed25519', pk: w.addr, at, sig: w.sig }; }
+    else { const kp = await bdDeviceKey(true); body = { op: 'signin', name, alg: 'p256', pk: await bdDevicePk(kp), at, sig: await bdDeviceSign(kp, BMSG.signin(name, at)) }; }
+    let r; try { r = await bdCall(body); } catch (e) { bdBusy(false); bdSay(bdUnreachable(), true); return; }
+    if (r.status !== 200) { bdBusy(false); bdSay((r.json.error || 'the board said no') + '.', true); return; }
+    bdKeep({ ...bdState(), id: r.json.id, name: r.json.name, token: r.json.token, alg: body.alg, addr: body.alg === 'ed25519' ? body.pk : undefined });
+    jlog(`signed in to the board as ${r.json.name}`);
+    bdBusy(false); await bdRefresh(true);
+  } catch (e) { bdBusy(false); bdSay(String(e && e.message || e).replace(/\.?$/, '.'), true); }
+}
+
+async function bdSignScore(quiet) {
+  if (BD.busy) return;
+  const st = bdState(); if (!st.token) return;
+  bdBusy(true, quiet ? '' : st.alg === 'ed25519' ? 'waiting for the wallet…' : 'signing…');   // signing by itself says nothing until it lands
+  let body;
+  try { body = await bdScoreBody(st); } catch (e) { bdBusy(false); if (!quiet) bdSay(String(e && e.message || e).replace(/\.?$/, '.'), true); return; }
+  let r;
+  try { r = await bdCall(body); }
+  catch (e) { const s = bdState(); s.pending = body; bdKeep(s); bdBusy(false); bdSay(bdUnreachable(), true); bdPaint(); return; }
+  bdBusy(false);
+  if (r.status === 200) {
+    jlog(`signed a score: ${body.score} resonance`);
+    bdSay(r.json.kept ? `signed. you're ${bdOrd(r.json.rank)} of ${r.json.of}.` : `signed. your best is still ${(+r.json.best || 0).toLocaleString()}.`);
+    await bdRefresh();
+  } else if (!(quiet && r.status === 429)) bdSay((r.json.error || 'the board said no') + '.', true);
+}
+
+async function bdRefresh(signedNow) {
+  const st = bdState(); if (!st.token) { BD.last = null; bdPaint(); return; }
+  let r; try { r = await bdCall({ op: 'board', token: st.token }); } catch (e) { bdPaint(); bdSay(bdUnreachable(), true); return; }
+  if (r.status === 401) {   // the sign-in ran out (30 days): a device key signs in again on its own; a wallet asks once
+    const s = bdState(); delete s.token; bdKeep(s);
+    if (st.alg === 'p256' && st.name && !signedNow) { $('bdName').value = st.name; await bdSignIn('device'); return; }
+    bdPaint(); bdSay('sign in again to see the board.'); return;
+  }
+  if (r.status !== 200) { bdPaint(); bdSay((r.json.error || "the board didn't answer") + '.', true); return; }
+  BD.last = r.json; bdPaint();
+  // a device key keeps the board up to date by itself: if this browser has played past what the board shows, sign it
+  const you = r.json.you;
+  if (st.alg === 'p256' && GAME.score > 0 && (!you || GAME.score > you.score || found.size > you.finds) && !BD.busy) bdSignScore(true);
+}
+
+async function bdLeave() {
+  const st = bdState(); if (!st.id || BD.busy) return;
+  if (Date.now() - BD.leaving > 5000) { BD.leaving = Date.now(); $('bdLeave').textContent = 'press again to take your name and scores off'; return; }
+  BD.leaving = 0; bdBusy(true, 'taking you off…');
+  try {
+    const at = new Date().toISOString(), sig = await bdSignAs(st, BMSG.leave(st.name, at));
+    const r = await bdCall({ op: 'leave', id: st.id, at, sig });
+    bdBusy(false);
+    if (r.status !== 200 && r.status !== 404) { bdSay((r.json.error || 'the board said no') + '.', true); return; }
+    bdKeep({}); BD.last = null; jlog('left the board'); bdPaint(); bdSay('your name and scores are off the board.');
+  } catch (e) { bdBusy(false); bdSay(e instanceof TypeError ? bdUnreachable() : String(e && e.message || e).replace(/\.?$/, '.'), true); }
+}
+function bdSignOut() { const s = bdState(); bdKeep(s.pending ? { pending: s.pending } : {}); BD.last = null; bdPaint(); bdSay('signed out. sign in with the same name to pick up where you were.'); }
+
+async function bdCopyForRadio() {
+  const st = bdState(); if (!st.token || BD.busy) return;
+  bdBusy(true, st.alg === 'ed25519' ? 'waiting for the wallet…' : 'signing…');
+  try {
+    const text = JSON.stringify(await bdScoreBody(st)); bdBusy(false);
+    let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { /* no clipboard: show it to copy by hand */ }
+    const box = $('bdRadioText'); box.value = text; box.classList.toggle('hidden', ok); if (!ok) { box.focus(); box.select(); }
+    bdSay(ok ? 'copied. it stays good for 30 days.' : 'select it and copy. it stays good for 30 days.');
+  } catch (e) { bdBusy(false); bdSay(String(e && e.message || e).replace(/\.?$/, '.'), true); }
+}
+
+// ---------- the sheet ----------
+function bdSay(text, bad) { const m = $('bdMsg'); m.textContent = text || ''; m.classList.toggle('bad', !!bad); }
+function bdBusy(on, text) {
+  BD.busy = on; document.querySelectorAll('#board .bd-b').forEach(b => { b.disabled = on; });
+  if (on && text) bdSay(text);
+}
+function bdPaint() {
+  const st = bdState(), inn = !!st.token, b = BD.last;
+  $('bdGuest').classList.toggle('hidden', inn); $('bdSigned').classList.toggle('hidden', !inn); $('bdBoardPart').classList.toggle('hidden', !inn);
+  const w = !!bdWallet(); $('bdWallet').classList.toggle('hidden', !w); $('bdWalletNote').classList.toggle('hidden', !w);
+  $('bdVolatile').classList.toggle('hidden', !BD.volatile);
+  const n = bdNumbers();
+  $('bdNow').textContent = `this browser: ${n.score.toLocaleString()} resonance · ${n.finds} finds · ${n.stars} stars · ${n.rounds} rounds`;
+  $('bdPending').classList.toggle('hidden', !st.pending);
+  if (!inn) return;
+  $('bdMe').textContent = st.name || '';
+  $('bdMeKey').textContent = st.alg === 'ed25519' ? 'signs with a wallet' : 'signs with this browser';
+  const you = b && b.you;
+  $('bdRank').textContent = !b ? '' : you ? `${bdOrd(you.rank)} of ${b.count}` : 'not on the board yet';
+  const list = $('bdList'); list.textContent = '';
+  if (!b) return;
+  for (const row of b.top) list.appendChild(bdRow(row, you && row.rank === you.rank));
+  if (you && you.rank > b.top.length) { const gap = document.createElement('li'); gap.className = 'bd-gap'; gap.textContent = '⋯'; gap.setAttribute('aria-hidden', 'true'); list.append(gap, bdRow(you, true)); }
+}
+function bdRow(row, mine) {
+  const li = document.createElement('li'); li.className = 'bd-row'; if (mine) li.setAttribute('aria-current', 'true');
+  const rank = document.createElement('span'); rank.className = 'bd-rank'; rank.textContent = row.rank;
+  const name = document.createElement('span'); name.className = 'bd-name'; name.textContent = row.name;
+  if (row.wallet) { const i = document.createElement('i'); i.textContent = 'wallet'; name.appendChild(i); }
+  const score = document.createElement('span'); score.className = 'bd-score'; score.textContent = (+row.score || 0).toLocaleString();
+  const sub = document.createElement('span'); sub.className = 'bd-sub'; sub.textContent = `${row.finds} finds · ${row.stars} stars · ${row.rounds} rounds`;
+  li.append(rank, name, score, sub); return li;
+}
+function boardOpen() {
+  if (MIR.depth > 0) return;
+  BD.open = true; BD.leaving = 0; $('bdLeave').textContent = 'take me off the board';
+  $('board').classList.add('on'); $('board').setAttribute('aria-hidden', 'false');
+  const st = bdState(); if (st.name) $('bdName').value = st.name;
+  bdSay(''); bdPaint(); jlog('opened the board');
+  setTimeout(() => { const f = st.token ? $('bdSign') : $('bdName'); if (f) f.focus(); }, 30);
+  bdFlush().then(() => bdRefresh());
+}
+function boardClose() { BD.open = false; $('board').classList.remove('on'); $('board').setAttribute('aria-hidden', 'true'); }
+
+$('bdForm').addEventListener('submit', e => { e.preventDefault(); bdSignIn('device'); });
+$('bdWallet').addEventListener('click', () => bdSignIn('wallet'));
+$('bdSign').addEventListener('click', () => bdSignScore(false));
+$('bdOutBtn').addEventListener('click', bdSignOut);
+$('bdLeave').addEventListener('click', bdLeave);
+$('bdCopy').addEventListener('click', bdCopyForRadio);
+$('bdRelay').href = BOARD_RELAY;
+on('boardClose', boardClose);
+on('gBoard', boardOpen);
+on('bBoard', boardOpen);
+$('board').addEventListener('click', e => { if (e.target === $('board')) boardClose(); });
+// while the sheet is open, keys belong to it (typing a name included): Escape closes it, and the instrument hears nothing
+window.addEventListener('keydown', e => { if (!BD.open) return; e.stopImmediatePropagation(); if (e.key === 'Escape') boardClose(); }, true);
+window.addEventListener('online', bdFlush);
+if (MIR.depth > 0) { $('gBoard').closest('.btns').classList.add('hidden'); $('gBoardNote').classList.add('hidden'); $('bBoard').classList.add('hidden'); }
+else setTimeout(bdFlush, 4000);
+
+// ===== AND SO as an app: on stevoblevo.github.io it installs to a home screen or a dock and opens offline =====
+// The manifest and the service worker sit next to the page (/and-so/manifest.webmanifest and /and-so/sw.js, from
+// _src/and-so/pwa/). The worker goes to the network first and keeps a copy of whatever it fetched, so being online
+// always brings the newest build and being offline brings the last one you had. Elsewhere (the artifact, a file on
+// disk, a copy inside the mirror) none of this runs.
+const APP = { prompt: null, standalone: (() => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } })() };
+function appNote() {
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  $('gInstall').classList.toggle('hidden', !APP.prompt);
+  $('gInstallNote').textContent = !VER_ON_PAGES ? 'at stevoblevo.github.io/and-so, AND SO installs like an app and opens without a connection.'
+    : APP.standalone ? "you're in the app. it opens without a connection, and picks up the newest build whenever you're online."
+    : APP.prompt ? 'installs like an app: its own window or home-screen icon, and it opens without a connection.'
+    : ios ? 'on an iPhone or iPad: Share, then Add to Home Screen. it opens without a connection after that.'
+    : 'once a page has loaded here, it opens without a connection too. your browser may offer to install it from the address bar.';
+}
+if (VER_ON_PAGES && MIR.depth === 0 && 'serviceWorker' in navigator) {
+  const reg = () => navigator.serviceWorker.register('/and-so/sw.js', { scope: '/and-so/' }).catch(() => { /* private window or blocked: plays online as before */ });
+  if (document.readyState === 'complete') reg(); else window.addEventListener('load', reg, { once: true });
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); APP.prompt = e; appNote(); });
+window.addEventListener('appinstalled', () => { APP.prompt = null; APP.standalone = true; appNote(); jlog('installed AND SO as an app'); });
+on('gInstall', async () => { const p = APP.prompt; if (!p) return; APP.prompt = null; p.prompt(); try { await p.userChoice; } catch (e) { /* closed */ } appNote(); });
+if (MIR.depth > 0) { $('gInstall').closest('.btns').classList.add('hidden'); $('gInstallNote').classList.add('hidden'); }
+appNote();
+
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;
 const PERF_LOCK = (() => { try { return /[?&]hq\b/.test(location.search); } catch (e) { return false; } })();
@@ -14719,6 +15061,8 @@ try {
     reels: () => REELS.concat(CUT).map(r => ({ id: r.id, name: r.name, total: r.total, gives: [...r.gives], shots: r.shots.map(s => ({ n: s.n, d: s.d, gives: s.gives || [] })) })),
     reelSkip, reelNow: () => { if (REEL.on && !REEL.done && REEL.i >= 0) REEL.next = t; }, reelAuto: on => { SET.reelAuto = !!on; reelUI(); },
     diffOpen, diffClose, diff: () => ({ open: DIFF.open, held: DIFF.held, paused, src: $('diffFrame').getAttribute('src') || '', t: +t.toFixed(2) }),
+    boardOpen, boardClose, board: () => { const s = bdState(); return { open: BD.open, busy: BD.busy, signedIn: !!s.token, name: s.name || '', alg: s.alg || '', pending: !!s.pending, volatile: BD.volatile, last: BD.last }; },
+    app: () => ({ prompt: !!APP.prompt, standalone: APP.standalone, sw: !!(navigator.serviceWorker && navigator.serviceWorker.controller) }),
     quests: () => GAME.quests.map(a => ({ id: a.id, p: a.p, done: a.done })), setQuests: ids => { GAME.quests = ids.map(id => ({ id, p: 0, done: false })); renderQuests(); },
     view: () => ({ x0: +VIEW.x0.toFixed(2), x1: +VIEW.x1.toFixed(2), tgt: VIEW.tgt && { x0: +VIEW.tgt.x0.toFixed(2), w: +VIEW.tgt.w.toFixed(2) }, rubber: +VIEW.rubber.toFixed(2), vel: +VIEW.vel.toFixed(1), zoom: +zoomLevel().toFixed(3) }),
     box: () => ({ view: viewOn(), MX, MY, MR, yaw: +VW.yaw.toFixed(3), dist: +VW.dist.toFixed(2), pick: VW.pick && VW.pick.lab, hits: (VW.hits || []).map(h => ({ X: Math.round(h.X), Y: Math.round(h.Y), lab: h.nd.lab })), cy: { n: CY.n, motion: +CY.motion.toFixed(4), still: +CY.still.toFixed(2), gain: CY.gain, lead: CY.lead && CY.lead.ms.map(m => m.mo.key + '@' + m.a.toFixed(2)).join(' '), f: CY.lead && +CY.lead.f.toFixed(1) } }),

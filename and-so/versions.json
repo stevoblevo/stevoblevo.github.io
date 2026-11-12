@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "8.3",
+   "short": "AND SO 8.3",
+   "name": "AND SO 8.3 · The board",
+   "date": "2026-11-12",
+   "line": "A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio.",
+   "path": "/and-so/v8.3/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "fa97ff1d379593951ed53eeb7429bf61227eac9ae38d2077e3e30f9903b79762"
+  },
+  {
    "id": "8.1",
    "short": "AND SO 8.1",
    "name": "AND SO 8.1 · The Book, in the jam",
    "date": "2026-10-30",
    "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.",
    "path": "/and-so/v8.1/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "0a5cb596532d8c1708f3b4bd49203bbe6f7ca199ccbb09ef1e51d68084837c6b"
+   "commit": "645c781",
+   "sha256": "659ba66bdcb816f142ad2ff9376d224b405c09517a763e22b1365b7aa0420697"
   },
   {
    "id": "8",

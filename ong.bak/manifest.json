@@ -111,6 +111,61 @@
           "h": 2160
         }
       ]
+    },
+    {
+      "name": "and-so",
+      "version": "8.1-diff",
+      "title": "AND SO",
+      "note": "AND SO 8.1 with the before-and-after switch in the gamut (1 November), as it was the latest at /and-so/ until 8.3 took its place on 12 November.",
+      "source": "and-so-index-645c781.html",
+      "sha256": "0a5cb596532d8c1708f3b4bd49203bbe6f7ca199ccbb09ef1e51d68084837c6b",
+      "bytes": 946327,
+      "frozen_at": "2026-11-12T14:13:33Z",
+      "sheet": "sheet.jpg",
+      "shots": [
+        {
+          "view": "phone",
+          "state": "title",
+          "file": "phone-title.jpg",
+          "w": 390,
+          "h": 844
+        },
+        {
+          "view": "phone",
+          "state": "play",
+          "file": "phone-play.jpg",
+          "w": 390,
+          "h": 844
+        },
+        {
+          "view": "laptop",
+          "state": "title",
+          "file": "laptop-title.jpg",
+          "w": 1440,
+          "h": 900
+        },
+        {
+          "view": "laptop",
+          "state": "play",
+          "file": "laptop-play.jpg",
+          "w": 1440,
+          "h": 900
+        },
+        {
+          "view": "4k",
+          "state": "title",
+          "file": "4k-title.jpg",
+          "w": 3840,
+          "h": 2160
+        },
+        {
+          "view": "4k",
+          "state": "play",
+          "file": "4k-play.jpg",
+          "w": 3840,
+          "h": 2160
+        }
+      ]
     }
   ]
 }
