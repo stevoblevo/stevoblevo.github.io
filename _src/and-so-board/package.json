@@ -1,0 +1,9 @@
+{
+  "name": "and-so-board",
+  "private": true,
+  "description": "The AND SO leaderboard: one serverless function, signed scores, one private JSON document in Vercel Blob.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node test/board.test.mjs" },
+  "dependencies": { "@vercel/blob": "2.8.2" }
+}
