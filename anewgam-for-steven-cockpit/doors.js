@@ -5,7 +5,7 @@ window.__anewDoors = [
   { id: "goober", hash: ["goober", "crossing", "anewgam"], title: "Crossing", href: "/goober/", live: true, line: "Aiden door · find your line" },
   { id: "run", hash: ["run", "signal"], title: "Signal Run", href: "/goober/run/", live: true, line: "Ruins · lanterns · no wager" },
   { id: "with-him", hash: ["with-him", "withhim"], title: "With him", href: "/goober/with-him/", live: true, line: "Same world. Further together." },
-  { id: "cheese", hash: ["cheese", "cheese-royale"], title: "Cheese Royale", href: "/cheese-royale/", live: true, line: "Tester table" },
+  { id: "cheese", hash: ["cheese", "cheese-royale"], title: "Cheese Royale", href: null, live: false, line: "Source route unavailable; explore the art" },
   { id: "atlas", hash: ["atlas"], title: "Atlas", href: "/goober/gallery/", live: true, line: "Goober recovered wall" },
   { id: "kk", hash: ["kk", "on", "kknight"], title: "sae://on#kk", href: null, live: false, line: "KkNight on · 4.2 clock" },
   { id: "thea", hash: ["thea", "reign", "redreign"], title: "Thea", href: null, live: false, line: "Under the well · red reign" },
