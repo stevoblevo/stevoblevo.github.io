@@ -2,12 +2,14 @@
 //   { op: 'signin', name, alg: 'p256' | 'ed25519', pk, at, sig }   → { id, name, token }
 //   { op: 'score', id, score, finds, stars, rounds, played, at, sig } → { kept, rank, of, best }
 //   { op: 'board', token }                                           → { count, top: [...50], you }
+//   { op: 'leave', id, at, sig }                                     → { left: true }
 // Bodies may be sent as text/plain so browsers skip the preflight. Nothing is readable without signing in.
-import { signin, score, board, readToken } from '../lib/core.js';
+import { signin, score, leave, board, readToken } from '../lib/core.js';
 import { store, ready, Conflict } from '../lib/store.js';
 
 const ORIGINS = [/^https:\/\/stevoblevo\.github\.io$/, /^https:\/\/([a-z0-9-]+\.)?saelion\.co$/, /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
   /^https:\/\/[a-z0-9-]+\.claudeusercontent\.com$/, /^https:\/\/claude\.ai$/, /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
+const WRITES = { signin, score, leave };
 let cache = null;   // { at, doc } for board reads, a few seconds at most
 
 export default async function handler(req, res) {
@@ -29,10 +31,10 @@ export default async function handler(req, res) {
       const id = readToken(cache.doc.key, b.token, now); if (!id) return res.status(401).json({ error: 'sign in to see the board' });
       return res.status(200).json(board(cache.doc, id));
     }
-    if (b.op !== 'signin' && b.op !== 'score') return res.status(400).json({ error: 'unknown op' });
+    const op = Object.hasOwn(WRITES, b.op) ? WRITES[b.op] : null; if (!op) return res.status(400).json({ error: 'unknown op' });
     for (let tries = 0; tries < 6; tries++) {   // read, apply, write if unchanged; on a race, read again
       const { doc, etag } = await st.read();
-      const r = b.op === 'signin' ? signin(doc, b, now) : score(doc, b, now);
+      const r = op(doc, b, now);
       if (r.doc) { try { await st.write(r.doc, etag); cache = { at: Date.now(), doc: r.doc }; } catch (e) { if (e instanceof Conflict) continue; throw e; } }
       return res.status(r.status).json(r.body);
     }

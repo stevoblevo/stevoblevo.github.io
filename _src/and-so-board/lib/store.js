@@ -5,7 +5,8 @@ import { readFile, writeFile, rename } from 'node:fs/promises';
 import crypto from 'node:crypto';
 import { emptyDoc } from './core.js';
 
-const PATH = 'board/v1.json';
+// previews get a board of their own, so trying a change never touches the real scores
+const PATH = !process.env.VERCEL_ENV || process.env.VERCEL_ENV === 'production' ? 'board/v1.json' : `board/${process.env.VERCEL_ENV}-v1.json`;
 
 export class Conflict extends Error {}
 

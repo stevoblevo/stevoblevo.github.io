@@ -14,6 +14,7 @@ link) and nobody on the way can change it.
 | `signin` | `name, alg, pk, at, sig` | `{ id, name, token }` |
 | `score` | `id, score, finds, stars, rounds, played, at, sig` | `{ kept, rank, of, best }` |
 | `board` | `token` | `{ count, top: [50 rows], you }` |
+| `leave` | `id, at, sig` | `{ left: true }` |
 
 - `alg` is `p256` (a WebCrypto ECDSA P-256 device key; `pk` is its public JWK `{kty, crv, x, y}`) or `ed25519` (a
   Solana wallet; `pk` is the base58 address).
@@ -28,6 +29,7 @@ The signed texts, exactly (`\n` is a newline):
 ```
 AND SO leaderboard\nsign in as {name}\nat {at}
 AND SO leaderboard\nsign my score: {score} resonance, {finds} finds, {stars} stars, {rounds} rounds, {played}s played\nas {name}\nat {at}
+AND SO leaderboard\nremove {name} from the board\nat {at}
 ```
 
 ## Rules
@@ -37,11 +39,13 @@ AND SO leaderboard\nsign my score: {score} resonance, {finds} finds, {stars} sta
 - A score keeps your best; finds, stars, rounds and played keep their maximum. One accepted score every 8 seconds.
 - A score older than the one on file changes nothing. More than `5000 + 400 × seconds played` resonance is refused.
 - The board shows names and numbers, and whether a row signed with a wallet. It never shows keys or ids of others.
+- `leave` takes you off: your row, your name and your key are deleted. A player who signed in but never posted a
+  score doesn't appear on the board at all.
 - Wallets only sign. Nothing here moves tokens or pays anything out.
 
 ## Storage
 
-`board/v1.json` in a private Blob store connected to the Vercel project. Writes are conditional on the ETag that was
+`board/v1.json` in a private Blob store connected to the Vercel project (previews use `board/preview-v1.json`). Writes are conditional on the ETag that was
 read (`ifMatch`), so two players posting at once can't overwrite each other: the loser reads again and retries. The
 board's session key is made on the first sign-in and kept in that same document; deleting `key` from it signs
 everyone out.

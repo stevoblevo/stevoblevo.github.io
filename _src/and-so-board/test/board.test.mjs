@@ -74,6 +74,14 @@ const c = await deviceKey(), d = await deviceKey();
 const [rc, rd] = await Promise.all([signin(c, 'Coin'), signin(d, 'Dime')]); assert.equal(rc.status, 200); assert.equal(rd.status, 200);
 r = await call({ op: 'board', token: A.token }); assert.equal(r.status, 200);
 r = await call({ op: 'score', id: 'nobody' }); assert.equal(r.status, 404);
+r = await call({ op: 'constructor' }); assert.equal(r.status, 400, 'only the four ops');
+
+// leaving: only your own key can take you off, and then your name is free
+let at = iso();
+r = await call({ op: 'leave', id: Wl.id, at, sig: await a.sign(MSG.leave('Moonmint', at)) }); assert.equal(r.status, 401, 'nobody else can remove you');
+r = await call({ op: 'leave', id: Wl.id, at, sig: await w.sign(MSG.leave('Moonmint', at)) }); assert.equal(r.status, 200); assert.equal(r.json.left, true);
+r = await call({ op: 'board', token: A.token }); assert.ok(!r.json.top.some(x => x.name === 'Moonmint'), 'gone from the board');
+r = await signin(c, 'Moonmint'); assert.equal(r.status, 200, 'and the name is free');
 r = await call({ op: 'board', token: A.token }, 'https://evil.example'); assert.equal(r.headers['access-control-allow-origin'], undefined, 'no CORS for strangers');
 await rm(FILE, { force: true });
 console.log('board: all checks passed');

@@ -15,7 +15,8 @@ export const MIN_GAP = 8 * 1000;                       // between two accepted s
 
 export const MSG = {
   signin: (name, at) => `AND SO leaderboard\nsign in as ${name}\nat ${at}`,
-  score: p => `AND SO leaderboard\nsign my score: ${p.score} resonance, ${p.finds} finds, ${p.stars} stars, ${p.rounds} rounds, ${p.played}s played\nas ${p.name}\nat ${p.at}`
+  score: p => `AND SO leaderboard\nsign my score: ${p.score} resonance, ${p.finds} finds, ${p.stars} stars, ${p.rounds} rounds, ${p.played}s played\nas ${p.name}\nat ${p.at}`,
+  leave: (name, at) => `AND SO leaderboard\nremove ${name} from the board\nat ${at}`
 };
 
 export const b64u = buf => Buffer.from(buf).toString('base64url');
@@ -127,6 +128,15 @@ export function score(doc, b, now) {
   Object.assign(p, { finds: Math.max(p.finds, f.finds), stars: Math.max(p.stars, f.stars), rounds: Math.max(p.rounds, f.rounds), played: Math.max(p.played, f.played), at: b.at, posted: now });
   if (better) p.score = f.score;
   return { status: 200, body: { kept: better, ...rankOf(doc, b.id) }, doc };
+}
+
+// a player can take themselves off the board: their row, their name and their key are gone
+export function leave(doc, b, now) {
+  const p = doc.players[b.id]; if (!p) return fail(404, 'not on the board');
+  const at = when(b.at); if (at == null || Math.abs(now - at) > WINDOW_SIGNIN) return fail(400, "that request is out of date; check this device's clock");
+  const k = readKey(p.alg, p.pk); if (!k || !verify(p.alg, k.key, MSG.leave(p.name, b.at), b.sig)) return fail(401, 'the signature does not match');
+  delete doc.names[nameKey(p.name)]; delete doc.players[b.id];
+  return { status: 200, body: { left: true }, doc };
 }
 
 export function board(doc, id, n = 50) {
