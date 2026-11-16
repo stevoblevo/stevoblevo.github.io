@@ -1,0 +1,14 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": { "v": 1, "at": "2026-11-16T08:10:00Z" },
+  "title": "Hypermetapunk",
+  "namespace": "Hypermetapunk",
+  "libraries": [],
+  "sections": {},
+  "groups": [],
+  "assetGroups": {},
+  "blobs": {},
+  "docs": { "readme": "project/README.md", "sections": [] },
+  "lastChange": { "by": "Bleve", "at": "2026-11-16T08:10:00Z", "via": "Claude (cloud session)", "note": "Hypermetapunk 0.1: colours, type, spacing, radii and glow from AND SO’s hypermetapunk look, and a cover." }
+}

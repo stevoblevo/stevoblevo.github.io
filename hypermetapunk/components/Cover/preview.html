@@ -1,0 +1,58 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hypermetapunk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Hanken+Grotesk:wght@400;600&display=swap">
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--void); color:var(--ink); font-family:"Hanken Grotesk", Arial, sans-serif; overflow:hidden; }
+  .cover { position:relative; height:288px; overflow:hidden; }
+  .band { position:absolute; top:0; left:0; width:960px; height:112px; }
+  .band svg { display:block; width:960px; height:112px; }
+  .plum { fill:var(--plum); }
+  .aub { fill:var(--aubergine); }
+  .mint { fill:var(--mint); }
+  .violet { fill:var(--violet); }
+  .gold { fill:var(--gold); }
+  .coral { fill:var(--coral); }
+  .sky { fill:var(--sky); }
+  .blk { rx:var(--radius-md); }
+  .node { rx:8px; }
+  .edge { stroke:var(--line); stroke-width:2; fill:none; }
+  .words { position:absolute; left:32px; right:32px; bottom:32px; }
+  .name { margin:0; font-family:"Cormorant Garamond", Georgia, serif; font-size:64px; line-height:.95; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--ink); }
+  .tag { margin:8px 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="band" aria-hidden="true">
+<svg viewBox="0 0 960 112" width="960" height="112">
+<!--
+  blocks      plum 448×112 bled off the top-left (the raised surface, largest) · aubergine 256×80 · mint 96×112 bled off the top (the live signal) · coral 64×48 (warmth, held) — about a third of 960×288
+  arrangement a strip of unequal bands bleeding off the top, the five axis colours as one row of nodes riding over it
+  pattern     a literal motif: the five lattice nodes (16px discs, rx half of space-4) joined by line hairlines, from “Five axes, five colours”
+  scales      heights in space-4 multiples; gutters space-4; nodes space-4 discs at a space-16 pitch; corners radius-md
+-->
+<rect class="plum blk" x="0" y="-16" width="448" height="128" rx="12"/>
+<rect class="aub blk" x="464" y="16" width="256" height="80" rx="12"/>
+<rect class="mint blk" x="736" y="-16" width="96" height="128" rx="12"/>
+<rect class="coral blk" x="848" y="48" width="96" height="48" rx="12"/>
+<path class="edge" d="M80 56 L144 32 L208 56 L272 80 L336 56 L400 32"/>
+<rect class="mint node" x="72" y="48" width="16" height="16" rx="8"/>
+<rect class="violet node" x="136" y="24" width="16" height="16" rx="8"/>
+<rect class="gold node" x="200" y="48" width="16" height="16" rx="8"/>
+<rect class="sky node" x="264" y="72" width="16" height="16" rx="8"/>
+<rect class="coral node" x="328" y="48" width="16" height="16" rx="8"/>
+<rect class="gold node" x="392" y="24" width="16" height="16" rx="8"/>
+</svg>
+</div>
+<div class="words">
+<p class="name">Hypermetapunk</p>
+<p class="tag">The neon kit: five glowing axes holding a sound in place.</p>
+</div>
+</div>
+</body>
+</html>
