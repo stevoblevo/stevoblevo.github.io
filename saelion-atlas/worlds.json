@@ -1,6 +1,6 @@
 {
   "schema": "saelion-atlas-public-v1",
-  "updated": "2026-11-02",
+  "updated": "2026-11-17",
   "scope": "curated public wayfinding, not an exhaustive private archive",
   "phases": {
     "open": "Observed public entry; some may need browser features and save locally.",
@@ -737,6 +737,25 @@
       ],
       "featured": true,
       "sort": 0
+    },
+    {
+      "id": "livloch",
+      "title": "Livloch",
+      "kind": "play",
+      "phase": "open",
+      "description": "Two patrons, three threads, one loch. A paper valley stuck in a stalemate, and several quiet ways to break it. Prototype, solo against bots.",
+      "url": "https://stevoblevo.github.io/livloch/",
+      "image": "",
+      "tags": [
+        "lanes",
+        "paper",
+        "loch",
+        "fold",
+        "microtonal",
+        "webgl"
+      ],
+      "featured": false,
+      "sort": 19
     }
   ]
 }
