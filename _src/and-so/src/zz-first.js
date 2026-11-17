@@ -2,7 +2,7 @@
 // First steps is hands-on and short: four things to do, each named after you have done it. Nothing is credited until
 // you touch something, Saedo waits, and the band (easy listening) starts when you are through. It can be skipped, it
 // never comes back once it is finished or skipped, and ?first=1 shows it again (?first=0 never does).
-const FIRST = { on: false, step: -1, touched: false, grabbed: false, released: false, did: { drag: false, tap: false, move: false, jar: false }, hold: 0, endAt: 0, tick: 0 };
+const FIRST = { on: false, step: -1, touched: false, grabbed: false, released: false, callAt: 0, did: { drag: false, tap: false, move: false, jar: false }, hold: 0, endAt: 0, tick: 0 };
 const FIRST_KEY = 'andso:first', TODAY_KEY = 'andso:today';
 const FIRST_STEPS = [
   { k: 'drag', say: 'drag a voice up the hill, then let go.', sub: 'it rolls home to the nearest place where the notes agree.', done: 'there. that was a landing.' },
@@ -21,7 +21,7 @@ function firstWanted() {
 function firstStart() {
   FIRST.on = true; FIRST.step = -1; FIRST.touched = false; FIRST.grabbed = false; FIRST.released = false;
   for (const k in FIRST.did) FIRST.did[k] = false;
-  autoOn = false; flipAt = t + 1e7; nextTryT = t + 1e7;
+  autoOn = false; flipAt = t + 1e7; nextTryT = t + 1e7; FIRST.callAt = t + 6;
   document.body.classList.add('first'); syncUI();
   setTimeout(() => { if (FIRST.on) firstNext(); }, 1500);
   if (!FIRST.tick) FIRST.tick = setInterval(firstPlace, 120);
@@ -92,7 +92,14 @@ function firstPlace() {
   el.style.top = Math.max(150, LT - 16) + 'px';
   if (!FIRST.on || FIRST.step < 0 || el.classList.contains('ok') || !el.classList.contains('on')) { ring.classList.remove('on'); return; }
   const s = FIRST_STEPS[FIRST.step]; let x = -1, y = -1, r = 34, w = 0, h = 0;
-  if (s.k === 'drag') { const v = (act && act.wT > 0 && act) || voices.find(o => o.wT > 0); if (v && !voices.some(o => o.dragging)) { const b = ballPos(v); x = b.X; y = b.Y; } }
+  if (s.k === 'drag') {
+    const v = (act && act.wT > 0 && act) || voices.find(o => o.wT > 0);
+    if (v && !voices.some(o => o.dragging)) {
+      const b = ballPos(v); x = b.X; y = b.Y;
+      // until it is touched, the ringed voice calls now and then, so the first sound to answer is yours
+      if (!FIRST.touched && t > FIRST.callAt) { FIRST.callAt = t + 5.5; try { if (plucky()) audio.pluck(v, 0.75, 0.3, 0); v.flash = 0.7; } catch (e) {} }
+    }
+  }
   else if (s.k === 'tap') { const v = voices.find(o => o.wT > 0); if (v) { const b = ballPos(Object.assign({}, v, { x: firstGap(), dropping: false })); x = b.X; y = b.Y + 26; r = 28; } }
   else { const e = $(s.k === 'move' ? (phone ? 'dNext' : 'bNext') : 'jar'), q = e && e.getBoundingClientRect(); if (q && q.width) { x = q.left + q.width / 2; y = q.top + q.height / 2; w = q.width + 14; h = q.height + 14; } }
   if (x < 0) { ring.classList.remove('on'); return; }
