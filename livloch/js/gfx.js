@@ -6,7 +6,7 @@ const R = LL.gfx = { ok: false, low: false };
 let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
 let world, dyn, sky, stars;
-let tr = [null, null], trHat, barBg, barFill, projMesh, orbMesh, parts, staticGlow;
+let tr = [null, null], hushEyes, trHat, barBg, barFill, projMesh, orbMesh, parts, staticGlow;
 let nessM = null, nessY = -11, creaseM = [];
 let heroM = [], structM = [], strayM = [], knotPool = [], fawnPool = [], zonePool = [], rings = [];
 let shake = 0, camPos = { x: 0, y: 30, z: -60 }, camDir = { x: 0, y: 0, z: 1 }, camDist = 5.4;
@@ -249,10 +249,14 @@ function buildThreads() {
 }
 function buildInstanced() {
   const bodyG = cyl(0.42, 0.52, 1.0, 6); bodyG.translate(0, 0.75, 0);
-  for (let t = 0; t < 2; t++) {
-    tr[t] = new T.InstancedMesh(bodyG, new T.MeshLambertMaterial({ color: SRC_TEAM[t], emissive: SRC_TEAM[t], emissiveIntensity: 0.5 }), 90);
-    tr[t].frustumCulled = false; tr[t].count = 0; dyn.add(tr[t]);
-  }
+  tr[0] = new T.InstancedMesh(bodyG, new T.MeshLambertMaterial({ color: SRC_TEAM[0], emissive: SRC_TEAM[0], emissiveIntensity: 0.5 }), 90);
+  // the Hush: torn tissue paper, the coldest thing on screen, with pale lilac eyes (Reignfawn)
+  const hushG = cyl(0.1, 0.66, 1.4, 5); hushG.translate(0, 0.72, 0);
+  tr[1] = own(new T.InstancedMesh(hushG, new T.MeshLambertMaterial({ color: LK.hush || 0x1c1426, emissive: 0x6a5a9a, emissiveIntensity: 0.3 }), 110));
+  const eyeG = new T.BoxGeometry(0.44, 0.09, 0.06); eyeG.translate(0, 0.98, 0.3);
+  hushEyes = own(new T.InstancedMesh(eyeG, new T.MeshBasicMaterial({ color: 0xf2e2ff, fog: false }), 110));
+  hushEyes.frustumCulled = false; hushEyes.count = 0; dyn.add(hushEyes);
+  for (let t = 0; t < 2; t++) { tr[t].frustumCulled = false; tr[t].count = 0; dyn.add(tr[t]); }
   const hatG = flat(new T.ConeGeometry(0.66, 0.5, 6)); hatG.translate(0, 1.5, 0);
   trHat = new T.InstancedMesh(hatG, mat(0x2b1b2f), 180); trHat.frustumCulled = false; trHat.count = 0; dyn.add(trHat);
   const pg = new T.PlaneGeometry(1, 1);
@@ -346,14 +350,18 @@ function heroModel(h) {
     const br = mesh(cyl(0.09, 0.05, 0.8, 5), mat(0xc4403a), 0, 1.25, -0.3, body); br.rotation.x = 0.35;
     gun = mesh(box(0.1, 0.1, 0.95), mat(0x6a4a34), 0, 0, 0.45, arm); mesh(box(0.34, 0.2, 0.2), mat(0x8a8690), 0, 0, 0.95, arm);
   } else if (d.id === 'myra') {
-    mesh(cyl(0.2, 0.72, 1.15, 10), mat(0xd9879f), 0, 1.0, 0, body);
-    mesh(new T.TorusGeometry(0.72, 0.07, 5, 14), mat(0xe9b44c, 0.3), 0, 0.45, 0, body).rotation.x = Math.PI / 2;
+    mesh(new T.SphereGeometry(0.62, 10, 8), mat(0x9a6fd0), 0, 1.02, 0, body);
+    const wgl = mesh(flat(new T.ConeGeometry(0.3, 0.9, 3)), mat(0xe9dcff, 0.4), 0.42, 1.5, -0.42, body); wgl.rotation.set(0.5, 0, -1.0);
+    const wgr = mesh(flat(new T.ConeGeometry(0.3, 0.9, 3)), mat(0xe9dcff, 0.4), -0.42, 1.5, -0.42, body); wgr.rotation.set(0.5, 0, 1.0);
+    mesh(cyl(0.2, 0.2, 0.34, 8), mat(0xe9b44c, 0.3), 0.5, 1.0, 0.36, body).rotation.z = Math.PI / 2;
     mesh(new T.SphereGeometry(0.24, 8, 6), skin, 0, 1.72, 0, body);
     mesh(new T.SphereGeometry(0.12, 6, 5), mat(0xe9b44c, 0.4), 0, 2.0, 0, body);
     gun = mesh(cyl(0.16, 0.1, 0.6, 7), mat(0xe9b44c, 0.25), 0, 0, 0.4, arm); gun.rotation.x = Math.PI / 2;
   } else {
-    mesh(cyl(0.16, 0.28, 0.95, 5), mat(0x6d5a8a), 0, 0.98, 0, body);
-    mesh(flat(new T.IcosahedronGeometry(0.32, 0)), mat(0xc9a0ff, 0.35), 0, 1.68, 0, body);
+    mesh(cyl(0.16, 0.3, 0.95, 5), mat(0x8fd8c0), 0, 0.98, 0, body);
+    mesh(flat(new T.IcosahedronGeometry(0.32, 0)), mat(0xe8c4a0), 0, 1.68, 0, body);
+    const b1 = mesh(cyl(0.08, 0.05, 0.7, 5), mat(0xc8703a, 0.25), 0.3, 1.4, -0.08, body); b1.rotation.z = -0.25;
+    const b2 = mesh(cyl(0.08, 0.05, 0.7, 5), mat(0xc8703a, 0.25), -0.3, 1.4, -0.08, body); b2.rotation.z = 0.25;
     const n1 = mesh(cyl(0.02, 0.02, 0.9, 4), mat(0xf4e8d6), 0.1, 1.85, 0, body); n1.rotation.z = 0.7;
     const n2 = mesh(cyl(0.02, 0.02, 0.9, 4), mat(0xf4e8d6), -0.1, 1.85, 0, body); n2.rotation.z = -0.7;
     gun = mesh(box(0.08, 0.08, 0.6), mat(0xf4e8d6), 0, 0, 0.35, arm);
@@ -387,7 +395,7 @@ function structModel(s) {
   const rub = new T.Group(); mesh(flat(new T.IcosahedronGeometry(1.4, 0)), stone, 0.6, 0.5, 0.3, rub); mesh(flat(new T.IcosahedronGeometry(1, 0)), dark, -0.9, 0.4, -0.5, rub); mesh(box(1.6, 0.4, 1.2), stone, 0, 0.2, 1.1, rub).rotation.y = 0.5; rub.visible = false; g.add(rub);
   const ward = new T.Mesh(new T.CylinderGeometry(s.r + 1.4, s.r + 1.4, s.h + 1, 14, 1, true), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.13, side: T.DoubleSide, blending: T.AdditiveBlending, depthWrite: false }));
   ward.position.y = (s.h + 1) / 2; g.add(ward);
-  g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.position.set(s.x, 0, s.z); dyn.add(g); return g;
+  g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.paper = paper; g.position.set(s.x, 0, s.z); dyn.add(g); return g;
 }
 function strayModel(s) {
   const g = new T.Group(), m = mat(0x5a4a78);
@@ -512,6 +520,12 @@ R.fx = function (e) {
     case 'jump': if (e.dbl) emit(e.u.x, e.u.y, e.u.z, 8, 0xf4e8d6, 3, 0.35, -1, 0); break;
     case 'dash': emit(e.u.x, e.u.y + 0.8, e.u.z, 10, 0xf4e8d6, 3, 0.35, 0, 0); break;
     case 'level': ring(e.u.x, e.u.y, e.u.z, 0.4, 3, 0xffe9a8, 0.5); break;
+    case 'slam': ring(e.x, 0.05, e.z, 0.4, 3.2, 0xb8a0ff, 0.3); emit(e.x, 0.5, e.z, 8, 0xb8a0ff, 5, 0.4, 2); break;
+    case 'theft': emit(e.u.x, e.u.y + 1.2, e.u.z, 26, 0xffe9a8, 6, 0.8, 3); if (e.p) shake = Math.max(shake, 0.4); break;
+    case 'snuff': emit(e.u.x, e.u.h * 0.6, e.u.z, 50, 0x8a78c8, 8, 1, 2); ring(e.u.x, 0.05, e.u.z, 6, 0.5, 0x8a78c8, 0.7); break;
+    case 'thiefdown': emit(e.x, 1, e.z, 34, 0xffe9a8, 7, 0.9, 4, 3); break;
+    case 'lastbreath': ring(e.x, e.y + 0.05, e.z, 0.5, 7.5, 0xffffff, 0.45); emit(e.x, e.y + 1, e.z, 30, 0xfff0d0, 9, 0.5, 1); break;
+    case 'relit': emit(e.u.x, e.u.h * 0.6, e.u.z, 30, 0xffd28a, 5, 0.9, 3, 0); break;
     case 'fold': ring(e.x, 0.05, e.z, 1, 26, 0xf4e8d6, 1.1); for (let k = -12; k <= 12; k += 2) emit(e.x, 0.4, k, 8, 0xf4e8d6, 5, 1.1, 6, 4); if (dist2cam(e.x, e.z) < 80) shake = 0.5; break;
     case 'nessup': ring(e.x, 0.05, e.z, 1, 13, 0x7fe0ff, 1.3); emit(e.x, 0.6, e.z, 110, 0x9fe8ff, 11, 1.5, 11); if (dist2cam(e.x, e.z) < 70) shake = 0.6; break;
     case 'nessdown': ring(e.x, 0.05, e.z, 1, 24, 0xffe08a, 1.4); emit(e.x, 4, e.z, 220, 0xffe08a, 15, 2, 8, 4); emit(e.x, 1, e.z, 90, 0x9fe8ff, 10, 1.5, 9); if (dist2cam(e.x, e.z) < 70) shake = 0.8; break;
@@ -581,13 +595,22 @@ R.frame = function (dt, view) {
     const t = ts[i]; if (!t.alive) continue;
     const moving = Math.abs(t.vx) + Math.abs(t.vz) > 0.1;
     const hop = moving ? Math.abs(Math.sin(time * 9 + t.id)) * 0.2 : 0, sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
-    const sx = t.ranged ? 0.78 : 1, sy = t.ranged ? 1.35 : 1;
-    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(0, t.yaw, 0); dummy.scale.set(sx * sc, sy * sc, sx * sc); dummy.updateMatrix();
-    if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); } else { if (n1 < 90) tr[1].setMatrixAt(n1++, dummy.matrix); }
-    if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix);
+    const sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1);
+    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(0, t.yaw, t.team === 1 ? Math.sin(time * 5 + t.id) * 0.08 : 0); dummy.scale.set(sx * sc, sy * sc, sx * sc); dummy.updateMatrix();
+    if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix); }
+    else if (n1 < 110) { hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix); }
   }
-  tr[0].count = n0; tr[1].count = n1; trHat.count = nh;
-  tr[0].instanceMatrix.needsUpdate = tr[1].instanceMatrix.needsUpdate = trHat.instanceMatrix.needsUpdate = true;
+  for (i = 0; i < W.thieves.length; i++) {
+    const t = W.thieves[i]; if (!t.alive || n1 >= 110) continue;
+    const sc = t.flash > 0 ? 1.05 : 0.85;
+    dummy.position.set(t.x, Math.abs(Math.sin(time * 14 + t.id)) * 0.3, t.z); dummy.rotation.set(0.35, t.yaw, 0); dummy.scale.set(sc, sc * 0.9, sc); dummy.updateMatrix();
+    hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix);
+    if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0);
+  }
+  dummy.rotation.set(0, 0, 0);
+  if (W.red > 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 3 : 8); k++) emit(cx + (Math.random() - 0.5) * 44, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 44, 1, 0xff3a3a, 0.3, 0.75, -20, 26); }
+  tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh;
+  tr[0].instanceMatrix.needsUpdate = tr[1].instanceMatrix.needsUpdate = hushEyes.instanceMatrix.needsUpdate = trHat.instanceMatrix.needsUpdate = true;
   // structures
   for (i = 0; i < structM.length; i++) {
     const m = structM[i], s = m.unit;
@@ -597,6 +620,8 @@ R.frame = function (dt, view) {
       if (m.spin) { m.spin.rotation.y += dt * 0.7; m.spin.position.y = 7.2 + Math.sin(time * 1.3 + s.team) * 0.4; m.halo.rotation.x = Math.PI / 2 + Math.sin(time * 0.8) * 0.3; m.halo.rotation.y += dt * 0.5; }
       const pulse = 1 + Math.sin(time * 2 + i) * 0.06 + (s.flash > 0 ? 0.35 : 0);
       const b = s.kind === 'patron' ? 22 : (s.kind === 'warden' ? 13 : 10); m.glow.scale.set(b * pulse, b * pulse, 1);
+      m.glow.visible = !s.dark;
+      if (m.paper) { if (m.baseEm == null) m.baseEm = m.paper.emissiveIntensity; m.paper.emissiveIntensity = s.dark ? 0.03 : m.baseEm; }
     }
   }
   for (i = 0; i < strayM.length; i++) {
@@ -711,11 +736,11 @@ R.frame = function (dt, view) {
   const us = W.units, q = camera.quaternion;
   for (i = 0; i < us.length && nb < 170; i++) {
     const u = us[i]; if (!u.alive) continue;
-    if (u.kind === 'trooper' && u.hp >= u.maxHp) continue;
+    if (u.kind === 'trooper' && !u.big && u.hp >= u.maxHp) continue;
     if (u.kind === 'stray' && u.hp >= u.maxHp) continue;
     if (u === pl && view.mode !== 'attract') continue;
     const dx = u.x - camPos.x, dz = u.z - camPos.z; if (dx * dx + dz * dz > (u.struct || u.kind === 'ness' ? 150 * 150 : 75 * 75)) continue;
-    let w = 1, hgt = 0.11, y = u.y + u.h + 0.45;
+    let w = u.big ? 2.8 : 1, hgt = u.big ? 0.22 : 0.11, y = u.y + u.h * (u.big ? 2.3 : 1) + 0.45;
     if (u.kind === 'hero') { w = 1.7; hgt = 0.2; y = u.y + u.h + 0.6; } else if (u.struct) { w = 5.5; hgt = 0.4; y = u.h + 1.6; } else if (u.kind === 'stray') { w = 2.2; hgt = 0.16; y = 3.6; } else if (u.kind === 'ness') { w = 7; hgt = 0.45; y = 9; }
     const f = Math.max(0, u.hp / u.maxHp);
     dummy.position.set(u.x, y, u.z); dummy.quaternion.copy(q); dummy.scale.set(w + 0.08, hgt + 0.08, 1); dummy.updateMatrix(); barBg.setMatrixAt(nb, dummy.matrix);

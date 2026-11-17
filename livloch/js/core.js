@@ -17,7 +17,7 @@ var C = LL.C = {
   HALF_X: 78, HALF_Z: 138, SPAWN_Z: 128, PATRON_Z: 114, FOUNT_R: 13,
   LANE_X: [-48, 0, 48], LANE_NAME: ['West thread', 'Middle thread', 'East thread'],
   GRAV: 26, ZIP_Y: 6.5, ZIP_SPEED: 27,
-  TEAM_NAME: ['Reign', 'Hush'], CREASE_X: [-24, 24], FOLD_T: 45, TEAM_COL: [0xff6a4d, 0x5fe6b6], TEAM_CSS: ['#ff7a5c', '#6fe8c0'],
+  TEAM_NAME: ['Reign', 'Hush'], RED_EVERY: 300, RED_T: 60, CREASE_X: [-24, 24], FOLD_T: 45, TEAM_COL: [0xff6a4d, 0x5fe6b6], TEAM_CSS: ['#ff7a5c', '#6fe8c0'],
   CAMPS: [[-24, 0], [-24, -50], [24, -50], [-24, 50], [24, 50]],
   LOCH: { x: 24, z: 0, r: 9.5 }, GREAT_T: 90,
   ULT_LEVEL: 3, MAX_ITEMS: 15
@@ -55,8 +55,8 @@ LL.nearestLane = function (x, z) {
 
 /* Heroes. kind: orb | line | nova | dash | blink | zone | turret */
 LL.HEROES = [
-  { id: 'dora', name: 'Dora', title: 'Lantern keeper', col: 0xffc46b, css: '#ffc46b',
-    blurb: 'Steady bolts, a thrown light, a thread home. The sensible choice.',
+  { id: 'dora', name: 'Dora', title: 'Carries the little light', col: 0xffc46b, css: '#ffc46b',
+    blurb: 'Coffee first. Steady bolts, a thrown light, a thread home.',
     hp: 660, speed: 7.2, aiRange: 36, build: [10, 5, 11, 0, 12, 6, 13, 8, 14, 9, 1, 2, 3, 7, 4],
     gun: { name: 'Lantern bolts', dmg: 10, rate: 7.5, mag: 26, reload: 1.5, speed: 95, spread: 0.012, pellets: 1, range: 46, size: 0.16 },
     ab: [
@@ -73,16 +73,16 @@ LL.HEROES = [
       { key: 'E', name: 'Tumble', kind: 'nova', cd: 12, r: 7.5, dmg: 110, slow: 0.45, slowT: 2.5, knock: 9, desc: 'Shake the ground. Nearby enemies are hurt, shoved and slowed.' },
       { key: 'F', name: 'Fawn Charge', kind: 'line', ult: true, vis: 'fawn', cd: 75, dmg: 270, speed: 30, r: 2.6, knock: 14, range: 66, flat: true, desc: 'The fawn runs the lane. It does not go around people.' }
     ] },
-  { id: 'myra', name: 'Myra Belle', title: 'The bell', col: 0xf2a0b8, css: '#f2a0b8',
-    blurb: 'Close range, hard to move, heals the people standing near her.',
+  { id: 'myra', name: 'Myra Belle', title: 'Thread-keeper', col: 0xb48cf0, css: '#b48cf0',
+    blurb: 'Round, purple, hard to move. Keeps the quest log and mends whoever stands near her.',
     hp: 800, speed: 6.8, aiRange: 22, build: [5, 10, 6, 0, 8, 7, 12, 1, 9, 14, 11, 13, 2, 3, 4],
-    gun: { name: 'Bellshot', dmg: 7.5, rate: 1.5, mag: 6, reload: 1.9, speed: 90, spread: 0.055, pellets: 7, range: 26, size: 0.14 },
+    gun: { name: 'Spool shot', dmg: 7.5, rate: 1.5, mag: 6, reload: 1.9, speed: 90, spread: 0.055, pellets: 7, range: 26, size: 0.14 },
     ab: [
-      { key: 'Q', name: 'Ring', kind: 'nova', cd: 8, r: 8, dmg: 95, slow: 0.35, slowT: 2, knock: 4, desc: 'One clear note. Everything near you takes it personally.' },
-      { key: 'E', name: 'Chime Ward', kind: 'zone', cd: 16, r: 7, heal: 55, life: 6, fx: 'ward', desc: 'Plant a ward that mends you and your side while you stand in it.' },
-      { key: 'F', name: 'Toll', kind: 'zone', ult: true, cd: 80, r: 13, burst: 430, delay: 1.3, life: 0.5, fx: 'toll', desc: 'Wind up, then toll. Wide, late, and very loud.' }
+      { key: 'Q', name: 'Snip', kind: 'nova', cd: 8, r: 8, dmg: 95, slow: 0.35, slowT: 2, knock: 4, desc: 'Cut every thread within reach. Whatever was holding on lets go.' },
+      { key: 'E', name: 'Mending', kind: 'zone', cd: 16, r: 7, heal: 55, life: 6, fx: 'ward', desc: 'Lay a circle of stitches that mends you and your side while you stand in it.' },
+      { key: 'F', name: 'Pull the Thread', kind: 'zone', ult: true, cd: 80, r: 13, burst: 430, delay: 1.3, life: 0.5, fx: 'toll', desc: 'Wind the spool, then pull. Everything nearby comes undone at once.' }
     ] },
-  { id: 'skein', name: 'Skein Doll', title: 'Loose thread', col: 0xc9a0ff, css: '#c9a0ff',
+  { id: 'skein', name: 'Skein Doll', title: 'Every thread is hers', col: 0xe0955f, css: '#e0955f',
     blurb: 'Fast, fragile, everywhere. Needles by the dozen and a knot that shoots.',
     hp: 580, speed: 7.6, aiRange: 30, build: [1, 0, 5, 3, 6, 2, 8, 4, 9, 7, 11, 10, 12, 13, 14],
     gun: { name: 'Needles', dmg: 5.6, rate: 14, mag: 42, reload: 1.4, speed: 100, spread: 0.028, pellets: 1, range: 36, size: 0.11 },

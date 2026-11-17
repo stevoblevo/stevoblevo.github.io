@@ -3,7 +3,7 @@
 A third-person lane game in the Saelion valley. The Reign keeps the lanterns lit, the Hush puts them out, and their paper troopers cancel each other on three threads until something asymmetrical happens. WebGL (Three.js r128 from cdnjs), no build step: `index.html` plus `js/`.
 
 - Play: https://stevoblevo.github.io/livloch/
-- Version: 0.4 (the fold). Earlier: 0.1 one-shot, 0.2 the loch and the Ness, 0.3 four looks.
+- Version: 0.5 (the Hush). Earlier: 0.1 one-shot, 0.2 the loch and the Ness, 0.3 four looks, 0.4 the fold.
 - Status: prototype. Solo against bots. Not yet play-tested on real devices beyond one phone session.
 
 ## Files

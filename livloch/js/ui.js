@@ -116,7 +116,7 @@ UI.fx = function (e) {
     case 'herokill': {
       const v = e.victim, k = e.killer;
       if (k) feed(hname(k) + ' ' + KILL_VERBS[(k.kills + v.deaths) % KILL_VERBS.length] + ' ' + hname(v));
-      else feed(hname(v) + ' walked into ' + (e.src && e.src.struct ? 'a ' + e.src.kind : (e.src && e.src.kind === 'ness' ? 'the loch' : 'the troopers')));
+      else feed(hname(v) + ' walked into ' + (e.src && e.src.struct ? 'a ' + e.src.kind : (e.src && e.src.kind === 'ness' ? 'the loch' : (e.src && e.src.big ? 'a hollow' : 'the hush'))));
       if (k === pl) { UI.banner('You ' + KILL_VERBS[(k.kills + v.deaths) % KILL_VERBS.length] + ' ' + v.name + '.', '+' + (200 + 25 * v.level) + ' souls', 2.5); const hm = $('hitm'); hm.className = ''; void hm.offsetWidth; hm.className = 'kill'; LL.input.rumble(0.8, 200); }
       if (v === pl) { $('deadH').textContent = !k && e.src && e.src.kind === 'ness' ? 'The loch kept you.' : k ? k.name + ' ' + KILL_VERBS[(k.kills + v.deaths) % KILL_VERBS.length] + ' you.' : 'You came apart.'; LL.input.rumble(1, 400); }
       break;
@@ -128,6 +128,15 @@ UI.fx = function (e) {
       feed('<b class="t' + s.team + '">' + C.TEAM_NAME[s.team] + '</b> lost a ' + s.kind);
       break;
     }
+    case 'thief': if (e.mark === pl) feed('A hush is out for your souls'); else if (e.mark.struct) feed('A hush is out for a lantern'); break;
+    case 'theft': if (e.p) UI.banner('A hush has ' + Math.round(e.amt) + ' of your souls.', 'Catch it before it reaches the gate', 4.5); else feed('A hush robbed ' + hname(e.u)); break;
+    case 'snuff': UI.banner('The light is gone from your ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + '.', 'It cannot fire until the hush carrying its light is caught', 5); break;
+    case 'thiefdown': if (e.vp && e.loot) feed('Your ' + Math.round(e.loot) + ' souls are back'); else if (e.p) feed('You caught the hush'); if (e.carry) feed('The ' + e.carry.kind + ' is lit again'); break;
+    case 'thiefhome': if (e.carry) UI.banner('The hush reached its gate.', 'Your ' + C.LANE_NAME[e.carry.lane] + ' ' + e.carry.kind + ' stays dark for two minutes', 4.5); else if (e.vp) feed('The hush got home with your souls'); break;
+    case 'relit': feed('The ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' is lit again'); break;
+    case 'red': UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
+    case 'redend': feed('The rain thins'); break;
+    case 'lastbreath': if (e.u === pl) feed('Last breath'); break;
     case 'fold':
       if (e.p) UI.banner('The valley folds.', 'Your ' + C.LANE_NAME[e.from] + ' troopers cross to the ' + C.LANE_NAME[e.to] + ' for ' + C.FOLD_T + ' seconds', 5);
       feed('<b class="t' + e.team + '">' + C.TEAM_NAME[e.team] + '</b> folded the valley');
@@ -179,8 +188,8 @@ UI.showPause = function (onOff) {
 };
 UI.showOver = function () {
   const win = W.winner === 0, t = U.fmtTime(W.t);
-  $('overH').innerHTML = win ? 'The Hush patron is <em>out</em>.' : 'Your patron went dark.';
-  $('overP').textContent = win ? 'The livelock resolved in ' + t + '. The valley is yours until someone forks it.' : 'The livelock resolved in ' + t + ', just not in your favour. The troopers did not notice.';
+  $('overH').innerHTML = win ? 'The Hush gate is <em>shut</em>.' : 'Your patron went dark.';
+  $('overP').textContent = win ? 'The livelock resolved in ' + t + '. One door stays lit.' : 'The livelock resolved in ' + t + ', just not in your favour. The troopers did not notice.';
   $('sbOver').innerHTML = board(); $('hud').hidden = true; show('over');
 };
 UI.nav = function (I) {
@@ -202,10 +211,11 @@ function minimap(view) {
   g.fillStyle = 'rgba(60,150,170,0.55)'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), C.LOCH.r * sc, 0, 6.3); g.fill();
   if (W.ness.alive) { g.fillStyle = '#fff0a0'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), 5.5, 0, 6.3); g.fill(); }
   W.strays.forEach(function (s) { if (!s.alive) return; g.fillStyle = 'rgba(201,160,255,0.8)'; g.beginPath(); g.arc(X(s.x), Y(s.z), 3, 0, 6.3); g.fill(); });
-  W.troopers.forEach(function (t) { if (!t.alive) return; g.fillStyle = C.TEAM_CSS[t.team]; g.fillRect(X(t.x) - 1.5, Y(t.z) - 1.5, 3, 3); });
+  W.troopers.forEach(function (t) { if (!t.alive) return; g.fillStyle = C.TEAM_CSS[t.team]; const z = t.big ? 4.5 : 1.5; g.fillRect(X(t.x) - z, Y(t.z) - z, z * 2, z * 2); });
+  W.thieves.forEach(function (t) { if (!t.alive) return; g.fillStyle = (Math.floor(W.t * 4) % 2) ? '#f2e2ff' : C.TEAM_CSS[1]; g.save(); g.translate(X(t.x), Y(t.z)); g.rotate(Math.PI / 4); g.fillRect(-4, -4, 8, 8); g.restore(); });
   W.structs.forEach(function (s) {
     const z = s.kind === 'patron' ? 9 : (s.kind === 'warden' ? 7 : 6);
-    g.fillStyle = s.alive ? C.TEAM_CSS[s.team] : 'rgba(120,110,125,0.5)';
+    g.fillStyle = s.alive ? (s.dark ? 'rgba(90,74,120,0.9)' : C.TEAM_CSS[s.team]) : 'rgba(120,110,125,0.5)';
     g.save(); g.translate(X(s.x), Y(s.z)); if (s.kind === 'patron') g.rotate(Math.PI / 4); g.fillRect(-z, -z, z * 2, z * 2);
     if (s.alive && s.hp < s.maxHp) { g.fillStyle = 'rgba(14,9,18,0.75)'; const f = 1 - s.hp / s.maxHp; g.fillRect(-z, -z, z * 2, z * 2 * f); }
     g.restore();
