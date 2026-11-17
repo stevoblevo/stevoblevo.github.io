@@ -55,10 +55,13 @@ visitor with their count.
   (not from a branch tip). On 16 Nov it serves a different line of 8.1: this repo's 8.1 plus that repo's own additions
   (an origami invitation, recorded story voices under `/and-so/voices/`, its own `pwa.js` and `sw.js`, a `<base>` tag
   because the address has no trailing slash). `saelion.co/field/worlds/and-so` is an older 6.x copy.
-- Moving saelion.co to 9 means: this build as `and-so/index.html` there with the `<base href="/and-so/">` line, that
-  repo's current page kept at `/and-so/v8.1/`, its extra files left in place, and a production deploy by the owner's
-  word. Its recorded voices and origami invitation are not in this source yet; bringing them in is the next piece of
-  work if they are wanted on the front door.
+- 17 Nov: first steps and today's find were ported onto that line instead of replacing it, so it keeps its voices and
+  invitation. `port_saelion_co.py` applies the same edits 9 makes here to that repo's built `and-so/index.html`
+  (`python3 port_saelion_co.py <canary>/and-so/index.html src`). It is on the branch
+  `release/and-so-first-steps-20261117` there (pull request 38), built as a preview deployment. Promoting it to
+  saelion.co is the owner's step.
+- Still separate: the board, the app shell and the radio relay of 8.3 are not on that line, and its recorded voices and
+  origami invitation are not in this source.
 
 ## Next (ideas, not promises)
 
