@@ -3,8 +3,9 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'lantern', coached: false };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', coached: false, v6: false };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
+if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
 function save() { try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) {} }
 
@@ -16,10 +17,9 @@ const coach = { step: -1, x: 0, z: 0, look: 0, t: 0 };
 const canvas = document.getElementById('gl'), app = document.getElementById('app');
 const autoFireOn = () => cfg.autoFire == null ? I.device === 'touch' : cfg.autoFire;
 
-function setLook(id) { if (!R.LOOKS[id]) id = 'lantern'; cfg.look = id; save(); document.body.setAttribute('data-look', id); R.setLook(id); UI.lookChips(); }
+function setLook(id) { if (!R.LOOKS[id]) id = 'snow'; cfg.look = id; save(); document.body.setAttribute('data-look', id); R.setLook(id); UI.lookChips(); }
 function attract() {
   W = S.newWorld({ auto: true, difficulty: 1, seed: (Date.now() & 0xffff) + 3 });
-  for (let i = 0; i < 1500; i++) S.step(1 / 20);
   W.fx.length = 0; R.build(W);
   view.mode = 'attract'; view.target = null; state = 'title'; I.play = false;
 }
@@ -91,7 +91,7 @@ function runCoach(dt, p) {
   coach.t += dt; coach.look += Math.abs(I.lookX) + Math.abs(I.lookY);
   if (coach.step === 0) { UI.coach('Left thumb anywhere on this side: move'); if (Math.hypot(p.x - coach.x, p.z - coach.z) > 8) { coach.step = 1; coach.t = 0; coach.look = 0; } }
   else if (coach.step === 1) { UI.coach('Right thumb: drag to look. Your gun fires itself when the ring is on something'); if (coach.look > 1.2 || coach.t > 14) { coach.step = 2; coach.t = 0; } }
-  else if (coach.step === 2) { UI.coach(info.canZip ? 'Tap Ride thread to reach the fight' : 'Walk forward until you are under a thread'); if (p.zip || coach.t > 30) { coach.step = 3; coach.t = 0; } }
+  else if (coach.step === 2) { UI.coach(info.canZip ? 'Tap Ride thread to reach the fight' : 'Walk forward until you are standing on a thread'); if (p.zip || coach.t > 30) { coach.step = 3; coach.t = 0; } }
   else if (coach.step === 3) { UI.coach('Shoot the orbs that float up from dead troopers. That is most of your income'); if (coach.t > 9) { coach.step = -1; UI.coach(''); cfg.coached = true; save(); } }
 }
 function frame(now) {
@@ -105,8 +105,8 @@ function frame(now) {
     else if (I.take('shop')) UI.toggleShop();
   } else if (state === 'pause') { const esc = I.take('esc') && now - pausedAt > 500; if (I.take('pause') || esc || I.take('navBack')) resume(); }
   UI.nav(I);
-  if (state === 'play' || state === 'title') {
-    if (state === 'play') playerControl(dt);
+  if (state === 'play') {
+    playerControl(dt);
     const steps = Math.max(1, Math.ceil(dt * 45)), sd = dt / steps;
     for (let s = 0; s < steps; s++) S.step(sd);
     const cam = R.cam();
@@ -125,7 +125,7 @@ function frame(now) {
       else if (overT > 0) { overT -= dt; if (overT <= 0) { state = 'over'; I.play = false; UI.showOver(); } }
     }
   }
-  R.frame(state === 'pause' ? 0 : dt, view);
+  if (state !== 'title') R.frame(state === 'pause' ? 0 : dt, view);
   if (state === 'play') { UI.frame(dt, W, view, info); A.frame(dt, W); }
   for (const k in I.e) I.e[k] = false;
   I.lookX = I.lookY = 0;
@@ -149,8 +149,8 @@ function boot() {
   I.onUnlock = function () { if (state === 'play' && UI.screen === null && !W.over && !W.auto) pause(); };
   if (!window.THREE || !R.init(canvas)) { UI.error('This browser would not hand over WebGL, so the valley cannot be drawn here. Try another browser or device.'); return; }
   R.setQuality(cfg.low);
-  if (!R.LOOKS[cfg.look]) cfg.look = 'lantern';
-  document.body.setAttribute('data-look', cfg.look); if (cfg.look !== 'lantern') R.setLook(cfg.look); UI.lookChips();
+  if (!R.LOOKS[cfg.look]) cfg.look = 'snow';
+  document.body.setAttribute('data-look', cfg.look); if (cfg.look !== 'snow') R.setLook(cfg.look); else LL.C.TEAM_CSS = R.look.css; UI.lookChips();
   window.addEventListener('resize', R.resize);
   if (window.ResizeObserver) new ResizeObserver(R.resize).observe(app);
   document.addEventListener('visibilitychange', function () { if (document.hidden) pause(); });

@@ -3,7 +3,7 @@
 A third-person lane game in the Saelion valley. The Reign keeps the lanterns lit, the Hush puts them out, and their paper troopers cancel each other on three threads until something asymmetrical happens. WebGL (Three.js r128 from cdnjs), no build step: `index.html` plus `js/`.
 
 - Play: https://stevoblevo.github.io/livloch/
-- Version: 0.5 (the Hush). Earlier: 0.1 one-shot, 0.2 the loch and the Ness, 0.3 four looks, 0.4 the fold.
+- Version: 0.6 (Cobalt Snow). Earlier: 0.1 one-shot, 0.2 the loch and the Ness, 0.3 four looks, 0.4 the fold, 0.5 the Hush.
 - Status: prototype. Solo against bots. Not yet play-tested on real devices beyond one phone session.
 
 ## Files
@@ -21,4 +21,4 @@ A third-person lane game in the Saelion valley. The Reign keeps the lanterns lit
 
 ## Looks
 
-Lantern Night (Reignfawn), Knight Night (Storeybrook), Origami (Storeybrook with Foldlight fold), Hypermetapunk (Foldlight glow).
+Cobalt Snow (from the concept plate in `art/title.jpg`), Lantern Night (Reignfawn), Knight Night (Storeybrook), Origami (Storeybrook with Foldlight fold), Hypermetapunk (Foldlight glow).

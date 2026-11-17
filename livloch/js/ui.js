@@ -266,6 +266,7 @@ UI.frame = function (dt, w, view, info) {
   $('clock').textContent = U.fmtTime(W.t); $('k0').textContent = W.kills[0]; $('k1').textContent = W.kills[1];
   $('dead').hidden = p.alive || UI.screen === 'shop'; if (!p.alive) $('deadT').textContent = Math.ceil(p.respT);
   $('autoTag').hidden = !W.auto;
+  { const mo = $('moons'), pp = W.red > 0 ? 1 : U.clamp(1 - (W.redNext - W.t) / C.RED_EVERY, 0, 1); mo.classList.toggle('red', W.red > 0); for (let i = 0; i < 5; i++) mo.children[i].style.setProperty('--ph', U.clamp(pp * 5 - i, 0, 1).toFixed(2)); }
   const gr = $('great'), g0 = W.great[p.team], g1 = W.great[1 - p.team];
   if (g0 > 0 || g1 > 0) { gr.hidden = false; gr.className = g0 > 0 ? 'mine' : 'theirs'; gr.textContent = (g0 > 0 ? 'Greatness · ' + Math.ceil(g0) : 'Hush Greatness · ' + Math.ceil(g1)) + 's'; } else gr.hidden = true;
   const pm = $('prompt'), tz = $('tZip');

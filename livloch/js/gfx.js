@@ -17,11 +17,24 @@ const HS = { h: 0, s: 0, l: 0 };
 /* Looks. Each one is drawn from a Saelion style kit. Big surfaces (sky, ground, light) take the kit's colours directly;
    everything else is built in the Lantern colours and passed through the look's map. */
 const LOOKS = R.LOOKS = {
-  lantern: { name: 'Lantern Night', kit: 'Reignfawn, Gold Lantern valley', add: true, wire: false, map: null,
+  snow: { name: 'Cobalt Snow', kit: 'your concept plate, on the Cobalt Snow valley', add: true, wire: false, snowcaps: true, weather: 'snow', bloom: 0.5,
+    clear: 0x1b1840, fog: [0x4a3f86, 55, 300], sky: [0x15123a, 0x3a2f78, 0xd07aa8], sun: [0xffe0b0, 0xfff6e0], star: 1,
+    hemi: [0xb8b4ff, 0x3a2f5a, 0.8], dir: [0xffd0e0, 0.45], ground: { a: 0x545890, b: 0x6e6cac, lane: 0x3d355e, laneC: 0x54477a, rock: 0x3a3668, water: 0x18a595 },
+    crease: [0xffb347, 0x9fd8ff, 0.45], team: [0xff9a3c, 0x9fb4ff], css: ['#ffab4a', '#a9b8ff'], hush: 0x161230, ui: { line: 'rgba(240,220,255,0.2)', me: '#fff6ea', edge: '#1b1840' },
+    map: function (c) { c.getHSL(HS); let h = HS.h, s = HS.s, l = HS.l;
+      if (s < 0.12) { h = 0.68; s = 0.22; l = Math.min(1, l * 1.05); }
+      else if ((h < 0.06 || h > 0.93) && s < 0.62) { h = 0.93; s = 0.85; l = Math.max(0.62, l + 0.2); }
+      else if (h < 0.11 || h > 0.93) { h = 0.075; }
+      else if (h < 0.2) { /* gold stays */ }
+      else if (h > 0.38 && h < 0.6) { if (l < 0.42) { h = 0.005; s = 0.62; l = l * 1.25; } else { h = 0.63; s = 0.9; l = Math.max(0.72, l); } }
+      else if (h >= 0.6 && h < 0.72) { h = 0.66; }
+      else { s *= 0.9; }
+      c.setHSL(h, Math.min(1, s), l); } },
+  lantern: { name: 'Lantern Night', kit: 'Reignfawn, Gold Lantern valley', add: true, wire: false, map: null, bloom: 0.45,
     clear: 0x140f1c, fog: [0x2a1d38, 60, 290], sky: [0x0c0916, 0x2b1c40, 0x7a3344], sun: [0xffd9a0, 0xfff4dc], star: 0.8,
     hemi: [0xa99ad6, 0x2a1c2c, 0.95], dir: [0xffdcb8, 0.75], ground: { a: 0x1c3037, b: 0x2c2440, lane: 0x77605c, laneC: 0x93786a, rock: 0x3a2f47, water: 0x17505e },
     crease: [0xff8a5c, 0x8fb4ff, 0.32], team: [0xff6a4d, 0x5fe6b6], css: ['#ff7a5c', '#6fe8c0'], ui: { line: 'rgba(244,232,214,0.16)', me: '#fff6ea', edge: '#140f1c' } },
-  knight: { name: 'Knight Night', kit: 'Storeybrook, cobalt paper theatre', add: true, wire: false,
+  knight: { name: 'Knight Night', kit: 'Storeybrook, cobalt paper theatre', add: true, wire: false, bloom: 0.4,
     clear: 0x1c2838, fog: [0x263a57, 55, 270], sky: [0x0e1726, 0x1c2838, 0x3d6a8c], sun: [0xf0c75e, 0xfff2c8], star: 1,
     hemi: [0x9fc0ee, 0x1a2434, 1.0], dir: [0xf4efe6, 0.7], ground: { a: 0x2f4a6e, b: 0x2c4a3d, lane: 0x9c9482, laneC: 0xd9d2c2, rock: 0x1c2838, water: 0x3d6a8c },
     crease: [0xf0c75e, 0x8fb4e8, 0.4], team: [0xf0c75e, 0x8fb4e8], css: ['#f0c75e', '#8fb4e8'], ui: { line: 'rgba(244,239,230,0.18)', me: '#f4efe6', edge: '#1c2838' },
@@ -43,7 +56,7 @@ const LOOKS = R.LOOKS = {
       else if (h > 0.68 && l > 0.55) { h = 0.27; s = 0.45; l = 0.34; }
       else { h = 0.6; s = 0.14; l = 0.95 - l * 0.78; }
       c.setHSL(h, s, l); } },
-  glow: { name: 'Hypermetapunk', kit: 'Foldlight glow, neon over a pitch floor', add: true, wire: true, grid: true,
+  glow: { name: 'Hypermetapunk', kit: 'Foldlight glow, neon over a pitch floor', add: true, wire: true, grid: true, bloom: 0.7,
     clear: 0x0b060c, fog: [0x0b060c, 45, 230], sky: [0x060308, 0x1a0e1d, 0x4a3150], sun: [0xffd64a, 0xffffff], star: 0.5,
     hemi: [0xffffff, 0x3a2347, 1.3], dir: [0xffffff, 0.4], ground: { a: 0x120a14, b: 0x1a0e1d, lane: 0x2a1730, laneC: 0x3b2347, rock: 0x0b060c, water: 0x10202a },
     crease: [0xff7ab8, 0x62e6ff, 0.75], team: [0xff4faa, 0x62e6ff], css: ['#ff4faa', '#62e6ff'], ui: { line: 'rgba(243,230,218,0.2)', me: '#ffd64a', edge: '#0b060c' },
@@ -56,10 +69,11 @@ const LOOKS = R.LOOKS = {
       else { h = 0.83; s = 0.4; l = 0.3 + l * 0.5; }
       c.setHSL(h, s, l); } }
 };
-let LK = LOOKS.lantern; R.look = LK;
+let LK = LOOKS.snow; R.look = LK;
 let tcCache = {};
 function mapC(c) { const hex = c.getHex(); if (hex === SRC_TEAM[0]) c.setHex(LK.team[0]); else if (hex === SRC_TEAM[1]) c.setHex(LK.team[1]); else if (LK.map) LK.map(c); return c; }
 function tc(hex) { let c = tcCache[hex]; if (!c) c = tcCache[hex] = mapC(new T.Color(hex)); return c; }
+function own2(m) { m.userData.lk = true; return m; }
 function own(o) { if (o.material) { o.material.userData.lk = true; o.material.userData.solid = true; } if (o.geometry) o.geometry.userData.lk = true; return o; }
 function applyLook() {
   scene.traverse(function (o) {
@@ -145,7 +159,7 @@ R.resize = function () {
   if (!renderer) return;
   const c = renderer.domElement, w = c.clientWidth || window.innerWidth, h = c.clientHeight || window.innerHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h; R.w = w; R.h = h; R.portrait = h > w;
-  camera.updateProjectionMatrix();
+  camera.updateProjectionMatrix(); sizeBloom();
 };
 function buildSky() {
   const g = new T.SphereGeometry(1000, 24, 14), p = g.attributes.position, cols = new Float32Array(p.count * 3);
@@ -166,6 +180,21 @@ function buildSky() {
   const sg = new T.BufferGeometry(); sg.setAttribute('position', new T.BufferAttribute(sp, 3));
   stars = new T.Points(sg, new T.PointsMaterial({ color: 0xf4e8d6, size: 2, sizeAttenuation: false, fog: false, transparent: true, opacity: LK.star, depthWrite: false }));
   own(stars); stars.visible = LK.star > 0; sky.add(stars);
+  if (LK.star > 0 && !LK.wire) {
+    const mk = function (w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = '#000'; g.fillRect(0, 0, w, h); draw(g); return new T.CanvasTexture(c); };
+    const moons = mk(1024, 160, function (g) {
+      for (let i = 0; i < 7; i++) { const x = 90 + i * 140, r = i === 3 ? 46 : 30, ph = 1 - Math.abs(i - 3) / 3.4;
+        g.fillStyle = '#f2dcae'; g.beginPath(); g.arc(x, 80, r, 0, 6.3); g.fill();
+        g.fillStyle = '#000'; g.beginPath(); g.arc(x + (i < 3 ? 1 : -1) * r * 2 * ph, 80, r * 1.02, 0, 6.3); if (i !== 3) g.fill(); }
+    });
+    const stag = mk(512, 512, function (g) {
+      const L = [[.30,.55,.62,.52],[.62,.52,.68,.62],[.68,.62,.66,.90],[.68,.62,.36,.66],[.36,.66,.34,.92],[.36,.66,.30,.55],[.30,.55,.22,.34],[.22,.34,.12,.38],[.22,.34,.20,.14],[.20,.14,.12,.06],[.20,.14,.28,.04],[.22,.34,.32,.18],[.32,.18,.40,.10],[.32,.18,.30,.06],[.62,.52,.70,.48],[.60,.64,.58,.90],[.40,.66,.42,.90]];
+      g.strokeStyle = 'rgba(200,190,255,0.5)'; g.lineWidth = 2; g.beginPath(); L.forEach(function (q) { g.moveTo(q[0] * 512, q[1] * 512); g.lineTo(q[2] * 512, q[3] * 512); }); g.stroke();
+      L.forEach(function (q) { [[q[0], q[1]], [q[2], q[3]]].forEach(function (p) { const gr = g.createRadialGradient(p[0] * 512, p[1] * 512, 0, p[0] * 512, p[1] * 512, 9); gr.addColorStop(0, '#fff'); gr.addColorStop(1, 'rgba(180,170,255,0)'); g.fillStyle = gr; g.beginPath(); g.arc(p[0] * 512, p[1] * 512, 9, 0, 6.3); g.fill(); }); });
+    });
+    const plane = function (tex, w, h, x, y, z) { const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: tex, transparent: true, blending: T.AdditiveBlending, fog: false, depthWrite: false })); m.material.userData.lk = true; m.material.userData.bl = true; m.position.set(x, y, z); m.lookAt(0, 0, 0); sky.add(m); };
+    plane(moons, 420, 66, 0, 470, 800); plane(stag, 300, 300, 380, 400, 780);
+  }
   const sun = glowSprite(LK.sun[0], 260, sky, 0, 210, 900); sun.material.fog = false; sun.material.userData.lk = true;
   const core = glowSprite(LK.sun[1], 90, sky, 0, 210, 895); core.material.fog = false; core.material.userData.lk = true;
 }
@@ -212,14 +241,12 @@ function buildGround() {
   });
 }
 function buildThreads() {
+  // the thread lies on the ground: a lit path you walk, and ride
   const gl = [], gc = [], P = { x: 0, z: 0, dx: 0, dz: 0 };
-  const postG = cyl(0.12, 0.18, C.ZIP_Y + 2.4, 5), postM = mat(0x3a2a3c);
-  const posts = new T.InstancedMesh(postG, postM, 80); let pn = 0;
   for (let l = 0; l < 3; l++) {
     const L = LL.lanes[l], pts = [];
-    for (let s = 0; s <= L.len; s += 4) { LL.lanePoint(l, s, P); pts.push(new T.Vector3(P.x, C.ZIP_Y + 2.3 - Math.sin((s % 32) / 32 * Math.PI) * 0.5, P.z)); }
-    const curve = new T.CatmullRomCurve3(pts);
-    const g = new T.TubeGeometry(curve, Math.floor(L.len / 2), 0.09, 5, false);
+    for (let s = 0; s <= L.len; s += 3) { LL.lanePoint(l, s, P); pts.push(new T.Vector3(P.x + Math.sin(s * 0.11 + l * 2) * 1.1, 0.13, P.z)); }
+    const g = new T.TubeGeometry(new T.CatmullRomCurve3(pts), Math.floor(L.len / 1.5), 0.15, 5, false);
     const p = g.attributes.position, cols = new Float32Array(p.count * 3), a = new T.Color(0xff8a5c), m = new T.Color(0xffe2a0), b = new T.Color(0x6fe8c0), c = new T.Color();
     for (let i = 0; i < p.count; i++) {
       const t = U.clamp((p.getZ(i) + 104) / 208, 0, 1);
@@ -227,24 +254,19 @@ function buildThreads() {
       cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
     }
     g.setAttribute('color', new T.BufferAttribute(cols, 3));
-    world.add(new T.Mesh(g, new T.MeshBasicMaterial({ vertexColors: true })));
-    for (let s = 0; s <= L.len; s += 32) {
-      LL.lanePoint(l, s, P);
-      dummy.position.set(P.x - P.dz * 0.01, (C.ZIP_Y + 2.4) / 2, P.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(1, 1, 1); dummy.updateMatrix();
-      if (pn < 80) posts.setMatrixAt(pn++, dummy.matrix);
-      const t = s / L.len; tmpC.setHex(t < 0.5 ? 0xff9a66 : 0x7ff0cc);
-      gl.push(P.x, C.ZIP_Y + 2.5, P.z); gc.push(tmpC.r, tmpC.g, tmpC.b);
+    world.add(new T.Mesh(g, new T.MeshBasicMaterial({ vertexColors: true, fog: false })));
+    for (let s = 0; s <= L.len; s += 2.6) {
+      LL.lanePoint(l, s, P); const t = s / L.len; tmpC.setHex(t < 0.5 ? 0xffb070 : 0x8ff5d4).multiplyScalar(0.42);
+      gl.push(P.x + Math.sin(s * 0.11 + l * 2) * 1.1, 0.3, P.z); gc.push(tmpC.r, tmpC.g, tmpC.b);
     }
-    // path lanterns
     for (let s = 10; s < L.len; s += 20) {
       LL.lanePoint(l, s, P); const side = (Math.round(s / 20) % 2) ? 1 : -1;
-      const t = s / L.len; tmpC.setHex(t < 0.5 ? 0xffb070 : 0x8ff5d4).multiplyScalar(0.8);
+      const t = s / L.len; tmpC.setHex(t < 0.5 ? 0xffb070 : 0x8ff5d4).multiplyScalar(0.9);
       gl.push(P.x - P.dz * 7.2 * side, 0.9, P.z + P.dx * 7.2 * side); gc.push(tmpC.r, tmpC.g, tmpC.b);
     }
   }
-  posts.count = pn; world.add(posts);
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(gl, 3)); g.setAttribute('color', new T.Float32BufferAttribute(gc, 3));
-  staticGlow = new T.Points(g, new T.PointsMaterial({ map: glowTex, size: 3.2, vertexColors: true, blending: T.AdditiveBlending, transparent: true, depthWrite: false }));
+  staticGlow = new T.Points(g, new T.PointsMaterial({ map: glowTex, size: 2.4, vertexColors: true, blending: T.AdditiveBlending, transparent: true, depthWrite: false }));
   world.add(staticGlow);
 }
 function buildInstanced() {
@@ -374,10 +396,40 @@ function heroModel(h) {
   g.body = body; g.legL = legL; g.legR = legR; g.arm = arm; g.ring = ring; g.shield = shield; g.phase = 0; g.recoil = 0; g.unit = h;
   dyn.add(g); return g;
 }
+let deerT = null;
+function deerTex() {
+  if (deerT) return deerT;
+  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(128, 140, 20, 128, 128, 190); gr.addColorStop(0, '#fff3d0'); gr.addColorStop(1, '#e9a860'); g.fillStyle = gr; g.fillRect(0, 0, 256, 256);
+  g.fillStyle = '#4a2a1c';
+  g.beginPath(); g.ellipse(132, 150, 46, 22, 0, 0, 6.3); g.fill();
+  [[100, 0], [116, 0], [152, 0], [166, 0]].forEach(function (p) { g.fillRect(p[0], 160, 7, 56); });
+  g.beginPath(); g.moveTo(96, 140); g.lineTo(78, 92); g.lineTo(94, 88); g.lineTo(116, 134); g.fill();
+  g.beginPath(); g.ellipse(76, 88, 18, 10, -0.3, 0, 6.3); g.fill();
+  g.strokeStyle = '#4a2a1c'; g.lineWidth = 5; g.lineCap = 'round';
+  [[84, 80, 76, 40], [76, 40, 60, 24], [76, 52, 92, 30], [92, 82, 108, 44], [108, 44, 124, 30], [108, 56, 98, 30]].forEach(function (q) { g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[2], q[3]); g.stroke(); });
+  g.strokeStyle = '#5a3520'; g.lineWidth = 6; g.strokeRect(3, 3, 250, 250); g.lineWidth = 3; g.beginPath(); g.moveTo(128, 0); g.lineTo(128, 60); g.moveTo(0, 60); g.lineTo(256, 60); g.moveTo(0, 222); g.lineTo(256, 222); g.stroke();
+  deerT = new T.CanvasTexture(c); return deerT;
+}
 function structModel(s) {
   const g = new T.Group(), lit = new T.Group(), tc = SRC_TEAM[s.team];
-  const stone = mat(0x4a3d52), dark = mat(0x2b1b2f), paper = new T.MeshLambertMaterial({ color: tc, emissive: tc, emissiveIntensity: 0.65 });
-  if (s.kind === 'patron') {
+  const stone = mat(0x4a3d52), dark = mat(0x2b1b2f);
+  let paper = new T.MeshLambertMaterial({ color: tc, emissive: tc, emissiveIntensity: 0.65 });
+  if (s.team === 0 && s.kind !== 'patron') {
+    // a lantern house: paper screens with a stag on them
+    const big = s.kind === 'warden', w = big ? 4.2 : 3.6, bh = big ? 3.4 : 3.0;
+    paper = new T.MeshLambertMaterial({ color: 0x3a2418, emissive: 0xffc98a, emissiveMap: deerTex(), emissiveIntensity: 0.9 }); paper.userData.lk = true;
+    mesh(box(w + 0.9, 1, w + 0.9), stone, 0, 0.5, 0, g);
+    mesh(new T.BoxGeometry(w, bh, w), paper, 0, 1 + bh / 2, 0, lit);
+    [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(function (c) { mesh(box(0.26, bh, 0.26), dark, c[0] * w / 2, 1 + bh / 2, c[1] * w / 2, lit); });
+    mesh(box(w + 1.5, 0.2, w + 1.5), dark, 0, 1 + bh + 0.1, 0, lit);
+    let top = 1 + bh + 0.2;
+    if (big) { mesh(new T.BoxGeometry(w * 0.58, 2.1, w * 0.58), paper, 0, top + 1.05, 0, lit); mesh(box(w * 0.58 + 1.2, 0.18, w * 0.58 + 1.2), dark, 0, top + 2.2, 0, lit); top += 2.3; }
+    const rw = big ? w * 0.62 : w * 0.98;
+    const roof = mesh(flat(new T.ConeGeometry(rw, 1.9, 4)), own2(new T.MeshLambertMaterial({ color: 0x9a3328 })), 0, top + 0.95, 0, lit); roof.rotation.y = Math.PI / 4;
+    if (LK.snowcaps) { const cap = mesh(flat(new T.ConeGeometry(rw * 0.62, 1.0, 4)), mat(0xc8ccf0), 0, top + 1.5, 0, lit); cap.rotation.y = Math.PI / 4; }
+    g.glow = glowSprite(0xffc98a, big ? 12 : 9.5, lit, 0, 1 + bh / 2, 0);
+  } else if (s.kind === 'patron') {
     mesh(cyl(4, 4.6, 1.6, 8), stone, 0, 0.8, 0, g); mesh(cyl(2.4, 3.2, 1.6, 8), stone, 0, 2.4, 0, g);
     g.spin = mesh(flat(new T.OctahedronGeometry(3, 0)), paper, 0, 7.2, 0, lit);
     g.halo = mesh(new T.TorusGeometry(4.4, 0.14, 5, 28), new T.MeshBasicMaterial({ color: tc }), 0, 7.2, 0, lit);
@@ -391,7 +443,7 @@ function structModel(s) {
     if (big) mesh(flat(new T.ConeGeometry(1.5, 1.4, 4)), dark, 0, 4.4 + hh, 0, lit);
     g.glow = glowSprite(tc, big ? 13 : 10, lit, 0, 2 + hh / 2, 0);
   }
-  g.add(lit);
+  g.add(lit); g.house = s.team === 0 && s.kind !== 'patron';
   const rub = new T.Group(); mesh(flat(new T.IcosahedronGeometry(1.4, 0)), stone, 0.6, 0.5, 0.3, rub); mesh(flat(new T.IcosahedronGeometry(1, 0)), dark, -0.9, 0.4, -0.5, rub); mesh(box(1.6, 0.4, 1.2), stone, 0, 0.2, 1.1, rub).rotation.y = 0.5; rub.visible = false; g.add(rub);
   const ward = new T.Mesh(new T.CylinderGeometry(s.r + 1.4, s.r + 1.4, s.h + 1, 14, 1, true), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.13, side: T.DoubleSide, blending: T.AdditiveBlending, depthWrite: false }));
   ward.position.y = (s.h + 1) / 2; g.add(ward);
@@ -406,17 +458,21 @@ function strayModel(s) {
   g.unit = s; dyn.add(g); return g;
 }
 function nessModel() {
-  const g = new T.Group(), skin = new T.MeshLambertMaterial({ color: 0x1f7a72, emissive: 0x0e4a48, emissiveIntensity: 0.7 }), pale = mat(0xbfe8d0);
-  [[-1.4, 2.5], [-4.6, 1.8], [-7.1, 1.15]].forEach(function (p) { const m = mesh(flat(new T.IcosahedronGeometry(p[1], 1)), skin, 0, 0.15, p[0], g); m.scale.y = 0.8; mesh(flat(new T.ConeGeometry(p[1] * 0.35, p[1] * 0.9, 4)), pale, 0, p[1] * 0.85, p[0], g); });
+  const g = new T.Group(), skin = new T.MeshLambertMaterial({ color: 0x27b89e, emissive: 0x128a76, emissiveIntensity: 0.75 }), pale = new T.MeshLambertMaterial({ color: 0xc8f2e0, emissive: 0x6fd8c0, emissiveIntensity: 0.3 });
+  const gold = new T.LineBasicMaterial({ color: 0xf2c868, transparent: true, opacity: 0.95 });
+  [skin, pale, gold].forEach(function (m) { m.userData.lk = true; m.userData.solid = true; });
+  const edged = function (geo, m, x, y, z, parent) { const o = mesh(geo, m, x, y, z, parent); o.add(new T.LineSegments(new T.EdgesGeometry(geo, 8), gold)); return o; };
+  [[-1.4, 2.5], [-4.6, 1.8], [-7.1, 1.15]].forEach(function (p) { const m = edged(flat(new T.IcosahedronGeometry(p[1], 0)), skin, 0, 0.15, p[0], g); m.scale.y = 0.8; edged(flat(new T.ConeGeometry(p[1] * 0.35, p[1] * 0.9, 4)), pale, 0, p[1] * 0.85, p[0], g); });
   let parent = g; g.neck = [];
   for (let i = 0; i < 6; i++) {
     const seg = new T.Group(); seg.position.set(0, i === 0 ? 0.5 : 1.15, i === 0 ? 0.8 : 0); seg.baseX = i < 3 ? 0.05 : 0.2; seg.rotation.x = seg.baseX;
-    mesh(cyl(0.74 - i * 0.07, 0.9 - i * 0.07, 1.35, 7), skin, 0, 0.6, 0, seg); parent.add(seg); parent = seg; g.neck.push(seg);
+    edged(cyl(0.74 - i * 0.07, 0.9 - i * 0.07, 1.35, 5), skin, 0, 0.6, 0, seg); parent.add(seg); parent = seg; g.neck.push(seg);
   }
   const head = new T.Group(); head.position.set(0, 1.35, 0.1); head.rotation.x = -0.5; parent.add(head);
-  mesh(box(1.15, 0.8, 2), skin, 0, 0.1, 0.55, head); mesh(box(0.95, 0.28, 1.5), pale, 0, -0.42, 0.7, head);
-  mesh(flat(new T.ConeGeometry(0.14, 0.6, 4)), pale, 0.35, 0.7, -0.1, head); mesh(flat(new T.ConeGeometry(0.14, 0.6, 4)), pale, -0.35, 0.7, -0.1, head);
-  glowSprite(0xfff0a0, 1.1, head, 0.5, 0.25, 0.95); glowSprite(0xfff0a0, 1.1, head, -0.5, 0.25, 0.95);
+  edged(box(1.15, 0.8, 2), skin, 0, 0.1, 0.55, head); edged(box(0.95, 0.28, 1.5), pale, 0, -0.42, 0.7, head);
+  edged(flat(new T.ConeGeometry(0.16, 0.9, 4)), pale, 0.35, 0.8, -0.2, head).rotation.x = -0.5; edged(flat(new T.ConeGeometry(0.16, 0.9, 4)), pale, -0.35, 0.8, -0.2, head).rotation.x = -0.5;
+  glowSprite(0x9ff5e0, 1.2, head, 0.5, 0.25, 0.95); glowSprite(0x9ff5e0, 1.2, head, -0.5, 0.25, 0.95);
+  glowSprite(0x2fe0c0, 14, g, 0, 2.5, -2);
   g.head = head; g.visible = false; dyn.add(g); return g;
 }
 /* Foldlight: mountain creases are dash-dot, valley creases are dashed, never swapped. West is the mountain fold, east the valley fold. */
@@ -468,6 +524,17 @@ function buildDecor() {
     m1.setColorAt(i, tmpC.setHex(rose ? 0x9a3f4a : 0x24505a)); m2.setColorAt(i, tmpC.setHex(rose ? 0xc4605a : 0x2f6a6a));
   });
   world.add(tm); world.add(m1); world.add(m2);
+  if (LK.snowcaps) {
+    const cg = flat(new T.ConeGeometry(1.25, 1.7, 6)); cg.translate(0, 8.35, 0);
+    const c3 = flat(new T.ConeGeometry(2.0, 0.9, 6)); c3.translate(0, 6.1, 0);
+    const cm = new T.InstancedMesh(cg, mat(0xc8ccf0), Math.max(1, trees.length)), cm2 = new T.InstancedMesh(c3, mat(0xc8ccf0), Math.max(1, trees.length));
+    trees.forEach(function (o, i) { const sc = 0.85 + o.seed * 0.5; dummy.position.set(o.x, 0, o.z); dummy.rotation.set(0, o.seed * 6, 0); dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); cm.setMatrixAt(i, dummy.matrix); cm2.setMatrixAt(i, dummy.matrix); });
+    world.add(cm); world.add(cm2);
+    const rs = new T.InstancedMesh(flat(new T.IcosahedronGeometry(1, 0)), mat(0xc8ccf0), Math.max(1, rocks.length));
+    rocks.forEach(function (o, i) { dummy.position.set(o.x, o.h * 0.62, o.z); dummy.rotation.set(o.seed * 3, o.seed * 17, o.seed * 7); dummy.scale.set(o.r * 0.95, o.h * 0.42, o.r * 0.95); dummy.updateMatrix(); rs.setMatrixAt(i, dummy.matrix); });
+    world.add(rs);
+  }
+  dummy.rotation.set(0, 0, 0);
 }
 R.build = function (w) {
   W = w;
@@ -533,6 +600,38 @@ R.fx = function (e) {
     case 'zip': emit(e.u.x, e.u.y + 2, e.u.z, 10, 0xffe2a0, 3, 0.4, 2, 0); break;
   }
 };
+/* A small bloom: bright pass at quarter size, two blurs, added back. Lanterns should glow. */
+let rtScene = null, rtA = null, rtB = null, qScene = null, qCam = null, quad = null, mBright, mBlur, mComp, bloomOK = true;
+function sizeBloom() {
+  if (!bloomOK || !renderer) return;
+  try {
+    if (!qScene) {
+      qCam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1); qScene = new T.Scene(); quad = new T.Mesh(new T.PlaneGeometry(2, 2), null); quad.frustumCulled = false; qScene.add(quad);
+      const vs = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }', o = { depthTest: false, depthWrite: false };
+      mBright = new T.ShaderMaterial(Object.assign({ uniforms: { t: { value: null }, th: { value: 0.74 } }, vertexShader: vs, fragmentShader: 'uniform sampler2D t; uniform float th; varying vec2 vUv; void main(){ vec3 c = texture2D(t, vUv).rgb; float l = max(c.r, max(c.g, c.b)); gl_FragColor = vec4(c * smoothstep(th, th + 0.3, l), 1.0); }' }, o));
+      mBlur = new T.ShaderMaterial(Object.assign({ uniforms: { t: { value: null }, d: { value: new T.Vector2() } }, vertexShader: vs, fragmentShader: 'uniform sampler2D t; uniform vec2 d; varying vec2 vUv; void main(){ vec3 c = texture2D(t, vUv).rgb * 0.227; c += (texture2D(t, vUv + d * 1.385).rgb + texture2D(t, vUv - d * 1.385).rgb) * 0.316; c += (texture2D(t, vUv + d * 3.231).rgb + texture2D(t, vUv - d * 3.231).rgb) * 0.0703; gl_FragColor = vec4(c, 1.0); }' }, o));
+      mComp = new T.ShaderMaterial(Object.assign({ uniforms: { t: { value: null }, b: { value: null }, k: { value: 0.8 } }, vertexShader: vs, fragmentShader: 'uniform sampler2D t; uniform sampler2D b; uniform float k; varying vec2 vUv; void main(){ gl_FragColor = vec4(texture2D(t, vUv).rgb + texture2D(b, vUv).rgb * k, 1.0); }' }, o));
+    }
+    [rtScene, rtA, rtB].forEach(function (r) { if (r) r.dispose(); });
+    const pr = renderer.getPixelRatio(), w = Math.max(4, Math.floor(R.w * pr)), h = Math.max(4, Math.floor(R.h * pr));
+    rtScene = (renderer.capabilities.isWebGL2 && T.WebGLMultisampleRenderTarget) ? new T.WebGLMultisampleRenderTarget(w, h) : new T.WebGLRenderTarget(w, h);
+    const q = { minFilter: T.LinearFilter, magFilter: T.LinearFilter, depthBuffer: false };
+    rtA = new T.WebGLRenderTarget(w >> 2, h >> 2, q); rtB = new T.WebGLRenderTarget(w >> 2, h >> 2, q);
+  } catch (e) { bloomOK = false; }
+}
+function draw() {
+  const k = (R.low || !bloomOK || !rtScene) ? 0 : (LK.bloom || 0);
+  if (k <= 0) { renderer.setRenderTarget(null); renderer.render(scene, camera); return; }
+  renderer.setRenderTarget(rtScene); renderer.render(scene, camera);
+  quad.material = mBright; mBright.uniforms.t.value = rtScene.texture; renderer.setRenderTarget(rtA); renderer.render(qScene, qCam);
+  quad.material = mBlur;
+  for (let i = 0; i < 2; i++) {
+    mBlur.uniforms.t.value = rtA.texture; mBlur.uniforms.d.value.set((1 + i) / rtA.width, 0); renderer.setRenderTarget(rtB); renderer.render(qScene, qCam);
+    mBlur.uniforms.t.value = rtB.texture; mBlur.uniforms.d.value.set(0, (1 + i) / rtA.height); renderer.setRenderTarget(rtA); renderer.render(qScene, qCam);
+  }
+  quad.material = mComp; mComp.uniforms.t.value = rtScene.texture; mComp.uniforms.b.value = rtA.texture; mComp.uniforms.k.value = k;
+  renderer.setRenderTarget(null); renderer.render(qScene, qCam);
+}
 function dist2cam(x, z) { return Math.hypot(x - camPos.x, z - camPos.z); }
 
 /* ---------- camera ---------- */
@@ -575,14 +674,15 @@ R.frame = function (dt, view) {
     m.position.set(h.x, h.y, h.z); m.rotation.y = h.yaw;
     const sp = Math.hypot(h.vx, h.vz);
     m.phase += dt * Math.min(sp, 9) * 1.7;
-    const sw = h.zip ? 0.5 : (h.onGround ? Math.sin(m.phase) * Math.min(1, sp / 5) * 0.8 : 0.5);
-    m.legL.rotation.x = sw; m.legR.rotation.x = h.zip ? 0.3 : -sw;
-    m.body.rotation.x = h.dashT > 0 ? 0.45 : Math.min(0.22, sp * 0.02);
+    const sw = h.zip ? 0.55 : (h.onGround ? Math.sin(m.phase) * Math.min(1, sp / 5) * 0.8 : 0.5);
+    m.legL.rotation.x = sw; m.legR.rotation.x = h.zip ? -0.35 : -sw;
+    m.body.rotation.x = h.dashT > 0 || h.zip ? 0.45 : Math.min(0.22, sp * 0.02);
+    if (h.zip && Math.random() < dt * 40) emit(h.x, 0.25, h.z, 1, 0xffe2a0, 1.5, 0.6, 1.2, 0);
     m.body.position.y = h.onGround ? Math.abs(Math.sin(m.phase)) * 0.05 * Math.min(1, sp / 5) : 0;
     if (m.recoil > 0) m.recoil = Math.max(0, m.recoil - dt * 9);
-    m.arm.rotation.x = h.zip ? -2.4 : -h.pitch - m.body.rotation.x - m.recoil * 0.25;
+    m.arm.rotation.x = -h.pitch - m.body.rotation.x - m.recoil * 0.25;
     m.arm.position.z = 0.1 - m.recoil * 0.12;
-    m.ring.visible = h.onGround; m.shield.visible = h.shield > 0;
+    m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
     if (h.slowT > 0 && Math.random() < dt * 8) emit(h.x, h.y + 0.3, h.z, 1, 0x8fb0ff, 1, 0.5, 1, 0);
     if (h.dotT > 0 && Math.random() < dt * 10) emit(h.x, h.y + 1.2, h.z, 1, 0xc9a0ff, 1.5, 0.5, 1, 0);
@@ -608,6 +708,7 @@ R.frame = function (dt, view) {
     if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0);
   }
   dummy.rotation.set(0, 0, 0);
+  if (LK.weather === 'snow' && W.red <= 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 1 : 3); k++) emit(cx + (Math.random() - 0.5) * 50, 8 + Math.random() * 8, cz + (Math.random() - 0.5) * 50, 1, Math.random() < 0.16 ? 0xff9ac8 : 0xdfe6ff, 0.5, 2.4, -3.2, 1.2); }
   if (W.red > 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 3 : 8); k++) emit(cx + (Math.random() - 0.5) * 44, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 44, 1, 0xff3a3a, 0.3, 0.75, -20, 26); }
   tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh;
   tr[0].instanceMatrix.needsUpdate = tr[1].instanceMatrix.needsUpdate = hushEyes.instanceMatrix.needsUpdate = trHat.instanceMatrix.needsUpdate = true;
@@ -619,7 +720,7 @@ R.frame = function (dt, view) {
     if (s.alive) {
       if (m.spin) { m.spin.rotation.y += dt * 0.7; m.spin.position.y = 7.2 + Math.sin(time * 1.3 + s.team) * 0.4; m.halo.rotation.x = Math.PI / 2 + Math.sin(time * 0.8) * 0.3; m.halo.rotation.y += dt * 0.5; }
       const pulse = 1 + Math.sin(time * 2 + i) * 0.06 + (s.flash > 0 ? 0.35 : 0);
-      const b = s.kind === 'patron' ? 22 : (s.kind === 'warden' ? 13 : 10); m.glow.scale.set(b * pulse, b * pulse, 1);
+      const b = s.kind === 'patron' ? 22 : (s.kind === 'warden' ? 13 : 10) * (m.house ? 0.95 : 1); m.glow.scale.set(b * pulse, b * pulse, 1);
       m.glow.visible = !s.dark;
       if (m.paper) { if (m.baseEm == null) m.baseEm = m.paper.emissiveIntensity; m.paper.emissiveIntensity = s.dark ? 0.03 : m.baseEm; }
     }
@@ -741,7 +842,7 @@ R.frame = function (dt, view) {
     if (u === pl && view.mode !== 'attract') continue;
     const dx = u.x - camPos.x, dz = u.z - camPos.z; if (dx * dx + dz * dz > (u.struct || u.kind === 'ness' ? 150 * 150 : 75 * 75)) continue;
     let w = u.big ? 2.8 : 1, hgt = u.big ? 0.22 : 0.11, y = u.y + u.h * (u.big ? 2.3 : 1) + 0.45;
-    if (u.kind === 'hero') { w = 1.7; hgt = 0.2; y = u.y + u.h + 0.6; } else if (u.struct) { w = 5.5; hgt = 0.4; y = u.h + 1.6; } else if (u.kind === 'stray') { w = 2.2; hgt = 0.16; y = 3.6; } else if (u.kind === 'ness') { w = 7; hgt = 0.45; y = 9; }
+    if (u.kind === 'hero') { w = 1.7; hgt = 0.2; y = u.y + u.h + 0.6; } else if (u.struct) { w = 5.5; hgt = 0.4; y = (u.team === 0 && u.kind !== 'patron') ? (u.kind === 'warden' ? 10.4 : 7.6) : u.h + 1.6; } else if (u.kind === 'stray') { w = 2.2; hgt = 0.16; y = 3.6; } else if (u.kind === 'ness') { w = 7; hgt = 0.45; y = 9; }
     const f = Math.max(0, u.hp / u.maxHp);
     dummy.position.set(u.x, y, u.z); dummy.quaternion.copy(q); dummy.scale.set(w + 0.08, hgt + 0.08, 1); dummy.updateMatrix(); barBg.setMatrixAt(nb, dummy.matrix);
     const off = -(1 - f) * w * 0.5;
@@ -751,7 +852,7 @@ R.frame = function (dt, view) {
   }
   barBg.count = barFill.count = nb; barBg.instanceMatrix.needsUpdate = barFill.instanceMatrix.needsUpdate = true;
   if (barFill.instanceColor) barFill.instanceColor.needsUpdate = true;
-  renderer.render(scene, camera);
+  draw();
 };
 R.cam = function () { return camPos; };
 })();

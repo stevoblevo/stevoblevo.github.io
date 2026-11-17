@@ -16,7 +16,7 @@ LL.rng = function (seed) {
 var C = LL.C = {
   HALF_X: 78, HALF_Z: 138, SPAWN_Z: 128, PATRON_Z: 114, FOUNT_R: 13,
   LANE_X: [-48, 0, 48], LANE_NAME: ['West thread', 'Middle thread', 'East thread'],
-  GRAV: 26, ZIP_Y: 6.5, ZIP_SPEED: 27,
+  GRAV: 26, ZIP_Y: 0.9, ZIP_SPEED: 27,
   TEAM_NAME: ['Reign', 'Hush'], RED_EVERY: 300, RED_T: 60, CREASE_X: [-24, 24], FOLD_T: 45, TEAM_COL: [0xff6a4d, 0x5fe6b6], TEAM_CSS: ['#ff7a5c', '#6fe8c0'],
   CAMPS: [[-24, 0], [-24, -50], [24, -50], [-24, 50], [24, 50]],
   LOCH: { x: 24, z: 0, r: 9.5 }, GREAT_T: 90,
