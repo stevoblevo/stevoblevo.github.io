@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="8.3", short="AND SO 8.3", name="AND SO 8.3 · The board", date="2026-11-12", path="/and-so/v8.3/", latest=True, source="dist",
+    dict(id="9", short="AND SO 9", name="AND SO 9 · Open Door", date="2026-11-16", path="/and-so/v9/", latest=True, source="dist",
+         line="First steps for a first visit: four things to do with your own hands, and the first find is yours. One find a day, with a nougat for it. Saedo waits until you are through."),
+    dict(id="8.3", short="AND SO 8.3", name="AND SO 8.3 · The board", date="2026-11-12", path="/and-so/v8.3/", source="af2f46f",
          line="A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio."),
     dict(id="8.1", short="AND SO 8.1", name="AND SO 8.1 · The Book, in the jam", date="2026-10-30", path="/and-so/v8.1/", source="645c781",
          line="The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region."),

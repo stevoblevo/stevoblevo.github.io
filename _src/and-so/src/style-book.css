@@ -89,7 +89,8 @@ body.ens-glow .book-table { box-shadow: inset 0 0 80px rgba(231,178,58,.35) }
 .mag-card .pair { display: flex; justify-content: center; align-items: flex-end }
 body.dreaming #hud, body.dreaming #quests, body.dreaming #gw, body.dreaming #top, body.dreaming #hint, body.dreaming #toast, body.dreaming #cap, body.dreaming #viewChip { opacity: 0 !important; pointer-events: none }
 body.booking #hud { opacity: .15 }
-#hud.on { opacity: .32 }
+#hud.on { opacity: .62 }
+body.first #hud.on { opacity: 1 }
 #hud.on:hover, #hud.on:focus-within { opacity: 1 }
 #brookMap, #versions, #liner, #story, #mirror { transition: opacity .45s ease }
 .vs-item { position: relative; background: transparent; border: 0; padding-left: 28px }

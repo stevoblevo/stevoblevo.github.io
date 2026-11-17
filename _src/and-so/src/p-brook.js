@@ -95,6 +95,7 @@ function walkStone(id) {
 let brookApi = null;
 function openBrook() {
   const el = $('brookMap'); if (!el) return;
+  firstEvent('jar');
   el.classList.add('on'); el.setAttribute('aria-hidden', 'false'); $('jar').classList.remove('news');
   $('bmN').textContent = String(GAME.nougats);
   const nn = el.querySelector('[data-sb-nougat]'); if (nn && !nn.firstChild && window.Storeybrook) nn.innerHTML = Storeybrook.nougatSVG(5);

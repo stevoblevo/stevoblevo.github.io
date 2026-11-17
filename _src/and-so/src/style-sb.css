@@ -384,3 +384,24 @@ body.mirrored #gw:not(.sheet) { display: none }
 
 @media (prefers-reduced-motion: reduce) { #turn { display: none !important } .jam-phase[data-phase="you"], #jar.news::after { animation: none } }
 @media (forced-colors: active) { .jk, .pill, .mir-b, .jam-b { border: 1px solid ButtonText } .jk.down { background: Highlight; color: HighlightText } }
+
+/* ---------- first steps and today's find (AND SO 9) ---------- */
+#first { position: fixed; left: 50%; top: 40%; z-index: 12; width: min(440px, 88vw); box-sizing: border-box; transform: translate(-50%, -100%); padding: 12px 18px 15px; border-radius: 16px; background: var(--page, rgba(24, 17, 26, .94)); color: var(--ink, #f0e4d6); border: 2px solid var(--line, rgba(234, 220, 198, .35)); box-shadow: 0 10px 34px rgba(38, 50, 63, .18); opacity: 0; pointer-events: none; transition: opacity .35s, border-color .35s }
+#first.on { opacity: 1; pointer-events: auto }
+#first.ok { border-color: var(--sap, #7ee0c3) }
+.first-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 700 13px/1.2 var(--sb-ui, inherit); letter-spacing: .02em; color: var(--ink-muted, rgba(240, 228, 214, .72)) }
+#firstSkip { all: unset; cursor: pointer; padding: 6px 2px; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 3px }
+#firstSkip:focus-visible { outline: 2px solid var(--accent, #f0c75e); outline-offset: 2px; border-radius: 4px }
+#first.end #firstSkip { display: none }
+#firstSay { margin: 2px 0 0; font: 600 clamp(19px, .6vw + 14px, 26px)/1.2 var(--sb-display, inherit); font-variation-settings: "wdth" var(--sb-display-wdth, 100) }
+#firstSub { margin: 6px 0 0; font: 400 clamp(15px, .3vw + 12px, 18px)/1.4 var(--sb-story, inherit); color: var(--ink-muted, rgba(240, 228, 214, .72)) }
+#firstSub:empty { display: none }
+#firstRing { position: fixed; z-index: 13; box-sizing: border-box; border-radius: 999px; border: 3px solid var(--accent, #f0c75e); box-shadow: 0 0 0 3px var(--page, rgba(24, 17, 26, .6)), 0 0 18px rgba(184, 50, 95, .35); pointer-events: none; opacity: 0; transition: opacity .25s }
+#firstRing.on { opacity: 1; animation: firstPulse 1.5s ease-in-out infinite }
+@keyframes firstPulse { 0%, 100% { transform: scale(.92) } 50% { transform: scale(1.14) } }
+@media (prefers-reduced-motion: reduce) { #firstRing.on { animation: none } }
+body.first #quests, body.first #hint, body.reel #first, body.reel #firstRing { display: none !important }
+#qToday { margin: 0 0 8px; padding: 0 0 8px; border-bottom: 1px dashed var(--line, rgba(234, 220, 198, .25)); font: 700 13px/1.35 var(--sb-ui, inherit); color: var(--accent, #f6d7a0) }
+#qToday.done { color: var(--ink-muted, rgba(240, 228, 214, .7)); font-weight: 400 }
+.fine.today { margin-top: 8px; font-weight: 700; color: var(--accent, #f6d7a0) }
+.fine.today.done { font-weight: 400; color: inherit }

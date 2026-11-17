@@ -11,15 +11,18 @@
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
     <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reels first</button></div>
-    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 8 · The Book<span class="ver-more"> · every version</span></button></p>
+    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 9 · Open Door<span class="ver-more"> · every version</span></button></p>
     <p class="dream-line"><button type="button" id="dreamMark">dream</button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
+    <p class="fine today" id="ovToday" hidden></p>
   </div>
   <div id="ovBrook" class="ov-brook" role="group" aria-label="the brook: scenes you can walk to"></div>
 </div>
 
 <div id="cap"></div>
 <div id="hint"></div>
+<div id="first" role="status" aria-live="polite"><div class="first-top"><span id="firstN"></span><button id="firstSkip" type="button">skip</button></div><p id="firstSay"></p><p id="firstSub"></p></div>
+<div id="firstRing" aria-hidden="true"></div>
 <div id="toast" aria-live="polite"></div>
 
 <button id="jar" class="sb-jar sbi" aria-label="nougats in the jar. open the brook" title="the brook (C)"><span class="sb-jar__count" id="jarN">0</span></button>
@@ -58,7 +61,7 @@
 
 <div id="quests" aria-live="polite">
   <div class="qh"><span>quests</span><button id="qHide" aria-label="hide quests">hide</button></div>
-  <div id="qList"></div>
+  <p id="qToday" hidden></p><div id="qList"></div>
 </div>
 
 <div id="round">

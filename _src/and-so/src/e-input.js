@@ -89,6 +89,7 @@ function grabVoice(p, v) {
   v.dragging = p.id; v.locked = false; v.pinUntil = 0; v.temp = 0; v.v = 0; v.dropping = false; v.target = null; v.dragY = p.y; v.dragX = v.x; act = v;
   if (p.type === 'mouse') hitEl.style.cursor = 'grabbing';
   if (!draggedOnce) { draggedOnce = true; hideHint(); }
+  firstEvent('grab');
   if (M.struck) { audio.strikeVoice(v, 0.9, 1); v.flash = 1; } else if (plucky()) audio.pluck(v, 1.1, 0.45, 0);
   haptic(5); handsCheck();
 }
@@ -146,7 +147,7 @@ hitEl.addEventListener('pointerdown', e => {
   let hit = null, bd = phone ? 42 : 30;
   for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const b = ballPos(v), d = Math.hypot(b.X - px, b.Y - py); if (d < bd) { bd = d; hit = v; } }
   if (!hit && reg === 'terrain' && !(skin === 'hmp' && tab !== 'resonance' && !phone)) {
-    const x = xFromS(px); hit = addVoice(x, { temp: 0 });
+    const x = xFromS(px); hit = addVoice(x, { temp: 0 }); if (hit) firstEvent('tap');
     if (!hit) { let nd = 1e9; for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const d = Math.abs(v.x - x); if (d < nd) { nd = d; hit = v; } } }
     if (hit) hit.x = x;
   }
@@ -212,7 +213,7 @@ function endPtr(e) {
     case 'pinch': { const o = PTR.get(p.id === pinch.a ? pinch.b : pinch.a); if (o) o.role = 'none'; pinch = null; break; }
     case 'view': viewUp(p, now); break;
     case 'voice': {
-      const v = p.v; v.dragging = false; v.dragX = null; if (p.type === 'mouse') hitEl.style.cursor = 'grab';
+      const v = p.v; v.dragging = false; v.dragX = null; if (p.type === 'mouse') hitEl.style.cursor = 'grab'; firstEvent('release');
       if (!p.moved && dur < 260) { if (now - (v.tapT || 0) < 340) { v.tapT = 0; if (lightGlide(v, v.x)) { caption('snapped to the nearest valley floor.', 1400); haptic(6); } } else v.tapT = now; }
       if (v.dropping) { v.dropping = false; dropVoice(v); haptic(10); }
       else {
@@ -357,7 +358,7 @@ window.addEventListener('keydown', e => {
   if (REEL.on && k === 'arrowright') { e.preventDefault(); reelSkip(); return; }   // the next reel; anything else hands it back to you
   if (REEL.on && k !== 'w' && k !== 'shift') { reelStop(false); if (k === 'escape') return; }
   if (k === ' ' || k === 'l') { e.preventDefault(); lean(1); userIdleUntil = t + 10; }
-  else if (k === 'n') { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; }
+  else if (k === 'n') { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; firstEvent('next'); }
   else if (k === 'p') startPump();
   else if (k === 'g') showGw(true);
   else if (k === 'a') { autoOn = !autoOn; syncUI(); }
@@ -403,7 +404,7 @@ on('tScore', () => { if (MIR.depth === 0) boardOpen(); else caption(`resonance $
 on('tSound', toggleMute);
 on('qHide', () => { questsPinned = false; questsHide(); });
 on('bLean', () => { lean(1); userIdleUntil = t + 10; });
-on('bNext', () => { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; });
+on('bNext', () => { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; firstEvent('next'); });
 on('bPump', startPump);
 on('bBeat', toggleBeat);
 on('bRound', toggleRound);
@@ -420,7 +421,7 @@ on('bGam', () => showGw(true));
 on('bAuto', () => { autoOn = !autoOn; syncUI(); });
 on('bSnd', toggleMute);
 on('dLean', () => { lean(1); userIdleUntil = t + 10; haptic(6); });
-on('dNext', () => { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; haptic(6); });
+on('dNext', () => { chooseRootStep(); gongDue = false; userIdleUntil = t + 10; haptic(6); firstEvent('next'); });
 on('dRound', toggleRound);
 on('dBeat', toggleBeat);
 on('dMood', nextMood);

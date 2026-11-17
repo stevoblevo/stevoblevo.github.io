@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 8.3.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 9 · Open Door.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -28,3 +28,40 @@ has a board button (S); on a phone the score chip on the top bar opens it; the g
 `pwa/` holds the manifest, the service worker and the icons (`pwa/icons.py` redraws them from `pwa/icon.svg`);
 `build.py` copies them to `/and-so/`. `src/z-app.js` registers the worker only on stevoblevo.github.io under
 `/and-so/`. The worker goes to the network first and keeps what it fetched, so online always means the newest build.
+
+## Open Door (9)
+
+`src/zz-first.js` is the way in for a first visit, and the one find a day.
+
+**First steps.** A visitor with nothing found and no `andso:first` key gets four things to do, each named after it is
+done: drag a voice and let go, tap the ground, move the chord, open the jar. While it runs the ground stays still
+(just intonation, Saedo off, no auto-flip), the gamut does not open by itself, quests and the idle hints are hidden,
+and nothing is credited (finds or quests) until the visitor has touched something, so the first find is theirs. When it
+ends, Saedo and easy listening start. It can be skipped, it never returns once finished or skipped, `?first=1` shows it
+again and `?first=0` never does. The game reports to it through `firstEvent()` (grab, release, land, tap, next, jar);
+those calls sit in `e-input.js`, `d-game.js` and `p-brook.js`.
+
+**Today's find.** One unfound thing a day (`andso:today`), shown on the landing for a returning visitor and at the top
+of the quests. Finding it that day is worth one nougat. Early on (under 12 finds) it is drawn from the just and
+easy-listening finds only. Nothing expires and nothing is lost by missing a day.
+
+Also in 9: the desktop HUD rests at 62% instead of 32% so the controls can be read, and the landing greets a returning
+visitor with their count.
+
+## Where AND SO is published (16 Nov 2026)
+
+- `stevoblevo.github.io/and-so/` is this source, built. Every version keeps its address under `/and-so/v*/`.
+- `saelion.co/and-so` is served from the `saelion-relay-canary` repository, deployed to production from a chosen commit
+  (not from a branch tip). On 16 Nov it serves a different line of 8.1: this repo's 8.1 plus that repo's own additions
+  (an origami invitation, recorded story voices under `/and-so/voices/`, its own `pwa.js` and `sw.js`, a `<base>` tag
+  because the address has no trailing slash). `saelion.co/field/worlds/and-so` is an older 6.x copy.
+- Moving saelion.co to 9 means: this build as `and-so/index.html` there with the `<base href="/and-so/">` line, that
+  repo's current page kept at `/and-so/v8.1/`, its extra files left in place, and a production deploy by the owner's
+  word. Its recorded voices and origami invitation are not in this source yet; bringing them in is the next piece of
+  work if they are wanted on the front door.
+
+## Next (ideas, not promises)
+
+- 9.x: carry the three toolkits (Depthfield, Storeybrook, Hypermetapunk) into the looks as shared tokens.
+- A mastery ladder on the board: today's find and round times as their own columns.
+- Bring the recorded story voices from the saelion.co line into `y-voice.js`.

@@ -134,7 +134,7 @@ function update(dt) {
   if (toastFlush && t >= toastFlush && !(REEL.on && phone)) { showToast(toastQ.splice(0, 4)); toastFlush = 0; toastHideAt = t + 7; }
   if (toastHideAt && t >= toastHideAt) { $('toast').classList.remove('on'); toastHideAt = 0; if (toastQ.length) toastFlush = t + 0.9; }
   if (hintOffAt && t > hintOffAt) hideHint();
-  if (entered && t - lastUserT > 30 && t > nextTryT && !$('hint').classList.contains('on')) { const pool = CAT.filter(c => !found.has(c.id) && (c.mode === 'any' || c.mode === M.key)); if (pool.length) showHint('try: ' + pool[(Math.random() * pool.length) | 0].hint, 8); nextTryT = t + 45; }
+  if (entered && !FIRST.on && t - lastUserT > 30 && t > nextTryT && !$('hint').classList.contains('on')) { const pool = CAT.filter(c => !found.has(c.id) && (c.mode === 'any' || c.mode === M.key)); if (pool.length) showHint('try: ' + pool[(Math.random() * pool.length) | 0].hint, 8); nextTryT = t + 45; }
   if (GAME.combo && t - GAME.lastLand > 4) { GAME.combo = 0; scoreUI(); }
   mrot += dt * 0.025; bloomFlash *= Math.exp(-dt * 1.8); rootFlash *= Math.exp(-dt * 2.2); aurora *= Math.exp(-dt * 0.9); flash55 *= Math.exp(-dt * 0.8);
   for (let i = sparks.length - 1; i >= 0; i--) { const s = sparks[i]; s.life -= dt; if (s.life <= 0) { sparks.splice(i, 1); continue; } s.vx *= Math.exp(-dt * 1.5); s.x += s.vx * dt; s.y += s.vy * dt; }
@@ -209,7 +209,7 @@ function boot(hotData) {
   resize();
   if (MIR.depth === 0) initCaps(); else capsUI();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
-  jarPaint(false); landing(); mirBoot();
+  jarPaint(false); landing(); landingNote(); mirBoot();
   if ((wantDream || wantPlay) && MIR.depth === 0) setTimeout(() => { if (!entered) $('enter').click(); }, 350);
   requestAnimationFrame(frame);
 }
@@ -222,13 +222,15 @@ $('enter').addEventListener('click', e => {
   startVoices();
   caption(LIGHT() ? 'light first. every valley is a little sun.' : 'a dissonance leans on its resolution.', 3800, 'music');
   // Everfallen starts in easy listening: familiar chords, plucked, that slide into just intonation when the auto-flip comes
-  if (SET.easyStart && !M.easy) setTimeout(() => { if (entered && !M.easy && !round && !JAM.on && !era && !REEL.on) setMode('easy', true); }, 1600);
+  const firstVisit = firstWanted();   // a first visit gets first steps: a still ground, no panel, and the band afterwards
+  if (!firstVisit && SET.easyStart && !M.easy) setTimeout(() => { if (entered && !M.easy && !round && !JAM.on && !era && !REEL.on) setMode('easy', true); }, 1600);
   dailyNougat(); guardsLoad();
   nextAct = t + 10; lastUserT = t; nextTryT = t + 40; flipAt = t + 45; bellNext = t + 14; windNext = t + 9; trainNext = t + 200;
   lastPX = W / 2; lastPY = H / 2;
   fillQuests(); resize();
-  if (!phone && MIR.depth === 0) setTimeout(() => showGw(false), 900);
-  setTimeout(() => { if (!draggedOnce) showHint(phone ? 'drag a voice · tap the terrain to add one · drag the scale' : 'drag a voice off its rest · tap the terrain to add one · scroll the scale · tap the sky to ' + (LIGHT() ? 'glide' : 'lean'), 16); }, 1600);
+  if (!phone && MIR.depth === 0 && !firstVisit) setTimeout(() => showGw(false), 900);
+  if (firstVisit) firstStart(); else todayPaint();
+  if (!firstVisit) setTimeout(() => { if (!draggedOnce) showHint(phone ? 'drag a voice · tap the terrain to add one · drag the scale' : 'drag a voice off its rest · tap the terrain to add one · scroll the scale · tap the sky to ' + (LIGHT() ? 'glide' : 'lean'), 16); }, 1600);
   jlog('entered');
   if (wantDream) { const tour = wantDream; wantDream = ''; setTimeout(() => dreamStart(tour), 700); }
   else if (wantPlay) { wantPlay = false; setTimeout(() => bookOpen('st-louis', { play: true }), 800); }

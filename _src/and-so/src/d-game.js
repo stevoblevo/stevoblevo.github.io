@@ -119,8 +119,9 @@ function hideHint() { $('hint').classList.remove('on'); hintOffAt = 0; }
 function discover(id, v) {
   if (found.has(id)) return;
   const e = CATI.get(id); if (!e) return;
+  if (FIRST.on && !FIRST.touched) return;   // first steps: the first find waits for your own hand
   if (REEL.on && !reelMay(id)) return;   // while a reel plays it credits only what it shows; everything else stays yours to find
-  found.add(id); persistSoon(); renderGuide(id);
+  found.add(id); persistSoon(); renderGuide(id); todayHit(id);
   if (REEL.on && !GAME.reelFound.includes(id)) GAME.reelFound.push(id);
   if (MIR.depth > 0) mirUp({ andso: 'found', id });
   else if (found.size % 4 === 0 && !REEL.on) setTimeout(() => nougat(1, MX, MY - MR, `${found.size} things found`), 900);   // the reels pay their own way, in halves
@@ -246,6 +247,8 @@ function fillQuests() {
 }
 function emit(ev, e) {
   if (!entered) return;
+  firstEvent(ev);
+  if (FIRST.on && !FIRST.touched) return;   // first steps: quests wait for your own hand too
   e = e || {};
   let ch = false;
   for (const a of GAME.quests) {
