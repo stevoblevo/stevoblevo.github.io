@@ -222,6 +222,8 @@ body[data-look="memory"] #gl { filter: sepia(0.25); }
 #plates { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
 #plates button { padding: 0; border: 1px solid var(--gold); background: none; cursor: pointer; } #plates img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
 #plateBig img { width: 100%; height: auto; border: 1px solid var(--gold); } #plateBig p { font-size: 14px; color: var(--paper-dim); margin: 6px 0; }
+#keys { position: absolute; left: 12px; bottom: calc(var(--sb, 0px) + 8px); font-size: 12px; color: var(--paper-dim); opacity: 0.8; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+#keys b { color: var(--paper); font-weight: 600; }
 #lean { position: absolute; left: 50%; bottom: calc(var(--sb, 0px) + 14px); transform: translateX(-50%); display: none; gap: 8px; z-index: 6; flex-wrap: wrap; justify-content: center; width: min(560px, 96%); }
 #lean .btn { min-height: 52px; min-width: 58px; padding-left: 10px; padding-right: 10px; }
 #lean .btn[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
@@ -275,6 +277,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="banner"></div>
     <div id="cross"><u></u><i></i><div id="hitm"></div></div>
     <div id="prompt" hidden></div>
+    <div id="keys" hidden><b>B</b> shop · <b>V</b> view · <b>T</b> thread · <b>Q E F</b> powers · <b>Esc</b> menu, frees the mouse</div>
     <div id="great" hidden></div>
     <div id="buffs" hidden></div>
     <div id="coach" hidden></div>
@@ -346,7 +349,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-touch"><dt>Left thumb</dt><dd>move</dd><dt>Right thumb</dt><dd>drag to aim; your gun fires on its own when the ring is on a target</dd><dt>Buttons</dt><dd>fire, jump, dash, three abilities, ride thread when it shows</dd></dl>
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
-      <footer>Livloch 0.10 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <footer>Livloch 0.10.1 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
     </div>
   </section>
 

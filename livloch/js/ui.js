@@ -353,6 +353,9 @@ UI.frame = function (dt, w, view, info) {
   $('clock').textContent = U.fmtTime(W.t) + (W.lens === 'rain' && W.red <= 0 ? ' · rain ' + U.fmtTime(Math.max(0, W.redNext - W.t)) : ''); $('k0').textContent = W.fallen ? W.lights : W.kills[0];
   if (W.lean) { const ok = S.leanCrease() >= 0, lf = $('lFold'); if (lf.disabled === ok) lf.disabled = !ok; for (let l = 0; l < 3; l++) { const b = $('lCall' + l), on = String(p.ai.lane === l); if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on); } } $('k1').textContent = W.kills[1];
   $('dead').hidden = p.alive || UI.screen === 'shop'; if (!p.alive) $('deadT').textContent = Math.ceil(p.respT);
+  { // with the mouse captured the buttons cannot be clicked, so the keys are written on them
+    const kb = LL.input.device === 'kbm' && !W.lean, k = $('keys'); if (k.hidden === kb) k.hidden = !kb;
+    const t = kb ? 'Press B to spend souls while you wait' : 'Spend souls while you wait', d = $('bDeadShop'); if (d.textContent !== t) d.textContent = t; }
   $('autoTag').hidden = !W.auto;
   { const bf = $('buffs'), a = []; if (p.zestT > 0) a.push('Lemon ' + Math.ceil(p.zestT)); if (p.furyT > 0) a.push('Verde Limón ' + Math.ceil(p.furyT)); if (p.hipsT > 0) a.push('Rose hips ' + Math.ceil(p.hipsT)); if (W.pull[p.team] > 0) a.push('orbs come to you ' + Math.ceil(W.pull[p.team]));
     bf.hidden = !a.length; if (a.length) { const t = a.join(' · '); if (bf.textContent !== t) bf.textContent = t; } }
