@@ -1,7 +1,13 @@
 {
-  "current": "0.8",
+  "current": "0.9",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.9",
+      "path": "v0.9/",
+      "source": "release/0.9",
+      "note": "Views become a mechanic: rare big fruit exists only through one view; a mood before each red rain is answered by the right view"
+    },
     {
       "v": "0.8",
       "path": "v0.8/",

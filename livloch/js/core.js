@@ -32,13 +32,28 @@ var C = LL.C = {
   LOCH: { x: 24, z: 0, r: 9.5 }, GREAT_T: 90,
   /* Fruit grows off the threads. Little ones regrow in about a minute; the big lime takes three. */
   FRUIT: [{ k: 'lemon', x: -36, z: -20 }, { k: 'lemon', x: 36, z: -20 }, { k: 'lemon', x: -12, z: 22 }, { k: 'hips', x: -12, z: -24 }, { k: 'hips', x: 30, z: -44 }, { k: 'hips', x: -36, z: 26 },
-    { k: 'lime', x: 12, z: 24 }, { k: 'lime', x: -30, z: -46 }, { k: 'biglime', x: 24, z: 28 }],
+    { k: 'lime', x: 12, z: 24 }, { k: 'lime', x: -30, z: -46 },
+    // Big fruit is the rare tier. Each one ripens out of sight and can be seen and eaten only through one view.
+    { k: 'biglime', x: 24, z: 28, lens: 'glow' }, { k: 'biglemon', x: -60, z: -10, lens: 'origami' }, { k: 'bighips', x: 60, z: 14, lens: 'knight' }],
   FRUIT_INFO: {
     lemon: { name: 'Lemon', line: 'quick feet', t: 9, grow: 55, col: 0xffe14d, css: '#ffe14d' },
     hips: { name: 'Rose hips', line: 'mending', t: 5, grow: 50, col: 0xe0452c, css: '#f0624a' },
     lime: { name: 'Verde Limón', line: 'sour shots', t: 9, grow: 70, col: 0x7ad03a, css: '#8fdc50' },
-    biglime: { name: 'Big Verde Limón', line: 'the whole side, sour and quick', t: 12, grow: 180, col: 0x7ad03a, css: '#8fdc50' }
+    biglime: { name: 'Big Verde Limón', line: 'the whole side, sour and quick', t: 12, grow: 180, col: 0x7ad03a, css: '#8fdc50', big: 'lime' },
+    biglemon: { name: 'Big Lemon', line: 'the whole side, quick', t: 16, grow: 160, col: 0xffe14d, css: '#ffe14d', big: 'lemon' },
+    bighips: { name: 'Big Rose hips', line: 'the whole side, mended', t: 6, grow: 170, col: 0xe0452c, css: '#f0624a', big: 'hips' }
   },
+  /* Views. The view the player is wearing is model state (W.lens), set by the player like any other action.
+     Before each red rain the valley sets a mood; one view fits it. Wear that view before the rain and the rain comes thin. */
+  LENSES: ['snow', 'ink', 'lantern', 'knight', 'origami', 'glow'],
+  MOODS: [
+    { lens: 'knight', line: 'A paper theatre. Someone has lit the footlights.' },
+    { lens: 'origami', line: 'There is daylight folded under the snow.' },
+    { lens: 'glow', line: 'The valley hums in wire. Follow the lines.' },
+    { lens: 'ink', line: 'A stain that might be a stag. Doubt it.' },
+    { lens: 'lantern', line: 'Old gold. The first valley, before the snow.' }
+  ],
+  RED_WARN: 30, MOOD_GUESSES: 3,
   ULT_LEVEL: 3, MAX_ITEMS: 15
 };
 

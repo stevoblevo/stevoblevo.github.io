@@ -1,8 +1,9 @@
 /* LIVLOCH · sim: the whole match, headless. Reads LL.core, writes LL.sim.W. No DOM, no THREE.
 
    DESIGN
-   - This file is the game. It never reads the look, the renderer or the DOM (tools/test.js enforces that), so any
-     rule here holds in every look and can be played to the end under Node.
+   - This file is the game. It never reads the renderer or the DOM (tools/test.js enforces that), so every rule can be
+     played to the end under Node. The view the player wears IS game state here (W.lens, set through S.setLens):
+     rare fruit exists only through one view, and the mood before each red rain is answered by the right view.
    - The premise: paper troopers march three threads and cancel exactly. That stalemate is the puzzle. Each system below
      is one asymmetry the player can use to break it, most of them never explained in the game:
        souls and orbs   half a kill's worth is banked, half floats up as an orb you shoot to secure (or deny)
@@ -79,7 +80,7 @@ S.newWorld = function (o) {
     units: [], heroes: [], structs: [], troopers: [], strays: [], knots: [],
     projs: [], orbs: [], zones: [], obstacles: [], fx: [], st: [[], []], patron: [null, null],
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
-    coordT: 0, cleanT: 0, auto: !!o.auto, tune: o.tune || {}, calm: 0, warned: false, thieves: [], thiefT: 150, red: 0, redNext: C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
+    coordT: 0, cleanT: 0, auto: !!o.auto, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
   buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildFruit(); buildHeroes(o);
   coordinate();
@@ -166,18 +167,27 @@ function foldTrooper(u, c) {
 }
 /* ---------- fruit: lemons (quick feet), rose hips (mending), Verde Limón little and big (sour shots) ---------- */
 function buildFruit() {
-  W.fruit = C.FRUIT.map(function (f, i) { return { i: i, k: f.k, x: f.x, z: f.z, ripe: false, t: f.k === 'biglime' ? 120 : 18 + i * 5 }; });
+  W.fruit = C.FRUIT.map(function (f, i) { return { i: i, k: f.k, x: f.x, z: f.z, lens: f.lens || null, ripe: false, t: f.lens ? 100 + i * 12 : 18 + i * 5 }; });
   W.pull = [0, 0];
 }
+/* The view is the player's to change, and the model's to know. Presentation follows W.lens; the model never asks the renderer. */
+S.setLens = function (id) {
+  if (!W || C.LENSES.indexOf(id) < 0 || id === W.lens) return;
+  W.lens = id; fx({ k: 'lens', id: id });
+  const m = W.mood; if (!m || m.done) return;
+  if (id === m.lens) { m.done = true; m.solved = true; W.thin = true; W.moodsSolved++; for (let i = 0; i < W.heroes.length; i++) if (W.heroes[i].team === 0) give(W.heroes[i], 80); fx({ k: 'moodsolved', lens: id }); }
+  else if (--m.guesses <= 0) { m.done = true; fx({ k: 'moodlost' }); }
+  else fx({ k: 'moodmiss', left: m.guesses });
+};
 function eat(h, f) {
   const info = C.FRUIT_INFO[f.k], T = info.t;
   f.ripe = false; f.t = info.grow; h.fruit++;
-  if (f.k === 'lemon') h.zestT = T;
-  else if (f.k === 'hips') { h.hipsT = T; h.slowT = 0; h.dotT = 0; }
-  else if (f.k === 'lime') h.furyT = T;
+  const one = function (o, kind) { if (kind === 'lemon') o.zestT = Math.max(o.zestT, T); else if (kind === 'hips') { o.hipsT = Math.max(o.hipsT, T); o.slowT = 0; o.dotT = 0; } else o.furyT = Math.max(o.furyT, T); };
+  if (!info.big) one(h, f.k);
   else {
-    for (let i = 0; i < W.heroes.length; i++) { const o = W.heroes[i]; if (o.alive && o.team === h.team) { o.furyT = Math.max(o.furyT, T); o.zestT = Math.max(o.zestT, T); } }
-    W.pull[h.team] = T;
+    // the big tier: the same fruit for the whole side, and a shove for whatever was standing near
+    for (let i = 0; i < W.heroes.length; i++) { const o = W.heroes[i]; if (o.alive && o.team === h.team) { one(o, info.big); if (f.k === 'biglime') o.zestT = Math.max(o.zestT, T); } }
+    if (f.k === 'biglime') W.pull[h.team] = T;
     for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (!u.alive || u.team === h.team) continue; const dx = u.x - h.x, dz = u.z - h.z, d = hyp(dx, dz); if (d < 9) { const n = d || 1; u.x += dx / n * 3; u.z += dz / n * 3; applySlow(u, 0.5, 2); } }
   }
   fx({ k: 'fruit', kind: f.k, u: h, p: h.isPlayer, x: f.x, z: f.z, t: T });
@@ -186,8 +196,9 @@ function fruitStep(dt) {
   for (let t = 0; t < 2; t++) if (W.pull[t] > 0) W.pull[t] -= dt;
   for (let i = 0; i < W.fruit.length; i++) {
     const f = W.fruit[i];
-    if (!f.ripe) { f.t -= dt; if (f.t <= 0) { f.ripe = true; fx({ k: 'fruitripe', kind: f.k, x: f.x, z: f.z }); } continue; }
-    const reach = f.k === 'biglime' ? 3.2 : 2.2;
+    if (!f.ripe) { f.t -= dt; if (f.t <= 0) { f.ripe = true; fx({ k: 'fruitripe', kind: f.k, lens: f.lens, x: f.x, z: f.z }); } continue; }
+    if (f.lens && f.lens !== W.lens) continue; // rare fruit exists for you only in its own view
+    const reach = f.lens ? 3.2 : 2.2;
     for (let j = 0; j < W.heroes.length; j++) { const h = W.heroes[j]; if (h.alive && h.y < 2.5 && hyp(h.x - f.x, h.z - f.z) < reach) { eat(h, f); break; } }
   }
 }
@@ -745,7 +756,7 @@ function think(h) {
     if (dd < range && sc > bs && losClear(h.x, h.z, ness.x, ness.z)) { bs = sc; best = ness; }
   }
   a.target = best; a.wantFire = !!best;
-  for (let i = 0; i < W.fruit.length; i++) { const f = W.fruit[i]; if (f.ripe && hyp(f.x - h.x, f.z - h.z) < 16 && (f.k !== 'hips' || hpF < 0.75)) { a.gx = f.x; a.gz = f.z; break; } }
+  for (let i = 0; i < W.fruit.length; i++) { const f = W.fruit[i]; if (f.ripe && (!f.lens || f.lens === W.lens) && hyp(f.x - h.x, f.z - h.z) < 16 && (f.k !== 'hips' || hpF < 0.75)) { a.gx = f.x; a.gz = f.z; break; } /* never walk to fruit this view cannot reach */ }
   // orbs
   if (a.orbT <= 0 && W.orbs.length) {
     for (let i = 0; i < W.orbs.length; i++) {
@@ -879,7 +890,7 @@ function spawnWave() {
   const min = W.t / 60;
   for (let team = 0; team < 2; team++) for (let lane = 0; lane < 3; lane++) {
     const L = lanes[lane];
-    const cnt = team === 0 ? 4 : [4, 4, 5][W.diff] + (W.red > 0 ? 2 : 0) - (W.mercy ? 1 : 0);
+    const cnt = team === 0 ? 4 : [4, 4, 5][W.diff] + (W.red > 0 && !W.thin ? 2 : 0) - (W.mercy ? 1 : 0);
     for (let k = 0; k < cnt; k++) {
       const s = team === 0 ? 2 + k * 2.4 : L.len - 2 - k * 2.4;
       LL.lanePoint(lane, s, P);
@@ -945,15 +956,23 @@ function thiefStep(u, dt) {
 }
 function hushStep(dt) {
   // red rain: every five minutes, a thick night
-  if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; W.warned = false; if (W.tune.recover) W.calm = 20; fx({ k: 'redend' }); } }
-  else if (!W.warned && W.t >= W.redNext - 15) { W.warned = true; fx({ k: 'redwarn' }); }
-  else if (W.t >= W.redNext) { W.redNext += C.RED_EVERY; W.red = C.RED_T; fx({ k: 'red' }); for (let l = 0; l < 3; l++) spawnHollow(l, true); }
+  if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; W.warned = false; W.thin = false; if (W.tune.recover) W.calm = 20; fx({ k: 'redend' }); } }
+  else if (!W.warned && W.t >= W.redNext - C.RED_WARN) {
+    W.warned = true; const mi = Math.floor(W.rng() * C.MOODS.length);
+    W.mood = { i: mi, lens: C.MOODS[mi].lens, guesses: C.MOOD_GUESSES, done: false, solved: false };
+    if (W.lens === W.mood.lens) { W.mood.i = mi = (mi + 1) % C.MOODS.length; W.mood.lens = C.MOODS[mi].lens; } // never the view already worn
+    fx({ k: 'redwarn', mood: W.mood.i });
+  }
+  else if (W.t >= W.redNext) {
+    W.redNext += C.RED_EVERY; W.red = C.RED_T; if (W.mood && !W.mood.done) { W.mood.done = true; fx({ k: 'moodlost' }); }
+    fx({ k: 'red', thin: W.thin }); if (!W.thin) for (let l = 0; l < 3; l++) spawnHollow(l, true);
+  }
   // mercy: when the Reign is two structures behind, the Hush eases off
   let rd = 0, hd = 0; for (let i = 0; i < W.structs.length; i++) { const s = W.structs[i]; if (!s.alive) { if (s.team === 0) rd++; else hd++; } }
   W.mercy = rd - hd >= 2;
   if (W.calm > 0) W.calm -= dt;
   for (let l = 0; l < 3; l++) { if (W.hollowT[l] > 0 && W.calm <= 0) { W.hollowT[l] -= dt; if (W.hollowT[l] <= 0) { W.hollowT[l] = 0; spawnHollow(l, false); } } }
-  if (W.calm <= 0) W.thiefT -= dt * (W.red > 0 ? (W.tune.stagger ? 2 : 3.5) : 1);
+  if (W.calm <= 0) W.thiefT -= dt * (W.red > 0 ? (W.tune.stagger || W.thin ? 2 : 3.5) : 1);
   if (W.thiefT <= 0) { W.thiefT = [85, 62, 44][W.diff] * (W.mercy ? 1.6 : 1); if (W.thieves.filter(u => u.alive).length < (W.tune.stagger ? 2 : 3)) spawnThief(); }
   for (let i = 0; i < W.thieves.length; i++) { const u = W.thieves[i]; if (u.alive) { if (u.flash > 0) u.flash -= dt; thiefStep(u, dt); } }
 }

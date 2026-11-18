@@ -62,7 +62,7 @@ UI.init = function (handlers) {
   on('bFull', H.full); on('bFull2', H.full);
   on('bShop', () => UI.toggleShop()); on('bDeadShop', () => UI.toggleShop(true)); on('bShopClose', () => UI.toggleShop(false));
   on('bPause', H.pause); on('bResume', H.resume); on('bQuit', H.quit); on('bAgain', () => H.play(false)); on('bTitle', H.quit);
-  on('bAuto', H.auto); on('bInk', H.ink);
+  on('bAuto', H.auto); on('bInk', H.view);
   // settings
   const bind = (id, key, type) => {
     const el = $(id);
@@ -141,12 +141,16 @@ UI.fx = function (e) {
     case 'thiefhome': if (e.carry) UI.banner('The hush reached its gate.', 'Your ' + C.LANE_NAME[e.carry.lane] + ' ' + e.carry.kind + ' stays dark for two minutes', 4.5); else if (e.vp) feed('The hush got home with your souls'); break;
     case 'relit': feed('The ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' is lit again'); break;
     case 'fruit': { const fi = C.FRUIT_INFO[e.kind];
-      if (e.kind === 'biglime') { UI.banner(e.p ? 'Big Verde Limón.' : e.u.name + ' found the Big Verde Limón.', 'Your whole side is sour and quick for ' + e.t + ' seconds, and orbs come to you', 4.5); feed(hname(e.u) + ' ate the <b>Big Verde Limón</b>'); }
+      if (fi.big) { UI.banner(e.p ? fi.name + '.' : e.u.name + ' found the ' + fi.name + '.', fi.line.charAt(0).toUpperCase() + fi.line.slice(1) + ', for ' + e.t + ' seconds' + (e.kind === 'biglime' ? '. Orbs come to you' : ''), 4.5); feed(hname(e.u) + ' ate the <b>' + fi.name + '</b>'); }
       else if (e.p) feed('<b style="color:' + fi.css + '">' + fi.name + '</b> · ' + fi.line + ', ' + e.t + ' s');
       break; }
-    case 'fruitripe': if (e.kind === 'biglime') feed('The <b>Big Verde Limón</b> is ripe'); break;
-    case 'redwarn': UI.banner('The moons are nearly full.', 'Red rain in fifteen seconds', 3.5); break;
-    case 'red': UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
+    case 'fruitripe': if (e.lens) feed(e.lens === W.lens ? 'The <b>' + C.FRUIT_INFO[e.kind].name + '</b> is ripe' : 'Something ripened that this light does not show'); break;
+    case 'lens': feed('View: <b>' + (LL.gfx.LOOKS[e.id] ? LL.gfx.LOOKS[e.id].name : e.id) + '</b>'); break;
+    case 'moodsolved': UI.banner('That is the one.', 'The rain will come thin: no extra hollows, fewer thieves. +80 souls each', 5); break;
+    case 'moodmiss': feed('Not that view. ' + e.left + (e.left === 1 ? ' try left' : ' tries left')); break;
+    case 'moodlost': feed('The mood slipped away'); break;
+    case 'redwarn': UI.banner(C.MOODS[e.mood].line, 'Red rain in thirty seconds. One view answers this. Three tries (' + (LL.input.device === 'kbm' ? 'V' : 'the View button') + ')', 9); break;
+    case 'red': if (e.thin) UI.banner('The rain comes down red, and thin.', 'You answered the mood. No extra hollows this time', 5); else UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
     case 'redend': feed('The rain thins'); break;
     case 'lastbreath': if (e.u === pl) feed('Last breath'); break;
     case 'fold':
@@ -222,7 +226,7 @@ function minimap(view) {
   g.setLineDash([5, 4]); g.lineWidth = 1.5; g.strokeStyle = LL.gfx.look.ui.line; C.CREASE_X.forEach(function (cx, i) { const c = W.creases[i]; g.strokeStyle = c.t > 0 ? '#fff0a0' : LL.gfx.look.ui.line; g.beginPath(); g.moveTo(X(cx), Y(-13)); g.lineTo(X(cx), Y(13)); g.stroke(); }); g.setLineDash([]);
   g.fillStyle = 'rgba(60,150,170,0.55)'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), C.LOCH.r * sc, 0, 6.3); g.fill();
   if (W.ness.alive) { g.fillStyle = '#fff0a0'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), 5.5, 0, 6.3); g.fill(); }
-  W.fruit.forEach(function (f) { if (!f.ripe) return; g.fillStyle = C.FRUIT_INFO[f.k].css; g.beginPath(); g.arc(X(f.x), Y(f.z), f.k === 'biglime' ? 6 : 3, 0, 6.3); g.fill(); });
+  W.fruit.forEach(function (f) { if (!f.ripe || (f.lens && f.lens !== W.lens)) return; g.fillStyle = C.FRUIT_INFO[f.k].css; g.beginPath(); g.arc(X(f.x), Y(f.z), f.lens ? 6 : 3, 0, 6.3); g.fill(); });
   W.strays.forEach(function (s) { if (!s.alive) return; g.fillStyle = 'rgba(201,160,255,0.8)'; g.beginPath(); g.arc(X(s.x), Y(s.z), 3, 0, 6.3); g.fill(); });
   W.troopers.forEach(function (t) { if (!t.alive) return; g.fillStyle = C.TEAM_CSS[t.team]; const z = t.big ? 4.5 : 1.5; g.fillRect(X(t.x) - z, Y(t.z) - z, z * 2, z * 2); });
   W.thieves.forEach(function (t) { if (!t.alive) return; g.fillStyle = (Math.floor(W.t * 4) % 2) ? '#f2e2ff' : C.TEAM_CSS[1]; g.save(); g.translate(X(t.x), Y(t.z)); g.rotate(Math.PI / 4); g.fillRect(-4, -4, 8, 8); g.restore(); });

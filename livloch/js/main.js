@@ -26,7 +26,9 @@ const canvas = document.getElementById('gl'), app = document.getElementById('app
 LL.dbg = { view: view }; // read by tools/evidence.js to frame shots; the game never uses it
 const autoFireOn = () => cfg.autoFire == null ? I.device === 'touch' : cfg.autoFire;
 
-function setLook(id) { if (!R.LOOKS[id]) id = 'snow'; cfg.look = id; save(); document.body.setAttribute('data-look', id); R.setLook(id); UI.lookChips(); }
+/* Changing the view is a player action. The model is told (S.setLens) and owns what it means; the renderer just follows. */
+function setLook(id) { if (!R.LOOKS[id]) id = 'snow'; cfg.look = id; save(); document.body.setAttribute('data-look', id); R.setLook(id); UI.lookChips(); if (W && (state === 'play' || state === 'pause')) S.setLens(id); }
+function nextView() { const L = C.LENSES; setLook(L[(L.indexOf(cfg.look) + 1) % L.length]); }
 /* Inkblot view is a way of looking, never a rule: it flips the look and back. */
 function toggleInk() { if (cfg.look === 'ink') setLook(R.LOOKS[cfg.lookPrev] && cfg.lookPrev !== 'ink' ? cfg.lookPrev : 'snow'); else { cfg.lookPrev = cfg.look; setLook('ink'); } }
 function attract() {
@@ -36,7 +38,7 @@ function attract() {
 }
 function play(auto) {
   A.init(); A.setVol(cfg.vol); A.ui('ok');
-  W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11 });
+  W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look });
   R.build(W); UI.startHUD(W);
   view.mode = 'play'; view.target = W.player; view.yaw = 0; view.pitch = -0.08; view.zoom = 0;
   state = 'play'; I.play = true; counted = !auto; overT = 0; I.lookX = I.lookY = 0;
@@ -115,6 +117,7 @@ function frame(now) {
     if (I.take('pause') || esc || (UI.screen === 'shop' && I.take('navBack'))) { if (UI.screen === 'shop') UI.toggleShop(false); else pause(); }
     else if (I.take('shop')) UI.toggleShop();
     if (I.take('ink')) toggleInk();
+    if (I.take('view')) nextView();
   } else if (state === 'pause') { const esc = I.take('esc') && now - pausedAt > 500; if (I.take('pause') || esc || I.take('navBack')) resume(); }
   UI.nav(I);
   if (state === 'play') {
@@ -150,7 +153,7 @@ function boot() {
     play: play, pause: pause, resume: resume, quit: quit, save: save,
     apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
-    look: setLook, ink: toggleInk,
+    look: setLook, ink: toggleInk, view: nextView,
     relock: function () { if (state === 'play') I.lock(); },
     autoFire: autoFireOn,
     auto: function () { S.setAuto(!W.auto); counted = false; document.getElementById('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; resume(); },

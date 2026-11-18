@@ -536,12 +536,12 @@ function buildFruitArt() {
   fruitM.forEach(function (m) { dyn.remove(m); }); fruitM = [];
   const leaf = hm(0x2f5a3a), stem = hm(0x4a3a2a);
   W.fruit.forEach(function (f) {
-    const info = C.FRUIT_INFO[f.k], big = f.k === 'biglime', g = new T.Group(), fm = hm(info.col, 0.55);
+    const info = C.FRUIT_INFO[f.k], big = !!info.big, g = new T.Group(), fm = hm(info.col, 0.55);
     mesh(flat(new T.IcosahedronGeometry(big ? 1.1 : 0.8, 0)), leaf, 0, big ? 0.6 : 0.45, 0, g).scale.y = 0.6;
     mesh(cyl(0.06, 0.09, big ? 2.2 : 1.3, 4), stem, 0, big ? 1.6 : 1.1, 0, g);
     const fr = new T.Group(); fr.position.y = big ? 3.1 : 1.9; g.add(fr);
-    if (f.k === 'hips') { [[0, 0, 0], [0.24, -0.1, 0.1], [-0.2, -0.14, -0.12], [0.02, -0.22, 0.2]].forEach(function (p) { mesh(new T.SphereGeometry(0.17, 8, 6), fm, p[0], p[1], p[2], fr); }); }
-    else { const s = mesh(new T.SphereGeometry(big ? 0.95 : 0.34, 12, 8), fm, 0, 0, 0, fr); if (f.k === 'lemon') s.scale.set(1.35, 1, 1); mesh(flat(new T.ConeGeometry(big ? 0.3 : 0.11, big ? 0.5 : 0.2, 4)), leaf, 0, big ? 1.05 : 0.38, 0, fr); }
+    if (f.k === 'hips' || f.k === 'bighips') { if (big) fr.scale.set(1, 1, 1); const hs = big ? 2.6 : 1; [[0, 0, 0], [0.24, -0.1, 0.1], [-0.2, -0.14, -0.12], [0.02, -0.22, 0.2]].forEach(function (p) { mesh(new T.SphereGeometry(0.17 * hs, 8, 6), fm, p[0] * hs, p[1] * hs, p[2] * hs, fr); }); }
+    else { const s = mesh(new T.SphereGeometry(big ? 0.95 : 0.34, 12, 8), fm, 0, 0, 0, fr); if (f.k === 'lemon' || f.k === 'biglemon') s.scale.set(1.35, 1, 1); mesh(flat(new T.ConeGeometry(big ? 0.3 : 0.11, big ? 0.5 : 0.2, 4)), leaf, 0, big ? 1.05 : 0.38, 0, fr); }
     const glow = glowSprite(info.col, big ? 9 : 3.4, fr, 0, 0, 0); glow.material.userData.lk = true;
     g.position.set(f.x, 0, f.z); g.fr = fr; g.glow = glow; g.unit = f; g.big = big; dyn.add(g); fruitM.push(g);
   });
@@ -668,8 +668,9 @@ R.fx = function (e) {
     case 'jump': if (e.dbl) emit(e.u.x, e.u.y, e.u.z, 8, 0xf4e8d6, 3, 0.35, -1, 0); break;
     case 'dash': emit(e.u.x, e.u.y + 0.8, e.u.z, 10, 0xf4e8d6, 3, 0.35, 0, 0); break;
     case 'level': ring(e.u.x, e.u.y, e.u.z, 0.4, 3, 0xffe9a8, 0.5); break;
-    case 'fruit': { const fc = C.FRUIT_INFO[e.kind].col, big = e.kind === 'biglime'; emit(e.x, big ? 3 : 1.8, e.z, big ? 90 : 26, fc, big ? 11 : 6, 0.9, 4, 3); ring(e.x, 0.05, e.z, 0.4, big ? 12 : 3.5, fc, big ? 0.8 : 0.45); break; }
-    case 'fruitripe': if (e.kind === 'biglime') ring(e.x, 0.05, e.z, 6, 0.6, C.FRUIT_INFO.biglime.col, 1.0); break;
+    case 'fruit': { const fc = C.FRUIT_INFO[e.kind].col, big = !!C.FRUIT_INFO[e.kind].big; emit(e.x, big ? 3 : 1.8, e.z, big ? 90 : 26, fc, big ? 11 : 6, 0.9, 4, 3); ring(e.x, 0.05, e.z, 0.4, big ? 12 : 3.5, fc, big ? 0.8 : 0.45); break; }
+    case 'moodsolved': if (W.player) { ring(W.player.x, 0.05, W.player.z, 1, 30, 0xffe9a8, 1.2); emit(W.player.x, 2, W.player.z, 60, 0xffe9a8, 9, 1.2, 5, 2); } break;
+    case 'fruitripe': if (e.lens && e.lens === W.lens) ring(e.x, 0.05, e.z, 6, 0.6, C.FRUIT_INFO.biglime.col, 1.0); break;
     case 'slam': ring(e.x, 0.05, e.z, 0.4, 3.2, 0xb8a0ff, 0.3); emit(e.x, 0.5, e.z, 8, 0xb8a0ff, 5, 0.4, 2); break;
     case 'theft': emit(e.u.x, e.u.y + 1.2, e.u.z, 26, 0xffe9a8, 6, 0.8, 3); if (e.p) shake = Math.max(shake, 0.4); break;
     case 'snuff': emit(e.u.x, e.u.h * 0.6, e.u.z, 50, 0x8a78c8, 8, 1, 2); ring(e.u.x, 0.05, e.u.z, 6, 0.5, 0x8a78c8, 0.7); break;
@@ -828,9 +829,10 @@ R.frame = function (dt, view) {
     }
   }
   for (i = 0; i < fruitM.length; i++) {
-    const m = fruitM[i], f = m.unit, s = f.ripe ? 1 : 0.22;
+    const m = fruitM[i], f = m.unit, here = !f.lens || f.lens === W.lens, s = f.ripe && here ? 1 : (f.lens ? 0.001 : 0.22);
+    if (f.ripe && !here && !R.reduced && Math.random() < dt * 2.5) emit(f.x + (Math.random() - 0.5) * 1.5, 0.3 + Math.random() * 2.5, f.z + (Math.random() - 0.5) * 1.5, 1, 0xf4e8d6, 0.3, 1.1, 0.8, 0); // something is here, in another light
     m.fr.scale.x += (s - m.fr.scale.x) * Math.min(1, dt * 5); m.fr.scale.y = m.fr.scale.z = m.fr.scale.x;
-    m.glow.visible = f.ripe; m.fr.rotation.y += dt * 0.9; m.fr.position.y = (m.big ? 3.1 : 1.9) + (f.ripe && !R.reduced ? Math.sin(time * 2.2 + i) * 0.14 : 0);
+    m.glow.visible = f.ripe && here; m.fr.rotation.y += dt * 0.9; m.fr.position.y = (m.big ? 3.1 : 1.9) + (f.ripe && !R.reduced ? Math.sin(time * 2.2 + i) * 0.14 : 0);
   }
   for (i = 0; i < creaseM.length; i++) {
     const cm = creaseM[i], c = W.creases[i];
