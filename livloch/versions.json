@@ -1,12 +1,18 @@
 {
-  "current": "0.9",
+  "current": "0.10",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.10",
+      "path": "v0.10/",
+      "source": "release/0.10",
+      "note": "Ever Fallen mode, Lean Back, Rainwake and Memory views, the Cabinet of easter eggs with the concept plates"
+    },
     {
       "v": "0.9",
       "path": "v0.9/",
       "source": "release/0.9",
-      "note": "Views become a mechanic: rare big fruit exists only through one view; a mood before each red rain is answered by the right view"
+      "note": "Views become a mechanic: rare big fruit exists only through one view; a mood before each red rain is answered by the right view. Known bug: can freeze 30 s before a red rain if the mood lands on the view worn"
     },
     {
       "v": "0.8",

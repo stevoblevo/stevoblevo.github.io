@@ -1,6 +1,14 @@
 /* LIVLOCH · sim: the whole match, headless. Reads LL.core, writes LL.sim.W. No DOM, no THREE.
 
    DESIGN
+   - MODES. 'match' is the lane war. 'fallen' (Ever Fallen) is the valley after the Hush has won: Hush structures cannot
+     be hurt, Reign houses start dark, every small one killed gives a light back to the nearest dark house for C.LIT_T
+     seconds, the rain comes twice as often and one hollow thicker each time. It cannot be won. The score is how long
+     the last lantern stood and how many lights came back.
+   - LEAN BACK is a modifier on either mode: the player's hero plays itself, and the player keeps only the hands that
+     were never about aim: the view (S.setLens), which thread to stand on (S.call), and the fold (S.leanFold).
+   - VIEWS WITH A PRICE. Rainwake: souls are worth half again while the rain is red. Memory: lights hold twice as long
+     and the dark passes twice as fast, and souls are worth half.
    - This file is the game. It never reads the renderer or the DOM (tools/test.js enforces that), so every rule can be
      played to the end under Node. The view the player wears IS game state here (W.lens, set through S.setLens):
      rare fruit exists only through one view, and the mood before each red rain is answered by the right view.
@@ -80,9 +88,10 @@ S.newWorld = function (o) {
     units: [], heroes: [], structs: [], troopers: [], strays: [], knots: [],
     projs: [], orbs: [], zones: [], obstacles: [], fx: [], st: [[], []], patron: [null, null],
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
-    coordT: 0, cleanT: 0, auto: !!o.auto, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
+    coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : 'match', fallen: o.mode === 'fallen', lean: !!o.lean, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
   buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildFruit(); buildHeroes(o);
+  if (W.fallen) for (let i = 0; i < W.structs.length; i++) { const st = W.structs[i]; if (st.team === 0 && st.kind !== 'patron') { st.dark = true; st.darkT = 0; st.litT = 0; } }
   coordinate();
   return W;
 };
@@ -270,6 +279,7 @@ function recompute(h) {
   h.st = st; h.magSize = Math.round(d.gun.mag * st.mag);
 }
 function give(h, n) {
+  if (h.team === 0) { if (W.lens === 'rain' && W.red > 0) n *= 1.5; else if (W.lens === 'memory') n *= 0.5; } // the price and the prize of two views
   h.souls += n; h.total += n;
   const lv = Math.min(20, 1 + Math.floor(h.total / 650));
   if (lv > h.level) { h.level = lv; recompute(h); fx({ k: 'level', u: h, lv: lv }); }
@@ -280,10 +290,24 @@ S.buy = function (h, idx) {
   h.souls -= it.cost; h.items.push(idx); recompute(h);
   fx({ k: 'buy', u: h, item: idx }); return true;
 };
-S.setAuto = function (on) { W.auto = on; if (W.player) { W.player.useAI = on; W.player.botMul = 1; } };
+S.setAuto = function (on) { W.auto = on; if (!on) W.lean = false; if (W.player) { W.player.useAI = on; W.player.botMul = 1; } };
 
 /* ---------- vulnerability ---------- */
+/* Lean Back hands. The hero plays itself; these are what is left to the player. */
+S.call = function (lane) {
+  const p = W && W.player; if (!p || !W.lean || lane < 0 || lane > 2) return false;
+  p.ai.lane = lane; p.ai.callT = 1e9; /* stays until the player calls again */ fx({ k: 'call', lane: lane }); return true;
+};
+S.leanCrease = function () { if (!W || !W.lean) return -1; for (let i = 0; i < W.creases.length; i++) { const c = W.creases[i]; if (c.t <= 0 && c.cd <= 0 && !c.guard.alive) return i; } return -1; };
+S.leanFold = function () {
+  const i = S.leanCrease(); if (i < 0) return false;
+  const c = W.creases[i], p = W.player; let na = 0, nb = 0;
+  for (let k = 0; k < W.troopers.length; k++) { const u = W.troopers[k]; if (u.alive && u.team === 0) { if (u.lane === c.a) na++; else if (u.lane === c.b) nb++; } }
+  c.from = na >= nb ? c.a : c.b; c.to = na >= nb ? c.b : c.a; c.t = C.FOLD_T; c.team = 0; c.n++; p.folds = (p.folds || 0) + 1;
+  fx({ k: 'fold', i: i, from: c.from, to: c.to, team: 0, p: true, x: c.x, z: c.z }); return true;
+};
 S.vuln = function (st) {
+  if (W.fallen && st.team === 1) return false; // Ever Fallen: the Hush has already won; nothing of theirs can be hurt
   if (st.kind === 'guardian') return true;
   if (st.kind === 'warden') return !W.st[st.team][st.lane].outer.alive;
   if (st.kind === 'patron') { for (let l = 0; l < 3; l++) if (!W.st[st.team][l].inner.alive) return true; return false; }
@@ -315,7 +339,7 @@ function damage(t, amt, src, kind, crit) {
   if (!t.alive || W.over) return 0;
   const hero = src ? (src.kind === 'hero' ? src : (src.owner && src.owner.kind === 'hero' ? src.owner : null)) : null;
   if (t.struct) {
-    if (!S.vuln(t)) { if (W.t - t.immuneFx > 0.6) { t.immuneFx = W.t; fx({ k: 'immune', u: t, p: hero && hero.isPlayer }); } return 0; }
+    if (!S.vuln(t)) { if (W.t - t.immuneFx > 0.6 && !W.fallen) { t.immuneFx = W.t; fx({ k: 'immune', u: t, p: hero && hero.isPlayer }); } return 0; }
     if (W.fray) amt *= 1.4; else if (!t.pressed) amt *= 0.3;
     if (src && src.team < 2 && W.great[src.team] > 0) amt *= 1.4;
     if (kind === 'ab') amt *= 0.5;
@@ -388,7 +412,8 @@ function kill(t, src, hero) {
     if (hero) { hero.kills++; give(hero, 200 + 25 * t.level); }
     fx({ k: 'herokill', victim: t, killer: hero, src: src });
   } else if (t.kind === 'thief') {
-    if (t.carry) { t.carry.dark = false; t.carry.darkT = 0; }
+    if (t.carry) { t.carry.dark = false; t.carry.darkT = 0; t.carry.litT = C.LIT_T; }
+    if (W.fallen && (hero || (src && src.team === 0))) relight(t.x, t.z);
     if (t.victim && t.loot) give(t.victim, t.loot);
     if (hero) give(hero, 70 + Math.floor(min) * 5);
     fx({ k: 'thiefdown', x: t.x, z: t.z, loot: t.loot || 0, carry: t.carry, p: !!(hero && hero.isPlayer), vp: !!(t.victim && t.victim.isPlayer) });
@@ -408,8 +433,15 @@ function kill(t, src, hero) {
     fx({ k: 'structdown', u: t, bounty: b });
   } else if (t.kind === 'patron') {
     W.over = true; W.winner = 1 - t.team;
-    fx({ k: 'over', winner: W.winner });
+    fx({ k: 'over', winner: W.winner, fallen: W.fallen, t: W.t, lights: W.lights, moods: W.moodsSolved });
   }
+}
+/* Ever Fallen: a small one put down gives its light to the nearest dark house. */
+function relight(x, z) {
+  let b = null, bd = 1e9;
+  for (let i = 0; i < W.structs.length; i++) { const s = W.structs[i]; if (s.team === 0 && s.alive && s.dark && s.kind !== 'patron') { const d = hyp(s.x - x, s.z - z); if (d < bd) { bd = d; b = s; } } }
+  W.lights++;
+  if (b) { b.dark = false; b.darkT = 0; b.litT = C.LIT_T; fx({ k: 'relit', u: b, recovered: true, n: W.lights }); } else fx({ k: 'lightkept', n: W.lights });
 }
 function aoeDamage(x, y, z, r, dmg, src, o) {
   const us = W.units, team = src.team;
@@ -756,7 +788,7 @@ function think(h) {
     if (dd < range && sc > bs && losClear(h.x, h.z, ness.x, ness.z)) { bs = sc; best = ness; }
   }
   a.target = best; a.wantFire = !!best;
-  for (let i = 0; i < W.fruit.length; i++) { const f = W.fruit[i]; if (f.ripe && (!f.lens || f.lens === W.lens) && hyp(f.x - h.x, f.z - h.z) < 16 && (f.k !== 'hips' || hpF < 0.75)) { a.gx = f.x; a.gz = f.z; break; } /* never walk to fruit this view cannot reach */ }
+  for (let i = 0; i < W.fruit.length; i++) { const f = W.fruit[i]; if (f.ripe && (!f.lens || f.lens === W.lens) && hyp(f.x - h.x, f.z - h.z) < (W.lean && h.isPlayer && f.lens ? 90 : 16) && (f.k !== 'hips' || hpF < 0.75)) { a.gx = f.x; a.gz = f.z; break; } /* never walk to fruit this view cannot reach */ }
   // orbs
   if (a.orbT <= 0 && W.orbs.length) {
     for (let i = 0; i < W.orbs.length; i++) {
@@ -862,7 +894,8 @@ function coordinate() {
   }
   // lane assignment
   for (let team = 0; team < 2; team++) {
-    const bots = W.heroes.filter(h => h.team === team && h.useAI);
+    const bots = W.heroes.filter(h => h.team === team && h.useAI && !(h.ai.callT > 0)); // a called hero stays where it was sent
+    for (let i = 0; i < W.heroes.length; i++) if (W.heroes[i].ai.callT > 0) W.heroes[i].ai.callT -= 0.5;
     const human = W.heroes.find(h => h.team === team && !h.useAI);
     if (W.t > 600) {
       let bl = 1, bsv = 1e9;
@@ -922,9 +955,10 @@ function pickMark() {
   for (let k = 0; k < 3; k++) { const st = W.st[0][(l0 + k) % 3]; const s = st.outer.alive ? st.outer : (st.inner.alive ? st.inner : null); if (s && !s.dark) return s; }
   return rich;
 }
+function anyReignHero() { const hs = W.heroes.filter(h => h.team === 0 && h.alive); return hs.length ? hs[Math.floor(W.rng() * hs.length)] : null; }
 function spawnThief() {
   const u = mk('thief', 1, (W.rng() - 0.5) * 20, C.PATRON_Z - 8, 0.6, 1.5, 420 + 40 * (W.t / 60));
-  u.speed = 8.4; u.state = 0; u.mark = pickMark(); u.loot = 0; u.victim = null; u.carry = null;
+  u.speed = 8.4; u.state = 0; u.mark = pickMark() || (W.fallen ? anyReignHero() : null); u.loot = 0; u.victim = null; u.carry = null;
   if (!u.mark) { u.alive = false; return; }
   W.thieves.push(u); fx({ k: 'thief', mark: u.mark });
 }
@@ -934,7 +968,7 @@ function thiefStep(u, dt) {
   let gx = 0, gz = C.PATRON_Z - 6;
   if (u.state === 0) {
     let m = u.mark;
-    if (!m || !m.alive || m.dark || (m.kind === 'hero' && m.souls < 60)) m = u.mark = pickMark();
+    if (!m || !m.alive || m.dark || (m.kind === 'hero' && m.souls < 60 && !W.fallen)) m = u.mark = pickMark() || (W.fallen ? anyReignHero() : null);
     if (!m) u.state = 1;
     else {
       gx = m.x; gz = m.z;
@@ -946,7 +980,7 @@ function thiefStep(u, dt) {
     }
   }
   if (u.state === 1 && hyp(u.x - gx, u.z - gz) < 4) {
-    if (u.carry && u.carry.alive) { const s = u.carry; s.darkT = 120; s.hp = Math.max(1, s.hp - s.maxHp * 0.25); }
+    if (u.carry && u.carry.alive) { const s = u.carry; s.darkT = W.fallen ? 0 : 120; s.hp = Math.max(1, s.hp - s.maxHp * 0.25); }
     fx({ k: 'thiefhome', loot: u.loot, carry: u.carry, vp: !!(u.victim && u.victim.isPlayer) });
     u.alive = false; return;
   }
@@ -958,14 +992,14 @@ function hushStep(dt) {
   // red rain: every five minutes, a thick night
   if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; W.warned = false; W.thin = false; if (W.tune.recover) W.calm = 20; fx({ k: 'redend' }); } }
   else if (!W.warned && W.t >= W.redNext - C.RED_WARN) {
-    W.warned = true; const mi = Math.floor(W.rng() * C.MOODS.length);
+    W.warned = true; let mi = Math.floor(W.rng() * C.MOODS.length);
     W.mood = { i: mi, lens: C.MOODS[mi].lens, guesses: C.MOOD_GUESSES, done: false, solved: false };
     if (W.lens === W.mood.lens) { W.mood.i = mi = (mi + 1) % C.MOODS.length; W.mood.lens = C.MOODS[mi].lens; } // never the view already worn
     fx({ k: 'redwarn', mood: W.mood.i });
   }
   else if (W.t >= W.redNext) {
-    W.redNext += C.RED_EVERY; W.red = C.RED_T; if (W.mood && !W.mood.done) { W.mood.done = true; fx({ k: 'moodlost' }); }
-    fx({ k: 'red', thin: W.thin }); if (!W.thin) for (let l = 0; l < 3; l++) spawnHollow(l, true);
+    W.redNext += W.redEvery; W.red = C.RED_T; W.fallN++; if (W.mood && !W.mood.done) { W.mood.done = true; fx({ k: 'moodlost' }); }
+    fx({ k: 'red', thin: W.thin, n: W.fallN }); if (!W.thin) { for (let l = 0; l < 3; l++) spawnHollow(l, true); if (W.fallen) for (let k = 1; k < W.fallN; k++) spawnHollow(Math.floor(W.rng() * 3), true); }
   }
   // mercy: when the Reign is two structures behind, the Hush eases off
   let rd = 0, hd = 0; for (let i = 0; i < W.structs.length; i++) { const s = W.structs[i]; if (!s.alive) { if (s.team === 0) rd++; else hd++; } }
@@ -973,7 +1007,7 @@ function hushStep(dt) {
   if (W.calm > 0) W.calm -= dt;
   for (let l = 0; l < 3; l++) { if (W.hollowT[l] > 0 && W.calm <= 0) { W.hollowT[l] -= dt; if (W.hollowT[l] <= 0) { W.hollowT[l] = 0; spawnHollow(l, false); } } }
   if (W.calm <= 0) W.thiefT -= dt * (W.red > 0 ? (W.tune.stagger || W.thin ? 2 : 3.5) : 1);
-  if (W.thiefT <= 0) { W.thiefT = [85, 62, 44][W.diff] * (W.mercy ? 1.6 : 1); if (W.thieves.filter(u => u.alive).length < (W.tune.stagger ? 2 : 3)) spawnThief(); }
+  if (W.thiefT <= 0) { W.thiefT = [85, 62, 44][W.diff] * (W.mercy ? 1.6 : 1) * (W.fallen ? 0.55 : 1); if (W.thieves.filter(u => u.alive).length < (W.tune.stagger ? 2 : 3)) spawnThief(); }
   for (let i = 0; i < W.thieves.length; i++) { const u = W.thieves[i]; if (u.alive) { if (u.flash > 0) u.flash -= dt; thiefStep(u, dt); } }
 }
 function pickTarget(u, R, heroesOk) {
@@ -1019,7 +1053,8 @@ function trooperStep(u, dt) {
   if (hyp(u.x, u.z - sgn * C.SPAWN_Z) < C.FOUNT_R) damage(u, 400 * dt, null, 'dot');
 }
 function structStep(s, dt) {
-  if (s.dark) { if (s.darkT > 0) { s.darkT -= dt; if (s.darkT <= 0) { s.dark = false; fx({ k: 'relit', u: s }); } } s.tgt = null; return; }
+  if (W.fallen && s.team === 0 && !s.dark && s.kind !== 'patron') { s.litT -= dt * (W.lens === 'memory' ? 0.5 : 1); if (s.litT <= 0) { s.dark = true; s.darkT = 0; fx({ k: 'snuff', u: s, faded: true }); } }
+  if (s.dark) { if (s.darkT > 0) { s.darkT -= dt * (W.lens === 'memory' && s.team === 0 ? 2 : 1); if (s.darkT <= 0) { s.dark = false; fx({ k: 'relit', u: s }); } } s.tgt = null; return; }
   s.atkT -= dt; s.scanT -= dt;
   if (s.scanT <= 0) {
     s.scanT = 0.25; s.pressed = false;
@@ -1135,7 +1170,7 @@ S.step = function (dt) {
   W.t += dt;
   W.waveT -= dt; if (W.waveT <= 0) { W.waveT = 24; spawnWave(); }
   if (!W.fray && W.t > 900) { W.fray = true; fx({ k: 'fray' }); }
-  if (W.t > 1200) {
+  if (W.t > 1200 && !W.fallen) {
     if (!W.gutter) { W.gutter = true; fx({ k: 'gutter' }); }
     for (let t = 0; t < 2 && !W.over; t++) { const p = W.patron[t]; if (p.alive) { p.hp -= 25 * dt; if (p.hp <= 0) { p.hp = 0; kill(p, null, null); } } }
     if (W.over) return;
@@ -1180,7 +1215,7 @@ S.step = function (dt) {
 };
 
 /* Hooks for tools/test.js. Nothing in the game calls these. */
-S._t = { eat: eat, damage: damage, kill: kill, spawnThief: spawnThief, spawnHollow: spawnHollow, thiefStep: thiefStep };
+S._t = { give: give, eat: eat, damage: damage, kill: kill, spawnThief: spawnThief, spawnHollow: spawnHollow, thiefStep: thiefStep };
 
 /* Aim ray for the human player: first thing the crosshair is on. */
 S.aimPoint = function (ox, oy, oz, dx, dy, dz, t0, team, out) {

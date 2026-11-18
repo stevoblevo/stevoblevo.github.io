@@ -11,7 +11,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'match', lean: false, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
@@ -38,12 +38,12 @@ function attract() {
 }
 function play(auto) {
   A.init(); A.setVol(cfg.vol); A.ui('ok');
-  W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look });
-  R.build(W); UI.startHUD(W);
+  W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look, mode: cfg.mode, lean: !auto && cfg.lean });
+  lens0 = W.lens; R.build(W); UI.startHUD(W);
   view.mode = 'play'; view.target = W.player; view.yaw = 0; view.pitch = -0.08; view.zoom = 0;
   state = 'play'; I.play = true; counted = !auto; overT = 0; I.lookX = I.lookY = 0;
-  coach.step = (!auto && I.device === 'touch' && !cfg.coached) ? 0 : -1; coach.x = W.player.x; coach.z = W.player.z; coach.t = 0; coach.look = 0; UI.coach('');
-  if (!auto) I.lock();
+  coach.step = (!auto && !W.lean && I.device === 'touch' && !cfg.coached) ? 0 : -1; coach.x = W.player.x; coach.z = W.player.z; coach.t = 0; coach.look = 0; UI.coach('');
+  if (!auto && !W.lean) I.lock();
 }
 function pause() { if (state !== 'play' || W.over) return; if (UI.screen === 'shop') UI.toggleShop(false); state = 'pause'; pausedAt = performance.now(); I.play = false; UI.showPause(true); I.unlock(); }
 function resume() { if (state !== 'pause') return; state = 'play'; I.play = true; UI.showPause(false); I.lock(); last = performance.now(); }
@@ -53,6 +53,7 @@ function playerControl(dt) {
   const p = W.player, c = p.ctl, menu = UI.screen !== null;
   info.hot = info.orb = false; info.canZip = false; info.canFold = false;
   if (p.useAI) {
+    if (W.lean) { for (let i = 0; i < 3; i++) if (I.take('ab' + i)) S.call(i); if (I.take('zip')) S.leanFold(); } // Lean Back: Q E F call a thread, T folds
     view.yaw += U.angDiff(p.yaw, view.yaw) * Math.min(1, dt * 3); view.pitch += (p.pitch * 0.6 - 0.1 - view.pitch) * Math.min(1, dt * 3);
     view.zoom += (0 - view.zoom) * Math.min(1, dt * 8); return;
   }
@@ -107,6 +108,19 @@ function runCoach(dt, p) {
   else if (coach.step === 2) { UI.coach(info.canZip ? 'Tap Ride thread to reach the fight' : 'Walk forward until you are standing on a thread'); if (p.zip || coach.t > 30) { coach.step = 3; coach.t = 0; } }
   else if (coach.step === 3) { UI.coach('Shoot the orbs that float up from dead troopers. That is most of your income'); if (coach.t > 9) { coach.step = -1; UI.coach(''); cfg.coached = true; save(); } }
 }
+/* Cabinet feats. Only a person earns them: nothing opens while the valley is just being watched. */
+const worn = {}; let lens0 = 'snow';
+function feats(e) {
+  if (W.auto && !W.lean) return;
+  const U_ = UI.unlock;
+  if (e.k === 'thiefdown' && e.p) U_('snuff'); else if (e.k === 'relit' && e.recovered) { U_('snuff'); if (e.n >= 10) U_('garden'); }
+  else if (e.k === 'fruit' && C.FRUIT_INFO[e.kind].big) U_('peachfall');
+  else if (e.k === 'fold' && e.p) U_('knight');
+  else if (e.k === 'nessdown' && e.team === 0) U_('peachball');
+  else if (e.k === 'redend' && W.moodsSolved > 0 && W.mood && W.mood.solved) U_('redreign');
+  else if (e.k === 'lens') { worn[e.id] = W; if (C.LENSES.every(k => worn[k] === W || k === lens0)) U_('foldflow'); }
+  else if (e.k === 'over') { if (W.lean) U_('kk'); if (e.fallen && e.t >= 480) U_('everfallen'); }
+}
 function frame(now) {
   requestAnimationFrame(frame);
   let dt = Math.min(0.1, (now - last) / 1000); last = now; if (!(dt > 0)) dt = 0.016;
@@ -131,7 +145,8 @@ function frame(now) {
       if (state === 'play') {
         A.fx(e, W, cam); UI.fx(e);
         if (e.k === 'respawn' && e.u === W.player && !W.player.useAI) { view.yaw = 0; view.pitch = -0.06; }
-        if (e.k === 'over') { overT = 2.6; I.unlock(); if (counted) { if (e.winner === 0) cfg.wins++; else cfg.losses++; save(); } }
+        feats(e);
+        if (e.k === 'over') { overT = 2.6; I.unlock(); if (e.fallen && W.auto === W.lean && e.t > cfg.bestT) { cfg.bestT = e.t; cfg.bestL = e.lights; save(); } if (counted && !e.fallen && !W.lean) { if (e.winner === 0) cfg.wins++; else cfg.losses++; save(); } }
       }
     }
     W.fx.length = 0;
@@ -154,14 +169,16 @@ function boot() {
     apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
     look: setLook, ink: toggleInk, view: nextView,
+    call: function (l) { if (state === 'play') S.call(l); }, leanFold: function () { if (state === 'play') S.leanFold(); },
     relock: function () { if (state === 'play') I.lock(); },
     autoFire: autoFireOn,
-    auto: function () { S.setAuto(!W.auto); counted = false; document.getElementById('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; resume(); },
+    auto: function () { S.setAuto(!W.auto); counted = false; document.body.classList.toggle('lean', !!W.lean); document.getElementById('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; resume(); },
     full: function () { try { const el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) { const p = el.requestFullscreen(); if (p && p.catch) p.catch(function () {}); } } catch (e) {} }
   });
   I.init(canvas, app);
   document.addEventListener('click', function (ev) { const b = ev.target.closest ? ev.target.closest('#hud button') : null; if (b) b.blur(); });
   I.onUnlock = function () { if (state === 'play' && UI.screen === null && !W.over && !W.auto) pause(); };
+  if (cfg.mode !== 'fallen') cfg.mode = 'match';
   if (!window.THREE || !R.init(canvas)) { UI.error('This browser would not hand over WebGL, so the valley cannot be drawn here. Try another browser or device.'); return; }
   R.setQuality(cfg.low);
   if (!R.LOOKS[cfg.look]) cfg.look = 'snow';

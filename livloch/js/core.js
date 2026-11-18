@@ -45,14 +45,17 @@ var C = LL.C = {
   },
   /* Views. The view the player is wearing is model state (W.lens), set by the player like any other action.
      Before each red rain the valley sets a mood; one view fits it. Wear that view before the rain and the rain comes thin. */
-  LENSES: ['snow', 'ink', 'lantern', 'knight', 'origami', 'glow'],
+  LENSES: ['snow', 'ink', 'lantern', 'knight', 'origami', 'glow', 'rain', 'memory'],
   MOODS: [
+    { lens: 'rain', line: 'It smells of iron. Face the weather.' }, { lens: 'memory', line: 'You have stood here before. About ten seconds ago.' },
     { lens: 'knight', line: 'A paper theatre. Someone has lit the footlights.' },
     { lens: 'origami', line: 'There is daylight folded under the snow.' },
     { lens: 'glow', line: 'The valley hums in wire. Follow the lines.' },
     { lens: 'ink', line: 'A stain that might be a stag. Doubt it.' },
     { lens: 'lantern', line: 'Old gold. The first valley, before the snow.' }
   ],
+  /* Ever Fallen: the valley is already lost. LIT_T is how long a recovered light holds; the rain comes twice as often. */
+  LIT_T: 80, FALLEN_RED_EVERY: 150,
   RED_WARN: 30, MOOD_GUESSES: 3,
   ULT_LEVEL: 3, MAX_ITEMS: 15
 };
@@ -146,4 +149,27 @@ LL.ITEMS = [
   { id: 'sun', cat: 2, tier: 3, cost: 3000, name: 'Little Sun', desc: '+55% ability power', mod: { ap: 0.55 } }
 ];
 LL.CATS = ['Gun', 'Body', 'Spirit'];
+/* THE CABINET. Easter eggs. Each entry opens on a feat in play; a switch hidden in Settings opens all of them.
+   Doors lead to other Saelion worlds (addresses from the public atlas). 'snuff' is a small game kept in this file's
+   neighbour, ui.js. 'plates' is the concept art the game was drawn from. */
+LL.CABINET = [
+  { id: 'plates', name: 'The plates', feat: 'Answer one mood', line: 'The concept art this valley was drawn from.' },
+  { id: 'snuff', name: 'Snuff', feat: 'Catch a small one yourself, or recover a light', line: 'Nine houses, thirty seconds, one thumb.' },
+  { id: 'kk', name: 'kk', feat: 'Sit through a whole match leaning back', line: 'A watch, not a wall.', url: 'https://saelion.co/kk' },
+  { id: 'everfallen', name: 'AND SO 7 · Everfallen', feat: 'Hold eight minutes in Ever Fallen', line: 'A storybook toy tuned in 31 steps, like the sounds here.', url: 'https://stevoblevo.github.io/and-so/' },
+  { id: 'redreign', name: 'Red Reign', feat: 'Stand through a red rain you thinned', line: 'Red rain, and a way home that stays open.', url: 'https://stevoblevo.github.io/red-reign/' },
+  { id: 'peachfall', name: 'The Peachfall', feat: 'Eat a big fruit', line: 'Play the dream or watch it.', url: 'https://stevoblevo.github.io/peachfall/' },
+  { id: 'knight', name: 'Knight Side', feat: 'Fold the valley', line: 'An isometric knight and some lanterns.', url: 'https://stevoblevo.github.io/knight-side/' },
+  { id: 'foldflow', name: 'Fold / Flow', feat: 'Wear every view in one match', line: 'Bring five lanterns home.', url: 'https://saelion.co/fold-flow' },
+  { id: 'peachball', name: 'Peach Ball', feat: 'Put the Ness down', line: 'A peach, a mood, and nowhere else you need to be.', url: 'https://saelion.co/peach-ball' },
+  { id: 'garden', name: 'Red Rain · Night Garden', feat: 'Recover ten lights in one fall', line: 'Gather five small lights in a garden that remembers.', url: 'https://night-garden-beta.vercel.app/' }
+];
+LL.PLATES = [
+  { f: 'art/title.jpg', name: 'The first plate', line: 'Sent with the words "some concept in game art for direction eventual". It became the title screen and the Cobalt Snow view.' },
+  { f: 'art/concepts/05_original_four_looks_reference.jpg', name: 'The four looks', line: 'Livloch 0.3, before the plate: the four looks built from the Saelion style kits. Kept for reference.' },
+  { f: 'art/concepts/01_gen3_storeybrook.jpg', name: 'Gen 3 · Storeybrook', line: 'The paper theatre. Knight Night and Origami come from here.' },
+  { f: 'art/concepts/02_gen4_fifteen_modes.jpg', name: 'Gen 4 · fifteen modes', line: '"Playable Reality Views". This plate is why views became a mechanic in 0.9.' },
+  { f: 'art/concepts/03_gen5_afterimage.jpg', name: 'Gen 5 · Afterimage', line: 'The radial toggle and the fifteenth mode. Neither is built yet.' },
+  { f: 'art/concepts/04_gen15_skeptic_noir.jpg', name: 'Gen XV · Skeptic Noir', line: '"Recover the light". Inkblot Noir, the small ones that carry lights, and Ever Fallen come from here.' }
+];
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -92,8 +92,28 @@ const LOOKS = R.LOOKS = {
       else if (h > 0.38 && h < 0.6 && s > 0.35) { h = 0.525; s = 1; l = Math.max(0.6, l); }
       else if (h > 0.68 && l > 0.5) { h = 0.73; s = 1; l = 0.74; }
       else { h = 0.83; s = 0.4; l = 0.3 + l * 0.5; }
-      c.setHSL(h, s, l); } }
+      c.setHSL(h, s, l); } },
+  /* Rainwake: the red rain worn on purpose. In the model, souls are worth half again while the rain is red. */
+  rain: { name: 'Rainwake', kit: 'mode 12 on the plates, the red rain worn on purpose', add: true, wire: false, weather: 'rain', bloom: 0.45,
+    clear: 0x1a0a10, fog: [0x4a1420, 50, 260], sky: [0x12060a, 0x3a0f1a, 0x8a2a2a], sun: [0xff8a70, 0xffd0c0], star: 0.2,
+    hemi: [0xd09090, 0x2a1014, 0.9], dir: [0xffb0a0, 0.6], ground: { a: 0x3a1c24, b: 0x4a2228, lane: 0x24121a, laneC: 0x3a1a22, rock: 0x2a141c, water: 0x145a5a },
+    crease: [0xffb347, 0x7fe0d0, 0.4], team: [0xffc070, 0x6fe0d0], css: ['#ffc070', '#6fe0d0'], ui: { line: 'rgba(255,220,210,0.18)', me: '#fff0e6', edge: '#1a0a10' },
+    map: function (c) { c.getHSL(HS); let h = HS.h, s = HS.s, l = HS.l;
+      if (s < 0.12) { h = 0.98; s = 0.18; }
+      else if (h < 0.2 || h > 0.9) { /* warm stays warm */ }
+      else if (h < 0.62) { h = 0.48; s *= 0.8; }
+      else { h = 0.96; s *= 0.6; l *= 0.9; }
+      c.setHSL(h, Math.min(1, s), l); } },
+  /* Memory: echo overlays. Small ones and hollows leave ten seconds of trail. In the model, light holds longer and souls are worth half. */
+  memory: { name: 'Memory', kit: 'mode 13 on the plates, echo overlays', add: true, wire: false, bloom: 0.3, echo: true,
+    clear: 0x2a2520, fog: [0x6a5f50, 45, 240], sky: [0x2a2520, 0x5a4f40, 0xb09a78], sun: [0xf0e0c0, 0xfff8e8], star: 0,
+    hemi: [0xe0d4bc, 0x3a3228, 0.95], dir: [0xfff0d8, 0.5], ground: { a: 0x5a5044, b: 0x6a5e4e, lane: 0x3e362c, laneC: 0x52483a, rock: 0x4a4036, water: 0x4a5a58 },
+    crease: [0xd9a860, 0x9ab0b8, 0.35], team: [0xe8b060, 0x8aa8c0], css: ['#e8b060', '#8aa8c0'], ui: { line: 'rgba(240,228,204,0.2)', me: '#fff8e8', edge: '#2a2520' },
+    map: function (c) { c.getHSL(HS); let h = HS.h, s = HS.s, l = HS.l;
+      if (h < 0.2 || h > 0.9) { h = 0.09; s *= 0.5; } else { h = 0.58; s *= 0.28; }
+      c.setHSL(h, Math.min(1, s), l); } }
 };
+const trails = new WeakMap(); let trailT = 0;
 let LK = LOOKS.snow; R.look = LK;
 let tcCache = {};
 function mapC(c) { const hex = c.getHex(); if (hex === SRC_TEAM[0]) c.setHex(LK.team[0]); else if (hex === SRC_TEAM[1]) c.setHex(LK.team[1]); else if (LK.map) LK.map(c); return c; }
@@ -550,10 +570,10 @@ function buildFruitArt() {
 function buildCues() {
   cueRings.forEach(function (r) { dyn.remove(r); }); cueRings = [];
   if (cueDash) { dyn.remove(cueDash); cueDash = null; }
-  if (!LK.cues) return;
+  if (!LK.cues && !LK.echo) return;
   cueDash = new T.InstancedMesh(new T.PlaneGeometry(0.28, 1.3), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, side: T.DoubleSide, depthWrite: false, fog: false }), 240);
   cueDash.userData.rt = true; cueDash.frustumCulled = false; initColor(cueDash, 240); cueDash.count = 0; cueDash.material.userData.lk = true; dyn.add(cueDash);
-  W.structs.forEach(function (s) {
+  if (LK.cues) W.structs.forEach(function (s) {
     const r = new T.Mesh(new T.RingGeometry(s.r + 1.9, s.r + 2.3, 40), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, side: T.DoubleSide, depthWrite: false, fog: false }));
     r.material.userData.lk = true; r.rotation.x = -Math.PI / 2; r.position.set(s.x, 0.1, s.z); r.unit = s; dyn.add(r); cueRings.push(r);
   });
@@ -563,7 +583,20 @@ R._cue = function () { return { dash: cueDash ? { n: cueDash.count, col: cueDash
 function drawCues() {
   if (!cueDash) return;
   let n = 0;
-  for (let i = 0; i < W.thieves.length; i++) {
+  if (LK.echo) { // Memory: where the small ones and the hollows were over the last ten seconds
+    const samp = time - trailT > 0.5; if (samp) trailT = time;
+    const echo = function (u, col) {
+      let tr = trails.get(u); if (!tr) { tr = []; trails.set(u, tr); }
+      if (samp) { tr.push(u.x, u.z); if (tr.length > 40) tr.splice(0, 2); }
+      for (let k = 0; k < tr.length && n < 240; k += 2) {
+        const age = 1 - k / 40; dummy.position.set(tr[k], 0.18, tr[k + 1]); dummy.rotation.set(-Math.PI / 2, 0, 0); dummy.scale.set(1.6 - age, 0.5 - age * 0.25, 1); dummy.updateMatrix();
+        cueDash.setMatrixAt(n, dummy.matrix); cueDash.setColorAt(n++, tmpC.setHex(col));
+      }
+    };
+    for (let i = 0; i < W.thieves.length; i++) if (W.thieves[i].alive) echo(W.thieves[i], 0xfff0d0);
+    for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (u.alive && u.big) echo(u, 0x8aa8c0); }
+  }
+  for (let i = 0; LK.cues && i < W.thieves.length; i++) {
     const t = W.thieves[i]; if (!t.alive) continue;
     let gx = 0, gz = C.PATRON_Z - 6; if (t.state === 0 && t.mark) { gx = t.mark.x; gz = t.mark.z; }
     const dx = gx - t.x, dz = gz - t.z, d = Math.hypot(dx, dz) || 1, yaw = Math.atan2(dx, dz), col = t.state === 1 ? CUE.copper : CUE.threat;

@@ -30,6 +30,11 @@ UI.init = function (handlers) {
     b.setAttribute('aria-pressed', String(+b.getAttribute('data-diff') === cfg.diff));
     b.addEventListener('click', function () { cfg.diff = +b.getAttribute('data-diff'); H.save(); document.querySelectorAll('[data-diff]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); LL.audio.init(); LL.audio.ui(); });
   });
+  const modeLine = function () { $('modeLine').textContent = (cfg.mode === 'fallen' ? 'Ever Fallen: already lost. Hold the last lantern and take the lights back. ' + (cfg.bestT ? 'Best ' + U.fmtTime(cfg.bestT) + ', ' + cfg.bestL + ' lights.' : 'No record yet.') : 'The livelock: three threads, two patrons, one of them yours.') + (cfg.lean ? ' Leaning back: the hero plays itself; you keep the view, the thread and the fold.' : ''); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x.getAttribute('data-mode') === cfg.mode))); $('cLean').setAttribute('aria-pressed', String(!!cfg.lean)); $('bPlay').textContent = cfg.lean ? 'Sit down' : 'Walk in'; };
+  UI.modeLine = modeLine;
+  document.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { cfg.mode = b.getAttribute('data-mode'); H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); }); });
+  $('cLean').addEventListener('click', function () { cfg.lean = !cfg.lean; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
+  modeLine();
   UI.record();
   ['looks', 'looks2'].forEach(function (id) {
     const w = $(id);
@@ -62,7 +67,11 @@ UI.init = function (handlers) {
   on('bFull', H.full); on('bFull2', H.full);
   on('bShop', () => UI.toggleShop()); on('bDeadShop', () => UI.toggleShop(true)); on('bShopClose', () => UI.toggleShop(false));
   on('bPause', H.pause); on('bResume', H.resume); on('bQuit', H.quit); on('bAgain', () => H.play(false)); on('bTitle', H.quit);
-  on('bAuto', H.auto); on('bInk', H.view);
+  on('bAuto', H.auto); on('bInk', H.view); on('bCab', UI.showCab); on('bCabClose', function () { snuffRun = null; show('title'); });
+  { let taps = 0; const all = $('oAll'); all.checked = !!cfg.all; $('lAll').hidden = !cfg.all; $('bCab').hidden = !(cfg.all || (cfg.unl && Object.keys(cfg.unl).length));
+    $('hSet').addEventListener('click', function () { if (++taps >= 5) { $('lAll').hidden = false; LL.audio.ui('ok'); } }); // the hidden switch: five taps on the word Settings
+    all.addEventListener('change', function () { cfg.all = all.checked; H.save(); $('bCab').hidden = !(cfg.all || (cfg.unl && Object.keys(cfg.unl).length)); }); }
+  [0, 1, 2].forEach(l => on('lCall' + l, () => H.call(l))); on('lFold', H.leanFold); on('lView', H.view);
   // settings
   const bind = (id, key, type) => {
     const el = $(id);
@@ -73,15 +82,65 @@ UI.init = function (handlers) {
   $('oAuto').addEventListener('input', function () { cfg.autoFire = $('oAuto').checked; H.save(); });
 };
 UI.lookChips = function () { const k = LL.cfg.look; document.querySelectorAll('[data-look]').forEach(b => { if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.getAttribute('data-look') === k)); }); const L = LL.gfx.LOOKS[k]; $('lookLine').textContent = L ? 'Look: ' + L.name + ', from ' + L.kit + '.' : ''; };
+/* ---------- the cabinet: easter eggs ---------- */
+UI.unlock = function (id) {
+  const c = LL.cfg; if (!c.unl) c.unl = {}; if (c.unl[id]) return; const e = LL.CABINET.find(x => x.id === id); if (!e) return;
+  c.unl[id] = 1; H.save(); if (!$('hud').hidden) feed('<b>Something in the cabinet opened</b> · ' + e.name); $('bCab').hidden = false;
+};
+const isOpen = id => !!(LL.cfg.all || (LL.cfg.unl && LL.cfg.unl[id]));
+let snuffRun = null;
+function cabDraw() {
+  const L = $('cabList'); L.innerHTML = ''; let n = 0;
+  LL.CABINET.forEach(function (e) {
+    const open = isOpen(e.id); if (open) n++;
+    const b = document.createElement(open && e.url ? 'a' : 'button'); b.className = 'item' + (open ? '' : ' shut');
+    b.innerHTML = '<b>' + (open ? e.name : '· · ·') + '</b><small>' + (open ? e.line : e.feat) + '</small>';
+    if (open && e.url) { b.href = e.url; b.target = '_blank'; b.rel = 'noopener'; }
+    else if (open) b.addEventListener('click', function () { if (e.id === 'snuff') snuffStart(); else platesShow(); });
+    else b.disabled = true;
+    L.appendChild(b);
+  });
+  $('cabSub').textContent = n + ' of ' + LL.CABINET.length + ' open. The shut ones say what opens them.';
+}
+function platesShow() {
+  const P = $('plates'); $('snuff').hidden = true; P.hidden = false; $('plateBig').hidden = true; P.innerHTML = '';
+  LL.PLATES.forEach(function (pl) { const b = document.createElement('button'), im = document.createElement('img'); im.loading = 'lazy'; im.src = pl.f; im.alt = pl.name; b.title = pl.name; b.appendChild(im);
+    b.addEventListener('click', function () { const B = $('plateBig'); B.hidden = false; B.querySelector('img').src = pl.f; B.querySelector('img').alt = pl.name; B.querySelector('p').textContent = pl.name + '. ' + pl.line; B.scrollIntoView({ block: 'nearest' }); }); P.appendChild(b); });
+}
+/* Snuff: nine houses. A hush creeps onto a lit one; touch it before the light goes. Thirty seconds. */
+function snuffStart() {
+  $('plates').hidden = true; $('plateBig').hidden = true; $('snuff').hidden = false;
+  const cv = $('snuffC'), g = cv.getContext('2d'), st = { t: 30, score: 0, lost: 0, h: [], next: 0.6, last: performance.now(), on: true };
+  for (let i = 0; i < 9; i++) st.h.push({ lit: true, hush: 0 });
+  snuffRun = st;
+  cv.onpointerdown = function (ev) { if (!st.on) { snuffStart(); return; } const r = cv.getBoundingClientRect(), i = Math.floor((ev.clientX - r.left) / r.width * 3) + 3 * Math.floor((ev.clientY - r.top) / r.height * 3), c = st.h[i]; if (c && c.hush > 0) { c.hush = 0; st.score++; LL.audio.ui('ok'); } };
+  (function loop(now) {
+    if (snuffRun !== st || $('cab').hidden) return;
+    const dt = Math.min(0.1, (now - st.last) / 1000); st.last = now;
+    if (st.on) { st.t -= dt; st.next -= dt;
+      if (st.next <= 0) { st.next = Math.max(0.28, 0.9 - (30 - st.t) * 0.02); const c = st.h[Math.floor(Math.random() * 9)]; if (c.lit && c.hush <= 0) c.hush = 1.25; }
+      st.h.forEach(function (c) { if (c.hush > 0) { c.hush -= dt; if (c.hush <= 0) { c.lit = false; st.lost++; } } });
+      if (st.t <= 0 || st.lost >= 9) { st.on = false; const cf = LL.cfg; if (st.score > (cf.snuffBest || 0)) { cf.snuffBest = st.score; H.save(); } } }
+    const css = getComputedStyle(document.body), gold = css.getPropertyValue('--gold') || '#f0c060', night = css.getPropertyValue('--night') || '#1b1840', mint = css.getPropertyValue('--mint') || '#a9b8ff';
+    g.fillStyle = night; g.fillRect(0, 0, 330, 330);
+    st.h.forEach(function (c, i) { const x = (i % 3) * 110 + 55, y = Math.floor(i / 3) * 110 + 60;
+      g.fillStyle = c.lit ? gold : 'rgba(128,128,128,0.35)'; g.beginPath(); g.moveTo(x - 30, y - 6); g.lineTo(x, y - 34); g.lineTo(x + 30, y - 6); g.fill(); g.fillRect(x - 22, y - 6, 44, 38);
+      if (c.lit) { g.fillStyle = night; g.fillRect(x - 6, y + 6, 12, 14); }
+      if (c.hush > 0) { g.fillStyle = mint; g.beginPath(); g.arc(x + 18 * (c.hush / 1.25), y + 26, 13, 0, 6.3); g.fill(); g.fillStyle = night; g.fillRect(x + 18 * (c.hush / 1.25) - 6, y + 22, 4, 4); g.fillRect(x + 18 * (c.hush / 1.25) + 2, y + 22, 4, 4); } });
+    $('snuffT').textContent = st.on ? Math.ceil(st.t) + ' s · caught ' + st.score + ' · dark ' + st.lost + ' of 9' : 'Caught ' + st.score + '. ' + (9 - st.lost) + ' houses still lit. Best ' + (LL.cfg.snuffBest || 0) + '. Touch to go again.';
+    requestAnimationFrame(loop);
+  })(performance.now());
+}
+UI.showCab = function () { $('snuff').hidden = true; $('plates').hidden = true; $('plateBig').hidden = true; snuffRun = null; cabDraw(); show('cab'); };
 UI.record = function () { const c = LL.cfg; $('rec').textContent = (c.wins + c.losses) ? 'Your record: ' + c.wins + ' won, ' + c.losses + ' lost' : ''; };
 UI.error = function (msg) { const e = $('err'); e.hidden = false; e.textContent = msg; $('bPlay').disabled = true; $('bWatch').disabled = true; };
 function show(name) {
   UI.screen = name;
-  ['title', 'shop', 'pause', 'over'].forEach(function (s) { $(s).hidden = s !== name; });
+  ['title', 'shop', 'pause', 'over', 'cab'].forEach(function (s) { $(s).hidden = s !== name; });
   if (name && LL.input.device !== 'touch') { const b = $(name).querySelector('.btn.primary, .btn'); if (b) try { b.focus({ preventScroll: true }); } catch (e) {} }
   else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
-UI.showTitle = function () { $('hud').hidden = true; show('title'); UI.record(); };
+UI.showTitle = function () { $('hud').hidden = true; document.body.classList.remove('lean'); show('title'); UI.record(); if (UI.modeLine) UI.modeLine(); };
 UI.startHUD = function (w) {
   W = w; const p = W.player, d = p.def;
   $('hud').hidden = false; show(null);
@@ -90,7 +149,11 @@ UI.startHUD = function (w) {
   $('gunN').textContent = d.gun.name;
   $('feed').innerHTML = ''; $('dead').hidden = true; lastSouls = -1; hurt = 0;
   nums.forEach(n => { n.life = 0; n.el.style.opacity = 0; });
-  UI.banner('The ' + C.LANE_NAME[1] + ' is yours.', 'Your side holds the other two. Shop any time with ' + (LL.input.device === 'kbm' ? 'B' : 'the Shop button') + '.', 5);
+  document.body.classList.toggle('lean', !!W.lean);
+  document.querySelector('#score .t0 .nm').textContent = W.fallen ? 'Lights ' : 'Reign '; $('autoTag').textContent = W.lean ? 'Lean back · the view, the thread and the fold are yours' : 'Auto · the valley plays itself';
+  if (W.fallen) UI.banner('The valley is already lost.', 'Hold the last lantern. Every small one put down gives a light back for ' + C.LIT_T + ' seconds', 7);
+  else if (W.lean) UI.banner('Sit back.', 'Your hero plays itself. Change the view, call a thread, fold when it lights', 6);
+  else UI.banner('The ' + C.LANE_NAME[1] + ' is yours.', 'Your side holds the other two. Shop any time with ' + (LL.input.device === 'kbm' ? 'B' : 'the Shop button') + '.', 5);
   $('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself';
 };
 UI.coach = function (text) { const c = $('coach'); c.hidden = !text; if (text) c.textContent = text; };
@@ -136,21 +199,23 @@ UI.fx = function (e) {
     }
     case 'thief': if (e.mark === pl) feed('A hush is out for your souls'); else if (e.mark.struct) feed('A hush is out for a lantern'); break;
     case 'theft': if (e.p) UI.banner('A hush has ' + Math.round(e.amt) + ' of your souls.', 'Catch it before it reaches the gate', 4.5); else feed('A hush robbed ' + hname(e.u)); break;
-    case 'snuff': UI.banner('The light is gone from your ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + '.', 'It cannot fire until the hush carrying its light is caught', 5); break;
+    case 'moodsolved': UI.unlock('plates'); UI.banner('That is the one.', 'The rain will come thin: no extra hollows, fewer thieves. +80 souls each', 5); break;
+    case 'call': feed('Called to the <b>' + C.LANE_NAME[e.lane] + '</b>'); break;
+    case 'lightkept': feed('A light, and nowhere dark to put it (' + e.n + ')'); break;
+    case 'snuff': if (e.faded) { feed('The light on the ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' burned down'); break; } if (W.fallen) { feed('A hush took the light from the ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind); break; } UI.banner('The light is gone from your ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + '.', 'It cannot fire until the hush carrying its light is caught', 5); break;
     case 'thiefdown': if (e.vp && e.loot) feed('Your ' + Math.round(e.loot) + ' souls are back'); else if (e.p) feed('You caught the hush'); if (e.carry) feed('The ' + e.carry.kind + ' is lit again'); break;
-    case 'thiefhome': if (e.carry) UI.banner('The hush reached its gate.', 'Your ' + C.LANE_NAME[e.carry.lane] + ' ' + e.carry.kind + ' stays dark for two minutes', 4.5); else if (e.vp) feed('The hush got home with your souls'); break;
-    case 'relit': feed('The ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' is lit again'); break;
+    case 'thiefhome': if (W.fallen) { if (e.carry) feed('That light is gone for good'); break; } if (e.carry) UI.banner('The hush reached its gate.', 'Your ' + C.LANE_NAME[e.carry.lane] + ' ' + e.carry.kind + ' stays dark for two minutes', 4.5); else if (e.vp) feed('The hush got home with your souls'); break;
+    case 'relit': if (e.recovered) { feed('<b>Light recovered</b> · ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' · ' + e.n); break; } feed('The ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' is lit again'); break;
     case 'fruit': { const fi = C.FRUIT_INFO[e.kind];
       if (fi.big) { UI.banner(e.p ? fi.name + '.' : e.u.name + ' found the ' + fi.name + '.', fi.line.charAt(0).toUpperCase() + fi.line.slice(1) + ', for ' + e.t + ' seconds' + (e.kind === 'biglime' ? '. Orbs come to you' : ''), 4.5); feed(hname(e.u) + ' ate the <b>' + fi.name + '</b>'); }
       else if (e.p) feed('<b style="color:' + fi.css + '">' + fi.name + '</b> · ' + fi.line + ', ' + e.t + ' s');
       break; }
     case 'fruitripe': if (e.lens) feed(e.lens === W.lens ? 'The <b>' + C.FRUIT_INFO[e.kind].name + '</b> is ripe' : 'Something ripened that this light does not show'); break;
     case 'lens': feed('View: <b>' + (LL.gfx.LOOKS[e.id] ? LL.gfx.LOOKS[e.id].name : e.id) + '</b>'); break;
-    case 'moodsolved': UI.banner('That is the one.', 'The rain will come thin: no extra hollows, fewer thieves. +80 souls each', 5); break;
     case 'moodmiss': feed('Not that view. ' + e.left + (e.left === 1 ? ' try left' : ' tries left')); break;
     case 'moodlost': feed('The mood slipped away'); break;
     case 'redwarn': UI.banner(C.MOODS[e.mood].line, 'Red rain in thirty seconds. One view answers this. Three tries (' + (LL.input.device === 'kbm' ? 'V' : 'the View button') + ')', 9); break;
-    case 'red': if (e.thin) UI.banner('The rain comes down red, and thin.', 'You answered the mood. No extra hollows this time', 5); else UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
+    case 'red': if (e.thin) UI.banner('The rain comes down red, and thin.', 'You answered the mood. No extra hollows this time', 5); else if (W.fallen) UI.banner('Rain ' + e.n + '.', (e.n + 2) + ' extra hollows. It is one thicker every time', 5); else UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
     case 'redend': feed('The rain thins'); break;
     case 'lastbreath': if (e.u === pl) feed('Last breath'); break;
     case 'fold':
@@ -169,7 +234,7 @@ UI.fx = function (e) {
     case 'gutter': UI.banner('Twenty minutes. Both patrons are guttering.', 'They burn down on their own now. The healthier one outlasts the other', 6); break;
     case 'fray': UI.banner('Fifteen minutes. The threads are fraying.', 'Structures have lost their protection', 5); break;
     case 'level': if (e.u === pl) { if (e.lv === C.ULT_LEVEL) UI.banner(pl.def.ab[2].name + ' is awake.', pl.def.ab[2].desc, 4.5); else feed('You reached level ' + e.lv); } break;
-    case 'wave': if (e.n === 2) UI.banner('Troopers drop souls.', 'Shoot the orb that floats up to secure the other half', 5); break;
+    case 'wave': if (e.n === 2 && !W.lean) UI.banner('Troopers drop souls.', 'Shoot the orb that floats up to secure the other half', 5); break;
     case 'immune':
       if (e.p && W.t - immuneT > 4) { immuneT = W.t; UI.banner('It will not break yet.', e.u.kind === 'patron' ? 'Drop a warden on any thread first' : 'Drop the guardian on this thread first', 3); }
       break;
@@ -204,6 +269,11 @@ UI.showPause = function (onOff) {
 };
 UI.showOver = function () {
   const win = W.winner === 0, t = U.fmtTime(W.t);
+  document.body.classList.remove('lean');
+  if (W.fallen) { const cfg = LL.cfg, best = W.t >= (cfg.bestT || 0);
+    $('overH').innerHTML = 'You held for <em>' + t + '</em>.';
+    $('overP').textContent = 'Lights recovered: ' + W.lights + '. Moods answered: ' + W.moodsSolved + '. ' + (best ? 'That is the longest anyone has held here.' : 'Best is ' + U.fmtTime(cfg.bestT) + '.') + ' The valley was already lost; that was never the question.';
+    $('sbOver').innerHTML = board(); $('hud').hidden = true; show('over'); return; }
   $('overH').innerHTML = win ? 'The Hush gate is <em>shut</em>.' : 'Your patron went dark.';
   $('overP').textContent = win ? 'The livelock resolved in ' + t + '. One door stays lit.' : 'The livelock resolved in ' + t + ', just not in your favour. The troopers did not notice.';
   $('sbOver').innerHTML = board(); $('hud').hidden = true; show('over');
@@ -280,12 +350,13 @@ UI.frame = function (dt, w, view, info) {
   const s = Math.floor(p.souls); $('soulN').textContent = s; $('lvl').textContent = 'Lv ' + p.level;
   let can = false; for (let i = 0; i < LL.ITEMS.length; i++) if (p.items.indexOf(i) < 0 && s >= LL.ITEMS[i].cost) { can = true; break; }
   $('souls').classList.toggle('can', can);
-  $('clock').textContent = U.fmtTime(W.t); $('k0').textContent = W.kills[0]; $('k1').textContent = W.kills[1];
+  $('clock').textContent = U.fmtTime(W.t) + (W.lens === 'rain' && W.red <= 0 ? ' · rain ' + U.fmtTime(Math.max(0, W.redNext - W.t)) : ''); $('k0').textContent = W.fallen ? W.lights : W.kills[0];
+  if (W.lean) { const ok = S.leanCrease() >= 0, lf = $('lFold'); if (lf.disabled === ok) lf.disabled = !ok; for (let l = 0; l < 3; l++) { const b = $('lCall' + l), on = String(p.ai.lane === l); if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on); } } $('k1').textContent = W.kills[1];
   $('dead').hidden = p.alive || UI.screen === 'shop'; if (!p.alive) $('deadT').textContent = Math.ceil(p.respT);
   $('autoTag').hidden = !W.auto;
   { const bf = $('buffs'), a = []; if (p.zestT > 0) a.push('Lemon ' + Math.ceil(p.zestT)); if (p.furyT > 0) a.push('Verde Limón ' + Math.ceil(p.furyT)); if (p.hipsT > 0) a.push('Rose hips ' + Math.ceil(p.hipsT)); if (W.pull[p.team] > 0) a.push('orbs come to you ' + Math.ceil(W.pull[p.team]));
     bf.hidden = !a.length; if (a.length) { const t = a.join(' · '); if (bf.textContent !== t) bf.textContent = t; } }
-  { const mo = $('moons'), pp = W.red > 0 ? 1 : U.clamp(1 - (W.redNext - W.t) / C.RED_EVERY, 0, 1); mo.classList.toggle('red', W.red > 0); for (let i = 0; i < 5; i++) mo.children[i].style.setProperty('--ph', U.clamp(pp * 5 - i, 0, 1).toFixed(2)); }
+  { const mo = $('moons'), pp = W.red > 0 ? 1 : U.clamp(1 - (W.redNext - W.t) / W.redEvery, 0, 1); mo.classList.toggle('red', W.red > 0); for (let i = 0; i < 5; i++) mo.children[i].style.setProperty('--ph', U.clamp(pp * 5 - i, 0, 1).toFixed(2)); }
   const gr = $('great'), g0 = W.great[p.team], g1 = W.great[1 - p.team];
   if (g0 > 0 || g1 > 0) { gr.hidden = false; gr.className = g0 > 0 ? 'mine' : 'theirs'; gr.textContent = (g0 > 0 ? 'Greatness · ' + Math.ceil(g0) : 'Hush Greatness · ' + Math.ceil(g1)) + 's'; } else gr.hidden = true;
   const pm = $('prompt'), tz = $('tZip');
