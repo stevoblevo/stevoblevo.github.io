@@ -1,7 +1,13 @@
 {
-  "current": "0.15",
+  "current": "0.16",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.16",
+      "path": "v0.16/",
+      "source": "release/0.16",
+      "note": "Goals with pay, links to the other worlds, a frame-rate report in the pause screen"
+    },
     {
       "v": "0.15",
       "path": "v0.15/",

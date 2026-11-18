@@ -41,7 +41,29 @@ let W = null;
 const P = { x: 0, z: 0, dx: 0, dz: 0 }, Q = { s: 0, d: 0 };
 const rel = (team, lane, s) => team === 0 ? s : lanes[lane].len - s;
 S.rel = rel;
-function fx(o) { if (W.fx.length < 500) W.fx.push(o); }
+function fx(o) { if (W.fx.length < 500) W.fx.push(o); goalSee(o); }
+/* Goals: see LL.GOALS in core.js. Watched here, at the one place every event passes. */
+function goalSee(e) {
+  const G = W.goals; if (!G || W.fallen) return; let id = null;
+  switch (e.k) {
+    case 'soul': if (e.p && e.kind === 'secured' && ++G.orbs >= 5) id = 'orbs'; break;
+    case 'zip': if (e.u === W.player) id = 'thread'; break;
+    case 'lens': id = 'view'; break;
+    case 'thiefdown': if (e.p) id = 'thief'; break;
+    case 'structdown': if (e.u.team === 1 && e.u.kind === 'guardian') id = 'guard'; break;
+    case 'echo': id = 'echo'; break;
+    case 'moodsolved': id = 'mood'; break;
+    case 'fruit': if (e.p && C.FRUIT_INFO[e.kind].big) id = 'big'; break;
+    case 'fold': if (e.p) id = 'fold'; break;
+    case 'nessdown': if (e.team === 0) id = 'ness'; break;
+    case 'over': if (e.winner === 0) id = 'gate'; break;
+  }
+  if (!id || G.done[id]) return;
+  G.done[id] = true; const g = LL.GOALS.find(function (x) { return x.id === id; });
+  if (g.pay && W.player) give(W.player, g.pay);
+  W.fx.push({ k: 'goal', id: id, pay: g.pay, line: g.line });
+}
+S.goal = function () { if (!W || !W.goals || W.fallen) return null; for (let i = 0; i < LL.GOALS.length; i++) if (!W.goals.done[LL.GOALS[i].id]) return LL.GOALS[i]; return null; };
 const hyp = Math.hypot;
 
 /* ---------- geometry ---------- */
@@ -95,7 +117,7 @@ S.newWorld = function (o) {
     units: [], heroes: [], structs: [], troopers: [], strays: [], knots: [],
     projs: [], orbs: [], zones: [], obstacles: [], fx: [], st: [[], []], patron: [null, null],
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
-    coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : 'match', fallen: o.mode === 'fallen', lean: !!o.lean || !!o.dream, dream: !!o.dream, dreamS: { t: 3, moodT: 0, home: o.lens || 'snow', skip: {}, callT: 50 }, rec: [], recT: 0, echo: null, echoCd: 0, echoes: 0, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean || !!o.dream, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
+    goals: { done: {}, orbs: 0 }, coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : 'match', fallen: o.mode === 'fallen', lean: !!o.lean || !!o.dream, dream: !!o.dream, dreamS: { t: 3, moodT: 0, home: o.lens || 'snow', skip: {}, callT: 50 }, rec: [], recT: 0, echo: null, echoCd: 0, echoes: 0, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean || !!o.dream, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
   buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildFruit(); buildHeroes(o);
   if (W.fallen) for (let i = 0; i < W.structs.length; i++) { const st = W.structs[i]; if (st.team === 0 && st.kind !== 'patron') { st.dark = true; st.darkT = 0; st.litT = 0; } }

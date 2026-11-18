@@ -154,6 +154,30 @@ LL.CATS = ['Gun', 'Body', 'Spirit'];
 /* THE CABINET. Easter eggs. Each entry opens on a feat in play; a switch hidden in Settings opens all of them.
    Doors lead to other Saelion worlds (addresses from the public atlas). 'snuff' is a small game kept in this file's
    neighbour, ui.js. 'plates' is the concept art the game was drawn from. */
+/* GOALS. The owner played and said a match was not enticing enough to finish. One small thing to do next is always on
+   screen, each pays souls, and together they walk the player through the hidden systems in the order they should be
+   found. Any goal completes whenever its thing happens; the screen shows the first one not yet done. */
+LL.GOALS = [
+  { id: 'orbs', line: 'Shoot five of your own orbs', pay: 60 },
+  { id: 'thread', line: 'Ride a thread to the front', pay: 40 },
+  { id: 'view', line: 'Change the view', pay: 40 },
+  { id: 'thief', line: 'Catch a small one', pay: 80 },
+  { id: 'guard', line: 'Drop a Hush guardian', pay: 120 },
+  { id: 'echo', line: 'Fight beside yourself', pay: 60 },
+  { id: 'mood', line: 'Answer the mood before the rain', pay: 100 },
+  { id: 'big', line: 'Eat a big fruit', pay: 100 },
+  { id: 'fold', line: 'Fold the valley', pay: 150 },
+  { id: 'ness', line: 'Put the Ness down', pay: 200 },
+  { id: 'gate', line: 'Shut the Hush gate', pay: 0 }
+];
+/* Doors that are always open, on the title: the owner's other worlds. */
+LL.WORLDS = [
+  { name: 'Everfallen', url: 'https://stevoblevo.github.io/everfallen/' },
+  { name: 'AND SO', url: 'https://saelion.co/and-so' },
+  { name: 'Reignfawn', url: 'https://saelion.co/reignfawn' },
+  { name: 'kk', url: 'https://saelion.co/kk' },
+  { name: 'The Peachfall', url: 'https://stevoblevo.github.io/peachfall/' }
+];
 LL.CABINET = [
   { id: 'plates', name: 'The plates', feat: 'Answer one mood', line: 'The concept art this valley was drawn from.' },
   { id: 'snuff', name: 'Snuff', feat: 'Catch a small one yourself, or recover a light', line: 'Nine houses, thirty seconds, one thumb.' },

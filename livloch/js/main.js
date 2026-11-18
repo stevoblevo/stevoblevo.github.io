@@ -110,6 +110,13 @@ function runCoach(dt, p) {
 }
 /* Cabinet feats. Only a person earns them: nothing opens while the valley is just being watched. */
 const worn = {}; let lens0 = 'snow', speed = 1;
+const perf = []; let perfI = 0;
+LL.perfReport = function () {
+  const a = perf.slice().sort(function (x, y) { return x - y; }), n = a.length; if (n < 30) return null;
+  const avg = a.reduce(function (s, v) { return s + v; }, 0) / n, p99 = a[Math.min(n - 1, Math.floor(n * 0.99))], p50 = a[Math.floor(n / 2)], i = R.info();
+  return { fps: Math.round(1000 / avg), mid: Math.round(1000 / p50), low: Math.round(1000 / p99), frames: n, slow: a.filter(function (v) { return v > 33.4; }).length, info: i,
+    text: 'Livloch ' + (document.querySelector('#title footer').textContent.match(/[0-9.]+/) || [''])[0] + ' frame report\n' + Math.round(1000 / avg) + ' fps average, ' + Math.round(1000 / p50) + ' typical, ' + Math.round(1000 / p99) + ' at the worst 1%\n' + a.filter(function (v) { return v > 33.4; }).length + ' of ' + n + ' frames slower than 30 fps\n' + i.w + 'x' + i.h + ' at ' + i.pr + 'x, view ' + i.look + (i.low ? ', lighter graphics' : '') + ', ' + (i.gl2 ? 'WebGL2' : 'WebGL1') + '\n' + i.gpu + '\n' + (W ? (W.dream ? 'Dreamwalk' : (W.lean ? 'Lean back' : 'Played')) + (W.fallen ? ', Ever Fallen' : '') + ', ' + U.fmtTime(W.t) + ' in, device ' + I.device : '') };
+};
 function feats(e) {
   if ((W.auto && !W.lean) || W.dream) return;
   const U_ = UI.unlock;
@@ -123,7 +130,9 @@ function feats(e) {
 }
 function frame(now) {
   requestAnimationFrame(frame);
+  const raw = now - last;
   let dt = Math.min(0.1, (now - last) / 1000); last = now; if (!(dt > 0)) dt = 0.016;
+  if (state === 'play' && raw > 0 && raw < 1000) { perf[perfI++ % 900] = raw; } // the last 900 frames, for the report
   const devSens = I.device === 'touch' && R.portrait ? 1.15 : 1;
   I.poll(dt, cfg.sens * devSens);
   if (state === 'play') {
