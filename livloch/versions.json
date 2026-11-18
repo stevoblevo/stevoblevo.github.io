@@ -1,7 +1,13 @@
 {
-  "current": "0.16",
+  "current": "0.17",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.17",
+      "path": "v0.17/",
+      "source": "release/0.17",
+      "note": "First Rain: a six-minute match scored in five stars"
+    },
     {
       "v": "0.16",
       "path": "v0.16/",

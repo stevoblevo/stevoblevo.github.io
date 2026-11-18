@@ -239,6 +239,8 @@ body[data-look="memory"] #gl { filter: sepia(0.25); }
 #quest small { font-family: var(--f-sc); letter-spacing: 0.12em; color: var(--gold); display: block; font-size: 11px; } #quest b { color: var(--gold); font-weight: 400; }
 #quest.done { animation: qd 0.9s; } @keyframes qd { 0% { background: var(--gold); color: var(--night); } }
 body.touch #quest { top: calc(var(--st) + 156px); } @media (max-width: 760px) { #quest { top: calc(var(--st) + 156px); font-size: 12.5px; } }
+#stars { margin: 6px 0 12px; } #stars .big { font-size: 34px; letter-spacing: 6px; color: var(--gold); } #stars .big i { font-style: normal; color: var(--line); }
+#stars p { margin: 2px 0; font-size: 15px; } #stars p.no { color: var(--paper-dim); }
 #worlds { font-size: 14px; color: var(--paper-dim); } #worlds a { color: var(--paper); margin-right: 12px; white-space: nowrap; }
 #perf { font-size: 13px; color: var(--paper-dim); margin: 6px 0; font-variant-numeric: tabular-nums; }
 #keys { position: absolute; left: 12px; bottom: calc(var(--sb, 0px) + 8px); font-size: 12px; color: var(--paper-dim); opacity: 0.8; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
@@ -341,6 +343,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <span id="rec" style="color:var(--paper-dim);font-size:14px"></span>
       </div>
       <div class="row" role="group" aria-label="Mode">
+        <button class="chip" data-mode="short" aria-pressed="false">First rain</button>
         <button class="chip" data-mode="match" aria-pressed="true">The livelock</button>
         <button class="chip" data-mode="fallen" aria-pressed="false">Ever Fallen</button>
         <button class="chip" id="cLean" aria-pressed="false" title="kk: a watch, not a wall">Lean back</button>
@@ -362,6 +365,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <p><b>The loch.</b> Three minutes in, the Ness surfaces between the Middle and East threads. It spits, it slams, and whoever lands the last hit gives their whole side the Greatness for 90 seconds.</p>
         <p><b>The Hush.</b> It has no heroes. It has hollows that walk the threads, and small ones that take what is lit and run for the gate. Every five minutes the rain comes down red.</p>
         <p><b>Views.</b> You can change how you look at the valley. Some things are only there in one light. Before the red rain the valley has a mood, and one view answers it. Two views cost something to wear.</p>
+        <p><b>First rain.</b> The short one. Six minutes: five to get ready, one of red rain, then five stars are counted. Start here.</p>
         <p><b>Ever Fallen.</b> The valley after the Hush has won. Nothing of theirs can be hurt. Your houses are dark. Every small one you put down gives a light back for a while. You will fall; the clock says when.</p>
         <p><b>Lean back.</b> Your hero plays itself. You keep three things: the view, which thread to stand on, and the fold. One thumb is enough.</p>
         <p><b>Echo.</b> The valley keeps your last few seconds. Ask for them back and you fight beside yourself for a moment.</p>
@@ -374,7 +378,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
       <p id="worlds">Other doors: </p>
-      <footer>Livloch 0.16 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <footer>Livloch 0.17 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
     </div>
   </section>
 
@@ -425,6 +429,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div class="panel">
       <h2 id="overH"></h2>
       <p class="sub" id="overP"></p>
+      <div id="stars" hidden></div>
       <div id="calls" hidden><h3>Your calls</h3><p class="sub">Each hidden system the walk showed you. Keep it, change it, or cut it. Then copy the list and send it.</p><div id="callList"></div><div class="row"><button class="btn" id="bCopyCalls">Copy my calls</button><span id="copyNote" style="color:var(--paper-dim);font-size:14px"></span></div></div>
       <div id="sbOver"></div>
       <div class="row" style="margin-top:14px"><button class="btn primary" id="bAgain">Again</button><button class="btn" id="bTitle">Change hero</button></div>
