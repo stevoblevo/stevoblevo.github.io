@@ -425,6 +425,7 @@ function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissiv
      backdrop one wide painting (jpg)            the far ridge and sky line, wrapped round the valley
    To switch one on, add a line:  FLATS.house = { src: 'art/flats/house.png', cells: 3 };  See art/flats/README.md. */
 const FLATS = R.FLATS = {};
+R._phase = function (ph) { heroM.forEach(function (m) { m.phase = ph; }); }; // for tools: pose the walk
 R._flats = function () { return Object.keys(flatTex).map(function (k) { return k + ':' + (flatTex[k].t ? 'loaded' : 'no'); }).join(' '); }; // for tools
 const flatTex = {}; let echoM = null, bd = null, decorPrims = [], decorTrees = [], decorRocks = [], decorHidden = false;
 function flatLoad(name, cb) {
@@ -468,15 +469,25 @@ Boards.prototype.end = function () { if (!this.m) return; for (let i = 0; i < th
    side, back, three-quarter), made by tools/sheet.py from a turnaround drawing. The cutout always turns its face to the
    camera and shows the view that matches where the camera stands, mirrored for the other side. A hero with no sheet,
    or whose sheet fails to load, keeps the built shapes below. Add a hero by adding a line here. */
-const PAPER = R.PAPER = { dora: { src: 'art/heroes/dora.png', h: 2.45 }, anna: { src: 'art/heroes/anna.png', h: 2.4 } }; // next: myra, skein, same shape of line
+const PAPER = R.PAPER = { dora: { src: 'art/heroes/dora.png', h: 2.45, hem: 0.2 }, anna: { src: 'art/heroes/anna.png', h: 2.4, hem: 0.3 } }; // next: myra, skein, same shape of line
 const paperTex = {}, PAPER_FLIP = -1;
 function paperFor(g, id) {
   const P = PAPER[id]; if (!P || R.noPaper) return;
   const put = function (base) {
     const tex = base.clone(); tex.needsUpdate = true; tex.repeat.set(0.25, 1);
     const mt = new T.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.45, side: T.DoubleSide }); mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
-    const pl = new T.Mesh(new T.PlaneGeometry(P.h * (base.image.width / 4) / base.image.height, P.h), mt); pl.position.y = P.h / 2; g.add(pl);
-    g.paper = pl; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
+    /* A paper puppet, cut from the one picture: the body from the hem up, and the legs below it as separate pieces hinged at
+       the hem. Front, back and three-quarter views use a left and a right leg; the side view uses the whole leg strip twice,
+       one swinging forward and one back. P.hem is how far up the figure the hem is (0 to 1). */
+    const wd = P.h * (base.image.width / 4) / base.image.height, hf = P.hem || 0.2, pp = new T.Group();
+    const part = function (u0, u1, v0, v1) {
+      const gq = new T.PlaneGeometry(wd * (u1 - u0), P.h * (v1 - v0)); gq.translate(((u0 + u1) / 2 - 0.5) * wd, -P.h * (v1 - v0) / 2, 0);
+      const uv = gq.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, u0 + uv.getX(k) * (u1 - u0), v0 + uv.getY(k) * (v1 - v0));
+      const ms = new T.Mesh(gq, mt); pp.add(ms); return ms;
+    };
+    const P_ = pp.parts = { body: part(0, 1, Math.max(0, hf - 0.035), 1), legL: part(0, 0.5, 0, hf), legR: part(0.5, 1, 0, hf), legA: part(0, 1, 0, hf), legB: part(0, 1, 0, hf) };
+    P_.body.position.set(0, P.h, 0.03); P_.legB.position.z = -0.02; pp.material = mt; pp.h = P.h; pp.hem = hf * P.h; g.add(pp);
+    g.paper = pp; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
   };
   if (paperTex[id]) { put(paperTex[id]); return; }
   new T.TextureLoader().load(P.src, function (t) { t.minFilter = T.LinearFilter; t.generateMipmaps = false; paperTex[id] = t; if (g.parent) put(t); }, undefined, function () {});
@@ -894,11 +905,17 @@ R.frame = function (dt, view) {
     if (m.paper) { // face the camera; pick the painted view from the angle between the hero's facing and the camera
       const toCam = Math.atan2(camera.position.x - h.x, camera.position.z - h.z); let d = toCam - h.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
       const ad = Math.abs(d), v = ad < 0.5 ? 0 : (ad < 1.2 ? 3 : (ad < 2.2 ? 1 : 2));
-      m.paper.material.map.offset.x = v * 0.25; m.paper.rotation.y = toCam - h.yaw;
-      m.paper.scale.x = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1;
-      m.paper.rotation.z = h.onGround ? Math.sin(m.phase) * 0.07 * Math.min(1, sp / 5) : 0.1; // paper waddle
-      m.paper.rotation.x = h.dashT > 0 || h.zip ? -0.3 : 0;
-      m.paper.position.y = m.paper.geometry.parameters.height / 2 + (h.onGround ? Math.abs(Math.sin(m.phase)) * 0.09 * Math.min(1, sp / 5) : 0);
+      const pp = m.paper, P_ = pp.parts, mv = Math.min(1, sp / 5), sw = h.onGround ? Math.sin(m.phase) * mv : 0.7, side = v === 1;
+      pp.material.map.offset.x = v * 0.25; pp.rotation.y = toCam - h.yaw;
+      pp.scale.x = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1;
+      pp.rotation.x = h.dashT > 0 || h.zip ? -0.3 : 0;
+      // walking: seen from the side the legs scissor; seen from front or back they lift in turn
+      P_.legL.visible = P_.legR.visible = !side; P_.legA.visible = P_.legB.visible = side;
+      if (side) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = sw * 0.62; P_.legB.rotation.z = -sw * 0.62; }
+      else { const lift = pp.hem * 0.42; P_.legL.position.y = pp.hem + Math.max(0, sw) * lift; P_.legR.position.y = pp.hem + Math.max(0, -sw) * lift; P_.legL.rotation.z = sw * 0.07; P_.legR.rotation.z = sw * 0.07; }
+      // the body rides the step: up twice per stride, a little sway, a breath when standing
+      P_.body.position.y = pp.h + (h.onGround ? Math.abs(Math.sin(m.phase)) * 0.07 * mv : 0.05);
+      P_.body.rotation.z = Math.sin(m.phase) * 0.045 * mv; P_.body.scale.y = 1 + Math.sin(time * 2.1) * 0.008 * (1 - mv);
     }
     m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);

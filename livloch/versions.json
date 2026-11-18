@@ -1,7 +1,13 @@
 {
-  "current": "0.14",
+  "current": "0.15",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.15",
+      "path": "v0.15/",
+      "source": "release/0.15",
+      "note": "Painted heroes walk"
+    },
     {
       "v": "0.14",
       "path": "v0.14/",
