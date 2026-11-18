@@ -61,7 +61,7 @@ S.newWorld = function (o) {
     units: [], heroes: [], structs: [], troopers: [], strays: [], knots: [],
     projs: [], orbs: [], zones: [], obstacles: [], fx: [], st: [[], []], patron: [null, null],
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
-    coordT: 0, cleanT: 0, auto: !!o.auto, thieves: [], thiefT: 150, red: 0, redNext: C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
+    coordT: 0, cleanT: 0, auto: !!o.auto, tune: o.tune || {}, calm: 0, warned: false, thieves: [], thiefT: 150, red: 0, redNext: C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
   buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildHeroes(o);
   coordinate();
@@ -853,6 +853,7 @@ function pickMark() {
   let rich = null;
   for (let i = 0; i < W.heroes.length; i++) { const h = W.heroes[i]; if (h.alive && h.team === 0 && h.souls >= 150 && (!rich || h.souls > rich.souls)) rich = h; }
   if (rich && W.rng() < 0.6) return rich;
+  if (W.tune.cap && W.structs.some(s => s.team === 0 && s.alive && s.dark)) return rich;
   const l0 = Math.floor(W.rng() * 3);
   for (let k = 0; k < 3; k++) { const st = W.st[0][(l0 + k) % 3]; const s = st.outer.alive ? st.outer : (st.inner.alive ? st.inner : null); if (s && !s.dark) return s; }
   return rich;
@@ -891,14 +892,16 @@ function thiefStep(u, dt) {
 }
 function hushStep(dt) {
   // red rain: every five minutes, a thick night
-  if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; fx({ k: 'redend' }); } }
+  if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; W.warned = false; if (W.tune.recover) W.calm = 20; fx({ k: 'redend' }); } }
+  else if (!W.warned && W.t >= W.redNext - 15) { W.warned = true; fx({ k: 'redwarn' }); }
   else if (W.t >= W.redNext) { W.redNext += C.RED_EVERY; W.red = C.RED_T; fx({ k: 'red' }); for (let l = 0; l < 3; l++) spawnHollow(l, true); }
   // mercy: when the Reign is two structures behind, the Hush eases off
   let rd = 0, hd = 0; for (let i = 0; i < W.structs.length; i++) { const s = W.structs[i]; if (!s.alive) { if (s.team === 0) rd++; else hd++; } }
   W.mercy = rd - hd >= 2;
-  for (let l = 0; l < 3; l++) { if (W.hollowT[l] > 0) { W.hollowT[l] -= dt; if (W.hollowT[l] <= 0) { W.hollowT[l] = 0; spawnHollow(l, false); } } }
-  W.thiefT -= dt * (W.red > 0 ? 3.5 : 1);
-  if (W.thiefT <= 0) { W.thiefT = [85, 62, 44][W.diff] * (W.mercy ? 1.6 : 1); if (W.thieves.length < 3) spawnThief(); }
+  if (W.calm > 0) W.calm -= dt;
+  for (let l = 0; l < 3; l++) { if (W.hollowT[l] > 0 && W.calm <= 0) { W.hollowT[l] -= dt; if (W.hollowT[l] <= 0) { W.hollowT[l] = 0; spawnHollow(l, false); } } }
+  if (W.calm <= 0) W.thiefT -= dt * (W.red > 0 ? (W.tune.stagger ? 2 : 3.5) : 1);
+  if (W.thiefT <= 0) { W.thiefT = [85, 62, 44][W.diff] * (W.mercy ? 1.6 : 1); if (W.thieves.filter(u => u.alive).length < (W.tune.stagger ? 2 : 3)) spawnThief(); }
   for (let i = 0; i < W.thieves.length; i++) { const u = W.thieves[i]; if (u.alive) { if (u.flash > 0) u.flash -= dt; thiefStep(u, dt); } }
 }
 function pickTarget(u, R, heroesOk) {
@@ -1101,6 +1104,9 @@ S.step = function (dt) {
     W.units = W.units.filter(u => u.alive || u.kind === 'hero' || u.struct || u.kind === 'stray' || u.kind === 'ness');
   }
 };
+
+/* Hooks for tools/test.js. Nothing in the game calls these. */
+S._t = { damage: damage, kill: kill, spawnThief: spawnThief, spawnHollow: spawnHollow, thiefStep: thiefStep };
 
 /* Aim ray for the human player: first thing the crosshair is on. */
 S.aimPoint = function (ox, oy, oz, dx, dy, dz, t0, team, out) {

@@ -56,7 +56,7 @@ UI.init = function (handlers) {
   on('bFull', H.full); on('bFull2', H.full);
   on('bShop', () => UI.toggleShop()); on('bDeadShop', () => UI.toggleShop(true)); on('bShopClose', () => UI.toggleShop(false));
   on('bPause', H.pause); on('bResume', H.resume); on('bQuit', H.quit); on('bAgain', () => H.play(false)); on('bTitle', H.quit);
-  on('bAuto', H.auto);
+  on('bAuto', H.auto); on('bInk', H.ink);
   // settings
   const bind = (id, key, type) => {
     const el = $(id);
@@ -134,6 +134,7 @@ UI.fx = function (e) {
     case 'thiefdown': if (e.vp && e.loot) feed('Your ' + Math.round(e.loot) + ' souls are back'); else if (e.p) feed('You caught the hush'); if (e.carry) feed('The ' + e.carry.kind + ' is lit again'); break;
     case 'thiefhome': if (e.carry) UI.banner('The hush reached its gate.', 'Your ' + C.LANE_NAME[e.carry.lane] + ' ' + e.carry.kind + ' stays dark for two minutes', 4.5); else if (e.vp) feed('The hush got home with your souls'); break;
     case 'relit': feed('The ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' is lit again'); break;
+    case 'redwarn': UI.banner('The moons are nearly full.', 'Red rain in fifteen seconds', 3.5); break;
     case 'red': UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
     case 'redend': feed('The rain thins'); break;
     case 'lastbreath': if (e.u === pl) feed('Last breath'); break;

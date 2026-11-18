@@ -18,7 +18,7 @@ I.unlock = function () { try { if (document.pointerLockElement) document.exitPoi
 
 I.init = function (cv, root) {
   canvas = cv; app = root;
-  const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyP: 'pause', Escape: 'esc', Tab: 'shop' };
+  const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyI: 'ink', KeyP: 'pause', Escape: 'esc', Tab: 'shop' };
   window.addEventListener('keydown', function (ev) {
     if (ev.target && (ev.target.tagName === 'INPUT')) return;
     setDevice('kbm');

@@ -18,6 +18,18 @@ A.init = function () {
     A.on = true; startDrone();
   } catch (e) { ctx = null; }
 };
+/* For evidence runs: render one event offline, with no drone, and report its level. It measures; it does not listen. */
+A.offline = function (ev, W, cam, secs) {
+  const OC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if (!OC) return Promise.resolve(null);
+  const keep = { ctx: ctx, master: master, nbuf: nbuf, drone: drone, on: A.on, combo: combo, budget: shotBudget };
+  const oc = new OC(1, Math.floor(44100 * (secs || 2)), 44100);
+  ctx = oc; master = oc.createGain(); master.gain.value = 1; master.connect(oc.destination); drone = null;
+  nbuf = oc.createBuffer(1, 44100, 44100); const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  A.on = true; shotBudget = 6; let threw = null;
+  try { A.fx(ev, W, cam); } catch (e) { threw = e.message; }
+  ctx = keep.ctx; master = keep.master; nbuf = keep.nbuf; drone = keep.drone; A.on = keep.on; combo = keep.combo; shotBudget = keep.budget;
+  return oc.startRendering().then(function (buf) { const x = buf.getChannelData(0); let pk = 0, acc = 0, last = 0; for (let i = 0; i < x.length; i++) { const a = Math.abs(x[i]); if (a > pk) pk = a; acc += a * a; if (a > 0.002) last = i; } return { peak: pk, rms: Math.sqrt(acc / x.length), seconds: last / 44100, threw: threw }; });
+};
 A.setVol = function (v) { A.vol = v; if (master) master.gain.value = v; };
 function tone(f, dur, type, g, slide, delay) {
   if (!A.on || g <= 0.002) return;
@@ -103,12 +115,13 @@ A.fx = function (e, W, cam) {
     case 'respawn': if (e.u === pl) bell(49, 0.12, 1.4); break;
     case 'over': if (e.winner === 0) [31, 41, 49, 59, 62, 72, 80, 93].forEach((n, i) => tone(edo(n), 0.9, 'triangle', 0.13, 0, i * 0.12)); else [62, 59, 49, 44, 31, 22, 13, 0].forEach((n, i) => tone(edo(n), 0.9, 'triangle', 0.12, 0, i * 0.16)); break;
     case 'fray': case 'gutter': bell(13, 0.2, 3); break;
-    case 'theft': if (e.p) { tone(edo(72), 0.14, 'square', 0.1); tone(edo(59), 0.14, 'square', 0.1, 0, 0.12); tone(edo(41), 0.3, 'square', 0.1, 0, 0.24); } break;
+    case 'theft': if (e.p) { tone(edo(72), 0.16, 'square', 0.18); tone(edo(59), 0.16, 'square', 0.18, 0, 0.13); tone(edo(41), 0.4, 'square', 0.18, 0, 0.26); } break;
     case 'snuff': noise(0.5, 0.25, 400, 0.8, 'lowpass', 0, 60); tone(edo(22), 0.6, 'sine', 0.14, edo(0)); break;
     case 'thiefdown': if (e.p || e.vp) { tone(edo(62), 0.1, 'triangle', 0.12); tone(edo(80), 0.12, 'triangle', 0.12, 0, 0.08); tone(edo(93), 0.2, 'triangle', 0.12, 0, 0.16); } break;
-    case 'thiefhome': if (e.vp || e.carry) tone(edo(31), 0.7, 'sawtooth', 0.07, edo(13)); break;
+    case 'thiefhome': if (e.vp || e.carry) { tone(edo(31), 0.9, 'sawtooth', 0.16, edo(13)); bell(13, 0.12, 1.6); } break;
+    case 'redwarn': bell(31, 0.1, 1.6); bell(18, 0.1, 1.6); break;
     case 'red': bell(-13, 0.26, 4); noise(2.5, 0.12, 2400, 0.5, 'highpass'); break;
-    case 'slam': noise(0.22, 0.3 * near(e.x, e.z, 45), 160, 1, 'lowpass'); break;
+    case 'slam': noise(0.3, 0.9 * near(e.x, e.z, 45), 220, 1, 'lowpass'); tone(70, 0.28, 'sine', 0.3 * near(e.x, e.z, 45), 40); break;
     case 'lastbreath': if (e.u === pl) { noise(0.5, 0.2, 500, 1, 'bandpass', 0, 2600); bell(49, 0.12, 1.2); } break;
     case 'relit': bell(62, 0.08, 1.4); break;
     case 'fold': noise(0.9, 0.28, 900, 0.8, 'bandpass', 0, 5200); noise(0.5, 0.2, 3000, 2, 'highpass', 0.35); bell(49, 0.14, 2.2); bell(49 + 18, 0.1, 2); break;

@@ -203,6 +203,7 @@ body.touch #stam { top: calc(var(--st) + 77px); }
 body.touch #feed, body.touch #autoTag { top: calc(var(--st) + 100px); }
 
 /* ---------- looks: each one re-skins the chrome from its kit ---------- */
+body[data-look="ink"] { --night: #0b0a14; --night-2: #15142a; --paper: #ebe6da; --paper-dim: rgba(235, 230, 218, 0.74); --ember: #ffb347; --ember-deep: #a8641a; --mint: #a78bff; --gold: #d9824a; --wash: 10, 9, 18; --ink: 235, 230, 218; }
 body[data-look="snow"] { --night: #1b1840; --night-2: #2a2560; --paper: #f6ecf4; --paper-dim: rgba(246, 236, 244, 0.74); --ember: #ffab4a; --ember-deep: #b5562a; --mint: #a9b8ff; --gold: #f0c060; --wash: 22, 17, 48; --ink: 246, 236, 244; }
 body[data-look="knight"] { --night: #1c2838; --night-2: #2f4a6e; --paper: #f4efe6; --paper-dim: rgba(244, 239, 230, 0.74); --ember: #f0c75e; --ember-deep: #8a6410; --mint: #8fb4e8; --gold: #f0c75e; --wash: 16, 24, 38; --ink: 244, 239, 230; }
 body[data-look="origami"] { --night: #e3eadc; --night-2: #f6f8f3; --paper: #242f3b; --paper-dim: rgba(36, 47, 59, 0.76); --ember: #b8311a; --ember-deep: #9e2a1f; --mint: #2a4c86; --gold: #8c5a2b; --wash: 250, 251, 247; --ink: 36, 47, 59; --shc: #fff; --shr: 255, 255, 255; color-scheme: light;
@@ -251,7 +252,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="nums"></div>
     <canvas id="mini" width="208" height="352" aria-label="Map"></canvas>
     <div id="score"><span class="t0"><span class="nm">Reign </span><b id="k0">0</b></span><span id="clock">0:00</span><span class="t1"><b id="k1">0</b><span class="nm"> Hush</span></span><div id="moons" title="The moons fill until the rain comes down red"><i></i><i></i><i></i><i></i><i></i></div></div>
-    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bShop">Shop</button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
+    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bInk" title="Inkblot view (I)">Ink</button><button class="btn small" id="bShop">Shop</button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
     <div id="feed"></div>
     <div id="banner"></div>
     <div id="cross"><u></u><i></i><div id="hitm"></div></div>
@@ -307,11 +308,11 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <p><b>The Hush.</b> It has no heroes. It has hollows that walk the threads, and small ones that take what is lit and run for the gate. Every five minutes the rain comes down red.</p>
         <p><b>Paper.</b> The valley is paper. Paper folds.</p>
         <p><b>Threads.</b> Stand on a thread on your side and ride it to the front. It reaches further as you push.</p>
-        <dl class="keys k-kbm"><dt>WASD · mouse</dt><dd>move and aim (click the valley to capture the mouse)</dd><dt>Click · right click</dt><dd>fire · zoom</dd><dt>Space · Shift</dt><dd>jump, double jump · dash</dd><dt>Q E F · R</dt><dd>abilities · reload</dd><dt>T · B · Esc</dt><dd>ride thread · shop · pause</dd></dl>
+        <dl class="keys k-kbm"><dt>WASD · mouse</dt><dd>move and aim (click the valley to capture the mouse)</dd><dt>Click · right click</dt><dd>fire · zoom</dd><dt>Space · Shift</dt><dd>jump, double jump · dash</dd><dt>Q E F · R</dt><dd>abilities · reload</dd><dt>T · B · I · Esc</dt><dd>ride thread · shop · inkblot view · pause</dd></dl>
         <dl class="keys k-touch"><dt>Left thumb</dt><dd>move</dd><dt>Right thumb</dt><dd>drag to aim; your gun fires on its own when the ring is on a target</dd><dt>Buttons</dt><dd>fire, jump, dash, three abilities, ride thread when it shows</dd></dl>
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · Back · Start</dt><dd>ride thread · shop · pause</dd></dl>
       </div>
-      <footer>Livloch 0.6 · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <footer>Livloch 0.7 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
     </div>
   </section>
 

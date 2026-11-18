@@ -1,0 +1,11 @@
+{
+  "current": "0.7",
+  "source": "https://github.com/stevoblevo/livloch (private)",
+  "versions": [
+    { "v": "0.7", "path": "v0.7/", "source": "release/0.7", "note": "Inkblot Noir look (press I), red-rain warning, visible bullets and orbs, louder theft and slam" },
+    { "v": "0.6.1", "path": "v0.6.1/", "source": "release/0.6.1", "note": "Cobalt Snow from the concept plate, with the invisible-bullet fix" },
+    { "v": "0.5", "path": "v0.5/", "source": "release/0.5", "note": "The Hush as its own side. Known bug: bullets, soul orbs and health-bar fills do not draw" },
+    { "v": "0.4", "path": "v0.4/", "source": "release/0.4", "note": "The fold. Mirror teams. Same known bug" }
+  ],
+  "notKept": "0.1 to 0.3 exist only as Claude artifact versions and 0.6 was replaced by 0.6.1"
+}

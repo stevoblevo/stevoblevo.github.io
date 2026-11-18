@@ -3,7 +3,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', coached: false, v6: false };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
@@ -15,9 +15,12 @@ const view = { mode: 'attract', target: null, yaw: 0, pitch: -0.08, zoom: 0 };
 const cp = { x: 0, y: 0, z: 0, dx: 0, dy: 0, dz: 1, dist: 5 }, aim = { x: 0, y: 0, z: 0, unit: null, orb: null, dist: 0 }, info = { hot: false, orb: false, canZip: false, canFold: false };
 const coach = { step: -1, x: 0, z: 0, look: 0, t: 0 };
 const canvas = document.getElementById('gl'), app = document.getElementById('app');
+LL.dbg = { view: view }; // read by tools/evidence.js to frame shots; the game never uses it
 const autoFireOn = () => cfg.autoFire == null ? I.device === 'touch' : cfg.autoFire;
 
 function setLook(id) { if (!R.LOOKS[id]) id = 'snow'; cfg.look = id; save(); document.body.setAttribute('data-look', id); R.setLook(id); UI.lookChips(); }
+/* Inkblot view is a way of looking, never a rule: it flips the look and back. */
+function toggleInk() { if (cfg.look === 'ink') setLook(R.LOOKS[cfg.lookPrev] && cfg.lookPrev !== 'ink' ? cfg.lookPrev : 'snow'); else { cfg.lookPrev = cfg.look; setLook('ink'); } }
 function attract() {
   W = S.newWorld({ auto: true, difficulty: 1, seed: (Date.now() & 0xffff) + 3 });
   W.fx.length = 0; R.build(W);
@@ -103,6 +106,7 @@ function frame(now) {
     const esc = I.take('esc');
     if (I.take('pause') || esc || (UI.screen === 'shop' && I.take('navBack'))) { if (UI.screen === 'shop') UI.toggleShop(false); else pause(); }
     else if (I.take('shop')) UI.toggleShop();
+    if (I.take('ink')) toggleInk();
   } else if (state === 'pause') { const esc = I.take('esc') && now - pausedAt > 500; if (I.take('pause') || esc || I.take('navBack')) resume(); }
   UI.nav(I);
   if (state === 'play') {
@@ -138,7 +142,7 @@ function boot() {
     play: play, pause: pause, resume: resume, quit: quit, save: save,
     apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
-    look: setLook,
+    look: setLook, ink: toggleInk,
     relock: function () { if (state === 'play') I.lock(); },
     autoFire: autoFireOn,
     auto: function () { S.setAuto(!W.auto); counted = false; document.getElementById('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; resume(); },
