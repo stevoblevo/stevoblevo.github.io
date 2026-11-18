@@ -7,6 +7,13 @@
      the last lantern stood and how many lights came back.
    - LEAN BACK is a modifier on either mode: the player's hero plays itself, and the player keeps only the hands that
      were never about aim: the view (S.setLens), which thread to stand on (S.call), and the fold (S.leanFold).
+   - ECHO paints with time. The model keeps the player's last ten seconds (where they stood, every shot). S.echo()
+     replays the last C.ECHO_T of them as a second self that fires the same shots from the same places at C.ECHO_DMG
+     strength. It is the plainest way to break the symmetry: outnumber the lane with yourself. In the Memory view the
+     echo is the full ten seconds and comes back sooner.
+   - DREAMWALK is Lean Back with the hands played too (o.dream): a director answers moods (missing once on purpose),
+     wears the right view for rare fruit, dark houses and red rain, folds, calls and echoes, and says what it is doing
+     through 'dream' events. It exists so a person can watch every hidden system and judge it.
    - VIEWS WITH A PRICE. Rainwake: souls are worth half again while the rain is red. Memory: lights hold twice as long
      and the dark passes twice as fast, and souls are worth half.
    - This file is the game. It never reads the renderer or the DOM (tools/test.js enforces that), so every rule can be
@@ -88,7 +95,7 @@ S.newWorld = function (o) {
     units: [], heroes: [], structs: [], troopers: [], strays: [], knots: [],
     projs: [], orbs: [], zones: [], obstacles: [], fx: [], st: [[], []], patron: [null, null],
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
-    coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : 'match', fallen: o.mode === 'fallen', lean: !!o.lean, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
+    coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : 'match', fallen: o.mode === 'fallen', lean: !!o.lean || !!o.dream, dream: !!o.dream, dreamS: { t: 3, moodT: 0, home: o.lens || 'snow', skip: {}, callT: 50 }, rec: [], recT: 0, echo: null, echoCd: 0, echoes: 0, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean || !!o.dream, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
   buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildFruit(); buildHeroes(o);
   if (W.fallen) for (let i = 0; i < W.structs.length; i++) { const st = W.structs[i]; if (st.team === 0 && st.kind !== 'patron') { st.dark = true; st.darkT = 0; st.litT = 0; } }
@@ -290,9 +297,60 @@ S.buy = function (h, idx) {
   h.souls -= it.cost; h.items.push(idx); recompute(h);
   fx({ k: 'buy', u: h, item: idx }); return true;
 };
-S.setAuto = function (on) { W.auto = on; if (!on) W.lean = false; if (W.player) { W.player.useAI = on; W.player.botMul = 1; } };
+S.setAuto = function (on) { W.auto = on; if (!on) { W.lean = false; W.dream = false; } if (W.player) { W.player.useAI = on; W.player.botMul = 1; } };
 
 /* ---------- vulnerability ---------- */
+/* Echo. See DESIGN. */
+S.echoReady = function () { const p = W && W.player; return !!(p && p.alive && !W.echo && W.echoCd <= 0 && W.rec.length > 4 && W.t - W.rec[0].t >= 2); };
+S.echo = function () {
+  if (!S.echoReady()) return false;
+  const mem = W.lens === 'memory', len = mem ? C.ECHO_MEM : C.ECHO_T, from = W.t - len, f = W.rec.filter(function (r) { return r.t >= from; });
+  if (f.length < 2) return false;
+  W.echo = { f: f, i: 0, at: 0, t0: f[0].t, x: f[0].x, z: f[0].z, yaw: f[0].yaw, shots: 0 }; W.echoCd = mem ? C.ECHO_CD_MEM : C.ECHO_CD; W.echoes++;
+  fx({ k: 'echo', x: f[0].x, z: f[0].z, len: f[f.length - 1].t - f[0].t, mem: mem }); return true;
+};
+function echoStep(dt) {
+  const p = W.player; if (!p) return;
+  if (W.echoCd > 0) W.echoCd -= dt;
+  W.recT -= dt; if (W.recT <= 0 && p.alive) { W.recT = 0.1; W.rec.push({ t: W.t, x: p.x, z: p.z, yaw: p.yaw, s: null }); }
+  while (W.rec.length && W.t - W.rec[0].t > C.ECHO_MEM) W.rec.shift();
+  const e = W.echo; if (!e) return;
+  e.at += dt; const g = p.def.gun;
+  while (e.i < e.f.length && e.f[e.i].t - e.t0 <= e.at) {
+    const r = e.f[e.i++]; e.x = r.x; e.z = r.z; e.yaw = r.yaw;
+    if (r.s) { e.shots++;
+      for (let k = 0; k < g.pellets; k++) {
+        let px = r.s[3] + (W.rng() - 0.5) * 2 * g.spread, py = r.s[4] + (W.rng() - 0.5) * 2 * g.spread, pz = r.s[5] + (W.rng() - 0.5) * 2 * g.spread; const n = hyp(px, py, pz); px /= n; py /= n; pz /= n;
+        spawnProj({ x: r.s[0], y: r.s[1], z: r.s[2], vx: px * g.speed, vy: py * g.speed, vz: pz * g.speed, life: g.range / g.speed, dmg: g.dmg * p.st.dmg * C.ECHO_DMG, team: p.team, owner: p, r: 0.18, kind: 'bullet', gun: true, pierce: p.st.pierce, hit: null, size: g.size, echo: true });
+      }
+      fx({ k: 'echoshot', x: r.s[0], y: r.s[1], z: r.s[2] }); }
+  }
+  if (e.i >= e.f.length) { fx({ k: 'echoend', x: e.x, z: e.z, shots: e.shots }); W.echo = null; }
+}
+/* Dreamwalk director: plays the Lean Back hands so every hidden system gets shown. One decision a second. */
+function dreamStep(dt) {
+  const D = W.dreamS, p = W.player, m = W.mood, say = function (sys) { fx({ k: 'dream', sys: sys }); };
+  if (m && !m.done) { // answer the mood on the second try, so a miss and a hit are both seen
+    D.moodT += dt;
+    if (D.moodT > 5 && m.guesses === C.MOOD_GUESSES) { const wrong = C.LENSES.filter(function (l) { return l !== m.lens && l !== W.lens; }); S.setLens(wrong[Math.floor(W.rng() * wrong.length)]); }
+    else if (D.moodT > 11 && m.guesses < C.MOOD_GUESSES) S.setLens(m.lens);
+    return;
+  }
+  D.moodT = 0; D.t -= dt; if (D.t > 0) return; D.t = 1;
+  if (S.leanCrease() >= 0) { S.leanFold(); return; }
+  if (S.echoReady() && W.t - p.lastShotT < 0.6 && W.rec.filter(function (r) { return r.s; }).length > 12) { S.echo(); return; }
+  D.callT -= 1; if (D.callT <= 0) { D.callT = 70; let best = 1, bn = -1; for (let l = 0; l < 3; l++) { let n = 0; for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (u.alive && u.team === 1 && u.lane === l) n += u.big ? 4 : 1; } if (n > bn) { bn = n; best = l; } } S.call(best); }
+  let want = D.home;
+  if (W.red > 0) { want = 'rain'; if (W.lens !== want) say('rainwake'); }
+  else if (W.structs.some(function (s) { return s.team === 0 && s.alive && s.dark && (s.darkT > 0 || W.fallen); }) && !W.fallen) { want = 'memory'; if (W.lens !== want) say('memory'); }
+  else if (W.fallen && W.structs.some(function (s) { return s.team === 0 && s.alive && !s.dark && s.kind !== 'patron'; })) { want = 'memory'; if (W.lens !== want) say('memory'); }
+  else { for (let i = 0; i < W.fruit.length; i++) { const f = W.fruit[i]; if (!f.ripe || !f.lens) continue;
+      const k = D.skip[f.i] || (D.skip[f.i] = { since: W.t, until: 0 }); if (W.t < k.until) continue;
+      if (W.lens !== f.lens && k.seen !== f.t) { k.since = W.t; k.seen = f.t; }
+      if (W.t - k.since > 45) { k.until = W.t + 150; continue; } // too far to fetch; leave it a while
+      want = f.lens; if (W.lens !== want) say('bigfruit'); break; } }
+  if (W.lens !== want) S.setLens(want);
+}
 /* Lean Back hands. The hero plays itself; these are what is left to the player. */
 S.call = function (lane) {
   const p = W && W.player; if (!p || !W.lean || lane < 0 || lane > 2) return false;
@@ -433,7 +491,7 @@ function kill(t, src, hero) {
     fx({ k: 'structdown', u: t, bounty: b });
   } else if (t.kind === 'patron') {
     W.over = true; W.winner = 1 - t.team;
-    fx({ k: 'over', winner: W.winner, fallen: W.fallen, t: W.t, lights: W.lights, moods: W.moodsSolved });
+    fx({ k: 'over', winner: W.winner, fallen: W.fallen, t: W.t, lights: W.lights, moods: W.moodsSolved, dream: W.dream });
   }
 }
 /* Ever Fallen: a small one put down gives its light to the nearest dark house. */
@@ -483,6 +541,7 @@ function fireGun(h) {
       dmg: g.dmg * st.dmg * h.botMul * (W.great[h.team] > 0 ? 1.25 : 1) * (h.furyT > 0 ? 1.4 : 1), team: h.team, owner: h, r: 0.18, kind: 'bullet', gun: true, pierce: st.pierce, hit: null, size: g.size });
   }
   fx({ k: 'shot', u: h, x: mx, y: my, z: mz });
+  if (h === W.player) W.rec.push({ t: W.t, x: h.x, z: h.z, yaw: h.yaw, s: [mx, my, mz, dx, dy, dz] });
 }
 function cast(h, i) {
   const a = h.def.ab[i], c = h.ctl, st = h.st;
@@ -944,7 +1003,7 @@ function spawnHollow(lane, extra) {
   const u = mk('trooper', 1, P.x, P.z, 1.15, 3.2, [1500, 2100, 2700][W.diff] + 110 * min);
   u.big = true; u.extra = !!extra; u.lane = lane; u.lane0 = lane; u.s = s; u.lat = 0; u.ranged = false; u.range = 3.2;
   u.dmg = [55, 72, 90][W.diff] + 2.5 * min; u.rate = 1.1; u.speed = 4.4; u.atkT = 0.6;
-  W.troopers.push(u); fx({ k: 'hollow', lane: lane });
+  W.troopers.push(u); fx({ k: 'hollow', lane: lane, extra: !!u.extra });
 }
 function pickMark() {
   let rich = null;
@@ -1168,6 +1227,7 @@ function separate() {
 S.step = function (dt) {
   if (!W || W.over) return;
   W.t += dt;
+  echoStep(dt); if (W.dream) dreamStep(dt);
   W.waveT -= dt; if (W.waveT <= 0) { W.waveT = 24; spawnWave(); }
   if (!W.fray && W.t > 900) { W.fray = true; fx({ k: 'fray' }); }
   if (W.t > 1200 && !W.fallen) {

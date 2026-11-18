@@ -30,7 +30,7 @@ UI.init = function (handlers) {
     b.setAttribute('aria-pressed', String(+b.getAttribute('data-diff') === cfg.diff));
     b.addEventListener('click', function () { cfg.diff = +b.getAttribute('data-diff'); H.save(); document.querySelectorAll('[data-diff]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); LL.audio.init(); LL.audio.ui(); });
   });
-  const modeLine = function () { $('modeLine').textContent = (cfg.mode === 'fallen' ? 'Ever Fallen: already lost. Hold the last lantern and take the lights back. ' + (cfg.bestT ? 'Best ' + U.fmtTime(cfg.bestT) + ', ' + cfg.bestL + ' lights.' : 'No record yet.') : 'The livelock: three threads, two patrons, one of them yours.') + (cfg.lean ? ' Leaning back: the hero plays itself; you keep the view, the thread and the fold.' : ''); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x.getAttribute('data-mode') === cfg.mode))); $('cLean').setAttribute('aria-pressed', String(!!cfg.lean)); $('bPlay').textContent = cfg.lean ? 'Sit down' : 'Walk in'; };
+  const modeLine = function () { $('modeLine').textContent = (cfg.mode === 'fallen' ? 'Ever Fallen: already lost. Hold the last lantern and take the lights back. ' + (cfg.bestT ? 'Best ' + U.fmtTime(cfg.bestT) + ', ' + cfg.bestL + ' lights.' : 'No record yet.') : 'The livelock: three threads, two patrons, one of them yours.') + (cfg.lean ? ' Leaning back: the hero plays itself; you keep the view, the thread and the fold.' : ''); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x.getAttribute('data-mode') === cfg.mode))); $('cLean').setAttribute('aria-pressed', String(!!cfg.lean)); $('cDream').setAttribute('aria-pressed', String(!!cfg.dream)); if (cfg.dream) $('modeLine').textContent += ' Dreamwalk: you will be shown every hidden thing, and asked at the end what to keep.'; $('bPlay').textContent = cfg.dream ? 'Dream' : (cfg.lean ? 'Sit down' : 'Walk in'); };
   UI.modeLine = modeLine;
   document.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { cfg.mode = b.getAttribute('data-mode'); H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); }); });
   $('cLean').addEventListener('click', function () { cfg.lean = !cfg.lean; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
@@ -67,6 +67,9 @@ UI.init = function (handlers) {
   on('bFull', H.full); on('bFull2', H.full);
   on('bShop', () => UI.toggleShop()); on('bDeadShop', () => UI.toggleShop(true)); on('bShopClose', () => UI.toggleShop(false));
   on('bPause', H.pause); on('bResume', H.resume); on('bQuit', H.quit); on('bAgain', () => H.play(false)); on('bTitle', H.quit);
+  on('bEcho', H.echo); on('lEcho', H.echo); on('lFast', function () { $('lFast').textContent = H.fast() + '×'; });
+  on('bCopyCalls', function () { const t = UI.callsText(); const done = function (ok) { $('copyNote').textContent = ok ? 'Copied. Paste it to Claude.' : t; }; try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (err) { done(false); } });
+  $('cDream').addEventListener('click', function () { cfg.dream = !cfg.dream; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
   on('bAuto', H.auto); on('bInk', H.view); on('bCab', UI.showCab); on('bCabClose', function () { snuffRun = null; show('title'); });
   { let taps = 0; const all = $('oAll'); all.checked = !!cfg.all; $('lAll').hidden = !cfg.all; $('bCab').hidden = !(cfg.all || (cfg.unl && Object.keys(cfg.unl).length));
     $('hSet').addEventListener('click', function () { if (++taps >= 5) { $('lAll').hidden = false; LL.audio.ui('ok'); } }); // the hidden switch: five taps on the word Settings
@@ -149,9 +152,10 @@ UI.startHUD = function (w) {
   $('gunN').textContent = d.gun.name;
   $('feed').innerHTML = ''; $('dead').hidden = true; lastSouls = -1; hurt = 0;
   nums.forEach(n => { n.life = 0; n.el.style.opacity = 0; });
-  document.body.classList.toggle('lean', !!W.lean);
+  document.body.classList.toggle('lean', !!W.lean); dreamSeen = []; dreamQ = []; dreamT = 0; wasMercy = false; $('dreamCard').hidden = true; $('lFast').hidden = !W.dream; $('lFast').textContent = '1×'; $('calls').hidden = true;
   document.querySelector('#score .t0 .nm').textContent = W.fallen ? 'Lights ' : 'Reign '; $('autoTag').textContent = W.lean ? 'Lean back · the view, the thread and the fold are yours' : 'Auto · the valley plays itself';
-  if (W.fallen) UI.banner('The valley is already lost.', 'Hold the last lantern. Every small one put down gives a light back for ' + C.LIT_T + ' seconds', 7);
+  if (W.dream) UI.banner('Dreamwalk.', 'Sit back. Each hidden thing is named the first time it happens. Faster is the last button', 7);
+  else if (W.fallen) UI.banner('The valley is already lost.', 'Hold the last lantern. Every small one put down gives a light back for ' + C.LIT_T + ' seconds', 7);
   else if (W.lean) UI.banner('Sit back.', 'Your hero plays itself. Change the view, call a thread, fold when it lights', 6);
   else UI.banner('The ' + C.LANE_NAME[1] + ' is yours.', 'Your side holds the other two. Shop any time with ' + (LL.input.device === 'kbm' ? 'B' : 'the Shop button') + '.', 5);
   $('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself';
@@ -166,9 +170,69 @@ function num(x, y, z, text, cls) {
   n.x = x + (Math.random() - 0.5) * 0.6; n.y = y; n.z = z + (Math.random() - 0.5) * 0.6; n.t = 0; n.life = 0.8; n.el.textContent = text; n.el.className = cls || '';
 }
 const hname = h => '<b class="t' + h.team + '">' + esc(h.name) + '</b>';
+/* DREAMWALK captions. Each hidden system has a name and one plain line. In a Dreamwalk the first time a system happens its
+   card is shown and it joins the list the player judges at the end. */
+const SYS = {
+  wave: ['The livelock', 'Both sides send the same troopers every 24 seconds. They meet and cancel. Shooting them changes nothing for long.'],
+  soul: ['Souls and orbs', 'A dead trooper gives half a soul at once. The other half floats up. Shoot yours to keep it, theirs to deny it.'],
+  zip: ['Threads', 'Stand on your own thread and ride it to the front. It reaches further as you push.'],
+  thief: ['The small ones', 'The Hush has no heroes. It sends thieves for your souls and for the light in your houses.'],
+  snuff: ['A stolen light', 'A small one took a house\'s light. Catch it before the gate and the light comes back. Miss, and the house stays dark two minutes.'],
+  lastbreath: ['Last breath', 'Once per life, a killing blow leaves a hero standing with a sliver.'],
+  nessup: ['The Ness', 'Three minutes in, something surfaces in the loch.'],
+  nessdown: ['The Greatness', 'Whoever lands the last hit on the Ness gives their whole side 90 seconds of harder hits.'],
+  redwarn: ['A mood', 'Thirty seconds before the rain the valley says one line. One view answers it. Three tries.'],
+  moodmiss: ['Wrong view', 'That was not the view the mood wanted. The walk misses once on purpose so you can see it.'],
+  moodsolved: ['The answer', 'The right view. This rain comes thin: no extra hollows, fewer thieves.'],
+  red: ['Red rain', 'Every five minutes the Hush is thick for a minute.'],
+  rainwake: ['Rainwake', 'A view worn in the rain: souls are worth half again while it is red.'],
+  memory: ['Memory', 'A view for dark houses: the dark passes twice as fast and light holds twice as long. Souls are worth half while you wear it.'],
+  fruit: ['Fruit', 'Lemons quicken, rose hips mend, Verde Limón sharpens. They grow back.'],
+  bigfruit: ['Big fruit', 'The rare tier feeds the whole side, and each one exists only through one view.'],
+  fold: ['The fold', 'With a crease\'s guard dead, the valley folds and one thread\'s troopers walk onto the next for 45 seconds.'],
+  echo: ['Echo', 'Your last seconds, replayed beside you: the same shots from the same places.'],
+  mercy: ['Mercy', 'Two structures behind, the Hush eases off. Nobody tells you.'],
+  fishing: ['Fishing', 'Sometimes a whole side goes to the loch and leaves its threads empty.'],
+  fray: ['The fray', 'At fifteen minutes structures start taking more damage.'],
+  gutter: ['The gutter', 'At twenty minutes both patrons burn down. Someone has to win.'],
+  relit: ['A light recovered', 'Ever Fallen: each small one put down relights the nearest dark house for 80 seconds.'],
+  structdown: ['A house falls', 'Structures only take real damage while the attacker\'s troopers stand at them.']
+};
+let dreamSeen = [], dreamQ = [], dreamT = 0, wasMercy = false;
+function sysOf(e) {
+  switch (e.k) {
+    case 'wave': return e.n === 2 ? 'wave' : null; case 'soul': return e.kind === 'secured' ? 'soul' : null;
+    case 'zip': return e.u && e.u.team === 0 ? 'zip' : null; case 'thief': return 'thief'; case 'snuff': return e.faded ? null : 'snuff';
+    case 'fruit': return C.FRUIT_INFO[e.kind].big ? 'bigfruit' : 'fruit'; case 'relit': return e.recovered ? 'relit' : null;
+    case 'dream': return e.sys; case 'echo': return 'echo';
+    case 'lastbreath': case 'nessup': case 'nessdown': case 'redwarn': case 'moodmiss': case 'moodsolved': case 'red': case 'fold': case 'fishing': case 'fray': case 'gutter': case 'structdown': return e.k;
+  }
+  return null;
+}
+function dreamShow(id) {
+  if (!SYS[id] || dreamSeen.indexOf(id) >= 0) return;
+  dreamSeen.push(id); dreamQ.push(id); // cards queue, so two things in one second are both read
+}
+function dreamNext() {
+  const id = dreamQ.shift(), c = $('dreamCard'); if (!id) { c.hidden = true; return; }
+  c.hidden = false; dreamT = dreamQ.length ? 4.5 : 8;
+  c.querySelector('small').textContent = 'HIDDEN THING ' + (dreamSeen.indexOf(id) + 1); c.querySelector('b').textContent = SYS[id][0]; c.querySelector('p').textContent = SYS[id][1];
+}
+function callsDraw() {
+  const L = $('callList'), cf = LL.cfg; if (!cf.calls) cf.calls = {}; L.innerHTML = '';
+  dreamSeen.forEach(function (id) {
+    const r = document.createElement('div'); r.className = 'cr'; r.innerHTML = '<span><b>' + SYS[id][0] + '</b><small>' + SYS[id][1] + '</small></span>';
+    const g = document.createElement('div'); g.className = 'row';
+    ['keep', 'change', 'cut'].forEach(function (v) { const b = document.createElement('button'); b.className = 'chip'; b.textContent = v[0].toUpperCase() + v.slice(1); b.setAttribute('aria-pressed', String(cf.calls[id] === v));
+      b.addEventListener('click', function () { cf.calls[id] = v; H.save(); callsDraw(); }); g.appendChild(b); });
+    r.appendChild(g); L.appendChild(r);
+  });
+}
+UI.callsText = function () { const cf = LL.cfg; return 'Livloch ' + (document.querySelector('#title footer').textContent.match(/[0-9.]+/) || [''])[0] + ' Dreamwalk calls\n' + dreamSeen.map(function (id) { return (cf.calls[id] || 'no call').toUpperCase() + '  ' + SYS[id][0]; }).join('\n'); };
 UI.fx = function (e) {
   if (!W || !W.player) return;
   const pl = W.player;
+  if (W.dream) { const sid = sysOf(e); if (sid) dreamShow(sid); }
   switch (e.k) {
     case 'hit':
       if (e.p === 1) {
@@ -200,6 +264,8 @@ UI.fx = function (e) {
     case 'thief': if (e.mark === pl) feed('A hush is out for your souls'); else if (e.mark.struct) feed('A hush is out for a lantern'); break;
     case 'theft': if (e.p) UI.banner('A hush has ' + Math.round(e.amt) + ' of your souls.', 'Catch it before it reaches the gate', 4.5); else feed('A hush robbed ' + hname(e.u)); break;
     case 'moodsolved': UI.unlock('plates'); UI.banner('That is the one.', 'The rain will come thin: no extra hollows, fewer thieves. +80 souls each', 5); break;
+    case 'echo': feed('<b>Echo</b> · ' + Math.round(e.len) + ' seconds of you' + (e.mem ? ', remembered whole' : '')); break;
+    case 'echoend': if (e.shots) feed('The echo fired ' + e.shots + ' times and went'); break;
     case 'call': feed('Called to the <b>' + C.LANE_NAME[e.lane] + '</b>'); break;
     case 'lightkept': feed('A light, and nowhere dark to put it (' + e.n + ')'); break;
     case 'snuff': if (e.faded) { feed('The light on the ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' burned down'); break; } if (W.fallen) { feed('A hush took the light from the ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind); break; } UI.banner('The light is gone from your ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + '.', 'It cannot fire until the hush carrying its light is caught', 5); break;
@@ -269,7 +335,7 @@ UI.showPause = function (onOff) {
 };
 UI.showOver = function () {
   const win = W.winner === 0, t = U.fmtTime(W.t);
-  document.body.classList.remove('lean');
+  document.body.classList.remove('lean'); $('calls').hidden = !(W.dream || dreamSeen.length) || !dreamSeen.length; if (dreamSeen.length) { callsDraw(); $('copyNote').textContent = ''; }
   if (W.fallen) { const cfg = LL.cfg, best = W.t >= (cfg.bestT || 0);
     $('overH').innerHTML = 'You held for <em>' + t + '</em>.';
     $('overP').textContent = 'Lights recovered: ' + W.lights + '. Moods answered: ' + W.moodsSolved + '. ' + (best ? 'That is the longest anyone has held here.' : 'Best is ' + U.fmtTime(cfg.bestT) + '.') + ' The valley was already lost; that was never the question.';
@@ -351,6 +417,8 @@ UI.frame = function (dt, w, view, info) {
   let can = false; for (let i = 0; i < LL.ITEMS.length; i++) if (p.items.indexOf(i) < 0 && s >= LL.ITEMS[i].cost) { can = true; break; }
   $('souls').classList.toggle('can', can);
   $('clock').textContent = U.fmtTime(W.t) + (W.lens === 'rain' && W.red <= 0 ? ' · rain ' + U.fmtTime(Math.max(0, W.redNext - W.t)) : ''); $('k0').textContent = W.fallen ? W.lights : W.kills[0];
+  { const er = S.echoReady(), be = $('bEcho'), le = $('lEcho'); if (be.disabled === er) be.disabled = !er; if (le.disabled === er) le.disabled = !er; }
+  if (W.dream) { if (W.mercy && !wasMercy) dreamShow('mercy'); wasMercy = W.mercy; dreamT -= dt; if (dreamT <= 0 && (dreamQ.length || !$('dreamCard').hidden)) dreamNext(); }
   if (W.lean) { const ok = S.leanCrease() >= 0, lf = $('lFold'); if (lf.disabled === ok) lf.disabled = !ok; for (let l = 0; l < 3; l++) { const b = $('lCall' + l), on = String(p.ai.lane === l); if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on); } } $('k1').textContent = W.kills[1];
   $('dead').hidden = p.alive || UI.screen === 'shop'; if (!p.alive) $('deadT').textContent = Math.ceil(p.respT);
   { // with the mouse captured the buttons cannot be clicked, so the keys are written on them

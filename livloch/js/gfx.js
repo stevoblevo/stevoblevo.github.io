@@ -145,7 +145,7 @@ function applyLook() {
 }
 function construct() {
   if (scene) scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose) o.material.dispose(); });
-  mats = {}; tcCache = {}; fruitM = []; cueDash = null; cueRings = []; creaseM = []; heroM = []; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
+  mats = {}; tcCache = {}; fruitM = []; cueDash = null; cueRings = []; creaseM = []; heroM = []; echoM = null; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
   renderer.setClearColor(LK.clear);
   scene = new T.Scene(); scene.fog = new T.Fog(LK.fog[0], LK.fog[1], LK.fog[2]);
   scene.add(new T.HemisphereLight(LK.hemi[0], LK.hemi[1], LK.hemi[2]));
@@ -219,6 +219,11 @@ function buildSky() {
   g.setAttribute('color', new T.BufferAttribute(cols, 3));
   sky = new T.Mesh(g, new T.MeshBasicMaterial({ vertexColors: true, side: T.BackSide, fog: false, depthWrite: false }));
   own(sky); scene.add(sky);
+  flatLoad('backdrop', function (t) { // the far ridge: one wide painting wrapped round the valley, mirrored so the seam never shows
+    t.wrapS = T.MirroredRepeatWrapping; t.repeat.x = 2; t.needsUpdate = true;
+    const mt = new T.MeshBasicMaterial({ map: t, side: T.BackSide, fog: false }); // opaque and depth-writing, so the sky dome behind it cannot paint over it mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
+    const hgt = 2 * Math.PI * 560 / 2 * (t.image.height / t.image.width), c = new T.Mesh(new T.CylinderGeometry(560, 560, hgt, 48, 1, true), mt); c.position.y = hgt * 0.4; c.scale.x = -1; scene.add(c);
+  });
   const n = 420, sp = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const th = Math.random() * Math.PI * 2, ph = Math.acos(0.08 + Math.random() * 0.92);
@@ -248,6 +253,7 @@ function buildSky() {
 function buildGround() {
   const sx = 2 * C.HALF_X + 190, sz = 2 * C.HALF_Z + 190;
   let g = new T.PlaneGeometry(sx, sz, 100, 150); g.rotateX(-Math.PI / 2);
+  const wallK = FLATS.backdrop && !R.noPaper ? 0.2 : 1; // with a painted backdrop the valley walls drop to foothills so the painting shows
   const p = g.attributes.position, cols = new Float32Array(p.count * 3), q = { s: 0, d: 0 };
   const G = LK.ground, jungA = new T.Color(G.a), jungB = new T.Color(G.b), lane = new T.Color(G.lane), laneC = new T.Color(G.laneC);
   const ember = new T.Color(LK.team[0]), mint = new T.Color(LK.team[1]), rock = new T.Color(G.rock), c = new T.Color();
@@ -256,7 +262,7 @@ function buildGround() {
     let d = 1e9; for (let l = 0; l < 3; l++) { LL.laneNearest(l, x, z, q); if (q.d < d) d = q.d; }
     const ox = Math.max(0, Math.abs(x) - C.HALF_X), oz = Math.max(0, Math.abs(z) - C.HALF_Z), out = Math.hypot(ox, oz);
     const n = noise(x * 0.06, z * 0.06), n2 = noise(x * 0.31 + 9, z * 0.31);
-    p.setY(i, out > 0 ? Math.pow(out, 1.3) * 0.5 * (0.55 + n * 1.1) + n2 * 1.5 : 0);
+    p.setY(i, out > 0 ? (Math.pow(out, 1.3) * 0.5 * (0.55 + n * 1.1) + n2 * 1.5) * wallK : 0);
     c.copy(jungA).lerp(jungB, n);
     const base = Math.min(Math.hypot(x, z + C.SPAWN_Z), Math.hypot(x, z - C.SPAWN_Z));
     const lt = Math.max(U.clamp((9.5 - d) / 4.5, 0, 1), U.clamp((30 - base) / 8, 0, 1));
@@ -319,6 +325,7 @@ function buildThreads() {
 /* r128 sizes instanceColor from .count at first setColorAt, so allocate it at full capacity up front. */
 function initColor(m, cap) { const a = new Float32Array(cap * 3).fill(1); m.instanceColor = new T.BufferAttribute(a, 3); }
 function buildInstanced() {
+  bd = { trooper: new Boards('trooper', 90), hush: new Boards('hush', 110), hollow: new Boards('hollow', 40), thief: new Boards('thief', 40), pines: new Boards('pines', 400), rocks: new Boards('rocks', 400) };
   const bodyG = cyl(0.42, 0.52, 1.0, 6); bodyG.translate(0, 0.75, 0);
   tr[0] = new T.InstancedMesh(bodyG, new T.MeshLambertMaterial({ color: SRC_TEAM[0], emissive: SRC_TEAM[0], emissiveIntensity: 0.5 }), 90);
   // the Hush: torn tissue paper, the coldest thing on screen, with pale lilac eyes (Reignfawn)
@@ -403,18 +410,72 @@ function buildPools() {
 
 /* ---------- per-match models ---------- */
 function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissive: em ? col : 0x000000, emissiveIntensity: em || 0 }); m.userData.lk = true; return m; }
+/* SLOTS FOR PAINTED ART. Everything in the valley can be a painted cutout, not only the heroes. Each slot below names a
+   picture; if the picture is listed in FLATS it replaces the built shapes, and if it is missing or fails to load the built
+   shapes stay. Pictures are rows of equal cells with a transparent background, made by tools/sheet.py.
+     house    3 cells: small, medium, large      Reign guardian, warden, patron
+     tower    3 cells: small, medium, large      Hush guardian, warden, patron
+     trooper  2 cells: front, back               Reign trooper
+     hush     2 cells: front, back               Hush trooper
+     hollow   2 cells: front, back               the big ones
+     thief    2 cells: front, back               the small ones
+     ness     1 cell:  side view, facing left    the Ness
+     pines    3 cells: three trees               scenery
+     rocks    3 cells: three rocks               scenery
+     backdrop one wide painting (jpg)            the far ridge and sky line, wrapped round the valley
+   To switch one on, add a line:  FLATS.house = { src: 'art/flats/house.png', cells: 3 };  See art/flats/README.md. */
+const FLATS = R.FLATS = {};
+R._flats = function () { return Object.keys(flatTex).map(function (k) { return k + ':' + (flatTex[k].t ? 'loaded' : 'no'); }).join(' '); }; // for tools
+const flatTex = {}; let echoM = null, bd = null, decorPrims = [], decorTrees = [], decorRocks = [], decorHidden = false;
+function flatLoad(name, cb) {
+  const F = FLATS[name]; if (!F || R.noPaper) return;
+  let e = flatTex[name];
+  if (e) { if (e.t) cb(e.t, F); else e.wait.push(cb); return; }
+  e = flatTex[name] = { t: null, wait: [cb] };
+  new T.TextureLoader().load(F.src, function (t) { t.minFilter = T.LinearFilter; t.generateMipmaps = false; e.t = t; e.wait.forEach(function (f) { f(t, F); }); e.wait = []; }, undefined, function () { e.wait = []; });
+}
+function cellGeo(cells, i) { const g = new T.PlaneGeometry(1, 1); g.translate(0, 0.5, 0); const uv = g.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setX(k, (uv.getX(k) + i) / cells); return g; }
+function flatMat(t) { const m = new T.MeshBasicMaterial({ map: t, transparent: true, alphaTest: 0.45, side: T.DoubleSide }); m.userData.lk = true; m.userData.solid = true; m.userData.bl = true; return m; }
+function flatAspect(t, cells) { return (t.image.width / cells) / t.image.height; }
+/* One standing cutout that replaces a built model: hides `hide`, adds the picture to g, remembers it as g.flat. */
+function standFlat(g, name, cell, h, hide) {
+  flatLoad(name, function (t, F) {
+    const m = new T.Mesh(cellGeo(F.cells, Math.min(cell, F.cells - 1)), flatMat(t)); m.scale.set(h * flatAspect(t, F.cells), h, 1); m.userData.w = h * flatAspect(t, F.cells);
+    hide().forEach(function (o) { o.visible = false; }); g.add(m); g.flat = m;
+  });
+}
+/* A crowd of cutouts: one instanced mesh per cell, every one turned to the camera each frame. */
+function Boards(name, cap) { this.name = name; this.cap = cap; this.m = null; this.n = []; this.asked = false; }
+Boards.prototype.begin = function () {
+  if (!this.m) {
+    if (!this.asked && FLATS[this.name]) { this.asked = true; const self = this, home = dyn;
+      flatLoad(this.name, function (t, F) {
+        self.a = flatAspect(t, F.cells); const mt = flatMat(t), ms = [];
+        for (let i = 0; i < F.cells; i++) { const im = new T.InstancedMesh(cellGeo(F.cells, i), mt, self.cap); im.frustumCulled = false; im.count = 0; home.add(im); ms.push(im); }
+        self.m = ms;
+      }); }
+    return false;
+  }
+  for (let i = 0; i < this.m.length; i++) this.n[i] = 0; return true;
+};
+Boards.prototype.put = function (cell, x, y, z, h, flip, tilt) {
+  const c = cell % this.m.length, k = this.n[c]; if (k >= this.cap) return;
+  dummy.position.set(x, y, z); dummy.rotation.set(0, Math.atan2(camPos.x - x, camPos.z - z), tilt || 0); dummy.scale.set(h * this.a * (flip ? -1 : 1), h, 1); dummy.updateMatrix();
+  this.m[c].setMatrixAt(k, dummy.matrix); this.n[c] = k + 1;
+};
+Boards.prototype.end = function () { if (!this.m) return; for (let i = 0; i < this.m.length; i++) { this.m[i].count = this.n[i]; this.m[i].instanceMatrix.needsUpdate = true; } };
 /* PAPER HEROES. The valley is paper, so a hero can be a paper cutout: four painted views on one sheet (front, left
    side, back, three-quarter), made by tools/sheet.py from a turnaround drawing. The cutout always turns its face to the
    camera and shows the view that matches where the camera stands, mirrored for the other side. A hero with no sheet,
    or whose sheet fails to load, keeps the built shapes below. Add a hero by adding a line here. */
-const PAPER = { dora: { src: 'art/heroes/dora.png', h: 2.45 } };
+const PAPER = R.PAPER = { dora: { src: 'art/heroes/dora.png', h: 2.45 }, anna: { src: 'art/heroes/anna.png', h: 2.4 } }; // next: myra, skein, same shape of line
 const paperTex = {}, PAPER_FLIP = -1;
 function paperFor(g, id) {
   const P = PAPER[id]; if (!P || R.noPaper) return;
   const put = function (base) {
     const tex = base.clone(); tex.needsUpdate = true; tex.repeat.set(0.25, 1);
     const mt = new T.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.45, side: T.DoubleSide }); mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
-    const pl = new T.Mesh(new T.PlaneGeometry(P.h * 0.55, P.h), mt); pl.position.y = P.h / 2; g.add(pl);
+    const pl = new T.Mesh(new T.PlaneGeometry(P.h * (base.image.width / 4) / base.image.height, P.h), mt); pl.position.y = P.h / 2; g.add(pl);
     g.paper = pl; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
   };
   if (paperTex[id]) { put(paperTex[id]); return; }
@@ -515,7 +576,9 @@ function structModel(s) {
   const rub = new T.Group(); mesh(flat(new T.IcosahedronGeometry(1.4, 0)), stone, 0.6, 0.5, 0.3, rub); mesh(flat(new T.IcosahedronGeometry(1, 0)), dark, -0.9, 0.4, -0.5, rub); mesh(box(1.6, 0.4, 1.2), stone, 0, 0.2, 1.1, rub).rotation.y = 0.5; rub.visible = false; g.add(rub);
   const ward = new T.Mesh(new T.CylinderGeometry(s.r + 1.4, s.r + 1.4, s.h + 1, 14, 1, true), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.13, side: T.DoubleSide, blending: T.AdditiveBlending, depthWrite: false }));
   ward.position.y = (s.h + 1) / 2; g.add(ward);
-  g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.paper = paper; g.position.set(s.x, 0, s.z); dyn.add(g); return g;
+  g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.paper = paper; g.position.set(s.x, 0, s.z); dyn.add(g);
+  standFlat(lit, s.team === 0 ? 'house' : 'tower', s.kind === 'patron' ? 2 : (s.kind === 'warden' ? 1 : 0), s.kind === 'patron' ? 14 : (s.kind === 'warden' ? 11.5 : 9.5), function () { return lit.children.filter(function (c) { return c !== g.glow; }).concat(g.children.filter(function (c) { return c.isMesh && c !== ward; })); });
+  return g;
 }
 function strayModel(s) {
   const g = new T.Group(), m = mat(0x5a4a78);
@@ -541,7 +604,9 @@ function nessModel() {
   edged(flat(new T.ConeGeometry(0.16, 0.9, 4)), pale, 0.35, 0.8, -0.2, head).rotation.x = -0.5; edged(flat(new T.ConeGeometry(0.16, 0.9, 4)), pale, -0.35, 0.8, -0.2, head).rotation.x = -0.5;
   glowSprite(0x9ff5e0, 1.2, head, 0.5, 0.25, 0.95); glowSprite(0x9ff5e0, 1.2, head, -0.5, 0.25, 0.95);
   glowSprite(0x2fe0c0, 14, g, 0, 2.5, -2);
-  g.head = head; g.visible = false; dyn.add(g); return g;
+  g.head = head; g.visible = false; dyn.add(g);
+  standFlat(g, 'ness', 0, 9.5, function () { return g.children.slice(); });
+  return g;
 }
 /* Foldlight: mountain creases are dash-dot, valley creases are dashed, never swapped. West is the mountain fold, east the valley fold. */
 function buildCreaseArt() {
@@ -641,7 +706,7 @@ function buildDecor() {
     dummy.position.set(o.x, o.h * 0.32, o.z); dummy.rotation.set(o.seed * 3, o.seed * 17, o.seed * 7); dummy.scale.set(o.r * 1.12, o.h * 0.75, o.r * 1.12); dummy.updateMatrix();
     rm.setMatrixAt(i, dummy.matrix); rm.setColorAt(i, tmpC.setHex(0x4a3d52).lerp(new T.Color(0x35454f), o.seed));
   });
-  world.add(rm);
+  world.add(rm); decorPrims = [rm]; decorTrees = trees; decorRocks = rocks; decorHidden = false;
   const tg = cyl(0.3, 0.55, 3, 5); tg.translate(0, 1.5, 0);
   const c1 = flat(new T.ConeGeometry(2.6, 4.2, 6)); c1.translate(0, 4.6, 0);
   const c2 = flat(new T.ConeGeometry(1.9, 3.6, 6)); c2.translate(0, 7.2, 0);
@@ -655,16 +720,16 @@ function buildDecor() {
     const rose = o.seed > 0.72;
     m1.setColorAt(i, tmpC.setHex(rose ? 0x9a3f4a : 0x24505a)); m2.setColorAt(i, tmpC.setHex(rose ? 0xc4605a : 0x2f6a6a));
   });
-  world.add(tm); world.add(m1); world.add(m2);
+  world.add(tm); world.add(m1); world.add(m2); [tm, m1, m2].forEach(function (o) { o.userData.tree = true; decorPrims.push(o); });
   if (LK.snowcaps) {
     const cg = flat(new T.ConeGeometry(1.25, 1.7, 6)); cg.translate(0, 8.35, 0);
     const c3 = flat(new T.ConeGeometry(2.0, 0.9, 6)); c3.translate(0, 6.1, 0);
     const cm = new T.InstancedMesh(cg, mat(0xc8ccf0), Math.max(1, trees.length)), cm2 = new T.InstancedMesh(c3, mat(0xc8ccf0), Math.max(1, trees.length));
     trees.forEach(function (o, i) { const sc = 0.85 + o.seed * 0.5; dummy.position.set(o.x, 0, o.z); dummy.rotation.set(0, o.seed * 6, 0); dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); cm.setMatrixAt(i, dummy.matrix); cm2.setMatrixAt(i, dummy.matrix); });
-    world.add(cm); world.add(cm2);
+    world.add(cm); world.add(cm2); [cm, cm2].forEach(function (o) { o.userData.tree = true; decorPrims.push(o); });
     const rs = new T.InstancedMesh(flat(new T.IcosahedronGeometry(1, 0)), mat(0xc8ccf0), Math.max(1, rocks.length));
     rocks.forEach(function (o, i) { dummy.position.set(o.x, o.h * 0.62, o.z); dummy.rotation.set(o.seed * 3, o.seed * 17, o.seed * 7); dummy.scale.set(o.r * 0.95, o.h * 0.42, o.r * 0.95); dummy.updateMatrix(); rs.setMatrixAt(i, dummy.matrix); });
-    world.add(rs);
+    world.add(rs); decorPrims.push(rs);
   }
   dummy.rotation.set(0, 0, 0);
 }
@@ -689,6 +754,8 @@ function ring(x, y, z, r0, r1, col, life) {
 }
 R.fx = function (e) {
   switch (e.k) {
+    case 'echo': case 'echoend': for (let k = 0; k < 14; k++) emit(e.x, 0.4 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 2.2, 0.6, 1.5, 0); break;
+    case 'echoshot': emit(e.x, e.y, e.z, 2, 0x9fd0ff, 1.5, 0.25, 0, 0); break;
     case 'hit': {
       const col = e.tk === 'hero' ? 0xfff0d0 : (e.tk === 'trooper' ? 0xffc890 : 0xbfd0ff);
       if (e.kind === 'gun') emit(e.x, e.y, e.z, e.crit ? 5 : 2, e.crit ? 0xffe070 : col, 4, 0.3, 1);
@@ -842,14 +909,26 @@ R.frame = function (dt, view) {
     if (h.hipsT > 0 && Math.random() < dt * 16) emit(h.x, h.y + 0.6 + Math.random(), h.z, 1, 0xf0624a, 0.6, 0.7, 1.6, 0);
     if (W.great[h.team] > 0 && Math.random() < dt * 16) emit(h.x + (Math.random() - 0.5) * 0.8, h.y + 0.3 + Math.random() * 1.6, h.z + (Math.random() - 0.5) * 0.8, 1, 0xffe08a, 0.6, 0.7, 2.2, 0);
   }
+  { // the echo: a pale second self where the model says it is
+    const e = W.echo;
+    if (e && !echoM) { const id = W.player.def.id, pt = paperTex[id]; let m;
+      if (pt) { const t = pt.clone(); t.needsUpdate = true; t.repeat.set(0.25, 1); t.offset.x = 0.5; const P = PAPER[id]; m = new T.Mesh(new T.PlaneGeometry(P.h * (pt.image.width / 4) / pt.image.height, P.h), new T.MeshBasicMaterial({ map: t, transparent: true, opacity: 0.55, color: 0x9fd0ff, side: T.DoubleSide, depthWrite: false })); m.userData.hy = P.h / 2; }
+      else { m = new T.Mesh(new T.ConeGeometry(0.5, 2, 6), new T.MeshBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: 0.45, depthWrite: false })); m.userData.hy = 1; }
+      m.material.userData.lk = true; m.material.userData.bl = true; m.material.userData.solid = true; echoM = m; dyn.add(m); }
+    if (echoM) { echoM.visible = !!e; if (e) { echoM.position.set(e.x, echoM.userData.hy + Math.sin(time * 6) * 0.05, e.z); echoM.rotation.y = Math.atan2(camPos.x - e.x, camPos.z - e.z); if (Math.random() < dt * 14) emit(e.x, 0.3 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 0.6, 0.5, 1.4, 0); } }
+  }
   // troopers
   let n0 = 0, n1 = 0, nh = 0;
+  const bT = bd.trooper.begin(), bH = bd.hush.begin(), bB = bd.hollow.begin(), bS = bd.thief.begin();
   const ts = W.troopers;
   for (i = 0; i < ts.length; i++) {
     const t = ts[i]; if (!t.alive) continue;
     const moving = Math.abs(t.vx) + Math.abs(t.vz) > 0.1;
     const hop = moving ? Math.abs(Math.sin(time * 9 + t.id)) * 0.2 : 0, sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
     const sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1);
+    { const B = t.team === 0 ? (bT ? bd.trooper : null) : (t.big ? (bB ? bd.hollow : null) : (bH ? bd.hush : null));
+      if (B) { let d = Math.atan2(camPos.x - t.x, camPos.z - t.z) - t.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
+        B.put(Math.abs(d) < 1.57 ? 0 : 1, t.x, hop, t.z, (t.big ? 4.4 : (t.ranged ? 2.2 : 1.9)) * sc, d * PAPER_FLIP > 0, moving ? Math.sin(time * 9 + t.id) * 0.06 : 0); continue; } }
     dummy.position.set(t.x, hop, t.z); dummy.rotation.set(0, t.yaw, t.team === 1 ? Math.sin(time * 5 + t.id) * 0.08 : 0); dummy.scale.set(sx * sc, sy * sc, sx * sc); dummy.updateMatrix();
     if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix); }
     else if (n1 < 110) { hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix); }
@@ -857,6 +936,8 @@ R.frame = function (dt, view) {
   for (i = 0; i < W.thieves.length; i++) {
     const t = W.thieves[i]; if (!t.alive || n1 >= 110) continue;
     const sc = t.flash > 0 ? 1.05 : 0.85;
+    if (bS) { let d = Math.atan2(camPos.x - t.x, camPos.z - t.z) - t.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); bd.thief.put(Math.abs(d) < 1.57 ? 0 : 1, t.x, Math.abs(Math.sin(time * 14 + t.id)) * 0.3, t.z, 1.5 * sc, d * PAPER_FLIP > 0, 0.12);
+      if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0); continue; }
     dummy.position.set(t.x, Math.abs(Math.sin(time * 14 + t.id)) * 0.3, t.z); dummy.rotation.set(0.35, t.yaw, 0); dummy.scale.set(sc, sc * 0.9, sc); dummy.updateMatrix();
     hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix);
     if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0);
@@ -866,6 +947,11 @@ R.frame = function (dt, view) {
   if (LK.weather === 'snow' && W.red <= 0 && !R.reduced) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 1 : 3); k++) emit(cx + (Math.random() - 0.5) * 50, 8 + Math.random() * 8, cz + (Math.random() - 0.5) * 50, 1, Math.random() < 0.16 ? 0xff9ac8 : 0xdfe6ff, 0.5, 2.4, -3.2, 1.2); }
   if (W.red > 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 3 : 8); k++) emit(cx + (Math.random() - 0.5) * 44, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 44, 1, 0xff3a3a, 0.3, 0.75, -20, 26); }
   tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh;
+  bd.trooper.end(); bd.hush.end(); bd.hollow.end(); bd.thief.end();
+  { const bp = bd.pines.begin(), br = bd.rocks.begin(); // painted scenery, once its sheets exist
+    if ((bp || br) && !decorHidden) { decorHidden = true; decorPrims.forEach(function (o) { if ((o.userData.tree && bp) || (!o.userData.tree && br)) o.visible = false; }); }
+    if (bp) { for (i = 0; i < decorTrees.length; i++) { const o = decorTrees[i]; bd.pines.put(Math.floor(o.seed * 2.999), o.x, 0, o.z, 9.6 * (0.85 + o.seed * 0.5), o.seed * 7 % 1 > 0.5, 0); } bd.pines.end(); }
+    if (br) { for (i = 0; i < decorRocks.length; i++) { const o = decorRocks[i]; bd.rocks.put(Math.floor(o.seed * 2.999), o.x, 0, o.z, o.h * 1.2, o.seed * 7 % 1 > 0.5, 0); } bd.rocks.end(); } }
   tr[0].instanceMatrix.needsUpdate = tr[1].instanceMatrix.needsUpdate = hushEyes.instanceMatrix.needsUpdate = trHat.instanceMatrix.needsUpdate = true;
   // structures
   for (i = 0; i < structM.length; i++) {
@@ -877,6 +963,7 @@ R.frame = function (dt, view) {
       const pulse = 1 + Math.sin(time * 2 + i) * 0.06 + (s.flash > 0 ? 0.35 : 0);
       const b = s.kind === 'patron' ? 22 : (s.kind === 'warden' ? 13 : 10) * (m.house ? 0.95 : 1); m.glow.scale.set(b * pulse, b * pulse, 1);
       m.glow.visible = !s.dark;
+      if (m.lit.flat) { m.lit.flat.rotation.y = Math.atan2(camPos.x - s.x, camPos.z - s.z) - m.rotation.y; m.lit.flat.material.color.setScalar(s.dark ? 0.38 : 1); }
       if (m.paper) { if (m.baseEm == null) m.baseEm = m.paper.emissiveIntensity; m.paper.emissiveIntensity = s.dark ? 0.03 : m.baseEm; }
     }
   }
@@ -891,6 +978,7 @@ R.frame = function (dt, view) {
     if (nessM.visible) {
       const sc = n.flash > 0 ? 1.04 : 1; nessM.scale.set(sc, sc, sc);
       nessM.position.set(n.x, nessY, n.z); nessM.rotation.y = n.yaw;
+      if (nessM.flat) { const f = nessM.flat, tc = Math.atan2(camPos.x - n.x, camPos.z - n.z); let d = tc - n.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); f.rotation.y = tc - n.yaw; f.scale.x = f.userData.w * (d * PAPER_FLIP > 0 ? -1 : 1); }
       for (let k = 0; k < 6; k++) { const s = nessM.neck[k]; s.rotation.z = Math.sin(time * 1.3 + k * 0.7) * 0.06; s.rotation.x = s.baseX + Math.sin(time * 0.9 + k) * 0.03 - (n.spitT > 1.25 ? 0.05 : 0); }
       if (n.alive && Math.random() < dt * 1.6) ring(n.x + (Math.random() - 0.5) * 8, 0.03, n.z + (Math.random() - 0.5) * 8, 0.3, 2 + Math.random() * 3, 0x7fe0ff, 1.3);
     }
