@@ -74,9 +74,9 @@ UI.init = function (handlers) {
   on('bCopyCalls', function () { const t = UI.callsText(); const done = function (ok) { $('copyNote').textContent = ok ? 'Copied. Paste it to Claude.' : t; }; try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (err) { done(false); } });
   $('cDream').addEventListener('click', function () { cfg.dream = !cfg.dream; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
   on('bAuto', H.auto); on('bInk', H.view); on('bCab', UI.showCab); on('bCabClose', function () { snuffRun = null; show('title'); });
-  { let taps = 0; const all = $('oAll'); all.checked = !!cfg.all; $('lAll').hidden = !cfg.all; $('bCab').hidden = !(cfg.all || (cfg.unl && Object.keys(cfg.unl).length));
+  { let taps = 0; const all = $('oAll'); all.checked = !!cfg.all; $('lAll').hidden = !cfg.all; $('bCab').hidden = false;
     $('hSet').addEventListener('click', function () { if (++taps >= 5) { $('lAll').hidden = false; LL.audio.ui('ok'); } }); // the hidden switch: five taps on the word Settings
-    all.addEventListener('change', function () { cfg.all = all.checked; H.save(); $('bCab').hidden = !(cfg.all || (cfg.unl && Object.keys(cfg.unl).length)); }); }
+    all.addEventListener('change', function () { cfg.all = all.checked; H.save(); }); }
   [0, 1, 2].forEach(l => on('lCall' + l, () => H.call(l))); on('lFold', H.leanFold); on('lView', H.view);
   // settings
   const bind = (id, key, type) => {
@@ -93,7 +93,7 @@ UI.unlock = function (id) {
   const c = LL.cfg; if (!c.unl) c.unl = {}; if (c.unl[id]) return; const e = LL.CABINET.find(x => x.id === id); if (!e) return;
   c.unl[id] = 1; H.save(); if (!$('hud').hidden) feed('<b>Something in the cabinet opened</b> · ' + e.name); $('bCab').hidden = false;
 };
-const isOpen = id => !!(LL.cfg.all || (LL.cfg.unl && LL.cfg.unl[id]));
+const isOpen = id => !!(LL.cfg.all || (LL.cfg.unl && LL.cfg.unl[id]) || (LL.CABINET.find(x => x.id === id) || {}).open);
 let snuffRun = null;
 function cabDraw() {
   const L = $('cabList'); L.innerHTML = ''; let n = 0;
@@ -102,14 +102,15 @@ function cabDraw() {
     const b = document.createElement(open && e.url ? 'a' : 'button'); b.className = 'item' + (open ? '' : ' shut');
     b.innerHTML = '<b>' + (open ? e.name : '· · ·') + '</b><small>' + (open ? e.line : e.feat) + '</small>';
     if (open && e.url) { b.href = e.url; b.target = '_blank'; b.rel = 'noopener'; }
-    else if (open) b.addEventListener('click', function () { if (e.id === 'snuff') snuffStart(); else platesShow(); });
+    else if (open) b.addEventListener('click', function () { if (e.video) videoShow(e); else if (e.id === 'snuff') snuffStart(); else platesShow(); });
     else b.disabled = true;
     L.appendChild(b);
   });
   $('cabSub').textContent = n + ' of ' + LL.CABINET.length + ' open. The shut ones say what opens them.';
 }
+function videoShow(e) { $('snuff').hidden = true; snuffRun = null; const P = $('plates'); P.hidden = true; const B = $('plateBig'); B.hidden = false; B.innerHTML = '<video controls playsinline preload="metadata" style="width:100%;border:1px solid var(--gold)" src="' + e.video + '"></video><p>' + e.name + '. ' + e.line + '</p>'; B.scrollIntoView({ block: 'nearest' }); }
 function platesShow() {
-  const P = $('plates'); $('snuff').hidden = true; P.hidden = false; $('plateBig').hidden = true; P.innerHTML = '';
+  const P = $('plates'); $('snuff').hidden = true; P.hidden = false; $('plateBig').hidden = true; $('plateBig').innerHTML = '<img alt=""><p></p>'; P.innerHTML = '';
   LL.PLATES.forEach(function (pl) { const b = document.createElement('button'), im = document.createElement('img'); im.loading = 'lazy'; im.src = pl.f; im.alt = pl.name; b.title = pl.name; b.appendChild(im);
     b.addEventListener('click', function () { const B = $('plateBig'); B.hidden = false; B.querySelector('img').src = pl.f; B.querySelector('img').alt = pl.name; B.querySelector('p').textContent = pl.name + '. ' + pl.line; B.scrollIntoView({ block: 'nearest' }); }); P.appendChild(b); });
 }
