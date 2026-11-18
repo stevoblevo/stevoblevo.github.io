@@ -402,6 +402,23 @@ function buildPools() {
 
 /* ---------- per-match models ---------- */
 function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissive: em ? col : 0x000000, emissiveIntensity: em || 0 }); m.userData.lk = true; return m; }
+/* PAPER HEROES. The valley is paper, so a hero can be a paper cutout: four painted views on one sheet (front, left
+   side, back, three-quarter), made by tools/sheet.py from a turnaround drawing. The cutout always turns its face to the
+   camera and shows the view that matches where the camera stands, mirrored for the other side. A hero with no sheet,
+   or whose sheet fails to load, keeps the built shapes below. Add a hero by adding a line here. */
+const PAPER = { dora: { src: 'art/heroes/dora.png', h: 2.45 } };
+const paperTex = {}, PAPER_FLIP = -1;
+function paperFor(g, id) {
+  const P = PAPER[id]; if (!P || R.noPaper) return;
+  const put = function (base) {
+    const tex = base.clone(); tex.needsUpdate = true; tex.repeat.set(0.25, 1);
+    const mt = new T.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.45, side: T.DoubleSide }); mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
+    const pl = new T.Mesh(new T.PlaneGeometry(P.h * 0.55, P.h), mt); pl.position.y = P.h / 2; g.add(pl);
+    g.paper = pl; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
+  };
+  if (paperTex[id]) { put(paperTex[id]); return; }
+  new T.TextureLoader().load(P.src, function (t) { t.minFilter = T.LinearFilter; t.generateMipmaps = false; paperTex[id] = t; if (g.parent) put(t); }, undefined, function () {});
+}
 function heroModel(h) {
   const d = h.def, g = new T.Group(), body = new T.Group(); g.add(body);
   const skin = hm(0xe8c4a0), dark = hm(0x2b1b2f), tc = SRC_TEAM[h.team];
@@ -444,7 +461,7 @@ function heroModel(h) {
   const shield = new T.Mesh(new T.SphereGeometry(1.25, 12, 8), new T.MeshBasicMaterial({ color: 0xfff0c8, transparent: true, opacity: 0.16, blending: T.AdditiveBlending, depthWrite: false }));
   shield.position.y = 1; shield.visible = false; g.add(shield);
   g.body = body; g.legL = legL; g.legR = legR; g.arm = arm; g.ring = ring; g.shield = shield; g.phase = 0; g.recoil = 0; g.unit = h;
-  dyn.add(g); return g;
+  dyn.add(g); paperFor(g, d.id); return g;
 }
 let deerT = null;
 function deerTex() {
@@ -799,6 +816,15 @@ R.frame = function (dt, view) {
     if (m.recoil > 0) m.recoil = Math.max(0, m.recoil - dt * 9);
     m.arm.rotation.x = -h.pitch - m.body.rotation.x - m.recoil * 0.25;
     m.arm.position.z = 0.1 - m.recoil * 0.12;
+    if (m.paper) { // face the camera; pick the painted view from the angle between the hero's facing and the camera
+      const toCam = Math.atan2(camera.position.x - h.x, camera.position.z - h.z); let d = toCam - h.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
+      const ad = Math.abs(d), v = ad < 0.5 ? 0 : (ad < 1.2 ? 3 : (ad < 2.2 ? 1 : 2));
+      m.paper.material.map.offset.x = v * 0.25; m.paper.rotation.y = toCam - h.yaw;
+      m.paper.scale.x = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1;
+      m.paper.rotation.z = h.onGround ? Math.sin(m.phase) * 0.07 * Math.min(1, sp / 5) : 0.1; // paper waddle
+      m.paper.rotation.x = h.dashT > 0 || h.zip ? -0.3 : 0;
+      m.paper.position.y = m.paper.geometry.parameters.height / 2 + (h.onGround ? Math.abs(Math.sin(m.phase)) * 0.09 * Math.min(1, sp / 5) : 0);
+    }
     m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
     if (h.slowT > 0 && Math.random() < dt * 8) emit(h.x, h.y + 0.3, h.z, 1, 0x8fb0ff, 1, 0.5, 1, 0);

@@ -170,6 +170,7 @@ LL.PLATES = [
   { f: 'art/concepts/01_gen3_storeybrook.jpg', name: 'Gen 3 · Storeybrook', line: 'The paper theatre. Knight Night and Origami come from here.' },
   { f: 'art/concepts/02_gen4_fifteen_modes.jpg', name: 'Gen 4 · fifteen modes', line: '"Playable Reality Views". This plate is why views became a mechanic in 0.9.' },
   { f: 'art/concepts/03_gen5_afterimage.jpg', name: 'Gen 5 · Afterimage', line: 'The radial toggle and the fifteenth mode. Neither is built yet.' },
+  { f: 'art/concepts/06_livloch_key_art.jpg', name: 'Livloch key art', line: 'The far castle, the Ness by the falls, a fox called Guardian Flow. Most of this is not in the game yet; it is where the game is going.' },
   { f: 'art/concepts/04_gen15_skeptic_noir.jpg', name: 'Gen XV · Skeptic Noir', line: '"Recover the light". Inkblot Noir, the small ones that carry lights, and Ever Fallen come from here.' }
 ];
 })(typeof window !== 'undefined' ? window : globalThis);
