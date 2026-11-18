@@ -11,7 +11,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'match', lean: false, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'match', lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
@@ -38,7 +38,7 @@ function attract() {
 }
 function play(auto) {
   A.init(); A.setVol(cfg.vol); A.ui('ok');
-  W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look, mode: cfg.mode, lean: !auto && cfg.lean });
+  W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look, mode: cfg.mode, lean: !auto && cfg.lean, dream: !auto && cfg.dream }); speed = 1;
   lens0 = W.lens; R.build(W); UI.startHUD(W);
   view.mode = 'play'; view.target = W.player; view.yaw = 0; view.pitch = -0.08; view.zoom = 0;
   state = 'play'; I.play = true; counted = !auto; overT = 0; I.lookX = I.lookY = 0;
@@ -53,7 +53,7 @@ function playerControl(dt) {
   const p = W.player, c = p.ctl, menu = UI.screen !== null;
   info.hot = info.orb = false; info.canZip = false; info.canFold = false;
   if (p.useAI) {
-    if (W.lean) { for (let i = 0; i < 3; i++) if (I.take('ab' + i)) S.call(i); if (I.take('zip')) S.leanFold(); } // Lean Back: Q E F call a thread, T folds
+    if (W.lean) { for (let i = 0; i < 3; i++) if (I.take('ab' + i)) S.call(i); if (I.take('zip')) S.leanFold(); if (I.take('echo')) S.echo(); } // Lean Back: Q E F call a thread, T folds
     view.yaw += U.angDiff(p.yaw, view.yaw) * Math.min(1, dt * 3); view.pitch += (p.pitch * 0.6 - 0.1 - view.pitch) * Math.min(1, dt * 3);
     view.zoom += (0 - view.zoom) * Math.min(1, dt * 8); return;
   }
@@ -109,9 +109,9 @@ function runCoach(dt, p) {
   else if (coach.step === 3) { UI.coach('Shoot the orbs that float up from dead troopers. That is most of your income'); if (coach.t > 9) { coach.step = -1; UI.coach(''); cfg.coached = true; save(); } }
 }
 /* Cabinet feats. Only a person earns them: nothing opens while the valley is just being watched. */
-const worn = {}; let lens0 = 'snow';
+const worn = {}; let lens0 = 'snow', speed = 1;
 function feats(e) {
-  if (W.auto && !W.lean) return;
+  if ((W.auto && !W.lean) || W.dream) return;
   const U_ = UI.unlock;
   if (e.k === 'thiefdown' && e.p) U_('snuff'); else if (e.k === 'relit' && e.recovered) { U_('snuff'); if (e.n >= 10) U_('garden'); }
   else if (e.k === 'fruit' && C.FRUIT_INFO[e.kind].big) U_('peachfall');
@@ -131,13 +131,13 @@ function frame(now) {
     if (I.take('pause') || esc || (UI.screen === 'shop' && I.take('navBack'))) { if (UI.screen === 'shop') UI.toggleShop(false); else pause(); }
     else if (I.take('shop')) UI.toggleShop();
     if (I.take('ink')) toggleInk();
-    if (I.take('view')) nextView();
+    if (I.take('view')) nextView(); if (I.take('echo')) S.echo();
   } else if (state === 'pause') { const esc = I.take('esc') && now - pausedAt > 500; if (I.take('pause') || esc || I.take('navBack')) resume(); }
   UI.nav(I);
   if (state === 'play') {
     playerControl(dt);
     const steps = Math.max(1, Math.ceil(dt * 45)), sd = dt / steps;
-    for (let s = 0; s < steps; s++) S.step(sd);
+    for (let k = 0; k < (W.dream ? speed : 1); k++) for (let s = 0; s < steps; s++) S.step(sd); // Dreamwalk can run faster than life
     const cam = R.cam();
     for (let i = 0; i < W.fx.length; i++) {
       const e = W.fx[i];
@@ -169,7 +169,7 @@ function boot() {
     apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
     look: setLook, ink: toggleInk, view: nextView,
-    call: function (l) { if (state === 'play') S.call(l); }, leanFold: function () { if (state === 'play') S.leanFold(); },
+    call: function (l) { if (state === 'play') S.call(l); }, echo: function () { if (state === 'play') S.echo(); }, fast: function () { speed = speed >= 4 ? 1 : speed * 2; return speed; }, leanFold: function () { if (state === 'play') S.leanFold(); },
     relock: function () { if (state === 'play') I.lock(); },
     autoFire: autoFireOn,
     auto: function () { S.setAuto(!W.auto); counted = false; document.body.classList.toggle('lean', !!W.lean); document.getElementById('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; resume(); },

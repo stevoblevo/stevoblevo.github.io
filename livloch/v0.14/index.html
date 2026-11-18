@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Livloch</title>
+<meta name="description" content="Livloch: a third-person lane war in the Saelion valley. Three threads, two patrons, three heroes a side, one monster in the loch. WebGL, plays on phone, desk and TV.">
+<meta property="og:image" content="https://saelion.co/livloch/art/card.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Livloch key art: a traveller in a straw hat and red scarf above a lantern-lit valley, a castle and a loch monster.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://saelion.co/livloch/art/card.jpg">
+<meta name="theme-color" content="#140f1c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Spectral:ital,wght@0,400;0,600;1,400&family=Zen+Maru+Gothic:wght@400;700&family=Newsreader:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap">
+<style>
+/* Layout: a full-bleed WebGL valley. HUD pins to the corners and bottom centre. Menus are dark parchment panels over the live match. */
+:root {
+  --night: #140f1c;
+  --night-2: #221829;
+  --paper: #f4e8d6;
+  --paper-dim: rgba(var(--ink), 0.72);
+  --ember: #ff7a5c;
+  --ember-deep: #c4403a;
+  --mint: #6fe8c0;
+  --gold: #e9b44c;
+  --veil: rgba(var(--wash), 0.84);
+  --line: rgba(var(--ink), 0.22);
+  --wash: 14, 9, 18;
+  --ink: 244, 232, 214;
+  --shc: #000;
+  --shr: 0, 0, 0;
+  --f-display: "IM Fell English", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-sc: "IM Fell English SC", "IM Fell English", Georgia, serif;
+  --f-body: "Spectral", "Iowan Old Style", Georgia, serif;
+  --sl: max(12px, env(safe-area-inset-left, 0px));
+  --sr: max(12px, env(safe-area-inset-right, 0px));
+  --st: max(8px, env(safe-area-inset-top, 0px));
+  --sb: max(10px, env(safe-area-inset-bottom, 0px));
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; background: var(--night); color: var(--paper); overflow: hidden; font-family: var(--f-body); font-size: 16px; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+#app { position: relative; width: 100%; height: 100%; overflow: hidden; touch-action: none; background: radial-gradient(ellipse at 50% 80%, #3a2233, var(--night) 70%); }
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+button { font: inherit; color: inherit; }
+.btn { font-family: var(--f-sc); font-size: 17px; letter-spacing: 0.05em; padding: 10px 18px; border-radius: 3px; border: 1px solid var(--line); background: rgba(var(--wash), 0.55); color: var(--paper); cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; }
+.btn:hover { background: rgba(var(--ink), 0.12); border-color: rgba(var(--ink), 0.6); }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--ember-deep); border-color: var(--ember-deep); color: #fff6ea; font-size: 20px; padding: 12px 26px; }
+.btn.primary:hover { background: #d24c44; }
+.btn.small { font-size: 14px; padding: 6px 11px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.chip { font-family: var(--f-sc); font-size: 15px; letter-spacing: 0.05em; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(var(--wash), 0.5); color: var(--paper-dim); cursor: pointer; }
+.chip[aria-pressed="true"] { border-color: var(--ember); color: var(--paper); background: rgba(70, 28, 30, 0.75); }
+
+/* ---------- HUD ---------- */
+#hud { position: absolute; inset: 0; pointer-events: none; }
+#hud button { pointer-events: auto; }
+#mini { position: absolute; left: var(--sl); top: var(--st); width: 104px; height: 176px; border: 1px solid var(--line); border-radius: 3px; background: rgba(var(--wash), 0.55); }
+#score { position: absolute; top: var(--st); left: 50%; transform: translateX(-50%); display: flex; align-items: baseline; gap: 12px; padding: 4px 14px; font-family: var(--f-sc); font-size: 17px; letter-spacing: 0.06em; text-shadow: 0 1px 3px var(--shc); background: rgba(var(--wash), 0.45); border-radius: 3px; white-space: nowrap; }
+#score .t0 { color: var(--ember); } #score .t1 { color: var(--mint); }
+#score b { font-family: var(--f-display); font-weight: 400; font-size: 21px; font-variant-numeric: tabular-nums; }
+#clock { font-family: var(--f-display); font-size: 19px; font-variant-numeric: tabular-nums; color: var(--paper); min-width: 3.2em; text-align: center; }
+#topR { position: absolute; right: var(--sr); top: var(--st); display: flex; align-items: center; gap: 8px; }
+#souls { font-family: var(--f-display); font-size: 21px; font-variant-numeric: tabular-nums; color: var(--gold); text-shadow: 0 1px 3px var(--shc); display: inline-flex; align-items: center; gap: 6px; }
+#souls i { width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg); background: radial-gradient(circle at 35% 30%, #fff, var(--gold) 55%, #8a5a1c); box-shadow: 0 0 8px rgba(233, 180, 76, 0.7); }
+#souls.can { animation: can 1.2s infinite; }
+@keyframes can { 50% { color: var(--paper); } }
+#lvl { font-family: var(--f-sc); font-size: 14px; color: var(--paper-dim); text-shadow: 0 1px 3px var(--shc); }
+#feed { position: absolute; right: var(--sr); top: calc(var(--st) + 46px); display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: 46%; }
+#feed p { margin: 0; padding: 3px 9px; font-size: 14px; background: rgba(var(--wash), 0.6); border-radius: 2px; text-align: right; animation: feedIn 0.25s; }
+#feed p b { font-weight: 600; } #feed .t0 { color: var(--ember); } #feed .t1 { color: var(--mint); }
+@keyframes feedIn { from { opacity: 0; transform: translateX(12px); } }
+#banner { position: absolute; left: 50%; top: 19%; transform: translateX(-50%); width: min(90%, 620px); text-align: center; font-family: var(--f-display); font-style: italic; font-size: clamp(20px, 3.4vw, 32px); line-height: 1.2; text-wrap: balance; text-shadow: 0 2px 8px var(--shc), 0 0 24px rgba(var(--shr), 0.6); opacity: 0; transition: opacity 0.4s; }
+#banner.on { opacity: 1; }
+#banner small { display: block; font-family: var(--f-sc); font-style: normal; font-size: 0.55em; letter-spacing: 0.12em; color: var(--paper-dim); margin-top: 4px; }
+#cross { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+#cross i { position: absolute; left: -2px; top: -2px; width: 4px; height: 4px; border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6); }
+#cross u { position: absolute; left: -13px; top: -13px; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(var(--ink), 0.55); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35); transition: transform 0.08s, border-color 0.08s; }
+#cross.hot u { border-color: var(--gold); transform: scale(0.72); }
+#cross.orb u { border-color: #fff; transform: scale(0.6) rotate(45deg); border-radius: 3px; }
+#hitm { position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; opacity: 0; background: linear-gradient(45deg, transparent 44%, #fff 44% 56%, transparent 56%), linear-gradient(-45deg, transparent 44%, #fff 44% 56%, transparent 56%); -webkit-mask: radial-gradient(circle, transparent 4px, #000 5px); mask: radial-gradient(circle, transparent 4px, #000 5px); }
+#hitm.on { animation: hm 0.18s; } #hitm.kill { animation: hm 0.4s; filter: drop-shadow(0 0 3px var(--ember)) saturate(3); }
+@keyframes hm { from { opacity: 1; transform: scale(1.4); } to { opacity: 0; transform: scale(0.9); } }
+#prompt { position: absolute; left: 50%; top: 62%; transform: translateX(-50%); font-family: var(--f-sc); font-size: 15px; letter-spacing: 0.08em; padding: 4px 12px; background: rgba(var(--wash), 0.6); border-radius: 3px; white-space: nowrap; }
+#prompt b { color: var(--gold); font-weight: 400; }
+#nums { position: absolute; inset: 0; overflow: hidden; }
+#nums span { position: absolute; left: 0; top: 0; font-family: var(--f-display); font-size: 18px; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px var(--shc), 0 0 6px rgba(var(--shr), 0.7); will-change: transform, opacity; opacity: 0; }
+#nums .crit { color: var(--gold); font-size: 23px; } #nums .soul { color: var(--gold); font-family: var(--f-sc); font-size: 15px; } #nums .deny { color: #b9b4c0; font-family: var(--f-sc); font-size: 15px; }
+#bottom { position: absolute; left: 50%; bottom: var(--sb); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; width: min(440px, 92%); }
+#stam { display: flex; gap: 4px; } #stam i { width: 22px; height: 5px; border-radius: 2px; background: rgba(var(--ink), 0.2); } #stam i.on { background: var(--paper); }
+#hpWrap { position: relative; width: 100%; height: 20px; border: 1px solid var(--line); border-radius: 3px; background: rgba(var(--wash), 0.7); overflow: hidden; }
+#hpFill { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(var(--ember), var(--ember-deep)); }
+#shFill { position: absolute; inset: 0 auto 0 0; width: 0; background: rgba(255, 240, 200, 0.55); }
+#hpTxt { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px var(--shc); }
+#abil { display: flex; align-items: flex-end; gap: 8px; }
+.ab { position: relative; width: 62px; height: 62px; padding: 0; border-radius: 4px; border: 1px solid var(--line); background: rgba(var(--wash), 0.72); overflow: hidden; cursor: pointer; touch-action: none; }
+.ab b { position: absolute; left: 5px; top: 2px; font-family: var(--f-sc); font-weight: 400; font-size: 14px; color: var(--gold); }
+.ab span { position: absolute; left: 2px; right: 2px; bottom: 4px; font-size: 11px; line-height: 1.05; text-align: center; color: var(--paper-dim); }
+.ab i { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: rgba(var(--wash), 0.78); }
+.ab em { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-display); font-style: normal; font-size: 22px; font-variant-numeric: tabular-nums; }
+.ab.ready { border-color: var(--hc, var(--gold)); box-shadow: inset 0 0 12px -4px var(--hc, var(--gold)); }
+.ab.locked { opacity: 0.45; }
+#ammo { min-width: 78px; text-align: right; font-family: var(--f-display); font-size: 28px; font-variant-numeric: tabular-nums; line-height: 1; text-shadow: 0 1px 3px var(--shc); padding-bottom: 4px; }
+#ammo small { display: block; font-family: var(--f-sc); font-size: 12px; letter-spacing: 0.08em; color: var(--paper-dim); }
+#ammo.rel { color: var(--gold); }
+#dead { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(40, 10, 16, 0.25), rgba(10, 4, 8, 0.7)); text-align: center; }
+#dead h2 { margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: clamp(28px, 5vw, 46px); }
+#dead p { margin: 6px 0 14px; font-family: var(--f-sc); letter-spacing: 0.1em; color: var(--paper-dim); }
+#dead b { color: var(--paper); font-family: var(--f-display); font-size: 1.5em; font-weight: 400; font-variant-numeric: tabular-nums; }
+#vig { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 52%, rgba(196, 40, 40, 0.7)); opacity: 0; transition: opacity 0.2s; }
+#great { position: absolute; left: var(--sl); top: calc(var(--st) + 184px); font-family: var(--f-sc); font-size: 14px; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px; background: rgba(var(--wash), 0.7); border: 1px solid var(--gold); color: var(--gold); font-variant-numeric: tabular-nums; }
+#great.theirs { border-color: var(--mint); color: var(--mint); }
+#buffs { position: absolute; left: 50%; bottom: calc(var(--sb) + 132px); transform: translateX(-50%); font-family: var(--f-sc); font-size: 14px; letter-spacing: 0.05em; padding: 3px 12px; border-radius: 999px; background: rgba(var(--wash), 0.72); border: 1px solid var(--line); white-space: nowrap; font-variant-numeric: tabular-nums; }
+body.touch #buffs { bottom: auto; top: calc(var(--st) + 130px); font-size: 12.5px; }
+#coach { position: absolute; left: 50%; top: 36%; transform: translateX(-50%); width: min(86%, 420px); text-align: center; font-size: 16px; line-height: 1.35; padding: 8px 14px; border-radius: 4px; background: rgba(var(--wash), 0.78); border: 1px solid var(--gold); text-wrap: balance; }
+#autoTag { position: absolute; left: 50%; bottom: calc(var(--sb) + 150px); transform: translateX(-50%); font-family: var(--f-sc); letter-spacing: 0.14em; font-size: 14px; padding: 4px 12px; border: 1px solid var(--gold); color: var(--gold); border-radius: 999px; background: rgba(var(--wash), 0.6); }
+
+/* touch controls */
+#touch { position: absolute; inset: 0; display: none; }
+body.touch #touch { display: block; }
+#stick { position: absolute; width: 112px; height: 112px; margin: -56px 0 0 -56px; border-radius: 50%; border: 1.5px solid rgba(var(--ink), 0.35); background: rgba(var(--wash), 0.25); left: calc(var(--sl) + 78px); bottom: auto; top: calc(100% - 120px - var(--sb)); }
+#stick i { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(var(--ink), 0.5); }
+.tb { position: absolute; border-radius: 50%; border: 1.5px solid rgba(var(--ink), 0.42); background: rgba(var(--wash), 0.5); font-family: var(--f-sc); font-size: 13px; letter-spacing: 0.04em; color: var(--paper); display: grid; place-items: center; padding: 0; touch-action: none; pointer-events: auto; }
+.tb.down { background: rgba(var(--ink), 0.3); }
+#tFire { right: calc(var(--sr) + 10px); bottom: calc(var(--sb) + 78px); width: 88px; height: 88px; border-color: var(--ember); font-size: 16px; }
+#tJump { right: calc(var(--sr) + 108px); bottom: calc(var(--sb) + 34px); width: 62px; height: 62px; }
+#tDash { right: calc(var(--sr) + 116px); bottom: calc(var(--sb) + 106px); width: 54px; height: 54px; }
+#tReload { right: calc(var(--sr) + 180px); bottom: calc(var(--sb) + 20px); width: 46px; height: 46px; font-size: 11px; }
+#tZip { right: calc(var(--sr) + 68px); bottom: calc(var(--sb) + 256px); width: auto; height: 40px; padding: 0 16px; border-radius: 999px; border-color: var(--gold); color: var(--gold); }
+body.touch .ab { position: absolute; width: 56px; height: 56px; border-radius: 50%; }
+body.touch .ab b { display: none; } body.touch .ab span { bottom: auto; top: 50%; transform: translateY(-50%); font-size: 10.5px; color: var(--paper); }
+body.touch #ab0 { right: calc(var(--sr) + 104px); bottom: calc(var(--sb) + 172px); }
+body.touch #ab1 { right: calc(var(--sr) + 40px); bottom: calc(var(--sb) + 184px); }
+body.touch #ab2 { right: var(--sr); bottom: calc(var(--sb) + 248px); }
+body.touch .ab.locked span, body.touch .ab.cd span { visibility: hidden; }
+body.touch #abil { position: static; } body.touch #ammo { position: absolute; right: calc(var(--sr) + 16px); bottom: calc(var(--sb) + 30px); min-width: 0; font-size: 22px; }
+body.touch #bottom { position: static; transform: none; width: auto; }
+body.touch #hpWrap { position: absolute; left: 50%; transform: translateX(-50%); top: calc(var(--st) + 40px); width: min(240px, 42%); height: 16px; }
+body.touch #stam { position: absolute; left: 50%; transform: translateX(-50%); top: calc(var(--st) + 60px); }
+body.touch #prompt { display: none; }
+body.touch #feed { top: calc(var(--st) + 84px); }
+body.touch #autoTag { bottom: auto; top: calc(var(--st) + 76px); }
+body:not(.touch) #tZip { display: none; }
+
+/* ---------- screens ---------- */
+.screen { position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: calc(var(--st) + 14px) var(--sr) calc(var(--sb) + 18px) var(--sl); }
+.panel { width: min(920px, 100%); margin: 0 auto; padding: 20px 22px; background: var(--veil); border: 1px solid var(--line); border-radius: 4px; backdrop-filter: blur(5px); }
+.panel h2 { margin: 0 0 4px; font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: clamp(26px, 4vw, 38px); text-wrap: balance; }
+.panel h3 { margin: 14px 0 6px; font-family: var(--f-sc); font-weight: 400; font-size: 16px; letter-spacing: 0.1em; color: var(--gold); }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sub { margin: 0 0 12px; color: var(--paper-dim); max-width: 62ch; line-height: 1.45; }
+
+#title { background: linear-gradient(100deg, rgba(var(--wash), 0.94) 0%, rgba(var(--wash), 0.8) 40%, rgba(var(--wash), 0.08) 80%), url(art/title.jpg) center / cover no-repeat rgb(var(--wash)); }
+#title .col { width: min(760px, 100%); display: flex; flex-direction: column; gap: 14px; }
+#title h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(54px, 11vw, 112px); line-height: 0.9; letter-spacing: 0.01em; }
+#title h1 em { color: var(--ember); font-style: italic; }
+#title .tag { margin: 0; font-family: var(--f-display); font-style: italic; font-size: clamp(18px, 2.6vw, 24px); color: var(--paper); }
+#heroes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.hero { text-align: left; padding: 12px; border-radius: 4px; border: 1px solid var(--line); background: rgba(var(--wash), 0.66); cursor: pointer; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.hero[aria-pressed="true"] { border-color: var(--hc); background: rgba(46, 26, 36, 0.86); box-shadow: inset 0 0 22px -10px var(--hc); }
+.hero h4 { margin: 0; font-family: var(--f-sc); font-weight: 400; font-size: 20px; letter-spacing: 0.03em; display: flex; align-items: center; gap: 7px; }
+.hero h4 i { width: 10px; height: 10px; border-radius: 50%; background: var(--hc); box-shadow: 0 0 8px var(--hc); flex: none; }
+.hero .ti { font-family: var(--f-display); font-style: italic; font-size: 14px; color: var(--hc); }
+.hero p { margin: 2px 0 4px; font-size: 14px; line-height: 1.35; color: var(--paper-dim); }
+.hero ul { margin: 0; padding: 0; list-style: none; font-size: 13px; line-height: 1.4; color: var(--paper-dim); }
+.hero ul b { font-family: var(--f-sc); font-weight: 400; color: var(--gold); margin-right: 5px; }
+#how { font-size: 14.5px; line-height: 1.5; color: var(--paper-dim); max-width: 68ch; }
+#how p { margin: 0 0 6px; } #how b { color: var(--paper); font-weight: 600; }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; margin: 6px 0 0; font-size: 14px; }
+.keys dt { font-family: var(--f-sc); color: var(--gold); } .keys dd { margin: 0; color: var(--paper-dim); }
+body.touch .k-kbm, body.touch .k-pad, body.pad .k-kbm, body.pad .k-touch, body:not(.touch):not(.pad) .k-touch, body:not(.touch):not(.pad) .k-pad { display: none; }
+#title footer { font-size: 13px; color: var(--paper-dim); } #title footer a { color: var(--paper); }
+#err { color: var(--ember); font-size: 15px; }
+
+#shop .panel { width: min(980px, 100%); }
+#shopHead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+#shopSouls { font-family: var(--f-display); font-size: 26px; color: var(--gold); font-variant-numeric: tabular-nums; }
+#shopCols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 8px; }
+.item { width: 100%; text-align: left; display: grid; grid-template-columns: 1fr auto; gap: 0 10px; padding: 8px 10px; margin-bottom: 6px; border-radius: 3px; border: 1px solid var(--line); background: rgba(var(--wash), 0.6); cursor: pointer; }
+.item b { font-family: var(--f-sc); font-weight: 400; font-size: 16px; } .item small { grid-column: 1; font-size: 13px; color: var(--paper-dim); line-height: 1.3; }
+.item .c { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-family: var(--f-display); font-size: 18px; color: var(--paper-dim); font-variant-numeric: tabular-nums; }
+.item.can { border-color: var(--gold); } .item.can .c { color: var(--gold); }
+.item.own { opacity: 0.55; border-style: dashed; cursor: default; } .item.own .c { color: var(--mint); }
+table.sb { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+table.sb th { font-family: var(--f-sc); font-weight: 400; color: var(--paper-dim); text-align: right; padding: 3px 8px; border-bottom: 1px solid var(--line); }
+table.sb td { padding: 4px 8px; text-align: right; } table.sb th:first-child, table.sb td:first-child { text-align: left; }
+table.sb tr.t0 td:first-child { color: var(--ember); } table.sb tr.t1 td:first-child { color: var(--mint); } table.sb tr.me td { background: rgba(var(--ink), 0.08); }
+.opt { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+.opt label { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; }
+.opt input[type=range] { flex: 1; max-width: 190px; accent-color: var(--ember); }
+.opt input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--ember); }
+#over .panel { text-align: left; }
+#over h2 em { color: var(--gold); }
+
+/* ---------- gold frames, from the concept plate ---------- */
+#mini, #score, .ab, #hpWrap, #hud .btn.small { border-color: var(--gold); outline: 1px solid var(--gold); outline-offset: -4px; }
+#score { padding: 6px 18px; position: absolute; }
+#mini { clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px); }
+body:not(.touch) .ab { clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px); }
+#moons { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); display: flex; gap: 6px; padding-top: 5px; }
+#moons i { position: relative; width: 11px; height: 11px; border-radius: 50%; overflow: hidden; background: var(--gold); box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
+#moons i::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; background: rgb(var(--wash)); transform: translateX(calc(var(--ph, 0) * 105%)); }
+#moons.red i { background: #ff4a4a; box-shadow: 0 0 7px #ff4a4a; }
+body.touch #hpWrap { top: calc(var(--st) + 56px); }
+body.touch #stam { top: calc(var(--st) + 77px); }
+body.touch #feed, body.touch #autoTag { top: calc(var(--st) + 100px); }
+
+/* ---------- looks: each one re-skins the chrome from its kit ---------- */
+body[data-look="ink"] { --night: #0b0a14; --night-2: #15142a; --paper: #ebe6da; --paper-dim: rgba(235, 230, 218, 0.74); --ember: #ffb347; --ember-deep: #a8641a; --mint: #a78bff; --gold: #d9824a; --wash: 10, 9, 18; --ink: 235, 230, 218; }
+body[data-look="snow"] { --night: #1b1840; --night-2: #2a2560; --paper: #f6ecf4; --paper-dim: rgba(246, 236, 244, 0.74); --ember: #ffab4a; --ember-deep: #b5562a; --mint: #a9b8ff; --gold: #f0c060; --wash: 22, 17, 48; --ink: 246, 236, 244; }
+body[data-look="knight"] { --night: #1c2838; --night-2: #2f4a6e; --paper: #f4efe6; --paper-dim: rgba(244, 239, 230, 0.74); --ember: #f0c75e; --ember-deep: #8a6410; --mint: #8fb4e8; --gold: #f0c75e; --wash: 16, 24, 38; --ink: 244, 239, 230; }
+body[data-look="origami"] { --night: #e3eadc; --night-2: #f6f8f3; --paper: #242f3b; --paper-dim: rgba(36, 47, 59, 0.76); --ember: #b8311a; --ember-deep: #9e2a1f; --mint: #2a4c86; --gold: #8c5a2b; --wash: 250, 251, 247; --ink: 36, 47, 59; --shc: #fff; --shr: 255, 255, 255; color-scheme: light;
+  --f-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Trebuchet MS", sans-serif; --f-sc: "Zen Maru Gothic", "Trebuchet MS", sans-serif; --f-body: "Zen Maru Gothic", "Trebuchet MS", sans-serif; }
+body[data-look="origami"] #title h1, body[data-look="origami"] .panel h2, body[data-look="origami"] #banner, body[data-look="origami"] #title .tag, body[data-look="origami"] #dead h2 { font-style: normal; font-weight: 700; }
+body[data-look="origami"] #hpTxt, body[data-look="origami"] #dead { color: #f6f8f3; --shc: #000; }
+body[data-look="origami"] .btn, body[data-look="origami"] .ab, body[data-look="origami"] .hero, body[data-look="origami"] .item, body[data-look="origami"] .panel, body[data-look="origami"] .chip { border-radius: 0; }
+body[data-look="rain"] { --night: #1a0a10; --night-2: #3a0f1a; --paper: #fbe9e2; --paper-dim: rgba(251, 233, 226, 0.74); --ember: #ffc070; --ember-deep: #a8501a; --mint: #6fe0d0; --gold: #ffb090; --wash: 22, 8, 12; --ink: 251, 233, 226; }
+body[data-look="memory"] { --night: #2a2520; --night-2: #4a4036; --paper: #f4ead6; --paper-dim: rgba(244, 234, 214, 0.74); --ember: #e8b060; --ember-deep: #8a6230; --mint: #9ab4c8; --gold: #d9b878; --wash: 36, 31, 26; --ink: 244, 234, 214; }
+body[data-look="memory"] #gl { filter: sepia(0.25); }
+#cabList { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin: 10px 0; }
+#cabList .item { text-align: left; } #cabList .item.shut { opacity: 0.5; } #cabList .item b { display: block; } #cabList .item small { color: var(--paper-dim); }
+#snuff { text-align: center; } #snuffC { width: min(330px, 86vw); height: auto; border: 1px solid var(--gold); touch-action: none; } #snuffT { margin: 6px 0; }
+#plates { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+#plates button { padding: 0; border: 1px solid var(--gold); background: none; cursor: pointer; } #plates img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+#plateBig img { width: 100%; height: auto; border: 1px solid var(--gold); } #plateBig p { font-size: 14px; color: var(--paper-dim); margin: 6px 0; }
+#dreamCard { position: absolute; left: var(--sl); bottom: calc(var(--sb) + 150px); width: min(340px, 78%); padding: 10px 14px; background: rgba(var(--wash), 0.86); border: 1px solid var(--gold); border-radius: 4px; pointer-events: none; }
+#dreamCard small { font-family: var(--f-sc); letter-spacing: 0.12em; font-size: 12px; color: var(--gold); display: block; }
+#dreamCard b { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: 22px; display: block; margin: 2px 0; }
+#dreamCard p { margin: 0; font-size: 14px; line-height: 1.35; color: var(--paper-dim); }
+#callList { display: grid; gap: 6px; margin: 8px 0 12px; } #callList .cr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+#callList .cr span { flex: 1 1 200px; } #callList .cr small { display: block; color: var(--paper-dim); }
+#hud #bEcho:disabled { opacity: 0.4; }
+#keys { position: absolute; left: 12px; bottom: calc(var(--sb, 0px) + 8px); font-size: 12px; color: var(--paper-dim); opacity: 0.8; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+#keys b { color: var(--paper); font-weight: 600; }
+#lean { position: absolute; left: 50%; bottom: calc(var(--sb, 0px) + 14px); transform: translateX(-50%); display: none; gap: 8px; z-index: 6; flex-wrap: wrap; justify-content: center; width: min(560px, 96%); }
+#lean .btn { min-height: 52px; min-width: 58px; padding-left: 10px; padding-right: 10px; }
+#lean .btn[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+#lean .btn:disabled { opacity: 0.35; }
+body.lean #lean { display: flex; }
+body.lean #autoTag, body.lean #touch, body.lean #cross, body.lean #abil, body.lean #stam, body.lean #prompt, body.lean #coach { display: none !important; }
+body.lean #bottom { bottom: calc(var(--sb, 0px) + 76px); }
+body[data-look="glow"] { --night: #0b060c; --night-2: #1a0e1d; --paper: #f3e6da; --paper-dim: rgba(243, 230, 218, 0.72); --ember: #ff4faa; --ember-deep: #a01f66; --mint: #62e6ff; --gold: #ffd64a; --wash: 11, 6, 12; --ink: 243, 230, 218;
+  --f-display: "Newsreader", "Iowan Old Style", Georgia, serif; --f-sc: "DM Mono", ui-monospace, Menlo, monospace; --f-body: "Newsreader", Georgia, serif; }
+body[data-look="glow"] #title h1 { font-weight: 300; font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; font-size: clamp(40px, 8.4vw, 88px); text-shadow: -2px 0 #ff4faa, 2px 0 #62e6ff; }
+body[data-look="glow"] .btn, body[data-look="glow"] .chip, body[data-look="glow"] #score, body[data-look="glow"] .hero h4 { text-transform: uppercase; font-size: 0.86em; }
+body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.22) 2px 3px); }
+
+@media (max-width: 760px) {
+  #heroes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero ul { display: none; }
+  #shopCols { grid-template-columns: minmax(0, 1fr); }
+  .opt { grid-template-columns: minmax(0, 1fr); }
+  #title { background: linear-gradient(rgba(var(--wash), 0.7), rgba(var(--wash), 0.9) 55%), url(art/title.jpg) 62% top / auto 60% no-repeat rgb(var(--wash)); }
+  #mini { width: 84px; height: 142px; }
+  #great { top: calc(var(--st) + 150px); font-size: 12.5px; }
+  #score { font-size: 14px; gap: 8px; padding: 3px 9px; } #score b { font-size: 18px; } #clock { font-size: 16px; }
+  #score .nm { display: none; }
+  #score { top: calc(var(--st) + 42px); }
+  #feed { top: calc(var(--st) + 84px); }
+  body.touch #hpWrap { top: calc(var(--st) + 102px); width: min(230px, 46%); }
+  body.touch #stam { top: calc(var(--st) + 123px); }
+  body.touch #feed, body.touch #autoTag { top: calc(var(--st) + 138px); }
+  #banner { top: 24%; }
+  .panel { padding: 16px 14px; }
+}
+@media (max-height: 460px) {
+  #mini { width: 72px; height: 122px; }
+  #great { top: calc(var(--st) + 130px); }
+  #banner { top: 14%; }
+}
+@media (prefers-reduced-motion: reduce) { #souls.can, #feed p { animation: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl"></canvas>
+
+  <div id="hud" hidden>
+    <div id="vig"></div>
+    <div id="nums"></div>
+    <canvas id="mini" width="208" height="352" aria-label="Map"></canvas>
+    <div id="score"><span class="t0"><span class="nm">Reign </span><b id="k0">0</b></span><span id="clock">0:00</span><span class="t1"><b id="k1">0</b><span class="nm"> Hush</span></span><div id="moons" title="The moons fill until the rain comes down red"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bEcho" title="Replay your last seconds beside you (C)">Echo</button><button class="btn small" id="bInk" title="Change the view (V)">View</button><button class="btn small" id="bShop">Shop</button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
+    <div id="feed"></div>
+    <div id="banner"></div>
+    <div id="cross"><u></u><i></i><div id="hitm"></div></div>
+    <div id="prompt" hidden></div>
+    <div id="keys" hidden><b>B</b> shop · <b>V</b> view · <b>C</b> echo · <b>T</b> thread · <b>Q E F</b> powers · <b>Esc</b> menu, frees the mouse</div>
+    <div id="great" hidden></div>
+    <div id="buffs" hidden></div>
+    <div id="coach" hidden></div>
+    <div id="dreamCard" hidden><small></small><b></b><p></p></div>
+    <div id="autoTag" hidden>Auto · the valley plays itself</div>
+    <div id="lean" role="group" aria-label="Lean Back controls">
+      <button class="btn" id="lCall0" aria-pressed="false">West</button><button class="btn" id="lCall1" aria-pressed="false">Middle</button><button class="btn" id="lCall2" aria-pressed="false">East</button>
+      <button class="btn" id="lFold" disabled>Fold</button><button class="btn" id="lEcho">Echo</button><button class="btn" id="lView">View</button><button class="btn" id="lFast" hidden>1×</button>
+    </div>
+    <div id="touch">
+      <div id="stick"><i></i></div>
+      <button class="tb" id="tFire" data-btn="fire">Fire</button>
+      <button class="tb" id="tJump" data-btn="jump">Jump</button>
+      <button class="tb" id="tDash" data-btn="dash">Dash</button>
+      <button class="tb" id="tReload" data-btn="reload">Load</button>
+      <button class="tb" id="tZip" data-btn="zip" hidden>Ride thread</button>
+    </div>
+    <div id="bottom">
+      <div id="stam"></div>
+      <div id="hpWrap"><div id="hpFill"></div><div id="shFill"></div><span id="hpTxt"></span></div>
+      <div id="abil">
+        <button class="ab" id="ab0" data-btn="ab0"><b>Q</b><span></span><i></i><em></em></button>
+        <button class="ab" id="ab1" data-btn="ab1"><b>E</b><span></span><i></i><em></em></button>
+        <button class="ab" id="ab2" data-btn="ab2"><b>F</b><span></span><i></i><em></em></button>
+        <div id="ammo"><span id="ammoN">0</span><small id="gunN"></small></div>
+      </div>
+    </div>
+    <div id="dead" hidden><div><h2 id="deadH">You came apart.</h2><p>Re-threading in <b id="deadT">0</b></p><button class="btn" id="bDeadShop">Spend souls while you wait</button></div></div>
+  </div>
+
+  <section id="title" class="screen">
+    <div class="col">
+      <h1>Liv<em>loch</em></h1>
+      <p class="tag">Two patrons, three threads, one loch.</p>
+      <p class="sub">The Reign keeps the lanterns lit. The Hush puts them out. Their paper troopers meet on three threads every 24 seconds and cancel each other exactly. That is called a livelock, and it has been going on for some time. You are the part that isn't symmetrical.</p>
+      <div id="heroes" role="group" aria-label="Choose a hero"></div>
+      <div class="row" role="group" aria-label="Difficulty">
+        <button class="chip" data-diff="0" aria-pressed="false">Gentle</button>
+        <button class="chip" data-diff="1" aria-pressed="true">Even</button>
+        <button class="chip" data-diff="2" aria-pressed="false">Cruel</button>
+        <span id="rec" style="color:var(--paper-dim);font-size:14px"></span>
+      </div>
+      <div class="row" role="group" aria-label="Mode">
+        <button class="chip" data-mode="match" aria-pressed="true">The livelock</button>
+        <button class="chip" data-mode="fallen" aria-pressed="false">Ever Fallen</button>
+        <button class="chip" id="cLean" aria-pressed="false" title="kk: a watch, not a wall">Lean back</button>
+        <button class="chip" id="cDream" aria-pressed="false" title="Watch every hidden system, named as it happens">Dreamwalk</button>
+      </div>
+      <p id="modeLine" style="margin:-6px 0 0;font-size:14px;color:var(--paper-dim)"></p>
+      <div class="row" id="looks" role="group" aria-label="Look"></div>
+      <p id="lookLine" style="margin:-6px 0 0;font-size:14px;color:var(--paper-dim)"></p>
+      <div class="row">
+        <button class="btn primary" id="bPlay">Walk in</button>
+        <button class="btn" id="bWatch">Watch it run</button>
+        <button class="btn" id="bFull">Full screen</button>
+        <button class="btn" id="bCab" hidden>Cabinet</button>
+      </div>
+      <p id="err" hidden></p>
+      <div id="how">
+        <p><b>Souls.</b> Troopers drop a soul when they die. Half is yours on the spot; the other half floats up as an orb. Shoot your own orbs to secure them. Shoot theirs to deny them.</p>
+        <p><b>Structures.</b> Each thread has a guardian, then a warden. They shrug off most damage unless your troopers are there. Drop one warden and the patron opens.</p>
+        <p><b>The loch.</b> Three minutes in, the Ness surfaces between the Middle and East threads. It spits, it slams, and whoever lands the last hit gives their whole side the Greatness for 90 seconds.</p>
+        <p><b>The Hush.</b> It has no heroes. It has hollows that walk the threads, and small ones that take what is lit and run for the gate. Every five minutes the rain comes down red.</p>
+        <p><b>Views.</b> You can change how you look at the valley. Some things are only there in one light. Before the red rain the valley has a mood, and one view answers it. Two views cost something to wear.</p>
+        <p><b>Ever Fallen.</b> The valley after the Hush has won. Nothing of theirs can be hurt. Your houses are dark. Every small one you put down gives a light back for a while. You will fall; the clock says when.</p>
+        <p><b>Lean back.</b> Your hero plays itself. You keep three things: the view, which thread to stand on, and the fold. One thumb is enough.</p>
+        <p><b>Echo.</b> The valley keeps your last few seconds. Ask for them back and you fight beside yourself for a moment.</p>
+        <p><b>Dreamwalk.</b> Sit back and be shown: the valley plays itself and names each hidden thing as it happens. At the end it asks what you would keep.</p>
+        <p><b>Fruit.</b> Things grow off the threads: lemons, rose hips, Verde Limón. Some are worth the walk. One is big.</p>
+        <p><b>Paper.</b> The valley is paper. Paper folds. Dora is the first of its people to be painted rather than built.</p>
+        <p><b>Threads.</b> Stand on a thread on your side and ride it to the front. It reaches further as you push.</p>
+        <dl class="keys k-kbm"><dt>WASD · mouse</dt><dd>move and aim (click the valley to capture the mouse)</dd><dt>Click · right click</dt><dd>fire · zoom</dd><dt>Space · Shift</dt><dd>jump, double jump · dash</dd><dt>Q E F · R</dt><dd>abilities · reload</dd><dt>T · B · V · Esc</dt><dd>ride thread · shop · change the view · pause</dd></dl>
+        <dl class="keys k-touch"><dt>Left thumb</dt><dd>move</dd><dt>Right thumb</dt><dd>drag to aim; your gun fires on its own when the ring is on a target</dd><dt>Buttons</dt><dd>fire, jump, dash, three abilities, ride thread when it shows</dd></dl>
+        <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
+      </div>
+      <footer>Livloch 0.14 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+    </div>
+  </section>
+
+  <section id="shop" class="screen" hidden>
+    <div class="panel">
+      <div id="shopHead"><h2>The stall</h2><div class="row"><span id="shopSouls">0</span><button class="btn" id="bShopClose">Back to it</button></div></div>
+      <p class="sub">The valley does not wait while you browse.</p>
+      <div id="shopCols"></div>
+    </div>
+  </section>
+
+  <section id="pause" class="screen" hidden>
+    <div class="panel">
+      <h2>Held</h2>
+      <p class="sub">Everything is exactly where you left it.</p>
+      <div class="row"><button class="btn primary" id="bResume">Carry on</button><button class="btn" id="bAuto" aria-pressed="false">Let it play itself</button><button class="btn" id="bFull2">Full screen</button><button class="btn" id="bQuit">Leave the valley</button></div>
+      <h3>Score</h3>
+      <div id="sbPause"></div>
+      <h3>Look</h3>
+      <div class="row" id="looks2" role="group" aria-label="Look"></div>
+      <h3 id="hSet">Settings</h3>
+      <div class="opt">
+        <label for="oSens">Look speed <input type="range" id="oSens" min="0.3" max="2.5" step="0.05" value="1"></label>
+        <label for="oVol">Volume <input type="range" id="oVol" min="0" max="1" step="0.05" value="0.6"></label>
+        <label for="oInv">Invert look up/down <input type="checkbox" id="oInv"></label>
+        <label for="oAuto">Fire by itself when on target <input type="checkbox" id="oAuto"></label>
+        <label for="oAssist">Aim help (touch and controller) <input type="checkbox" id="oAssist"></label>
+        <label for="oLow">Lighter graphics <input type="checkbox" id="oLow"></label>
+        <label for="oAll" id="lAll" hidden>Cabinet: everything open <input type="checkbox" id="oAll"></label>
+      </div>
+    </div>
+  </section>
+
+  <section id="cab" class="screen" hidden>
+    <div class="panel">
+      <div id="shopHead"><h2>The cabinet</h2><div class="row"><button class="btn" id="bCabClose">Shut it</button></div></div>
+      <p class="sub" id="cabSub"></p>
+      <div id="cabList"></div>
+      <div id="snuff" hidden><canvas id="snuffC" width="330" height="330" aria-label="Snuff, a small game"></canvas><p id="snuffT"></p></div>
+      <div id="plates" hidden></div>
+      <div id="plateBig" hidden><img alt=""><p></p></div>
+    </div>
+  </section>
+
+  <section id="over" class="screen" hidden>
+    <div class="panel">
+      <h2 id="overH"></h2>
+      <p class="sub" id="overP"></p>
+      <div id="calls" hidden><h3>Your calls</h3><p class="sub">Each hidden system the walk showed you. Keep it, change it, or cut it. Then copy the list and send it.</p><div id="callList"></div><div class="row"><button class="btn" id="bCopyCalls">Copy my calls</button><span id="copyNote" style="color:var(--paper-dim);font-size:14px"></span></div></div>
+      <div id="sbOver"></div>
+      <div class="row" style="margin-top:14px"><button class="btn primary" id="bAgain">Again</button><button class="btn" id="bTitle">Change hero</button></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/input.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

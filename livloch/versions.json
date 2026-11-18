@@ -1,7 +1,13 @@
 {
-  "current": "0.12",
+  "current": "0.14",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.14",
+      "path": "v0.14/",
+      "source": "release/0.14",
+      "note": "Echo (replay your last seconds beside you), Dreamwalk (a self-playing tour of every hidden system), Anna painted"
+    },
     {
       "v": "0.12",
       "path": "v0.12/",

@@ -55,6 +55,8 @@ var C = LL.C = {
     { lens: 'lantern', line: 'Old gold. The first valley, before the snow.' }
   ],
   /* Ever Fallen: the valley is already lost. LIT_T is how long a recovered light holds; the rain comes twice as often. */
+  /* Echo: your last few seconds, replayed beside you. ECHO_T seconds normally, ECHO_MEM in the Memory view. */
+  ECHO_T: 6, ECHO_MEM: 10, ECHO_CD: 45, ECHO_CD_MEM: 25, ECHO_DMG: 0.7,
   LIT_T: 80, FALLEN_RED_EVERY: 150,
   RED_WARN: 30, MOOD_GUESSES: 3,
   ULT_LEVEL: 3, MAX_ITEMS: 15

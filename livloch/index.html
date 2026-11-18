@@ -228,6 +228,13 @@ body[data-look="memory"] #gl { filter: sepia(0.25); }
 #plates { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
 #plates button { padding: 0; border: 1px solid var(--gold); background: none; cursor: pointer; } #plates img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
 #plateBig img { width: 100%; height: auto; border: 1px solid var(--gold); } #plateBig p { font-size: 14px; color: var(--paper-dim); margin: 6px 0; }
+#dreamCard { position: absolute; left: var(--sl); bottom: calc(var(--sb) + 150px); width: min(340px, 78%); padding: 10px 14px; background: rgba(var(--wash), 0.86); border: 1px solid var(--gold); border-radius: 4px; pointer-events: none; }
+#dreamCard small { font-family: var(--f-sc); letter-spacing: 0.12em; font-size: 12px; color: var(--gold); display: block; }
+#dreamCard b { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: 22px; display: block; margin: 2px 0; }
+#dreamCard p { margin: 0; font-size: 14px; line-height: 1.35; color: var(--paper-dim); }
+#callList { display: grid; gap: 6px; margin: 8px 0 12px; } #callList .cr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+#callList .cr span { flex: 1 1 200px; } #callList .cr small { display: block; color: var(--paper-dim); }
+#hud #bEcho:disabled { opacity: 0.4; }
 #keys { position: absolute; left: 12px; bottom: calc(var(--sb, 0px) + 8px); font-size: 12px; color: var(--paper-dim); opacity: 0.8; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
 #keys b { color: var(--paper); font-weight: 600; }
 #lean { position: absolute; left: 50%; bottom: calc(var(--sb, 0px) + 14px); transform: translateX(-50%); display: none; gap: 8px; z-index: 6; flex-wrap: wrap; justify-content: center; width: min(560px, 96%); }
@@ -278,19 +285,20 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="nums"></div>
     <canvas id="mini" width="208" height="352" aria-label="Map"></canvas>
     <div id="score"><span class="t0"><span class="nm">Reign </span><b id="k0">0</b></span><span id="clock">0:00</span><span class="t1"><b id="k1">0</b><span class="nm"> Hush</span></span><div id="moons" title="The moons fill until the rain comes down red"><i></i><i></i><i></i><i></i><i></i></div></div>
-    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bInk" title="Change the view (V)">View</button><button class="btn small" id="bShop">Shop</button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
+    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bEcho" title="Replay your last seconds beside you (C)">Echo</button><button class="btn small" id="bInk" title="Change the view (V)">View</button><button class="btn small" id="bShop">Shop</button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
     <div id="feed"></div>
     <div id="banner"></div>
     <div id="cross"><u></u><i></i><div id="hitm"></div></div>
     <div id="prompt" hidden></div>
-    <div id="keys" hidden><b>B</b> shop · <b>V</b> view · <b>T</b> thread · <b>Q E F</b> powers · <b>Esc</b> menu, frees the mouse</div>
+    <div id="keys" hidden><b>B</b> shop · <b>V</b> view · <b>C</b> echo · <b>T</b> thread · <b>Q E F</b> powers · <b>Esc</b> menu, frees the mouse</div>
     <div id="great" hidden></div>
     <div id="buffs" hidden></div>
     <div id="coach" hidden></div>
+    <div id="dreamCard" hidden><small></small><b></b><p></p></div>
     <div id="autoTag" hidden>Auto · the valley plays itself</div>
     <div id="lean" role="group" aria-label="Lean Back controls">
       <button class="btn" id="lCall0" aria-pressed="false">West</button><button class="btn" id="lCall1" aria-pressed="false">Middle</button><button class="btn" id="lCall2" aria-pressed="false">East</button>
-      <button class="btn" id="lFold" disabled>Fold</button><button class="btn" id="lView">View</button>
+      <button class="btn" id="lFold" disabled>Fold</button><button class="btn" id="lEcho">Echo</button><button class="btn" id="lView">View</button><button class="btn" id="lFast" hidden>1×</button>
     </div>
     <div id="touch">
       <div id="stick"><i></i></div>
@@ -329,6 +337,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <button class="chip" data-mode="match" aria-pressed="true">The livelock</button>
         <button class="chip" data-mode="fallen" aria-pressed="false">Ever Fallen</button>
         <button class="chip" id="cLean" aria-pressed="false" title="kk: a watch, not a wall">Lean back</button>
+        <button class="chip" id="cDream" aria-pressed="false" title="Watch every hidden system, named as it happens">Dreamwalk</button>
       </div>
       <p id="modeLine" style="margin:-6px 0 0;font-size:14px;color:var(--paper-dim)"></p>
       <div class="row" id="looks" role="group" aria-label="Look"></div>
@@ -348,6 +357,8 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <p><b>Views.</b> You can change how you look at the valley. Some things are only there in one light. Before the red rain the valley has a mood, and one view answers it. Two views cost something to wear.</p>
         <p><b>Ever Fallen.</b> The valley after the Hush has won. Nothing of theirs can be hurt. Your houses are dark. Every small one you put down gives a light back for a while. You will fall; the clock says when.</p>
         <p><b>Lean back.</b> Your hero plays itself. You keep three things: the view, which thread to stand on, and the fold. One thumb is enough.</p>
+        <p><b>Echo.</b> The valley keeps your last few seconds. Ask for them back and you fight beside yourself for a moment.</p>
+        <p><b>Dreamwalk.</b> Sit back and be shown: the valley plays itself and names each hidden thing as it happens. At the end it asks what you would keep.</p>
         <p><b>Fruit.</b> Things grow off the threads: lemons, rose hips, Verde Limón. Some are worth the walk. One is big.</p>
         <p><b>Paper.</b> The valley is paper. Paper folds. Dora is the first of its people to be painted rather than built.</p>
         <p><b>Threads.</b> Stand on a thread on your side and ride it to the front. It reaches further as you push.</p>
@@ -355,7 +366,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-touch"><dt>Left thumb</dt><dd>move</dd><dt>Right thumb</dt><dd>drag to aim; your gun fires on its own when the ring is on a target</dd><dt>Buttons</dt><dd>fire, jump, dash, three abilities, ride thread when it shows</dd></dl>
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
-      <footer>Livloch 0.12 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <footer>Livloch 0.14 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
     </div>
   </section>
 
@@ -404,6 +415,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div class="panel">
       <h2 id="overH"></h2>
       <p class="sub" id="overP"></p>
+      <div id="calls" hidden><h3>Your calls</h3><p class="sub">Each hidden system the walk showed you. Keep it, change it, or cut it. Then copy the list and send it.</p><div id="callList"></div><div class="row"><button class="btn" id="bCopyCalls">Copy my calls</button><span id="copyNote" style="color:var(--paper-dim);font-size:14px"></span></div></div>
       <div id="sbOver"></div>
       <div class="row" style="margin-top:14px"><button class="btn primary" id="bAgain">Again</button><button class="btn" id="bTitle">Change hero</button></div>
     </div>
