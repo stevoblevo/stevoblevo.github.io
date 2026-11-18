@@ -1,7 +1,13 @@
 {
-  "current": "0.17",
+  "current": "0.18",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.18",
+      "path": "v0.18/",
+      "source": "release/0.18",
+      "note": "The valley is painted: all four heroes and the Reign houses; arms swing and aim; concept videos in the Cabinet"
+    },
     {
       "v": "0.17",
       "path": "v0.17/",

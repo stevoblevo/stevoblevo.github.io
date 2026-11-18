@@ -188,6 +188,8 @@ LL.WORLDS = [
   { name: 'The Peachfall', url: 'https://stevoblevo.github.io/peachfall/' }
 ];
 LL.CABINET = [
+  { id: 'animatic', name: 'The animatic', open: true, video: 'art/video/animatic.mp4', line: 'Three threads. One stalemate. Eighteen seconds.' },
+  { id: 'trailer', name: 'The concept trailer', open: true, video: 'art/video/trailer.mp4', line: 'The valley as a paper diorama. Fifteen seconds.' },
   { id: 'plates', name: 'The plates', feat: 'Answer one mood', line: 'The concept art this valley was drawn from.' },
   { id: 'snuff', name: 'Snuff', feat: 'Catch a small one yourself, or recover a light', line: 'Nine houses, thirty seconds, one thumb.' },
   { id: 'kk', name: 'kk', feat: 'Sit through a whole match leaning back', line: 'A watch, not a wall.', url: 'https://saelion.co/kk' },
@@ -205,6 +207,10 @@ LL.PLATES = [
   { f: 'art/concepts/01_gen3_storeybrook.jpg', name: 'Gen 3 · Storeybrook', line: 'The paper theatre. Knight Night and Origami come from here.' },
   { f: 'art/concepts/02_gen4_fifteen_modes.jpg', name: 'Gen 4 · fifteen modes', line: '"Playable Reality Views". This plate is why views became a mechanic in 0.9.' },
   { f: 'art/concepts/03_gen5_afterimage.jpg', name: 'Gen 5 · Afterimage', line: 'The radial toggle and the fifteenth mode. Neither is built yet.' },
+  { f: 'art/concepts/07_a_living_world_poster.jpg', name: 'A Living World', line: 'The poster. It lists what the game is meant to hold: the views, Guardian Flow, Depthfield, Skein Memory, Ever Fallen, Lean Back.' },
+  { f: 'art/concepts/08_threads_of_destiny.jpg', name: 'Threads of Destiny', line: 'Three moments: meeting the fox, the red rain, the Ness. All four heroes stand together in the last one.' },
+  { f: 'art/concepts/09_lanterns_hush_and_the_ness.jpg', name: 'Lanterns, Hush and the Ness', line: 'The same three moments again. The small one carrying a lantern is the thief the game already has.' },
+  { f: 'art/concepts/10_crown_and_knight.jpg', name: 'The crown and the knight', line: 'A girl in a crown and a small knight with blue eyes, on a balcony under a pink moon.' },
   { f: 'art/concepts/06_livloch_key_art.jpg', name: 'Livloch key art', line: 'The far castle, the Ness by the falls, a fox called Guardian Flow. Most of this is not in the game yet; it is where the game is going.' },
   { f: 'art/concepts/04_gen15_skeptic_noir.jpg', name: 'Gen XV · Skeptic Noir', line: '"Recover the light". Inkblot Noir, the small ones that carry lights, and Ever Fallen come from here.' }
 ];

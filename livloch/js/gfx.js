@@ -425,6 +425,7 @@ function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissiv
      backdrop one wide painting (jpg)            the far ridge and sky line, wrapped round the valley
    To switch one on, add a line:  FLATS.house = { src: 'art/flats/house.png', cells: 3 };  See art/flats/README.md. */
 const FLATS = R.FLATS = {};
+FLATS.house = { src: 'art/flats/house.png', cells: 3 };
 R.info = function () { // for the frame-rate report
   let gpu = 'unknown'; try { const gl = renderer.getContext(), x = gl.getExtension('WEBGL_debug_renderer_info'); gpu = x ? gl.getParameter(x.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); } catch (e) {}
   return { gpu: String(gpu).slice(0, 90), w: R.w, h: R.h, pr: renderer ? renderer.getPixelRatio() : 1, low: !!R.low, look: LK.name, gl2: !!(renderer && renderer.capabilities.isWebGL2) };
@@ -473,7 +474,12 @@ Boards.prototype.end = function () { if (!this.m) return; for (let i = 0; i < th
    side, back, three-quarter), made by tools/sheet.py from a turnaround drawing. The cutout always turns its face to the
    camera and shows the view that matches where the camera stands, mirrored for the other side. A hero with no sheet,
    or whose sheet fails to load, keeps the built shapes below. Add a hero by adding a line here. */
-const PAPER = R.PAPER = { dora: { src: 'art/heroes/dora.png', h: 2.45, hem: 0.2 }, anna: { src: 'art/heroes/anna.png', h: 2.4, hem: 0.3 } }; // next: myra, skein, same shape of line
+const PAPER = R.PAPER = { // h: height in metres. hem: where the legs start (0 to 1). motion: the seven-figure sheet. arms: shoulder height, half shoulder width, arm length, all as fractions of h
+  dora: { src: 'art/heroes/dora.png', h: 2.45, hem: 0.2, motion: 'art/heroes/dora-motion.png' }, // her cloak hides her arms; they appear only when she aims
+  anna: { src: 'art/heroes/anna.png', h: 2.4, hem: 0.3, motion: 'art/heroes/anna-motion.png', arms: { y: 0.685, x: 0.105, len: 0.367 } },
+  myra: { src: 'art/heroes/myra.png', h: 1.95, hem: 0.22, motion: 'art/heroes/myra-motion.png', arms: { y: 0.6, x: 0.19, len: 0.356 } },
+  skein: { src: 'art/heroes/skein.png', h: 2.2, hem: 0.27, motion: 'art/heroes/skein-motion.png', arms: { y: 0.66, x: 0.13, len: 0.352 } }
+};
 const paperTex = {}, PAPER_FLIP = -1;
 function paperFor(g, id) {
   const P = PAPER[id]; if (!P || R.noPaper) return;
@@ -484,13 +490,22 @@ function paperFor(g, id) {
        the hem. Front, back and three-quarter views use a left and a right leg; the side view uses the whole leg strip twice,
        one swinging forward and one back. P.hem is how far up the figure the hem is (0 to 1). */
     const wd = P.h * (base.image.width / 4) / base.image.height, hf = P.hem || 0.2, pp = new T.Group();
-    const part = function (u0, u1, v0, v1) {
+    const part = function (u0, u1, v0, v1, m2) {
       const gq = new T.PlaneGeometry(wd * (u1 - u0), P.h * (v1 - v0)); gq.translate(((u0 + u1) / 2 - 0.5) * wd, -P.h * (v1 - v0) / 2, 0);
       const uv = gq.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, u0 + uv.getX(k) * (u1 - u0), v0 + uv.getY(k) * (v1 - v0));
-      const ms = new T.Mesh(gq, mt); pp.add(ms); return ms;
+      const ms = new T.Mesh(gq, m2 || mt); pp.add(ms); return ms;
     };
     const P_ = pp.parts = { body: part(0, 1, Math.max(0, hf - 0.035), 1), legL: part(0, 0.5, 0, hf), legR: part(0.5, 1, 0, hf), legA: part(0, 1, 0, hf), legB: part(0, 1, 0, hf) };
     P_.body.position.set(0, P.h, 0.03); P_.legB.position.z = -0.02; pp.material = mt; pp.h = P.h; pp.hem = hf * P.h; g.add(pp);
+    /* The motion sheet, when there is one: bodies drawn without arms (front, side, back), one arm from the side and one from
+       the front, and an aiming pose from behind and from the side. The body pieces switch to this picture for those views;
+       the arms hang from the shoulders and swing; while the hero is firing the aiming pose is shown. */
+    if (P.motion) new T.TextureLoader().load(P.motion, function (t2) {
+      t2.minFilter = T.LinearFilter; t2.generateMipmaps = false; t2.repeat.set(1 / 7, 1);
+      pp.mat1 = mt; pp.mat2 = flatMat(t2); pp.r2 = ((t2.image.width / 7) / t2.image.height * P.h) / wd; // how much wider a motion cell is than a turnaround cell
+      if (P.arms) { const ta = t2.clone(); ta.needsUpdate = true; ta.repeat.set(1 / 7, 1); const ma = flatMat(ta); pp.matA = ma;
+        P_.armL = part(0, 1, 1 - P.arms.len, 1, ma); P_.armR = part(0, 1, 1 - P.arms.len, 1, ma); P_.armR.scale.x = -1; }
+    }, undefined, function () {});
     g.paper = pp; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
   };
   if (paperTex[id]) { put(paperTex[id]); return; }
@@ -592,7 +607,8 @@ function structModel(s) {
   const ward = new T.Mesh(new T.CylinderGeometry(s.r + 1.4, s.r + 1.4, s.h + 1, 14, 1, true), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.13, side: T.DoubleSide, blending: T.AdditiveBlending, depthWrite: false }));
   ward.position.y = (s.h + 1) / 2; g.add(ward);
   g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.paper = paper; g.position.set(s.x, 0, s.z); dyn.add(g);
-  standFlat(lit, s.team === 0 ? 'house' : 'tower', s.kind === 'patron' ? 2 : (s.kind === 'warden' ? 1 : 0), s.kind === 'patron' ? 14 : (s.kind === 'warden' ? 11.5 : 9.5), function () { return lit.children.filter(function (c) { return c !== g.glow; }).concat(g.children.filter(function (c) { return c.isMesh && c !== ward; })); });
+  standFlat(lit, s.team === 0 ? 'house' : 'tower', s.kind === 'patron' ? 2 : (s.kind === 'warden' ? 1 : 0), 14.5, // the sheet draws the three sizes to scale in equal cells, so every cell gets the same height
+    function () { return lit.children.filter(function (c) { return c !== g.glow; }).concat(g.children.filter(function (c) { return c.isMesh && c !== ward; })); });
   return g;
 }
 function strayModel(s) {
@@ -910,9 +926,20 @@ R.frame = function (dt, view) {
       const toCam = Math.atan2(camera.position.x - h.x, camera.position.z - h.z); let d = toCam - h.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
       const ad = Math.abs(d), v = ad < 0.5 ? 0 : (ad < 1.2 ? 3 : (ad < 2.2 ? 1 : 2));
       const pp = m.paper, P_ = pp.parts, mv = Math.min(1, sp / 5), sw = h.onGround ? Math.sin(m.phase) * mv : 0.7, side = v === 1;
-      pp.material.map.offset.x = v * 0.25; pp.rotation.y = toCam - h.yaw;
-      pp.scale.x = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1;
+      const flip = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1, firing = W.t - h.lastShotT < 0.32;
+      // which picture and which cell: the motion sheet for front, side and back once it has loaded; the aiming pose while firing
+      let useM = !!pp.mat2 && v !== 3, cell = v, wide = 1;
+      if (useM) { cell = v === 0 ? 0 : (v === 1 ? 1 : 2); if (firing && v === 2) cell = 5; else if (firing && v === 1) cell = 6; wide = pp.r2; }
+      const mat = useM ? pp.mat2 : (pp.mat1 || pp.material);
+      if (P_.body.material !== mat) { P_.body.material = P_.legL.material = P_.legR.material = P_.legA.material = P_.legB.material = mat; }
+      mat.map.offset.x = useM ? cell / 7 : v * 0.25; pp.rotation.y = toCam - h.yaw;
+      pp.scale.x = flip * wide;
       pp.rotation.x = h.dashT > 0 || h.zip ? -0.3 : 0;
+      if (P_.armL) { const A = PAPER[h.def.id].arms, show = useM && cell < 3, sy = A.y * pp.h, sx = A.x * pp.h / wide;
+        P_.armL.visible = show; P_.armR.visible = show && !side;
+        if (show) { pp.matA.map.offset.x = (side ? 3 : 4) / 7;
+          if (side) { P_.armL.position.set(0, sy, 0.05); P_.armL.rotation.z = -sw * 0.5; }
+          else { P_.armL.position.set(-sx, sy + Math.max(0, -sw) * 0.03, -0.02); P_.armR.position.set(sx, sy + Math.max(0, sw) * 0.03, -0.02); P_.armL.rotation.z = -0.05 - sw * 0.06; P_.armR.rotation.z = 0.05 - sw * 0.06; } } }
       // walking: seen from the side the legs scissor; seen from front or back they lift in turn
       P_.legL.visible = P_.legR.visible = !side; P_.legA.visible = P_.legB.visible = side;
       if (side) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = sw * 0.62; P_.legB.rotation.z = -sw * 0.62; }
