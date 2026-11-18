@@ -1,7 +1,13 @@
 {
-  "current": "0.11",
+  "current": "0.12",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.12",
+      "path": "v0.12/",
+      "source": "release/0.12",
+      "note": "Each view is drawn its own way: ink, origami, bedtime book, zine neon, lantern, ledger, wet glass"
+    },
     {
       "v": "0.11",
       "path": "v0.11/",
