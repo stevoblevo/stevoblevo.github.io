@@ -7,6 +7,8 @@
      the last lantern stood and how many lights came back.
    - LEAN BACK is a modifier on either mode: the player's hero plays itself, and the player keeps only the hands that
      were never about aim: the view (S.setLens), which thread to stand on (S.call), and the fold (S.leanFold).
+   - FIRST RAIN (mode 'short') is the match worth finishing in one sitting: it ends when the first red rain ends, about
+     six minutes in, and scores five stars (LL.STARS). The long match is unchanged.
    - ECHO paints with time. The model keeps the player's last ten seconds (where they stood, every shot). S.echo()
      replays the last C.ECHO_T of them as a second self that fires the same shots from the same places at C.ECHO_DMG
      strength. It is the plainest way to break the symmetry: outnumber the lane with yourself. In the Memory view the
@@ -63,6 +65,14 @@ function goalSee(e) {
   if (g.pay && W.player) give(W.player, g.pay);
   W.fx.push({ k: 'goal', id: id, pay: g.pay, line: g.line });
 }
+function shortEnd() {
+  const G = W.goals.done, st = {
+    houses: W.structs.every(function (s) { return s.team !== 0 || s.alive; }), mood: W.moodsSolved > 0,
+    guard: W.structs.some(function (s) { return s.team === 1 && s.kind === 'guardian' && !s.alive; }), ness: !!G.ness,
+    goals: Object.keys(G).length >= 6 };
+  W.stars = st; W.over = true; W.winner = 0;
+  fx({ k: 'over', winner: 0, short: true, stars: st, n: LL.STARS.filter(function (x) { return st[x.id]; }).length, t: W.t, moods: W.moodsSolved, dream: W.dream });
+}
 S.goal = function () { if (!W || !W.goals || W.fallen) return null; for (let i = 0; i < LL.GOALS.length; i++) if (!W.goals.done[LL.GOALS[i].id]) return LL.GOALS[i]; return null; };
 const hyp = Math.hypot;
 
@@ -117,7 +127,7 @@ S.newWorld = function (o) {
     units: [], heroes: [], structs: [], troopers: [], strays: [], knots: [],
     projs: [], orbs: [], zones: [], obstacles: [], fx: [], st: [[], []], patron: [null, null],
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
-    goals: { done: {}, orbs: 0 }, coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : 'match', fallen: o.mode === 'fallen', lean: !!o.lean || !!o.dream, dream: !!o.dream, dreamS: { t: 3, moodT: 0, home: o.lens || 'snow', skip: {}, callT: 50 }, rec: [], recT: 0, echo: null, echoCd: 0, echoes: 0, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean || !!o.dream, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
+    goals: { done: {}, orbs: 0 }, coordT: 0, cleanT: 0, mode: o.mode === 'fallen' ? 'fallen' : (o.mode === 'short' ? 'short' : 'match'), short: o.mode === 'short', stars: null, fallen: o.mode === 'fallen', lean: !!o.lean || !!o.dream, dream: !!o.dream, dreamS: { t: 3, moodT: 0, home: o.lens || 'snow', skip: {}, callT: 50 }, rec: [], recT: 0, echo: null, echoCd: 0, echoes: 0, lights: 0, fallN: 0, redEvery: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, auto: !!o.auto || !!o.lean || !!o.dream, tune: o.tune || {}, calm: 0, warned: false, lens: o.lens || 'snow', mood: null, thin: false, moodsSolved: 0, thieves: [], thiefT: 150, red: 0, redNext: o.mode === 'fallen' ? C.FALLEN_RED_EVERY : C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
   buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildFruit(); buildHeroes(o);
   if (W.fallen) for (let i = 0; i < W.structs.length; i++) { const st = W.structs[i]; if (st.team === 0 && st.kind !== 'patron') { st.dark = true; st.darkT = 0; st.litT = 0; } }
@@ -1071,7 +1081,7 @@ function thiefStep(u, dt) {
 }
 function hushStep(dt) {
   // red rain: every five minutes, a thick night
-  if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; W.warned = false; W.thin = false; if (W.tune.recover) W.calm = 20; fx({ k: 'redend' }); } }
+  if (W.red > 0) { W.red -= dt; if (W.red <= 0) { W.red = 0; W.warned = false; W.thin = false; if (W.tune.recover) W.calm = 20; fx({ k: 'redend' }); if (W.short && !W.over) shortEnd(); } }
   else if (!W.warned && W.t >= W.redNext - C.RED_WARN) {
     W.warned = true; let mi = Math.floor(W.rng() * C.MOODS.length);
     W.mood = { i: mi, lens: C.MOODS[mi].lens, guesses: C.MOOD_GUESSES, done: false, solved: false };

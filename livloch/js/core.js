@@ -157,6 +157,15 @@ LL.CATS = ['Gun', 'Body', 'Spirit'];
 /* GOALS. The owner played and said a match was not enticing enough to finish. One small thing to do next is always on
    screen, each pays souls, and together they walk the player through the hidden systems in the order they should be
    found. Any goal completes whenever its thing happens; the screen shows the first one not yet done. */
+/* FIRST RAIN: the short match. Five minutes of build-up, one minute of red rain, then it ends and counts stars.
+   Each star is one of the things worth learning. */
+LL.STARS = [
+  { id: 'houses', line: 'Every house still standing' },
+  { id: 'mood', line: 'Answered the mood' },
+  { id: 'guard', line: 'Took a Hush guardian' },
+  { id: 'ness', line: 'Put the Ness down' },
+  { id: 'goals', line: 'Six goals done' }
+];
 LL.GOALS = [
   { id: 'orbs', line: 'Shoot five of your own orbs', pay: 60 },
   { id: 'thread', line: 'Ride a thread to the front', pay: 40 },

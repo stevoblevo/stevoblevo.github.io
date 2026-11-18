@@ -30,7 +30,7 @@ UI.init = function (handlers) {
     b.setAttribute('aria-pressed', String(+b.getAttribute('data-diff') === cfg.diff));
     b.addEventListener('click', function () { cfg.diff = +b.getAttribute('data-diff'); H.save(); document.querySelectorAll('[data-diff]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); LL.audio.init(); LL.audio.ui(); });
   });
-  const modeLine = function () { $('modeLine').textContent = (cfg.mode === 'fallen' ? 'Ever Fallen: already lost. Hold the last lantern and take the lights back. ' + (cfg.bestT ? 'Best ' + U.fmtTime(cfg.bestT) + ', ' + cfg.bestL + ' lights.' : 'No record yet.') : 'The livelock: three threads, two patrons, one of them yours.') + (cfg.lean ? ' Leaning back: the hero plays itself; you keep the view, the thread and the fold.' : ''); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x.getAttribute('data-mode') === cfg.mode))); $('cLean').setAttribute('aria-pressed', String(!!cfg.lean)); $('cDream').setAttribute('aria-pressed', String(!!cfg.dream)); if (cfg.dream) $('modeLine').textContent += ' Dreamwalk: you will be shown every hidden thing, and asked at the end what to keep.'; $('bPlay').textContent = cfg.dream ? 'Dream' : (cfg.lean ? 'Sit down' : 'Walk in'); };
+  const modeLine = function () { $('modeLine').textContent = (cfg.mode === 'short' ? 'First rain: six minutes, five stars. ' + (cfg.bestStars ? 'Best ' + cfg.bestStars + ' of 5. ' : '') : '') + (cfg.mode === 'short' ? '' : cfg.mode === 'fallen' ? 'Ever Fallen: already lost. Hold the last lantern and take the lights back. ' + (cfg.bestT ? 'Best ' + U.fmtTime(cfg.bestT) + ', ' + cfg.bestL + ' lights.' : 'No record yet.') : 'The livelock: three threads, two patrons, one of them yours.') + (cfg.lean ? ' Leaning back: the hero plays itself; you keep the view, the thread and the fold.' : ''); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x.getAttribute('data-mode') === cfg.mode))); $('cLean').setAttribute('aria-pressed', String(!!cfg.lean)); $('cDream').setAttribute('aria-pressed', String(!!cfg.dream)); if (cfg.dream) $('modeLine').textContent += ' Dreamwalk: you will be shown every hidden thing, and asked at the end what to keep.'; $('bPlay').textContent = cfg.dream ? 'Dream' : (cfg.lean ? 'Sit down' : 'Walk in'); };
   UI.modeLine = modeLine;
   document.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { cfg.mode = b.getAttribute('data-mode'); H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); }); });
   $('cLean').addEventListener('click', function () { cfg.lean = !cfg.lean; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
@@ -157,7 +157,8 @@ UI.startHUD = function (w) {
   nums.forEach(n => { n.life = 0; n.el.style.opacity = 0; });
   document.body.classList.toggle('lean', !!W.lean); dreamSeen = []; dreamQ = []; dreamT = 0; wasMercy = false; $('dreamCard').hidden = true; $('lFast').hidden = !W.dream; $('lFast').textContent = '1×'; $('calls').hidden = true;
   document.querySelector('#score .t0 .nm').textContent = W.fallen ? 'Lights ' : 'Reign '; $('autoTag').textContent = W.lean ? 'Lean back · the view, the thread and the fold are yours' : 'Auto · the valley plays itself';
-  if (W.dream) UI.banner('Dreamwalk.', 'Sit back. Each hidden thing is named the first time it happens. Faster is the last button', 7);
+  if (W.short && !W.dream) UI.banner('First rain.', 'Five minutes until it comes down red. Do the thing under the map', 6);
+  else if (W.dream) UI.banner('Dreamwalk.', 'Sit back. Each hidden thing is named the first time it happens. Faster is the last button', 7);
   else if (W.fallen) UI.banner('The valley is already lost.', 'Hold the last lantern. Every small one put down gives a light back for ' + C.LIT_T + ' seconds', 7);
   else if (W.lean) UI.banner('Sit back.', 'Your hero plays itself. Change the view, call a thread, fold when it lights', 6);
   else UI.banner('The ' + C.LANE_NAME[1] + ' is yours.', 'Your side holds the other two. Shop any time with ' + (LL.input.device === 'kbm' ? 'B' : 'the Shop button') + '.', 5);
@@ -340,6 +341,12 @@ UI.showPause = function (onOff) {
 UI.showOver = function () {
   const win = W.winner === 0, t = U.fmtTime(W.t);
   document.body.classList.remove('lean'); $('calls').hidden = !(W.dream || dreamSeen.length) || !dreamSeen.length; if (dreamSeen.length) { callsDraw(); $('copyNote').textContent = ''; }
+  $('stars').hidden = !W.short;
+  if (W.short && W.stars) { const n = LL.STARS.filter(function (x) { return W.stars[x.id]; }).length, cf = LL.cfg;
+    $('overH').innerHTML = n === 5 ? 'Five stars. <em>The rain found nothing.</em>' : (n >= 3 ? 'The rain has passed. <em>' + n + ' of 5.</em>' : 'The rain has passed. ' + n + ' of 5.');
+    $('overP').textContent = 'First rain, ' + t + '. ' + (n >= (cf.bestStars || 0) && n > 0 ? 'Your best.' : 'Best is ' + (cf.bestStars || 0) + '.') + (n < 5 ? ' The ones you missed are the things worth finding.' : ' Try the livelock next; it does not end by itself.');
+    $('stars').innerHTML = '<div class="big">' + '★'.repeat(n) + '<i>' + '★'.repeat(5 - n) + '</i></div>' + LL.STARS.map(function (x) { return '<p class="' + (W.stars[x.id] ? '' : 'no') + '">' + (W.stars[x.id] ? '★ ' : '· ') + x.line + '</p>'; }).join('');
+    $('sbOver').innerHTML = board(); $('hud').hidden = true; show('over'); return; }
   if (W.fallen) { const cfg = LL.cfg, best = W.t >= (cfg.bestT || 0);
     $('overH').innerHTML = 'You held for <em>' + t + '</em>.';
     $('overP').textContent = 'Lights recovered: ' + W.lights + '. Moods answered: ' + W.moodsSolved + '. ' + (best ? 'That is the longest anyone has held here.' : 'Best is ' + U.fmtTime(cfg.bestT) + '.') + ' The valley was already lost; that was never the question.';
