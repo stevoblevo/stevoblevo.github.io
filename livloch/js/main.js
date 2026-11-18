@@ -1,4 +1,12 @@
-/* LIVELOCK · main: states, the loop, and the human's hands on the hero. */
+/* LIVLOCH · main: states, the loop, and the human's hands on the hero.
+
+   DESIGN
+   - States: title (plate, no sim), play, pause, over. One requestAnimationFrame loop.
+   - Each frame: read input, turn it into hero.ctl for the player, step the sim in slices of at most 1/45 s, hand W.fx
+     to gfx, audio and ui, then draw.
+   - Aim is a ray from the camera through the crosshair; the sim says what it hits. Touch and pad get a gentle pull
+     toward a target near the crosshair, and touch fires by itself when the ring is on something.
+   - Looks, including the Inkblot toggle, are switched here and only here. They never reach the sim. */
 (function () {
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;

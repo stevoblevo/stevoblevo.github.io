@@ -1,4 +1,10 @@
-/* LIVELOCK · input: keyboard and mouse, touch, gamepad, all feeding one state. */
+/* LIVLOCH · input: keyboard and mouse, touch, gamepad, all feeding one state.
+
+   DESIGN
+   - Three devices write the same small state (move stick, look delta, fire, zoom, one-shot edges). main.js reads only that.
+   - The last device touched wins and sets a body class, so the HUD and help text follow the device in hand.
+   - Touch: left 42% of the screen is a floating stick, the rest is look; holding Fire also drags the view.
+   - Mouse look needs pointer lock. If the host frame refuses it, look falls back to raw mouse movement. */
 (function () {
 'use strict';
 const LL = window.LL;

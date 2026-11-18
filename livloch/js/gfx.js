@@ -1,4 +1,17 @@
-/* LIVELOCK · gfx: WebGL scene over the sim. Three.js r128. */
+/* LIVLOCH · gfx: WebGL scene over the sim. Three.js r128.
+
+   DESIGN
+   - Read-only view of sim state. It may draw anything the model knows; it may never decide anything.
+   - Art target is the concept plate (art/title.jpg): folded paper lit by lanterns on a snow night. Everything is
+     flat-shaded primitives on purpose; "paper" is the excuse for low-poly.
+   - Looks: every object is built once in the Lantern colours, then each look's `map` re-colours it by hue bucket. Big
+     surfaces (sky, ground, light, fog) take the look's colours directly. Things whose colour is their meaning are
+     exempt (own / hm / FIXED): heroes, the Ness, fruit, creases, cue colours.
+   - Crowds are InstancedMesh (troopers, hush, bars, projectiles, orbs, cue dashes). Three r128 sizes instanceColor
+     from .count at first use, so initColor() allocates it at capacity. Skipping that made bullets invisible for six versions.
+   - Semiotics, kept across looks: warm = Reign and protected light, cold = Hush, gold = creases and souls, jade = the Ness.
+     In Inkblot Noir: violet = unknown threat, amber = protected light, copper = a connection you can still recover.
+   - Bloom is a hand-rolled bright-pass and blur, off for the light look and for "Lighter graphics". */
 (function () {
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U;
@@ -7,7 +20,7 @@ let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
 let world, dyn, sky, stars;
 let tr = [null, null], hushEyes, trHat, barBg, barFill, projMesh, orbMesh, parts, staticGlow;
-let nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [];
+let nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [], fruitM = [];
 R.reduced = false; try { R.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 let heroM = [], structM = [], strayM = [], knotPool = [], fawnPool = [], zonePool = [], rings = [];
 let shake = 0, camPos = { x: 0, y: 30, z: -60 }, camDir = { x: 0, y: 0, z: 1 }, camDist = 5.4;
@@ -84,7 +97,8 @@ const LOOKS = R.LOOKS = {
 let LK = LOOKS.snow; R.look = LK;
 let tcCache = {};
 function mapC(c) { const hex = c.getHex(); if (hex === SRC_TEAM[0]) c.setHex(LK.team[0]); else if (hex === SRC_TEAM[1]) c.setHex(LK.team[1]); else if (LK.map) LK.map(c); return c; }
-function tc(hex) { let c = tcCache[hex]; if (!c) c = tcCache[hex] = mapC(new T.Color(hex)); return c; }
+const FIXED = { 0xffe14d: 1, 0xe0452c: 1, 0x7ad03a: 1, 0x8fdc50: 1, 0xf0624a: 1 }; // fruit colours read the same in every look
+function tc(hex) { let c = tcCache[hex]; if (!c) c = tcCache[hex] = FIXED[hex] ? new T.Color(hex) : mapC(new T.Color(hex)); return c; }
 function own2(m) { m.userData.lk = true; return m; }
 function own(o) { if (o.material) { o.material.userData.lk = true; o.material.userData.solid = true; } if (o.geometry) o.geometry.userData.lk = true; return o; }
 function applyLook() {
@@ -110,7 +124,7 @@ function applyLook() {
 }
 function construct() {
   if (scene) scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose) o.material.dispose(); });
-  mats = {}; tcCache = {}; cueDash = null; cueRings = []; creaseM = []; heroM = []; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
+  mats = {}; tcCache = {}; fruitM = []; cueDash = null; cueRings = []; creaseM = []; heroM = []; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
   renderer.setClearColor(LK.clear);
   scene = new T.Scene(); scene.fog = new T.Fog(LK.fog[0], LK.fog[1], LK.fog[2]);
   scene.add(new T.HemisphereLight(LK.hemi[0], LK.hemi[1], LK.hemi[2]));
@@ -516,6 +530,22 @@ function buildCreaseArt() {
     creaseM.push({ ridge: ridge, crane: crane, f: 0, cx: cx });
   });
 }
+/* Fruit. Colours are the fruit's own in every look, because the colour is how you tell them apart:
+   yellow lemon = quick feet, red rose hips = mending, green lime = sour shots, and the big lime is simply big. */
+function buildFruitArt() {
+  fruitM.forEach(function (m) { dyn.remove(m); }); fruitM = [];
+  const leaf = hm(0x2f5a3a), stem = hm(0x4a3a2a);
+  W.fruit.forEach(function (f) {
+    const info = C.FRUIT_INFO[f.k], big = f.k === 'biglime', g = new T.Group(), fm = hm(info.col, 0.55);
+    mesh(flat(new T.IcosahedronGeometry(big ? 1.1 : 0.8, 0)), leaf, 0, big ? 0.6 : 0.45, 0, g).scale.y = 0.6;
+    mesh(cyl(0.06, 0.09, big ? 2.2 : 1.3, 4), stem, 0, big ? 1.6 : 1.1, 0, g);
+    const fr = new T.Group(); fr.position.y = big ? 3.1 : 1.9; g.add(fr);
+    if (f.k === 'hips') { [[0, 0, 0], [0.24, -0.1, 0.1], [-0.2, -0.14, -0.12], [0.02, -0.22, 0.2]].forEach(function (p) { mesh(new T.SphereGeometry(0.17, 8, 6), fm, p[0], p[1], p[2], fr); }); }
+    else { const s = mesh(new T.SphereGeometry(big ? 0.95 : 0.34, 12, 8), fm, 0, 0, 0, fr); if (f.k === 'lemon') s.scale.set(1.35, 1, 1); mesh(flat(new T.ConeGeometry(big ? 0.3 : 0.11, big ? 0.5 : 0.2, 4)), leaf, 0, big ? 1.05 : 0.38, 0, fr); }
+    const glow = glowSprite(info.col, big ? 9 : 3.4, fr, 0, 0, 0); glow.material.userData.lk = true;
+    g.position.set(f.x, 0, f.z); g.fr = fr; g.glow = glow; g.unit = f; g.big = big; dyn.add(g); fruitM.push(g);
+  });
+}
 /* Inkblot cues. They draw what the model already knows (a thief's route, which structures can be hurt). They change nothing. */
 function buildCues() {
   cueRings.forEach(function (r) { dyn.remove(r); }); cueRings = [];
@@ -592,7 +622,7 @@ R.build = function (w) {
   heroM.concat(structM, strayM).forEach(function (g) { dyn.remove(g); });
   if (!nessM) nessM = nessModel(); nessY = -11;
   heroM = W.heroes.map(heroModel); structM = W.structs.map(structModel); strayM = W.strays.map(strayModel);
-  buildDecor(); buildCues();
+  buildDecor(); buildCues(); buildFruitArt();
   for (let i = 0; i < PN_MAX; i++) { pLife[i] = 0; pPos[i * 3 + 1] = -999; }
   rings.forEach(r => { r.life = 0; r.m.visible = false; });
   applyLook();
@@ -638,6 +668,8 @@ R.fx = function (e) {
     case 'jump': if (e.dbl) emit(e.u.x, e.u.y, e.u.z, 8, 0xf4e8d6, 3, 0.35, -1, 0); break;
     case 'dash': emit(e.u.x, e.u.y + 0.8, e.u.z, 10, 0xf4e8d6, 3, 0.35, 0, 0); break;
     case 'level': ring(e.u.x, e.u.y, e.u.z, 0.4, 3, 0xffe9a8, 0.5); break;
+    case 'fruit': { const fc = C.FRUIT_INFO[e.kind].col, big = e.kind === 'biglime'; emit(e.x, big ? 3 : 1.8, e.z, big ? 90 : 26, fc, big ? 11 : 6, 0.9, 4, 3); ring(e.x, 0.05, e.z, 0.4, big ? 12 : 3.5, fc, big ? 0.8 : 0.45); break; }
+    case 'fruitripe': if (e.kind === 'biglime') ring(e.x, 0.05, e.z, 6, 0.6, C.FRUIT_INFO.biglime.col, 1.0); break;
     case 'slam': ring(e.x, 0.05, e.z, 0.4, 3.2, 0xb8a0ff, 0.3); emit(e.x, 0.5, e.z, 8, 0xb8a0ff, 5, 0.4, 2); break;
     case 'theft': emit(e.u.x, e.u.y + 1.2, e.u.z, 26, 0xffe9a8, 6, 0.8, 3); if (e.p) shake = Math.max(shake, 0.4); break;
     case 'snuff': emit(e.u.x, e.u.h * 0.6, e.u.z, 50, 0x8a78c8, 8, 1, 2); ring(e.u.x, 0.05, e.u.z, 6, 0.5, 0x8a78c8, 0.7); break;
@@ -737,6 +769,9 @@ R.frame = function (dt, view) {
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
     if (h.slowT > 0 && Math.random() < dt * 8) emit(h.x, h.y + 0.3, h.z, 1, 0x8fb0ff, 1, 0.5, 1, 0);
     if (h.dotT > 0 && Math.random() < dt * 10) emit(h.x, h.y + 1.2, h.z, 1, 0xc9a0ff, 1.5, 0.5, 1, 0);
+    if (h.zestT > 0 && Math.random() < dt * 22) emit(h.x, h.y + 0.15, h.z, 1, 0xffe14d, 1.4, 0.5, 1.2, 0);
+    if (h.furyT > 0 && Math.random() < dt * 22) emit(h.x + (Math.random() - 0.5) * 0.7, h.y + 1.3, h.z + (Math.random() - 0.5) * 0.7, 1, 0x8fdc50, 1.2, 0.5, 1.8, 0);
+    if (h.hipsT > 0 && Math.random() < dt * 16) emit(h.x, h.y + 0.6 + Math.random(), h.z, 1, 0xf0624a, 0.6, 0.7, 1.6, 0);
     if (W.great[h.team] > 0 && Math.random() < dt * 16) emit(h.x + (Math.random() - 0.5) * 0.8, h.y + 0.3 + Math.random() * 1.6, h.z + (Math.random() - 0.5) * 0.8, 1, 0xffe08a, 0.6, 0.7, 2.2, 0);
   }
   // troopers
@@ -791,6 +826,11 @@ R.frame = function (dt, view) {
       for (let k = 0; k < 6; k++) { const s = nessM.neck[k]; s.rotation.z = Math.sin(time * 1.3 + k * 0.7) * 0.06; s.rotation.x = s.baseX + Math.sin(time * 0.9 + k) * 0.03 - (n.spitT > 1.25 ? 0.05 : 0); }
       if (n.alive && Math.random() < dt * 1.6) ring(n.x + (Math.random() - 0.5) * 8, 0.03, n.z + (Math.random() - 0.5) * 8, 0.3, 2 + Math.random() * 3, 0x7fe0ff, 1.3);
     }
+  }
+  for (i = 0; i < fruitM.length; i++) {
+    const m = fruitM[i], f = m.unit, s = f.ripe ? 1 : 0.22;
+    m.fr.scale.x += (s - m.fr.scale.x) * Math.min(1, dt * 5); m.fr.scale.y = m.fr.scale.z = m.fr.scale.x;
+    m.glow.visible = f.ripe; m.fr.rotation.y += dt * 0.9; m.fr.position.y = (m.big ? 3.1 : 1.9) + (f.ripe && !R.reduced ? Math.sin(time * 2.2 + i) * 0.14 : 0);
   }
   for (i = 0; i < creaseM.length; i++) {
     const cm = creaseM[i], c = W.creases[i];

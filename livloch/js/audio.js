@@ -1,4 +1,11 @@
-/* LIVELOCK · audio: small WebAudio synth, pitched in 31 equal steps to the octave. */
+/* LIVLOCH · audio: small WebAudio synth, pitched in 31 equal steps to the octave.
+
+   DESIGN
+   - No samples. Every sound is a few oscillators or filtered noise, so the game stays one small folder.
+   - All pitches come from edo(n) = 110 Hz * 2^(n/31). In 31-EDO, 10 steps is a near-just major third, 18 a fifth,
+     25 the harmonic seventh; 0-10-18-25 is close to 4:5:6:7. Good news rises through those, bad news falls.
+   - Securing soul orbs climbs a ladder of those steps while a combo lasts. That ladder is the seed of "thread tuning".
+   - Nobody has listened to this. Levels were set from offline measurement (A.offline, docs/evidence/audio-signal.txt). */
 (function () {
 'use strict';
 const LL = window.LL;
@@ -115,6 +122,8 @@ A.fx = function (e, W, cam) {
     case 'respawn': if (e.u === pl) bell(49, 0.12, 1.4); break;
     case 'over': if (e.winner === 0) [31, 41, 49, 59, 62, 72, 80, 93].forEach((n, i) => tone(edo(n), 0.9, 'triangle', 0.13, 0, i * 0.12)); else [62, 59, 49, 44, 31, 22, 13, 0].forEach((n, i) => tone(edo(n), 0.9, 'triangle', 0.12, 0, i * 0.16)); break;
     case 'fray': case 'gutter': bell(13, 0.2, 3); break;
+    case 'fruit': if (e.p || e.kind === 'biglime') { const st = { lemon: [62, 72, 80], hips: [49, 59, 67], lime: [54, 64, 72], biglime: [31, 41, 49, 59, 72] }[e.kind]; st.forEach((n, i) => tone(edo(n), 0.22, 'triangle', 0.16, 0, i * 0.07)); if (e.kind === 'biglime') bell(31, 0.2, 2.4); } break;
+    case 'fruitripe': if (e.kind === 'biglime') bell(49, 0.1, 1.8); break;
     case 'theft': if (e.p) { tone(edo(72), 0.16, 'square', 0.18); tone(edo(59), 0.16, 'square', 0.18, 0, 0.13); tone(edo(41), 0.4, 'square', 0.18, 0, 0.26); } break;
     case 'snuff': noise(0.5, 0.25, 400, 0.8, 'lowpass', 0, 60); tone(edo(22), 0.6, 'sine', 0.14, edo(0)); break;
     case 'thiefdown': if (e.p || e.vp) { tone(edo(62), 0.1, 'triangle', 0.12); tone(edo(80), 0.12, 'triangle', 0.12, 0, 0.08); tone(edo(93), 0.2, 'triangle', 0.12, 0, 0.16); } break;

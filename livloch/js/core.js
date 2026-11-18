@@ -1,4 +1,14 @@
-/* LIVELOCK · core: constants, lanes, heroes, items. No DOM, no THREE. */
+/* LIVLOCH · core: constants, lanes, heroes, items, fruit. No DOM, no THREE.
+
+   DESIGN
+   - The map is one valley on the z axis: Reign at -z, Hush at +z. Three lanes ("threads") are polylines that leave each
+     base together, spread to x = -48, 0, +48, and meet again. A position along a thread is `s`, metres from the Reign end.
+   - Everything a designer would tune lives here as data: hero kits, items, fruit, timings. Rules live in sim.js.
+   - Hero abilities are described by `kind` (orb, line, nova, dash, blink, zone, turret) plus numbers, so a new hero is
+     a new table row, not new code.
+   - Lore is checked against the Saelion repos: Myra Belle is the round purple thread-keeper, not a bell; the Skein Doll
+     has copper braids and a mint cardigan; Dora is not called a lantern keeper. Do not undo those.
+   (The file says LL and "livelock" in places because the game was called Livelock until 0.4.) */
 (function (G) {
 'use strict';
 var LL = G.LL = {};
@@ -20,6 +30,15 @@ var C = LL.C = {
   TEAM_NAME: ['Reign', 'Hush'], RED_EVERY: 300, RED_T: 60, CREASE_X: [-24, 24], FOLD_T: 45, TEAM_COL: [0xff6a4d, 0x5fe6b6], TEAM_CSS: ['#ff7a5c', '#6fe8c0'],
   CAMPS: [[-24, 0], [-24, -50], [24, -50], [-24, 50], [24, 50]],
   LOCH: { x: 24, z: 0, r: 9.5 }, GREAT_T: 90,
+  /* Fruit grows off the threads. Little ones regrow in about a minute; the big lime takes three. */
+  FRUIT: [{ k: 'lemon', x: -36, z: -20 }, { k: 'lemon', x: 36, z: -20 }, { k: 'lemon', x: -12, z: 22 }, { k: 'hips', x: -12, z: -24 }, { k: 'hips', x: 30, z: -44 }, { k: 'hips', x: -36, z: 26 },
+    { k: 'lime', x: 12, z: 24 }, { k: 'lime', x: -30, z: -46 }, { k: 'biglime', x: 24, z: 28 }],
+  FRUIT_INFO: {
+    lemon: { name: 'Lemon', line: 'quick feet', t: 9, grow: 55, col: 0xffe14d, css: '#ffe14d' },
+    hips: { name: 'Rose hips', line: 'mending', t: 5, grow: 50, col: 0xe0452c, css: '#f0624a' },
+    lime: { name: 'Verde Limón', line: 'sour shots', t: 9, grow: 70, col: 0x7ad03a, css: '#8fdc50' },
+    biglime: { name: 'Big Verde Limón', line: 'the whole side, sour and quick', t: 12, grow: 180, col: 0x7ad03a, css: '#8fdc50' }
+  },
   ULT_LEVEL: 3, MAX_ITEMS: 15
 };
 

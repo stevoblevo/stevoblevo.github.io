@@ -1,4 +1,10 @@
-/* LIVELOCK · ui: HUD, minimap, shop, menus. */
+/* LIVLOCH · ui: HUD, minimap, shop, menus.
+
+   DESIGN
+   - Voice is Saelion's: short, quiet, declarative, no exclamation marks. Say what happened and what it costs.
+   - The HUD explains consequences, not mechanics. Secrets (the fold, fruit, the loch) are hinted once and left to be found.
+   - The five moons under the clock are the red-rain countdown. The minimap is the tactical truth: thieves blink on it.
+   - Gold double frames and cut corners come from the concept plate. */
 (function () {
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U;
@@ -134,6 +140,11 @@ UI.fx = function (e) {
     case 'thiefdown': if (e.vp && e.loot) feed('Your ' + Math.round(e.loot) + ' souls are back'); else if (e.p) feed('You caught the hush'); if (e.carry) feed('The ' + e.carry.kind + ' is lit again'); break;
     case 'thiefhome': if (e.carry) UI.banner('The hush reached its gate.', 'Your ' + C.LANE_NAME[e.carry.lane] + ' ' + e.carry.kind + ' stays dark for two minutes', 4.5); else if (e.vp) feed('The hush got home with your souls'); break;
     case 'relit': feed('The ' + C.LANE_NAME[e.u.lane] + ' ' + e.u.kind + ' is lit again'); break;
+    case 'fruit': { const fi = C.FRUIT_INFO[e.kind];
+      if (e.kind === 'biglime') { UI.banner(e.p ? 'Big Verde Limón.' : e.u.name + ' found the Big Verde Limón.', 'Your whole side is sour and quick for ' + e.t + ' seconds, and orbs come to you', 4.5); feed(hname(e.u) + ' ate the <b>Big Verde Limón</b>'); }
+      else if (e.p) feed('<b style="color:' + fi.css + '">' + fi.name + '</b> · ' + fi.line + ', ' + e.t + ' s');
+      break; }
+    case 'fruitripe': if (e.kind === 'biglime') feed('The <b>Big Verde Limón</b> is ripe'); break;
     case 'redwarn': UI.banner('The moons are nearly full.', 'Red rain in fifteen seconds', 3.5); break;
     case 'red': UI.banner('Then the rain comes down red.', 'The Hush is thick for a minute. Extra hollows on every thread', 5); break;
     case 'redend': feed('The rain thins'); break;
@@ -211,6 +222,7 @@ function minimap(view) {
   g.setLineDash([5, 4]); g.lineWidth = 1.5; g.strokeStyle = LL.gfx.look.ui.line; C.CREASE_X.forEach(function (cx, i) { const c = W.creases[i]; g.strokeStyle = c.t > 0 ? '#fff0a0' : LL.gfx.look.ui.line; g.beginPath(); g.moveTo(X(cx), Y(-13)); g.lineTo(X(cx), Y(13)); g.stroke(); }); g.setLineDash([]);
   g.fillStyle = 'rgba(60,150,170,0.55)'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), C.LOCH.r * sc, 0, 6.3); g.fill();
   if (W.ness.alive) { g.fillStyle = '#fff0a0'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), 5.5, 0, 6.3); g.fill(); }
+  W.fruit.forEach(function (f) { if (!f.ripe) return; g.fillStyle = C.FRUIT_INFO[f.k].css; g.beginPath(); g.arc(X(f.x), Y(f.z), f.k === 'biglime' ? 6 : 3, 0, 6.3); g.fill(); });
   W.strays.forEach(function (s) { if (!s.alive) return; g.fillStyle = 'rgba(201,160,255,0.8)'; g.beginPath(); g.arc(X(s.x), Y(s.z), 3, 0, 6.3); g.fill(); });
   W.troopers.forEach(function (t) { if (!t.alive) return; g.fillStyle = C.TEAM_CSS[t.team]; const z = t.big ? 4.5 : 1.5; g.fillRect(X(t.x) - z, Y(t.z) - z, z * 2, z * 2); });
   W.thieves.forEach(function (t) { if (!t.alive) return; g.fillStyle = (Math.floor(W.t * 4) % 2) ? '#f2e2ff' : C.TEAM_CSS[1]; g.save(); g.translate(X(t.x), Y(t.z)); g.rotate(Math.PI / 4); g.fillRect(-4, -4, 8, 8); g.restore(); });
@@ -267,6 +279,8 @@ UI.frame = function (dt, w, view, info) {
   $('clock').textContent = U.fmtTime(W.t); $('k0').textContent = W.kills[0]; $('k1').textContent = W.kills[1];
   $('dead').hidden = p.alive || UI.screen === 'shop'; if (!p.alive) $('deadT').textContent = Math.ceil(p.respT);
   $('autoTag').hidden = !W.auto;
+  { const bf = $('buffs'), a = []; if (p.zestT > 0) a.push('Lemon ' + Math.ceil(p.zestT)); if (p.furyT > 0) a.push('Verde Limón ' + Math.ceil(p.furyT)); if (p.hipsT > 0) a.push('Rose hips ' + Math.ceil(p.hipsT)); if (W.pull[p.team] > 0) a.push('orbs come to you ' + Math.ceil(W.pull[p.team]));
+    bf.hidden = !a.length; if (a.length) { const t = a.join(' · '); if (bf.textContent !== t) bf.textContent = t; } }
   { const mo = $('moons'), pp = W.red > 0 ? 1 : U.clamp(1 - (W.redNext - W.t) / C.RED_EVERY, 0, 1); mo.classList.toggle('red', W.red > 0); for (let i = 0; i < 5; i++) mo.children[i].style.setProperty('--ph', U.clamp(pp * 5 - i, 0, 1).toFixed(2)); }
   const gr = $('great'), g0 = W.great[p.team], g1 = W.great[1 - p.team];
   if (g0 > 0 || g1 > 0) { gr.hidden = false; gr.className = g0 > 0 ? 'mine' : 'theirs'; gr.textContent = (g0 > 0 ? 'Greatness · ' + Math.ceil(g0) : 'Hush Greatness · ' + Math.ceil(g1)) + 's'; } else gr.hidden = true;

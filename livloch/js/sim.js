@@ -1,4 +1,22 @@
-/* LIVELOCK · sim: the whole match, headless. Reads LL.core, writes LL.sim.W. No DOM, no THREE. */
+/* LIVLOCH · sim: the whole match, headless. Reads LL.core, writes LL.sim.W. No DOM, no THREE.
+
+   DESIGN
+   - This file is the game. It never reads the look, the renderer or the DOM (tools/test.js enforces that), so any
+     rule here holds in every look and can be played to the end under Node.
+   - The premise: paper troopers march three threads and cancel exactly. That stalemate is the puzzle. Each system below
+     is one asymmetry the player can use to break it, most of them never explained in the game:
+       souls and orbs   half a kill's worth is banked, half floats up as an orb you shoot to secure (or deny)
+       the fold         a crease under a stray or under the Ness folds two threads together for 45 s
+       the Ness         a loch boss; the last hit gives the whole side the Greatness for 90 s
+       fruit            lemon = quick feet, rose hips = mending, Verde Limon = sour shots, and one big lime for everyone
+   - The Hush has no heroes. It has hollows (one heavy unit per thread, respawning), thieves (take souls or a guardian's
+     light and run for the gate), and red rain every 300 s. This is Reignfawn's Hush, not a mirror team.
+   - Pacing borrowed from Knight Side: Last Breath (once per life under 30% health) and Mercy (the Hush eases off when
+     the Reign is two structures behind).
+   - The sim talks to the outside only through W.fx, a list of plain event objects drained every frame by gfx, audio
+     and ui. Nothing outside may write to W except the player's hero controls (hero.ctl).
+   - Bots and the human drive heroes through the same hero.ctl, so "Watch it run" is the same code path as play.
+   - Not deterministic: Math.random is used for small timing jitter. Do not build replay on it without fixing that. */
 (function (G) {
 'use strict';
 const LL = G.LL, C = LL.C, U = LL.U, lanes = LL.lanes;
@@ -63,7 +81,7 @@ S.newWorld = function (o) {
     waveT: 4, waveN: 0, nextId: 1, player: null, kills: [0, 0], fray: false, front: [[0, 0, 0], [0, 0, 0]],
     coordT: 0, cleanT: 0, auto: !!o.auto, tune: o.tune || {}, calm: 0, warned: false, thieves: [], thiefT: 150, red: 0, redNext: C.RED_EVERY, hollowT: [38, 44, 50], mercy: false, great: [0, 0], rush: [0, 0], rushAll: [false, false], rushNext: [0, 0], gutter: false, ness: null
   };
-  buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildHeroes(o);
+  buildObstacles(); buildStructs(); buildStrays(); buildNess(); buildCreases(); buildFruit(); buildHeroes(o);
   coordinate();
   return W;
 };
@@ -80,6 +98,7 @@ function buildObstacles() {
     for (let i = 0; i < C.CAMPS.length && ok; i++) if (hyp(x - C.CAMPS[i][0], z - C.CAMPS[i][1]) < 8 + rad) ok = false;
     for (let i = 0; i < obs.length && ok; i++) if (hyp(x - obs[i].x, z - obs[i].z) < rad + obs[i].r + 3.2) ok = false;
     if (hyp(x, z + C.SPAWN_Z) < 34) ok = false;
+    for (let i = 0; i < C.FRUIT.length && ok; i++) { const f = C.FRUIT[i]; if (hyp(x - f.x, z - f.z) < 4.5 + rad || hyp(-x - f.x, -z - f.z) < 4.5 + rad) ok = false; }
     if (hyp(x - C.LOCH.x, z - C.LOCH.z) < 13 + rad || hyp(-x - C.LOCH.x, -z - C.LOCH.z) < 13 + rad) ok = false;
     if (Math.abs(z) < rad + 2.5) ok = false;
     if (!ok) continue;
@@ -145,6 +164,33 @@ function foldTrooper(u, c) {
   u.x = P.x - P.dz * u.lat; u.z = P.z + P.dx * u.lat; u.folded = true; u.tgt = null;
   fx({ k: 'blink', x0: x0, z0: z0, x: u.x, y: 0, z: u.z, col: 0xf4e8d6 });
 }
+/* ---------- fruit: lemons (quick feet), rose hips (mending), Verde Limón little and big (sour shots) ---------- */
+function buildFruit() {
+  W.fruit = C.FRUIT.map(function (f, i) { return { i: i, k: f.k, x: f.x, z: f.z, ripe: false, t: f.k === 'biglime' ? 120 : 18 + i * 5 }; });
+  W.pull = [0, 0];
+}
+function eat(h, f) {
+  const info = C.FRUIT_INFO[f.k], T = info.t;
+  f.ripe = false; f.t = info.grow; h.fruit++;
+  if (f.k === 'lemon') h.zestT = T;
+  else if (f.k === 'hips') { h.hipsT = T; h.slowT = 0; h.dotT = 0; }
+  else if (f.k === 'lime') h.furyT = T;
+  else {
+    for (let i = 0; i < W.heroes.length; i++) { const o = W.heroes[i]; if (o.alive && o.team === h.team) { o.furyT = Math.max(o.furyT, T); o.zestT = Math.max(o.zestT, T); } }
+    W.pull[h.team] = T;
+    for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (!u.alive || u.team === h.team) continue; const dx = u.x - h.x, dz = u.z - h.z, d = hyp(dx, dz); if (d < 9) { const n = d || 1; u.x += dx / n * 3; u.z += dz / n * 3; applySlow(u, 0.5, 2); } }
+  }
+  fx({ k: 'fruit', kind: f.k, u: h, p: h.isPlayer, x: f.x, z: f.z, t: T });
+}
+function fruitStep(dt) {
+  for (let t = 0; t < 2; t++) if (W.pull[t] > 0) W.pull[t] -= dt;
+  for (let i = 0; i < W.fruit.length; i++) {
+    const f = W.fruit[i];
+    if (!f.ripe) { f.t -= dt; if (f.t <= 0) { f.ripe = true; fx({ k: 'fruitripe', kind: f.k, x: f.x, z: f.z }); } continue; }
+    const reach = f.k === 'biglime' ? 3.2 : 2.2;
+    for (let j = 0; j < W.heroes.length; j++) { const h = W.heroes[j]; if (h.alive && h.y < 2.5 && hyp(h.x - f.x, h.z - f.z) < reach) { eat(h, f); break; } }
+  }
+}
 function buildNess() {
   const n = mk('ness', 2, C.LOCH.x, C.LOCH.z, 2.6, 7, 5200);
   n.alive = false; n.respT = 180; n.aggro = null; n.count = 0; n.spitT = 0; n.slamT = 0; n.rise = 0;
@@ -192,7 +238,7 @@ function mkHero(defIdx, team, slot, isPlayer) {
     souls: 0, total: 0, level: 1, items: [], ammo: d.gun.mag, magSize: d.gun.mag, reloadT: 0, fireT: 0, cds: [0, 0, 0], cdMax: [1, 1, 1],
     stamina: 3, stamT: 0, onGround: true, jumps: 0, dashT: 0, dashX: 0, dashZ: 0, zip: null, respT: 0,
     kills: 0, deaths: 0, assists: 0, dmgDealt: 0, secured: 0, denied: 0, shield: 0, shieldT: 0, pitch: 0, hurtBy: {},
-    lastShotT: -9, lastDmgHeroT: -9, incomeAcc: 0, breath: false,
+    lastShotT: -9, lastDmgHeroT: -9, incomeAcc: 0, breath: false, zestT: 0, furyT: 0, hipsT: 0, fruit: 0,
     botMul: isPlayer ? 1 : 0.78,
     ctl: { mx: 0, mz: 0, ax: sp.x, ay: 1.5, az: sp.z + (team === 0 ? 20 : -20), fire: false, jump: false, dash: false, ab: [false, false, false], reload: false, zip: false, zipDir: 0 },
     ai: { thinkT: Math.random() * 0.2, lane: slot, mode: 'lane', gx: sp.x, gz: sp.z, target: null, wantFire: false, orb: null, orbT: 0,
@@ -249,7 +295,9 @@ S.canZip = function (h) {
   return -1;
 };
 
-/* ---------- damage ---------- */
+/* ---------- damage ----------
+   One door for all harm. Structure immunity, backdoor protection (structures shrug off 70% unless enemy troopers are
+   near), shields, lifesteal, Last Breath and kill credit all happen here, so no caller can skip them. */
 function heal(u, n) { if (u.alive) u.hp = Math.min(u.maxHp, u.hp + n); }
 function applySlow(u, amt, t) { if (u.struct) return; if (amt > u.slowAmt || u.slowT <= 0) u.slowAmt = amt; if (t > u.slowT) u.slowT = t; }
 function damage(t, amt, src, kind, crit) {
@@ -389,7 +437,7 @@ function fireGun(h) {
     let px = dx + (W.rng() - 0.5) * 2 * g.spread, py = dy + (W.rng() - 0.5) * 2 * g.spread, pz = dz + (W.rng() - 0.5) * 2 * g.spread;
     const n = hyp(px, py, pz); px /= n; py /= n; pz /= n;
     spawnProj({ x: mx, y: my, z: mz, vx: px * g.speed, vy: py * g.speed, vz: pz * g.speed, life: g.range / g.speed,
-      dmg: g.dmg * st.dmg * h.botMul * (W.great[h.team] > 0 ? 1.25 : 1), team: h.team, owner: h, r: 0.18, kind: 'bullet', gun: true, pierce: st.pierce, hit: null, size: g.size });
+      dmg: g.dmg * st.dmg * h.botMul * (W.great[h.team] > 0 ? 1.25 : 1) * (h.furyT > 0 ? 1.4 : 1), team: h.team, owner: h, r: 0.18, kind: 'bullet', gun: true, pierce: st.pierce, hit: null, size: g.size });
   }
   fx({ k: 'shot', u: h, x: mx, y: my, z: mz });
 }
@@ -397,7 +445,7 @@ function cast(h, i) {
   const a = h.def.ab[i], c = h.ctl, st = h.st;
   let cd = a.cd * (1 - st.cdr); if (a.ult) cd *= (1 - st.ultCdr);
   h.cds[i] = cd; h.cdMax[i] = cd;
-  const ap = st.ap * h.botMul * (W.great[h.team] > 0 ? 1.25 : 1);
+  const ap = st.ap * h.botMul * (W.great[h.team] > 0 ? 1.25 : 1) * (h.furyT > 0 ? 1.3 : 1);
   const ex = h.x, ey = h.y + 1.5, ez = h.z;
   let dx = c.ax - ex, dy = c.ay - ey, dz = c.az - ez, d = hyp(dx, dy, dz) || 1; dx /= d; dy /= d; dz /= d;
   let hx = dx, hz = dz; const hd = hyp(hx, hz) || 1; hx /= hd; hz /= hd;
@@ -568,6 +616,8 @@ function heroStep(h, dt) {
   h.fireT -= dt; for (let i = 0; i < 3; i++) if (h.cds[i] > 0) h.cds[i] -= dt;
   if (h.shieldT > 0) { h.shieldT -= dt; if (h.shieldT <= 0) h.shield = 0; }
   if (h.slowT > 0) h.slowT -= dt;
+  if (h.zestT > 0) h.zestT -= dt; if (h.furyT > 0) h.furyT -= dt;
+  if (h.hipsT > 0) { h.hipsT -= dt; heal(h, h.maxHp * 0.07 * dt); }
   heal(h, (st.regen * (W.t - h.lastHurt > 6 ? 3 : 1) + (W.great[h.team] > 0 ? 8 : 0)) * dt);
   h.incomeAcc += dt * 1.5; if (h.incomeAcc >= 1) { const n = Math.floor(h.incomeAcc); h.incomeAcc -= n; give(h, n); }
   const sgn = h.team === 0 ? -1 : 1;
@@ -575,7 +625,7 @@ function heroStep(h, dt) {
   if (fd < C.FOUNT_R) heal(h, h.maxHp * 0.14 * dt);
   if (hyp(h.x, h.z + sgn * C.SPAWN_Z) < C.FOUNT_R) damage(h, 160 * dt, null, 'dot');
   if (!h.alive) return;
-  const sp = d.speed * st.speed * (h.slowT > 0 ? 1 - h.slowAmt : 1);
+  const sp = d.speed * st.speed * (h.slowT > 0 ? 1 - h.slowAmt : 1) * (h.zestT > 0 ? 1.3 : 1);
   if (h.zip) {
     const zp = h.zip, L = lanes[zp.lane];
     zp.s += zp.dir * (h.team === 0 ? 1 : -1) * C.ZIP_SPEED * dt;
@@ -602,7 +652,7 @@ function heroStep(h, dt) {
     if (h.y <= 0) { h.y = 0; h.vy = 0; h.onGround = true; h.jumps = 0; }
     collide(h);
   }
-  if (h.stamina < st.stam) { h.stamT += dt; if (h.stamT >= 2.6) { h.stamT = 0; h.stamina++; } } else h.stamT = 0;
+  if (h.stamina < st.stam) { h.stamT += dt * (h.zestT > 0 ? 3 : 1); if (h.stamT >= 2.6) { h.stamT = 0; h.stamina++; } } else h.stamT = 0;
   const adx = c.ax - h.x, adz = c.az - h.z, ad = hyp(adx, adz);
   if (ad > 0.5) { h.yaw = Math.atan2(adx, adz); h.pitch = Math.atan2(c.ay - (h.y + 1.5), ad); }
   if (h.reloadT > 0) { h.reloadT -= dt; if (h.reloadT <= 0) h.ammo = h.magSize; }
@@ -616,11 +666,13 @@ function respawn(h) {
   const sp = spawnPos(h.team, h.slot);
   h.alive = true; h.hp = h.maxHp; h.x = sp.x; h.z = sp.z; h.y = 0; h.vx = h.vy = h.vz = 0; h.onGround = true;
   h.ammo = h.magSize; h.reloadT = 0; h.shield = 0; h.slowT = 0; h.dotT = 0; h.stamina = h.st.stam; h.zip = null; h.lastHurt = -99;
-  h.ai.mode = 'lane'; h.breath = false;
+  h.ai.mode = 'lane'; h.breath = false; h.zestT = h.furyT = h.hipsT = 0;
   fx({ k: 'respawn', u: h });
 }
 
-/* ---------- bot brain ---------- */
+/* ---------- bot brain ----------
+   Bots think every ~0.2 s: pick a place to stand behind their own troopers, pick a target by score, maybe cast.
+   They retreat at 30% health and, so far, always survive. That makes every bot win rate optimistic for the Reign. */
 function tryBotBuy(h) {
   const a = h.ai, b = h.def.build;
   while (a.buildI < b.length && h.items.indexOf(b[a.buildI]) >= 0) a.buildI++;
@@ -693,6 +745,7 @@ function think(h) {
     if (dd < range && sc > bs && losClear(h.x, h.z, ness.x, ness.z)) { bs = sc; best = ness; }
   }
   a.target = best; a.wantFire = !!best;
+  for (let i = 0; i < W.fruit.length; i++) { const f = W.fruit[i]; if (f.ripe && hyp(f.x - h.x, f.z - h.z) < 16 && (f.k !== 'hips' || hpF < 0.75)) { a.gx = f.x; a.gz = f.z; break; } }
   // orbs
   if (a.orbT <= 0 && W.orbs.length) {
     for (let i = 0; i < W.orbs.length; i++) {
@@ -1032,6 +1085,7 @@ function stepOrbs(dt) {
     const o = os[i];
     if (o.dead) { os.splice(i, 1); continue; }
     o.t += dt; o.y = 1.2 + o.t * 1.3;
+    if (W.pull[o.team] > 0) { let g = null, bd = 40; for (let j = 0; j < W.heroes.length; j++) { const h = W.heroes[j]; if (h.alive && h.team === o.team) { const d = hyp(h.x - o.x, h.z - o.z); if (d < bd) { bd = d; g = h; } } } if (g) { claimOrb(o, g); os.splice(i, 1); continue; } }
     if (o.t > 3.2) {
       let g = null, bd = 30;
       for (let j = 0; j < W.heroes.length; j++) { const h = W.heroes[j]; if (h.alive && h.team === o.team) { const d = hyp(h.x - o.x, h.z - o.z); if (d < bd) { bd = d; g = h; } } }
@@ -1055,7 +1109,8 @@ function separate() {
   }
 }
 
-/* ---------- step ---------- */
+/* ---------- step ----------
+   Order matters: heroes act, then troopers, structures, strays, the Ness, then projectiles resolve, then zones and orbs. */
 S.step = function (dt) {
   if (!W || W.over) return;
   W.t += dt;
@@ -1067,7 +1122,7 @@ S.step = function (dt) {
     if (W.over) return;
   }
   W.coordT -= dt; if (W.coordT <= 0) { W.coordT = 0.5; coordinate(); }
-  hushStep(dt);
+  hushStep(dt); fruitStep(dt);
   let i;
   for (i = 0; i < W.heroes.length; i++) {
     const h = W.heroes[i];
@@ -1106,7 +1161,7 @@ S.step = function (dt) {
 };
 
 /* Hooks for tools/test.js. Nothing in the game calls these. */
-S._t = { damage: damage, kill: kill, spawnThief: spawnThief, spawnHollow: spawnHollow, thiefStep: thiefStep };
+S._t = { eat: eat, damage: damage, kill: kill, spawnThief: spawnThief, spawnHollow: spawnHollow, thiefStep: thiefStep };
 
 /* Aim ray for the human player: first thing the crosshair is on. */
 S.aimPoint = function (ox, oy, oz, dx, dy, dz, t0, team, out) {

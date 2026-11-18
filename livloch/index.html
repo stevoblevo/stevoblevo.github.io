@@ -109,6 +109,8 @@ button { font: inherit; color: inherit; }
 #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 52%, rgba(196, 40, 40, 0.7)); opacity: 0; transition: opacity 0.2s; }
 #great { position: absolute; left: var(--sl); top: calc(var(--st) + 184px); font-family: var(--f-sc); font-size: 14px; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px; background: rgba(var(--wash), 0.7); border: 1px solid var(--gold); color: var(--gold); font-variant-numeric: tabular-nums; }
 #great.theirs { border-color: var(--mint); color: var(--mint); }
+#buffs { position: absolute; left: 50%; bottom: calc(var(--sb) + 132px); transform: translateX(-50%); font-family: var(--f-sc); font-size: 14px; letter-spacing: 0.05em; padding: 3px 12px; border-radius: 999px; background: rgba(var(--wash), 0.72); border: 1px solid var(--line); white-space: nowrap; font-variant-numeric: tabular-nums; }
+body.touch #buffs { bottom: auto; top: calc(var(--st) + 130px); font-size: 12.5px; }
 #coach { position: absolute; left: 50%; top: 36%; transform: translateX(-50%); width: min(86%, 420px); text-align: center; font-size: 16px; line-height: 1.35; padding: 8px 14px; border-radius: 4px; background: rgba(var(--wash), 0.78); border: 1px solid var(--gold); text-wrap: balance; }
 #autoTag { position: absolute; left: 50%; bottom: calc(var(--sb) + 150px); transform: translateX(-50%); font-family: var(--f-sc); letter-spacing: 0.14em; font-size: 14px; padding: 4px 12px; border: 1px solid var(--gold); color: var(--gold); border-radius: 999px; background: rgba(var(--wash), 0.6); }
 
@@ -258,6 +260,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="cross"><u></u><i></i><div id="hitm"></div></div>
     <div id="prompt" hidden></div>
     <div id="great" hidden></div>
+    <div id="buffs" hidden></div>
     <div id="coach" hidden></div>
     <div id="autoTag" hidden>Auto · the valley plays itself</div>
     <div id="touch">
@@ -306,13 +309,14 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <p><b>Structures.</b> Each thread has a guardian, then a warden. They shrug off most damage unless your troopers are there. Drop one warden and the patron opens.</p>
         <p><b>The loch.</b> Three minutes in, the Ness surfaces between the Middle and East threads. It spits, it slams, and whoever lands the last hit gives their whole side the Greatness for 90 seconds.</p>
         <p><b>The Hush.</b> It has no heroes. It has hollows that walk the threads, and small ones that take what is lit and run for the gate. Every five minutes the rain comes down red.</p>
+        <p><b>Fruit.</b> Things grow off the threads: lemons, rose hips, Verde Limón. Some are worth the walk. One is big.</p>
         <p><b>Paper.</b> The valley is paper. Paper folds.</p>
         <p><b>Threads.</b> Stand on a thread on your side and ride it to the front. It reaches further as you push.</p>
         <dl class="keys k-kbm"><dt>WASD · mouse</dt><dd>move and aim (click the valley to capture the mouse)</dd><dt>Click · right click</dt><dd>fire · zoom</dd><dt>Space · Shift</dt><dd>jump, double jump · dash</dd><dt>Q E F · R</dt><dd>abilities · reload</dd><dt>T · B · I · Esc</dt><dd>ride thread · shop · inkblot view · pause</dd></dl>
         <dl class="keys k-touch"><dt>Left thumb</dt><dd>move</dd><dt>Right thumb</dt><dd>drag to aim; your gun fires on its own when the ring is on a target</dd><dt>Buttons</dt><dd>fire, jump, dash, three abilities, ride thread when it shows</dd></dl>
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · Back · Start</dt><dd>ride thread · shop · pause</dd></dl>
       </div>
-      <footer>Livloch 0.7 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <footer>Livloch 0.8 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
     </div>
   </section>
 
