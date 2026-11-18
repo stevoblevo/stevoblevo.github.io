@@ -1,0 +1,5 @@
+# sae-voice (shared read-aloud voice picker) — changelog
+Pages: gg/, anewgam-for-steven-cockpit/, 4newgam/, storeybrook/ (index, components/index, Reader, Caption, Balloon). Each page's pre-voice version is kept beside it as `*.prev-20261030.html` (e.g. /gg/index.prev-20261030.html).
+
+- 1.1.0 (2026-10-30): no proxy probe unless one is configured (meta sae-voice-proxy / SAE_VOICE_PROXY / ?voiceproxy=), so no 404s here; order is listener's language (English only if none) → accent from another region (Irish, Scottish, South African, Indian, British… listener's own last) → this OS/browser's own voice family → quality; a second tier of plain non-novelty voices (Samantha/Daniel/Karen, Android "English United States", Microsoft desktop, Firefox) before captions; novelty voices, eSpeak, Compact and Moira (Enhanced too) never; dropped utterances fire 'end' once; status and ?voices=1 debug refresh when voices arrive late; no gear on storeybrook docs pages (gear=0); gg's own Irish preference no longer lists moira.
+- 1.0.0 (2026-10-30): first shim (strict allowlist; Moira denied).
