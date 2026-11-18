@@ -1,7 +1,13 @@
 {
-  "current": "0.10",
+  "current": "0.11",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.11",
+      "path": "v0.11/",
+      "source": "release/0.11",
+      "note": "Paper heroes: Dora is a painted cutout. Keys shown on screen for keyboard play"
+    },
     {
       "v": "0.10",
       "path": "v0.10/",
