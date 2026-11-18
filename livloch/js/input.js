@@ -1,4 +1,10 @@
-/* LIVELOCK · input: keyboard and mouse, touch, gamepad, all feeding one state. */
+/* LIVLOCH · input: keyboard and mouse, touch, gamepad, all feeding one state.
+
+   DESIGN
+   - Three devices write the same small state (move stick, look delta, fire, zoom, one-shot edges). main.js reads only that.
+   - The last device touched wins and sets a body class, so the HUD and help text follow the device in hand.
+   - Touch: left 42% of the screen is a floating stick, the rest is look; holding Fire also drags the view.
+   - Mouse look needs pointer lock. If the host frame refuses it, look falls back to raw mouse movement. */
 (function () {
 'use strict';
 const LL = window.LL;
@@ -18,7 +24,7 @@ I.unlock = function () { try { if (document.pointerLockElement) document.exitPoi
 
 I.init = function (cv, root) {
   canvas = cv; app = root;
-  const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyP: 'pause', Escape: 'esc', Tab: 'shop' };
+  const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyI: 'ink', KeyV: 'view', BracketRight: 'view', KeyP: 'pause', Escape: 'esc', Tab: 'shop' };
   window.addEventListener('keydown', function (ev) {
     if (ev.target && (ev.target.tagName === 'INPUT')) return;
     setDevice('kbm');
@@ -104,7 +110,7 @@ I.poll = function (dt, sens) {
     const dz = v => Math.abs(v) < 0.16 ? 0 : (v - Math.sign(v) * 0.16) / 0.84;
     const ax = dz(gp.axes[0] || 0), ay = dz(gp.axes[1] || 0), rx = dz(gp.axes[2] || 0), ry = dz(gp.axes[3] || 0);
     let any = Math.abs(ax) + Math.abs(ay) + Math.abs(rx) + Math.abs(ry) > 0.2;
-    const MAP = { 0: 'jump', 1: 'dash', 2: 'reload', 3: 'ab2', 4: 'ab0', 5: 'ab1', 8: 'shop', 9: 'pause', 12: 'zip' };
+    const MAP = { 0: 'jump', 1: 'dash', 2: 'reload', 3: 'ab2', 4: 'ab0', 5: 'ab1', 8: 'shop', 9: 'pause', 12: 'zip', 15: 'view' };
     for (let i = 0; i < 16; i++) {
       const d = padBtn(gp, i); if (d) any = true;
       if (d && !padPrev[i]) {

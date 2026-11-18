@@ -1,4 +1,17 @@
-/* LIVELOCK · gfx: WebGL scene over the sim. Three.js r128. */
+/* LIVLOCH · gfx: WebGL scene over the sim. Three.js r128.
+
+   DESIGN
+   - Read-only view of sim state. It may draw anything the model knows; it may never decide anything.
+   - Art target is the concept plate (art/title.jpg): folded paper lit by lanterns on a snow night. Everything is
+     flat-shaded primitives on purpose; "paper" is the excuse for low-poly.
+   - Looks: every object is built once in the Lantern colours, then each look's `map` re-colours it by hue bucket. Big
+     surfaces (sky, ground, light, fog) take the look's colours directly. Things whose colour is their meaning are
+     exempt (own / hm / FIXED): heroes, the Ness, fruit, creases, cue colours.
+   - Crowds are InstancedMesh (troopers, hush, bars, projectiles, orbs, cue dashes). Three r128 sizes instanceColor
+     from .count at first use, so initColor() allocates it at capacity. Skipping that made bullets invisible for six versions.
+   - Semiotics, kept across looks: warm = Reign and protected light, cold = Hush, gold = creases and souls, jade = the Ness.
+     In Inkblot Noir: violet = unknown threat, amber = protected light, copper = a connection you can still recover.
+   - Bloom is a hand-rolled bright-pass and blur, off for the light look and for "Lighter graphics". */
 (function () {
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U;
@@ -7,7 +20,8 @@ let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
 let world, dyn, sky, stars;
 let tr = [null, null], hushEyes, trHat, barBg, barFill, projMesh, orbMesh, parts, staticGlow;
-let nessM = null, nessY = -11, creaseM = [];
+let nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [], fruitM = [];
+R.reduced = false; try { R.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 let heroM = [], structM = [], strayM = [], knotPool = [], fawnPool = [], zonePool = [], rings = [];
 let shake = 0, camPos = { x: 0, y: 30, z: -60 }, camDir = { x: 0, y: 0, z: 1 }, camDist = 5.4;
 const PN_MAX = 1400; let PN = PN_MAX, pPos, pCol, pVel, pLife, pMax, pBase, pCur = 0;
@@ -30,6 +44,17 @@ const LOOKS = R.LOOKS = {
       else if (h >= 0.6 && h < 0.72) { h = 0.66; }
       else { s *= 0.9; }
       c.setHSL(h, Math.min(1, s), l); } },
+  /* Gen XV. Presentation only: violet = unknown threat, amber = protected light, copper = recoverable connection. */
+  ink: { name: 'Inkblot Noir', kit: 'Gen XV, Skeptic Noir', add: true, wire: false, weather: 'rain', bloom: 0.35, cues: true,
+    clear: 0x0b0a14, fog: [0x14122a, 45, 240], sky: [0x05050c, 0x14122a, 0x3a2f6a], sun: [0xd8d0ff, 0xffffff], star: 0.4,
+    hemi: [0xc8c4e8, 0x1a1830, 0.9], dir: [0xe8e0ff, 0.5], ground: { a: 0x15142a, b: 0x1e1b38, lane: 0x2a2648, laneC: 0x3a3560, rock: 0x0b0a14, water: 0x0c3a44 },
+    crease: [0xc8703a, 0x8fb4ff, 0.55], team: [0xffb347, 0x9a7cff], css: ['#ffb347', '#a78bff'], hush: 0x1a1430, hushEm: 0x9a7cff, hushEmI: 0.6, ui: { line: 'rgba(235,230,218,0.2)', me: '#ebe6da', edge: '#0b0a14' },
+    map: function (c) { c.getHSL(HS); let h = HS.h, s = HS.s, l = HS.l;
+      if (s < 0.2) { if (l > 0.5) { h = 0.11; s = 0.2; l = Math.min(0.9, l); } else { h = 0.68; s = 0.25; l = l * 0.6; } }
+      else if (h < 0.2 || h > 0.93) { h = 0.095; s = Math.min(1, s * 1.05); }
+      else if (h > 0.38 && h < 0.6) { if (l < 0.42) { h = 0.66; s = 0.3; l = l * 0.55; } else { h = 0.5; s = 0.9; l = Math.max(0.62, l); } }
+      else if (h >= 0.6 && h < 0.9) { h = 0.72; s = Math.min(1, s * 1.1); }
+      c.setHSL(h, s, l); } },
   lantern: { name: 'Lantern Night', kit: 'Reignfawn, Gold Lantern valley', add: true, wire: false, map: null, bloom: 0.45,
     clear: 0x140f1c, fog: [0x2a1d38, 60, 290], sky: [0x0c0916, 0x2b1c40, 0x7a3344], sun: [0xffd9a0, 0xfff4dc], star: 0.8,
     hemi: [0xa99ad6, 0x2a1c2c, 0.95], dir: [0xffdcb8, 0.75], ground: { a: 0x1c3037, b: 0x2c2440, lane: 0x77605c, laneC: 0x93786a, rock: 0x3a2f47, water: 0x17505e },
@@ -67,12 +92,33 @@ const LOOKS = R.LOOKS = {
       else if (h > 0.38 && h < 0.6 && s > 0.35) { h = 0.525; s = 1; l = Math.max(0.6, l); }
       else if (h > 0.68 && l > 0.5) { h = 0.73; s = 1; l = 0.74; }
       else { h = 0.83; s = 0.4; l = 0.3 + l * 0.5; }
-      c.setHSL(h, s, l); } }
+      c.setHSL(h, s, l); } },
+  /* Rainwake: the red rain worn on purpose. In the model, souls are worth half again while the rain is red. */
+  rain: { name: 'Rainwake', kit: 'mode 12 on the plates, the red rain worn on purpose', add: true, wire: false, weather: 'rain', bloom: 0.45,
+    clear: 0x1a0a10, fog: [0x4a1420, 50, 260], sky: [0x12060a, 0x3a0f1a, 0x8a2a2a], sun: [0xff8a70, 0xffd0c0], star: 0.2,
+    hemi: [0xd09090, 0x2a1014, 0.9], dir: [0xffb0a0, 0.6], ground: { a: 0x3a1c24, b: 0x4a2228, lane: 0x24121a, laneC: 0x3a1a22, rock: 0x2a141c, water: 0x145a5a },
+    crease: [0xffb347, 0x7fe0d0, 0.4], team: [0xffc070, 0x6fe0d0], css: ['#ffc070', '#6fe0d0'], ui: { line: 'rgba(255,220,210,0.18)', me: '#fff0e6', edge: '#1a0a10' },
+    map: function (c) { c.getHSL(HS); let h = HS.h, s = HS.s, l = HS.l;
+      if (s < 0.12) { h = 0.98; s = 0.18; }
+      else if (h < 0.2 || h > 0.9) { /* warm stays warm */ }
+      else if (h < 0.62) { h = 0.48; s *= 0.8; }
+      else { h = 0.96; s *= 0.6; l *= 0.9; }
+      c.setHSL(h, Math.min(1, s), l); } },
+  /* Memory: echo overlays. Small ones and hollows leave ten seconds of trail. In the model, light holds longer and souls are worth half. */
+  memory: { name: 'Memory', kit: 'mode 13 on the plates, echo overlays', add: true, wire: false, bloom: 0.3, echo: true,
+    clear: 0x2a2520, fog: [0x6a5f50, 45, 240], sky: [0x2a2520, 0x5a4f40, 0xb09a78], sun: [0xf0e0c0, 0xfff8e8], star: 0,
+    hemi: [0xe0d4bc, 0x3a3228, 0.95], dir: [0xfff0d8, 0.5], ground: { a: 0x5a5044, b: 0x6a5e4e, lane: 0x3e362c, laneC: 0x52483a, rock: 0x4a4036, water: 0x4a5a58 },
+    crease: [0xd9a860, 0x9ab0b8, 0.35], team: [0xe8b060, 0x8aa8c0], css: ['#e8b060', '#8aa8c0'], ui: { line: 'rgba(240,228,204,0.2)', me: '#fff8e8', edge: '#2a2520' },
+    map: function (c) { c.getHSL(HS); let h = HS.h, s = HS.s, l = HS.l;
+      if (h < 0.2 || h > 0.9) { h = 0.09; s *= 0.5; } else { h = 0.58; s *= 0.28; }
+      c.setHSL(h, Math.min(1, s), l); } }
 };
+const trails = new WeakMap(); let trailT = 0;
 let LK = LOOKS.snow; R.look = LK;
 let tcCache = {};
 function mapC(c) { const hex = c.getHex(); if (hex === SRC_TEAM[0]) c.setHex(LK.team[0]); else if (hex === SRC_TEAM[1]) c.setHex(LK.team[1]); else if (LK.map) LK.map(c); return c; }
-function tc(hex) { let c = tcCache[hex]; if (!c) c = tcCache[hex] = mapC(new T.Color(hex)); return c; }
+const FIXED = { 0xffe14d: 1, 0xe0452c: 1, 0x7ad03a: 1, 0x8fdc50: 1, 0xf0624a: 1 }; // fruit colours read the same in every look
+function tc(hex) { let c = tcCache[hex]; if (!c) c = tcCache[hex] = FIXED[hex] ? new T.Color(hex) : mapC(new T.Color(hex)); return c; }
 function own2(m) { m.userData.lk = true; return m; }
 function own(o) { if (o.material) { o.material.userData.lk = true; o.material.userData.solid = true; } if (o.geometry) o.geometry.userData.lk = true; return o; }
 function applyLook() {
@@ -98,7 +144,7 @@ function applyLook() {
 }
 function construct() {
   if (scene) scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose) o.material.dispose(); });
-  mats = {}; tcCache = {}; creaseM = []; heroM = []; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
+  mats = {}; tcCache = {}; fruitM = []; cueDash = null; cueRings = []; creaseM = []; heroM = []; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
   renderer.setClearColor(LK.clear);
   scene = new T.Scene(); scene.fog = new T.Fog(LK.fog[0], LK.fog[1], LK.fog[2]);
   scene.add(new T.HemisphereLight(LK.hemi[0], LK.hemi[1], LK.hemi[2]));
@@ -269,13 +315,16 @@ function buildThreads() {
   staticGlow = new T.Points(g, new T.PointsMaterial({ map: glowTex, size: 2.4, vertexColors: true, blending: T.AdditiveBlending, transparent: true, depthWrite: false }));
   world.add(staticGlow);
 }
+/* r128 sizes instanceColor from .count at first setColorAt, so allocate it at full capacity up front. */
+function initColor(m, cap) { const a = new Float32Array(cap * 3).fill(1); m.instanceColor = new T.BufferAttribute(a, 3); }
 function buildInstanced() {
   const bodyG = cyl(0.42, 0.52, 1.0, 6); bodyG.translate(0, 0.75, 0);
   tr[0] = new T.InstancedMesh(bodyG, new T.MeshLambertMaterial({ color: SRC_TEAM[0], emissive: SRC_TEAM[0], emissiveIntensity: 0.5 }), 90);
   // the Hush: torn tissue paper, the coldest thing on screen, with pale lilac eyes (Reignfawn)
-  const hushG = cyl(0.1, 0.66, 1.4, 5); hushG.translate(0, 0.72, 0);
-  tr[1] = own(new T.InstancedMesh(hushG, new T.MeshLambertMaterial({ color: LK.hush || 0x1c1426, emissive: 0x6a5a9a, emissiveIntensity: 0.3 }), 110));
-  const eyeG = new T.BoxGeometry(0.44, 0.09, 0.06); eyeG.translate(0, 0.98, 0.3);
+  const hushG = new T.CylinderGeometry(0.1, 0.66, 1.4, 9, 3, true); { const hp = hushG.attributes.position; for (let i = 0; i < hp.count; i++) { const y = hp.getY(i); if (y < -0.2) { const k = (y < -0.6 ? 1 : 0.45), j = Math.sin(i * 12.9898) * 43758.5453, r = (j - Math.floor(j)) - 0.5; hp.setX(i, hp.getX(i) * (1 + r * 0.7 * k)); hp.setZ(i, hp.getZ(i) * (1 + r * 0.7 * k)); hp.setY(i, y + r * 0.42 * k); } } }
+  hushG.translate(0, 0.72, 0); const hushGeo = flat(hushG);
+  tr[1] = own(new T.InstancedMesh(hushGeo, new T.MeshLambertMaterial({ color: LK.hush || 0x1c1426, emissive: LK.hushEm || 0x6a5a9a, emissiveIntensity: LK.hushEmI || 0.3, side: T.DoubleSide }), 110));
+  const eyeG = new T.BoxGeometry(0.5, 0.15, 0.08); eyeG.translate(0, 0.96, 0.34);
   hushEyes = own(new T.InstancedMesh(eyeG, new T.MeshBasicMaterial({ color: 0xf2e2ff, fog: false }), 110));
   hushEyes.frustumCulled = false; hushEyes.count = 0; dyn.add(hushEyes);
   for (let t = 0; t < 2; t++) { tr[t].frustumCulled = false; tr[t].count = 0; dyn.add(tr[t]); }
@@ -284,12 +333,12 @@ function buildInstanced() {
   const pg = new T.PlaneGeometry(1, 1);
   barBg = new T.InstancedMesh(pg, new T.MeshBasicMaterial({ color: 0x120c18, transparent: true, opacity: 0.75, depthWrite: false, fog: false }), 170);
   barFill = new T.InstancedMesh(pg, new T.MeshBasicMaterial({ color: 0xffffff, depthWrite: false, fog: false, transparent: true }), 170);
-  barBg.userData.rt = barFill.userData.rt = true; barBg.frustumCulled = barFill.frustumCulled = false; barBg.renderOrder = 8; barFill.renderOrder = 9; barBg.count = barFill.count = 0;
-  barFill.setColorAt(0, tmpC.setHex(0xffffff)); dyn.add(barBg); dyn.add(barFill);
+  barBg.userData.rt = barFill.userData.rt = true; barBg.frustumCulled = barFill.frustumCulled = false; barBg.renderOrder = 8; barFill.renderOrder = 9; initColor(barFill, 170); barBg.count = barFill.count = 0;
+  dyn.add(barBg); dyn.add(barFill);
   projMesh = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), new T.MeshBasicMaterial({ color: 0xffffff, blending: T.AdditiveBlending, transparent: true, depthWrite: false, fog: false }), 340);
-  projMesh.userData.rt = true; projMesh.frustumCulled = false; projMesh.count = 0; projMesh.setColorAt(0, tmpC); dyn.add(projMesh);
+  projMesh.userData.rt = true; projMesh.frustumCulled = false; initColor(projMesh, 340); projMesh.count = 0; dyn.add(projMesh);
   orbMesh = new T.InstancedMesh(new T.IcosahedronGeometry(1, 1), new T.MeshBasicMaterial({ color: 0xffffff, blending: T.AdditiveBlending, transparent: true, opacity: 0.9, depthWrite: false, fog: false }), 90);
-  orbMesh.userData.rt = true; orbMesh.frustumCulled = false; orbMesh.count = 0; orbMesh.setColorAt(0, tmpC); dyn.add(orbMesh);
+  orbMesh.userData.rt = true; orbMesh.frustumCulled = false; initColor(orbMesh, 90); orbMesh.count = 0; dyn.add(orbMesh);
 }
 function buildParticles() {
   pPos = new Float32Array(PN_MAX * 3); pCol = new Float32Array(PN_MAX * 3); pBase = new Float32Array(PN_MAX * 3); pVel = new Float32Array(PN_MAX * 4);
@@ -352,41 +401,42 @@ function buildPools() {
 }
 
 /* ---------- per-match models ---------- */
+function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissive: em ? col : 0x000000, emissiveIntensity: em || 0 }); m.userData.lk = true; return m; }
 function heroModel(h) {
   const d = h.def, g = new T.Group(), body = new T.Group(); g.add(body);
-  const skin = mat(0xe8c4a0), dark = mat(0x2b1b2f), tc = SRC_TEAM[h.team];
+  const skin = hm(0xe8c4a0), dark = hm(0x2b1b2f), tc = SRC_TEAM[h.team];
   const legL = new T.Group(), legR = new T.Group(); legL.position.set(-0.16, 0.55, 0); legR.position.set(0.16, 0.55, 0);
   mesh(box(0.17, 0.55, 0.2), dark, 0, -0.27, 0, legL); mesh(box(0.17, 0.55, 0.2), dark, 0, -0.27, 0, legR); g.add(legL); g.add(legR);
   const arm = new T.Group(); arm.position.set(-0.3, 1.3, 0.1); body.add(arm);
   let gun;
   if (d.id === 'dora') {
-    mesh(cyl(0.24, 0.5, 0.95, 7), mat(0x8a5a3c), 0, 0.98, 0, body);
+    mesh(cyl(0.24, 0.5, 0.95, 7), hm(0x8a5a3c), 0, 0.98, 0, body);
     mesh(new T.SphereGeometry(0.26, 8, 6), skin, 0, 1.62, 0, body);
-    mesh(flat(new T.ConeGeometry(0.6, 0.34, 8)), mat(0xe9b44c), 0, 1.9, 0, body);
+    mesh(flat(new T.ConeGeometry(0.6, 0.34, 8)), hm(0xe9b44c), 0, 1.9, 0, body);
     gun = mesh(box(0.12, 0.14, 0.7), dark, 0, 0, 0.4, arm);
     mesh(box(0.22, 0.3, 0.22), new T.MeshBasicMaterial({ color: 0xffd28a }), 0.36, 1.0, 0.3, body); glowSprite(0xffc46b, 2.4, body, 0.36, 1.0, 0.3);
   } else if (d.id === 'anna') {
-    mesh(cyl(0.26, 0.42, 0.95, 6), mat(0x2f8f98), 0, 0.98, 0, body);
+    mesh(cyl(0.26, 0.42, 0.95, 6), hm(0x2f8f98), 0, 0.98, 0, body);
     mesh(new T.SphereGeometry(0.26, 8, 6), skin, 0, 1.62, 0, body);
-    mesh(new T.SphereGeometry(0.28, 8, 6, 0, Math.PI * 2, 0, Math.PI * 0.55), mat(0xc4403a), 0, 1.66, -0.02, body);
-    const br = mesh(cyl(0.09, 0.05, 0.8, 5), mat(0xc4403a), 0, 1.25, -0.3, body); br.rotation.x = 0.35;
-    gun = mesh(box(0.1, 0.1, 0.95), mat(0x6a4a34), 0, 0, 0.45, arm); mesh(box(0.34, 0.2, 0.2), mat(0x8a8690), 0, 0, 0.95, arm);
+    mesh(new T.SphereGeometry(0.28, 8, 6, 0, Math.PI * 2, 0, Math.PI * 0.55), hm(0xc4403a), 0, 1.66, -0.02, body);
+    const br = mesh(cyl(0.09, 0.05, 0.8, 5), hm(0xc4403a), 0, 1.25, -0.3, body); br.rotation.x = 0.35;
+    gun = mesh(box(0.1, 0.1, 0.95), hm(0x6a4a34), 0, 0, 0.45, arm); mesh(box(0.34, 0.2, 0.2), hm(0x8a8690), 0, 0, 0.95, arm);
   } else if (d.id === 'myra') {
-    mesh(new T.SphereGeometry(0.62, 10, 8), mat(0x9a6fd0), 0, 1.02, 0, body);
-    const wgl = mesh(flat(new T.ConeGeometry(0.3, 0.9, 3)), mat(0xe9dcff, 0.4), 0.42, 1.5, -0.42, body); wgl.rotation.set(0.5, 0, -1.0);
-    const wgr = mesh(flat(new T.ConeGeometry(0.3, 0.9, 3)), mat(0xe9dcff, 0.4), -0.42, 1.5, -0.42, body); wgr.rotation.set(0.5, 0, 1.0);
-    mesh(cyl(0.2, 0.2, 0.34, 8), mat(0xe9b44c, 0.3), 0.5, 1.0, 0.36, body).rotation.z = Math.PI / 2;
+    mesh(new T.SphereGeometry(0.62, 10, 8), hm(0x9a6fd0), 0, 1.02, 0, body);
+    const wgl = mesh(flat(new T.ConeGeometry(0.3, 0.9, 3)), hm(0xe9dcff, 0.4), 0.42, 1.5, -0.42, body); wgl.rotation.set(0.5, 0, -1.0);
+    const wgr = mesh(flat(new T.ConeGeometry(0.3, 0.9, 3)), hm(0xe9dcff, 0.4), -0.42, 1.5, -0.42, body); wgr.rotation.set(0.5, 0, 1.0);
+    mesh(cyl(0.2, 0.2, 0.34, 8), hm(0xe9b44c, 0.3), 0.5, 1.0, 0.36, body).rotation.z = Math.PI / 2;
     mesh(new T.SphereGeometry(0.24, 8, 6), skin, 0, 1.72, 0, body);
-    mesh(new T.SphereGeometry(0.12, 6, 5), mat(0xe9b44c, 0.4), 0, 2.0, 0, body);
-    gun = mesh(cyl(0.16, 0.1, 0.6, 7), mat(0xe9b44c, 0.25), 0, 0, 0.4, arm); gun.rotation.x = Math.PI / 2;
+    mesh(new T.SphereGeometry(0.12, 6, 5), hm(0xe9b44c, 0.4), 0, 2.0, 0, body);
+    gun = mesh(cyl(0.16, 0.1, 0.6, 7), hm(0xe9b44c, 0.25), 0, 0, 0.4, arm); gun.rotation.x = Math.PI / 2;
   } else {
-    mesh(cyl(0.16, 0.3, 0.95, 5), mat(0x8fd8c0), 0, 0.98, 0, body);
-    mesh(flat(new T.IcosahedronGeometry(0.32, 0)), mat(0xe8c4a0), 0, 1.68, 0, body);
-    const b1 = mesh(cyl(0.08, 0.05, 0.7, 5), mat(0xc8703a, 0.25), 0.3, 1.4, -0.08, body); b1.rotation.z = -0.25;
-    const b2 = mesh(cyl(0.08, 0.05, 0.7, 5), mat(0xc8703a, 0.25), -0.3, 1.4, -0.08, body); b2.rotation.z = 0.25;
-    const n1 = mesh(cyl(0.02, 0.02, 0.9, 4), mat(0xf4e8d6), 0.1, 1.85, 0, body); n1.rotation.z = 0.7;
-    const n2 = mesh(cyl(0.02, 0.02, 0.9, 4), mat(0xf4e8d6), -0.1, 1.85, 0, body); n2.rotation.z = -0.7;
-    gun = mesh(box(0.08, 0.08, 0.6), mat(0xf4e8d6), 0, 0, 0.35, arm);
+    mesh(cyl(0.16, 0.3, 0.95, 5), hm(0x8fd8c0), 0, 0.98, 0, body);
+    mesh(flat(new T.IcosahedronGeometry(0.32, 0)), hm(0xe8c4a0), 0, 1.68, 0, body);
+    const b1 = mesh(cyl(0.08, 0.05, 0.7, 5), hm(0xc8703a, 0.25), 0.3, 1.4, -0.08, body); b1.rotation.z = -0.25;
+    const b2 = mesh(cyl(0.08, 0.05, 0.7, 5), hm(0xc8703a, 0.25), -0.3, 1.4, -0.08, body); b2.rotation.z = 0.25;
+    const n1 = mesh(cyl(0.02, 0.02, 0.9, 4), hm(0xf4e8d6), 0.1, 1.85, 0, body); n1.rotation.z = 0.7;
+    const n2 = mesh(cyl(0.02, 0.02, 0.9, 4), hm(0xf4e8d6), -0.1, 1.85, 0, body); n2.rotation.z = -0.7;
+    gun = mesh(box(0.08, 0.08, 0.6), hm(0xf4e8d6), 0, 0, 0.35, arm);
   }
   mesh(new T.TorusGeometry(0.3, 0.07, 5, 10), mat(tc, 0.7), 0, 1.42, 0, body).rotation.x = Math.PI / 2;
   const ring = new T.Mesh(new T.RingGeometry(0.62, 0.8, 24), new T.MeshBasicMaterial({ color: tc, transparent: true, opacity: 0.8, side: T.DoubleSide, depthWrite: false }));
@@ -500,6 +550,70 @@ function buildCreaseArt() {
     creaseM.push({ ridge: ridge, crane: crane, f: 0, cx: cx });
   });
 }
+/* Fruit. Colours are the fruit's own in every look, because the colour is how you tell them apart:
+   yellow lemon = quick feet, red rose hips = mending, green lime = sour shots, and the big lime is simply big. */
+function buildFruitArt() {
+  fruitM.forEach(function (m) { dyn.remove(m); }); fruitM = [];
+  const leaf = hm(0x2f5a3a), stem = hm(0x4a3a2a);
+  W.fruit.forEach(function (f) {
+    const info = C.FRUIT_INFO[f.k], big = !!info.big, g = new T.Group(), fm = hm(info.col, 0.55);
+    mesh(flat(new T.IcosahedronGeometry(big ? 1.1 : 0.8, 0)), leaf, 0, big ? 0.6 : 0.45, 0, g).scale.y = 0.6;
+    mesh(cyl(0.06, 0.09, big ? 2.2 : 1.3, 4), stem, 0, big ? 1.6 : 1.1, 0, g);
+    const fr = new T.Group(); fr.position.y = big ? 3.1 : 1.9; g.add(fr);
+    if (f.k === 'hips' || f.k === 'bighips') { if (big) fr.scale.set(1, 1, 1); const hs = big ? 2.6 : 1; [[0, 0, 0], [0.24, -0.1, 0.1], [-0.2, -0.14, -0.12], [0.02, -0.22, 0.2]].forEach(function (p) { mesh(new T.SphereGeometry(0.17 * hs, 8, 6), fm, p[0] * hs, p[1] * hs, p[2] * hs, fr); }); }
+    else { const s = mesh(new T.SphereGeometry(big ? 0.95 : 0.34, 12, 8), fm, 0, 0, 0, fr); if (f.k === 'lemon' || f.k === 'biglemon') s.scale.set(1.35, 1, 1); mesh(flat(new T.ConeGeometry(big ? 0.3 : 0.11, big ? 0.5 : 0.2, 4)), leaf, 0, big ? 1.05 : 0.38, 0, fr); }
+    const glow = glowSprite(info.col, big ? 9 : 3.4, fr, 0, 0, 0); glow.material.userData.lk = true;
+    g.position.set(f.x, 0, f.z); g.fr = fr; g.glow = glow; g.unit = f; g.big = big; dyn.add(g); fruitM.push(g);
+  });
+}
+/* Inkblot cues. They draw what the model already knows (a thief's route, which structures can be hurt). They change nothing. */
+function buildCues() {
+  cueRings.forEach(function (r) { dyn.remove(r); }); cueRings = [];
+  if (cueDash) { dyn.remove(cueDash); cueDash = null; }
+  if (!LK.cues && !LK.echo) return;
+  cueDash = new T.InstancedMesh(new T.PlaneGeometry(0.28, 1.3), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, side: T.DoubleSide, depthWrite: false, fog: false }), 240);
+  cueDash.userData.rt = true; cueDash.frustumCulled = false; initColor(cueDash, 240); cueDash.count = 0; cueDash.material.userData.lk = true; dyn.add(cueDash);
+  if (LK.cues) W.structs.forEach(function (s) {
+    const r = new T.Mesh(new T.RingGeometry(s.r + 1.9, s.r + 2.3, 40), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, side: T.DoubleSide, depthWrite: false, fog: false }));
+    r.material.userData.lk = true; r.rotation.x = -Math.PI / 2; r.position.set(s.x, 0.1, s.z); r.unit = s; dyn.add(r); cueRings.push(r);
+  });
+}
+const CUE = { threat: 0x9a7cff, amber: 0xffb347, copper: 0xd9824a };
+R._cue = function () { return { dash: cueDash ? { n: cueDash.count, col: cueDash.instanceColor ? Array.from(cueDash.instanceColor.array.slice(0, 6)) : null, mat: cueDash.material.color.getHex(), vis: cueDash.visible, parent: !!cueDash.parent } : null, rings: cueRings.map(function (r) { return [r.visible, r.material.color.getHex(), +r.material.opacity.toFixed(2), !!r.parent]; }).slice(0, 4), look: LK.name }; };
+function drawCues() {
+  if (!cueDash) return;
+  let n = 0;
+  if (LK.echo) { // Memory: where the small ones and the hollows were over the last ten seconds
+    const samp = time - trailT > 0.5; if (samp) trailT = time;
+    const echo = function (u, col) {
+      let tr = trails.get(u); if (!tr) { tr = []; trails.set(u, tr); }
+      if (samp) { tr.push(u.x, u.z); if (tr.length > 40) tr.splice(0, 2); }
+      for (let k = 0; k < tr.length && n < 240; k += 2) {
+        const age = 1 - k / 40; dummy.position.set(tr[k], 0.18, tr[k + 1]); dummy.rotation.set(-Math.PI / 2, 0, 0); dummy.scale.set(1.6 - age, 0.5 - age * 0.25, 1); dummy.updateMatrix();
+        cueDash.setMatrixAt(n, dummy.matrix); cueDash.setColorAt(n++, tmpC.setHex(col));
+      }
+    };
+    for (let i = 0; i < W.thieves.length; i++) if (W.thieves[i].alive) echo(W.thieves[i], 0xfff0d0);
+    for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (u.alive && u.big) echo(u, 0x8aa8c0); }
+  }
+  for (let i = 0; LK.cues && i < W.thieves.length; i++) {
+    const t = W.thieves[i]; if (!t.alive) continue;
+    let gx = 0, gz = C.PATRON_Z - 6; if (t.state === 0 && t.mark) { gx = t.mark.x; gz = t.mark.z; }
+    const dx = gx - t.x, dz = gz - t.z, d = Math.hypot(dx, dz) || 1, yaw = Math.atan2(dx, dz), col = t.state === 1 ? CUE.copper : CUE.threat;
+    for (let s = 1.5 + (R.reduced ? 0 : (time * 4) % 2.6); s < d && n < 240; s += 2.6) {
+      dummy.position.set(t.x + dx / d * s, 0.16, t.z + dz / d * s); dummy.rotation.set(-Math.PI / 2, 0, -yaw); dummy.scale.set(1, 1, 1); dummy.updateMatrix();
+      cueDash.setMatrixAt(n, dummy.matrix); cueDash.setColorAt(n++, tmpC.setHex(col));
+    }
+  }
+  dummy.rotation.set(0, 0, 0);
+  cueDash.count = n; cueDash.instanceMatrix.needsUpdate = true; if (cueDash.instanceColor) cueDash.instanceColor.needsUpdate = true;
+  for (let i = 0; i < cueRings.length; i++) {
+    const r = cueRings[i], s = r.unit;
+    if (!s.alive) { r.visible = false; continue; }
+    if (s.team === 0) { r.visible = true; r.material.color.setHex(s.dark ? CUE.threat : CUE.amber); r.material.opacity = s.dark ? (R.reduced ? 0.9 : 0.55 + Math.sin(time * 6) * 0.35) : 0.5; }
+    else { r.visible = S.vuln(s); r.material.color.setHex(CUE.copper); r.material.opacity = 0.75; }
+  }
+}
 function buildDecor() {
   if (R.decor) return;
   R.decor = true;
@@ -541,7 +655,7 @@ R.build = function (w) {
   heroM.concat(structM, strayM).forEach(function (g) { dyn.remove(g); });
   if (!nessM) nessM = nessModel(); nessY = -11;
   heroM = W.heroes.map(heroModel); structM = W.structs.map(structModel); strayM = W.strays.map(strayModel);
-  buildDecor();
+  buildDecor(); buildCues(); buildFruitArt();
   for (let i = 0; i < PN_MAX; i++) { pLife[i] = 0; pPos[i * 3 + 1] = -999; }
   rings.forEach(r => { r.life = 0; r.m.visible = false; });
   applyLook();
@@ -587,6 +701,9 @@ R.fx = function (e) {
     case 'jump': if (e.dbl) emit(e.u.x, e.u.y, e.u.z, 8, 0xf4e8d6, 3, 0.35, -1, 0); break;
     case 'dash': emit(e.u.x, e.u.y + 0.8, e.u.z, 10, 0xf4e8d6, 3, 0.35, 0, 0); break;
     case 'level': ring(e.u.x, e.u.y, e.u.z, 0.4, 3, 0xffe9a8, 0.5); break;
+    case 'fruit': { const fc = C.FRUIT_INFO[e.kind].col, big = !!C.FRUIT_INFO[e.kind].big; emit(e.x, big ? 3 : 1.8, e.z, big ? 90 : 26, fc, big ? 11 : 6, 0.9, 4, 3); ring(e.x, 0.05, e.z, 0.4, big ? 12 : 3.5, fc, big ? 0.8 : 0.45); break; }
+    case 'moodsolved': if (W.player) { ring(W.player.x, 0.05, W.player.z, 1, 30, 0xffe9a8, 1.2); emit(W.player.x, 2, W.player.z, 60, 0xffe9a8, 9, 1.2, 5, 2); } break;
+    case 'fruitripe': if (e.lens && e.lens === W.lens) ring(e.x, 0.05, e.z, 6, 0.6, C.FRUIT_INFO.biglime.col, 1.0); break;
     case 'slam': ring(e.x, 0.05, e.z, 0.4, 3.2, 0xb8a0ff, 0.3); emit(e.x, 0.5, e.z, 8, 0xb8a0ff, 5, 0.4, 2); break;
     case 'theft': emit(e.u.x, e.u.y + 1.2, e.u.z, 26, 0xffe9a8, 6, 0.8, 3); if (e.p) shake = Math.max(shake, 0.4); break;
     case 'snuff': emit(e.u.x, e.u.h * 0.6, e.u.z, 50, 0x8a78c8, 8, 1, 2); ring(e.u.x, 0.05, e.u.z, 6, 0.5, 0x8a78c8, 0.7); break;
@@ -686,6 +803,9 @@ R.frame = function (dt, view) {
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
     if (h.slowT > 0 && Math.random() < dt * 8) emit(h.x, h.y + 0.3, h.z, 1, 0x8fb0ff, 1, 0.5, 1, 0);
     if (h.dotT > 0 && Math.random() < dt * 10) emit(h.x, h.y + 1.2, h.z, 1, 0xc9a0ff, 1.5, 0.5, 1, 0);
+    if (h.zestT > 0 && Math.random() < dt * 22) emit(h.x, h.y + 0.15, h.z, 1, 0xffe14d, 1.4, 0.5, 1.2, 0);
+    if (h.furyT > 0 && Math.random() < dt * 22) emit(h.x + (Math.random() - 0.5) * 0.7, h.y + 1.3, h.z + (Math.random() - 0.5) * 0.7, 1, 0x8fdc50, 1.2, 0.5, 1.8, 0);
+    if (h.hipsT > 0 && Math.random() < dt * 16) emit(h.x, h.y + 0.6 + Math.random(), h.z, 1, 0xf0624a, 0.6, 0.7, 1.6, 0);
     if (W.great[h.team] > 0 && Math.random() < dt * 16) emit(h.x + (Math.random() - 0.5) * 0.8, h.y + 0.3 + Math.random() * 1.6, h.z + (Math.random() - 0.5) * 0.8, 1, 0xffe08a, 0.6, 0.7, 2.2, 0);
   }
   // troopers
@@ -708,7 +828,8 @@ R.frame = function (dt, view) {
     if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0);
   }
   dummy.rotation.set(0, 0, 0);
-  if (LK.weather === 'snow' && W.red <= 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 1 : 3); k++) emit(cx + (Math.random() - 0.5) * 50, 8 + Math.random() * 8, cz + (Math.random() - 0.5) * 50, 1, Math.random() < 0.16 ? 0xff9ac8 : 0xdfe6ff, 0.5, 2.4, -3.2, 1.2); }
+  if (LK.weather === 'rain' && W.red <= 0 && !R.reduced) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 2 : 5); k++) emit(cx + (Math.random() - 0.5) * 46, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 46, 1, 0x6a64d8, 0.3, 0.7, -22, 26); }
+  if (LK.weather === 'snow' && W.red <= 0 && !R.reduced) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 1 : 3); k++) emit(cx + (Math.random() - 0.5) * 50, 8 + Math.random() * 8, cz + (Math.random() - 0.5) * 50, 1, Math.random() < 0.16 ? 0xff9ac8 : 0xdfe6ff, 0.5, 2.4, -3.2, 1.2); }
   if (W.red > 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 3 : 8); k++) emit(cx + (Math.random() - 0.5) * 44, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 44, 1, 0xff3a3a, 0.3, 0.75, -20, 26); }
   tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh;
   tr[0].instanceMatrix.needsUpdate = tr[1].instanceMatrix.needsUpdate = hushEyes.instanceMatrix.needsUpdate = trHat.instanceMatrix.needsUpdate = true;
@@ -739,6 +860,12 @@ R.frame = function (dt, view) {
       for (let k = 0; k < 6; k++) { const s = nessM.neck[k]; s.rotation.z = Math.sin(time * 1.3 + k * 0.7) * 0.06; s.rotation.x = s.baseX + Math.sin(time * 0.9 + k) * 0.03 - (n.spitT > 1.25 ? 0.05 : 0); }
       if (n.alive && Math.random() < dt * 1.6) ring(n.x + (Math.random() - 0.5) * 8, 0.03, n.z + (Math.random() - 0.5) * 8, 0.3, 2 + Math.random() * 3, 0x7fe0ff, 1.3);
     }
+  }
+  for (i = 0; i < fruitM.length; i++) {
+    const m = fruitM[i], f = m.unit, here = !f.lens || f.lens === W.lens, s = f.ripe && here ? 1 : (f.lens ? 0.001 : 0.22);
+    if (f.ripe && !here && !R.reduced && Math.random() < dt * 2.5) emit(f.x + (Math.random() - 0.5) * 1.5, 0.3 + Math.random() * 2.5, f.z + (Math.random() - 0.5) * 1.5, 1, 0xf4e8d6, 0.3, 1.1, 0.8, 0); // something is here, in another light
+    m.fr.scale.x += (s - m.fr.scale.x) * Math.min(1, dt * 5); m.fr.scale.y = m.fr.scale.z = m.fr.scale.x;
+    m.glow.visible = f.ripe && here; m.fr.rotation.y += dt * 0.9; m.fr.position.y = (m.big ? 3.1 : 1.9) + (f.ripe && !R.reduced ? Math.sin(time * 2.2 + i) * 0.14 : 0);
   }
   for (i = 0; i < creaseM.length; i++) {
     const cm = creaseM[i], c = W.creases[i];
@@ -823,6 +950,7 @@ R.frame = function (dt, view) {
   } else {
     R.camPose(pl, view.yaw, view.pitch, view.zoom, cp);
     camPos.x = cp.x; camPos.y = cp.y; camPos.z = cp.z; camDir.x = cp.dx; camDir.y = cp.dy; camDir.z = cp.dz; camDist = cp.dist;
+    if (R.reduced) shake = 0;
     let sx = 0, sy = 0; if (shake > 0) { sx = (Math.random() - 0.5) * shake * 0.5; sy = (Math.random() - 0.5) * shake * 0.5; shake = Math.max(0, shake - dt * 2.2); }
     camera.position.set(cp.x + sx, cp.y + sy, cp.z);
     camera.lookAt(cp.x + sx + cp.dx * 50, cp.y + sy + cp.dy * 50, cp.z + cp.dz * 50);
@@ -840,9 +968,11 @@ R.frame = function (dt, view) {
     if (u.kind === 'trooper' && !u.big && u.hp >= u.maxHp) continue;
     if (u.kind === 'stray' && u.hp >= u.maxHp) continue;
     if (u === pl && view.mode !== 'attract') continue;
-    const dx = u.x - camPos.x, dz = u.z - camPos.z; if (dx * dx + dz * dz > (u.struct || u.kind === 'ness' ? 150 * 150 : 75 * 75)) continue;
+    const dx = u.x - camPos.x, dz = u.z - camPos.z, d2 = dx * dx + dz * dz; if (d2 > (u.struct || u.kind === 'ness' ? 150 * 150 : 75 * 75) || d2 < 10) continue;
+    const near = u.struct ? 1 : Math.min(1, Math.max(0.4, Math.sqrt(d2) / 9));
     let w = u.big ? 2.8 : 1, hgt = u.big ? 0.22 : 0.11, y = u.y + u.h * (u.big ? 2.3 : 1) + 0.45;
     if (u.kind === 'hero') { w = 1.7; hgt = 0.2; y = u.y + u.h + 0.6; } else if (u.struct) { w = 5.5; hgt = 0.4; y = (u.team === 0 && u.kind !== 'patron') ? (u.kind === 'warden' ? 10.4 : 7.6) : u.h + 1.6; } else if (u.kind === 'stray') { w = 2.2; hgt = 0.16; y = 3.6; } else if (u.kind === 'ness') { w = 7; hgt = 0.45; y = 9; }
+    w *= near; hgt *= near;
     const f = Math.max(0, u.hp / u.maxHp);
     dummy.position.set(u.x, y, u.z); dummy.quaternion.copy(q); dummy.scale.set(w + 0.08, hgt + 0.08, 1); dummy.updateMatrix(); barBg.setMatrixAt(nb, dummy.matrix);
     const off = -(1 - f) * w * 0.5;
@@ -850,6 +980,7 @@ R.frame = function (dt, view) {
     barFill.setColorAt(nb, tc(u.team === 0 ? SRC_TEAM[0] : (u.team === 1 ? SRC_TEAM[1] : 0xc9a0ff)));
     nb++;
   }
+  drawCues();
   barBg.count = barFill.count = nb; barBg.instanceMatrix.needsUpdate = barFill.instanceMatrix.needsUpdate = true;
   if (barFill.instanceColor) barFill.instanceColor.needsUpdate = true;
   draw();

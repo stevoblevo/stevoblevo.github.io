@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Livloch versions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Spectral:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow column, a list of doors. */
+:root { --night: #1b1840; --paper: #f6ecf4; --dim: rgba(246, 236, 244, 0.72); --gold: #f0c060; --ember: #ffab4a; --line: rgba(246, 236, 244, 0.22); color-scheme: dark; }
+html, body { margin: 0; background: var(--night); color: var(--paper); font-family: "Spectral", Georgia, serif; }
+main { max-width: 62ch; margin: 0 auto; padding: 32px 16px 48px; }
+h1 { font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: clamp(40px, 9vw, 64px); margin: 0 0 4px; text-wrap: balance; }
+h1 em { color: var(--ember); }
+p { line-height: 1.5; color: var(--dim); }
+ol { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 10px; }
+li a { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: baseline; padding: 14px 16px; border: 1px solid var(--line); border-radius: 4px; color: var(--paper); text-decoration: none; }
+li a:hover, li a:focus-visible { border-color: var(--gold); outline: none; }
+li b { font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: 26px; color: var(--gold); font-variant-numeric: tabular-nums; }
+li span { color: var(--dim); line-height: 1.4; }
+li .now { color: var(--ember); }
+a.back { color: var(--paper); }
+</style></head>
+<body><main>
+<h1>Liv<em>loch</em>, every version</h1>
+<p>Each one stays playable as it was. Saves are shared between them, so a look or setting chosen in one may carry into another.</p>
+<ol id="list"><li><a href="../"><b>now</b><span>The current version</span></a></li></ol>
+<p><a class="back" href="../">Back to the valley</a></p>
+<script>
+fetch('../versions.json').then(function (r) { return r.json(); }).then(function (d) {
+  var ol = document.getElementById('list'); ol.innerHTML = '';
+  d.versions.forEach(function (v) {
+    var li = document.createElement('li'), a = document.createElement('a'), b = document.createElement('b'), s = document.createElement('span');
+    a.href = '../' + v.path; b.textContent = v.v; s.textContent = v.note; if (v.v === d.current) { s.className = 'now'; s.textContent = 'Current. ' + v.note; }
+    a.appendChild(b); a.appendChild(s); li.appendChild(a); ol.appendChild(li);
+  });
+  var p = document.createElement('p'); p.textContent = d.notKept.charAt(0).toUpperCase() + d.notKept.slice(1) + '.'; ol.parentNode.insertBefore(p, ol.nextSibling);
+}).catch(function () {});
+</script>
+</main></body></html>

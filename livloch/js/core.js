@@ -1,4 +1,14 @@
-/* LIVELOCK · core: constants, lanes, heroes, items. No DOM, no THREE. */
+/* LIVLOCH · core: constants, lanes, heroes, items, fruit. No DOM, no THREE.
+
+   DESIGN
+   - The map is one valley on the z axis: Reign at -z, Hush at +z. Three lanes ("threads") are polylines that leave each
+     base together, spread to x = -48, 0, +48, and meet again. A position along a thread is `s`, metres from the Reign end.
+   - Everything a designer would tune lives here as data: hero kits, items, fruit, timings. Rules live in sim.js.
+   - Hero abilities are described by `kind` (orb, line, nova, dash, blink, zone, turret) plus numbers, so a new hero is
+     a new table row, not new code.
+   - Lore is checked against the Saelion repos: Myra Belle is the round purple thread-keeper, not a bell; the Skein Doll
+     has copper braids and a mint cardigan; Dora is not called a lantern keeper. Do not undo those.
+   (The file says LL and "livelock" in places because the game was called Livelock until 0.4.) */
 (function (G) {
 'use strict';
 var LL = G.LL = {};
@@ -20,6 +30,33 @@ var C = LL.C = {
   TEAM_NAME: ['Reign', 'Hush'], RED_EVERY: 300, RED_T: 60, CREASE_X: [-24, 24], FOLD_T: 45, TEAM_COL: [0xff6a4d, 0x5fe6b6], TEAM_CSS: ['#ff7a5c', '#6fe8c0'],
   CAMPS: [[-24, 0], [-24, -50], [24, -50], [-24, 50], [24, 50]],
   LOCH: { x: 24, z: 0, r: 9.5 }, GREAT_T: 90,
+  /* Fruit grows off the threads. Little ones regrow in about a minute; the big lime takes three. */
+  FRUIT: [{ k: 'lemon', x: -36, z: -20 }, { k: 'lemon', x: 36, z: -20 }, { k: 'lemon', x: -12, z: 22 }, { k: 'hips', x: -12, z: -24 }, { k: 'hips', x: 30, z: -44 }, { k: 'hips', x: -36, z: 26 },
+    { k: 'lime', x: 12, z: 24 }, { k: 'lime', x: -30, z: -46 },
+    // Big fruit is the rare tier. Each one ripens out of sight and can be seen and eaten only through one view.
+    { k: 'biglime', x: 24, z: 28, lens: 'glow' }, { k: 'biglemon', x: -60, z: -10, lens: 'origami' }, { k: 'bighips', x: 60, z: 14, lens: 'knight' }],
+  FRUIT_INFO: {
+    lemon: { name: 'Lemon', line: 'quick feet', t: 9, grow: 55, col: 0xffe14d, css: '#ffe14d' },
+    hips: { name: 'Rose hips', line: 'mending', t: 5, grow: 50, col: 0xe0452c, css: '#f0624a' },
+    lime: { name: 'Verde Limón', line: 'sour shots', t: 9, grow: 70, col: 0x7ad03a, css: '#8fdc50' },
+    biglime: { name: 'Big Verde Limón', line: 'the whole side, sour and quick', t: 12, grow: 180, col: 0x7ad03a, css: '#8fdc50', big: 'lime' },
+    biglemon: { name: 'Big Lemon', line: 'the whole side, quick', t: 16, grow: 160, col: 0xffe14d, css: '#ffe14d', big: 'lemon' },
+    bighips: { name: 'Big Rose hips', line: 'the whole side, mended', t: 6, grow: 170, col: 0xe0452c, css: '#f0624a', big: 'hips' }
+  },
+  /* Views. The view the player is wearing is model state (W.lens), set by the player like any other action.
+     Before each red rain the valley sets a mood; one view fits it. Wear that view before the rain and the rain comes thin. */
+  LENSES: ['snow', 'ink', 'lantern', 'knight', 'origami', 'glow', 'rain', 'memory'],
+  MOODS: [
+    { lens: 'rain', line: 'It smells of iron. Face the weather.' }, { lens: 'memory', line: 'You have stood here before. About ten seconds ago.' },
+    { lens: 'knight', line: 'A paper theatre. Someone has lit the footlights.' },
+    { lens: 'origami', line: 'There is daylight folded under the snow.' },
+    { lens: 'glow', line: 'The valley hums in wire. Follow the lines.' },
+    { lens: 'ink', line: 'A stain that might be a stag. Doubt it.' },
+    { lens: 'lantern', line: 'Old gold. The first valley, before the snow.' }
+  ],
+  /* Ever Fallen: the valley is already lost. LIT_T is how long a recovered light holds; the rain comes twice as often. */
+  LIT_T: 80, FALLEN_RED_EVERY: 150,
+  RED_WARN: 30, MOOD_GUESSES: 3,
   ULT_LEVEL: 3, MAX_ITEMS: 15
 };
 
@@ -112,4 +149,27 @@ LL.ITEMS = [
   { id: 'sun', cat: 2, tier: 3, cost: 3000, name: 'Little Sun', desc: '+55% ability power', mod: { ap: 0.55 } }
 ];
 LL.CATS = ['Gun', 'Body', 'Spirit'];
+/* THE CABINET. Easter eggs. Each entry opens on a feat in play; a switch hidden in Settings opens all of them.
+   Doors lead to other Saelion worlds (addresses from the public atlas). 'snuff' is a small game kept in this file's
+   neighbour, ui.js. 'plates' is the concept art the game was drawn from. */
+LL.CABINET = [
+  { id: 'plates', name: 'The plates', feat: 'Answer one mood', line: 'The concept art this valley was drawn from.' },
+  { id: 'snuff', name: 'Snuff', feat: 'Catch a small one yourself, or recover a light', line: 'Nine houses, thirty seconds, one thumb.' },
+  { id: 'kk', name: 'kk', feat: 'Sit through a whole match leaning back', line: 'A watch, not a wall.', url: 'https://saelion.co/kk' },
+  { id: 'everfallen', name: 'AND SO 7 · Everfallen', feat: 'Hold eight minutes in Ever Fallen', line: 'A storybook toy tuned in 31 steps, like the sounds here.', url: 'https://stevoblevo.github.io/and-so/' },
+  { id: 'redreign', name: 'Red Reign', feat: 'Stand through a red rain you thinned', line: 'Red rain, and a way home that stays open.', url: 'https://stevoblevo.github.io/red-reign/' },
+  { id: 'peachfall', name: 'The Peachfall', feat: 'Eat a big fruit', line: 'Play the dream or watch it.', url: 'https://stevoblevo.github.io/peachfall/' },
+  { id: 'knight', name: 'Knight Side', feat: 'Fold the valley', line: 'An isometric knight and some lanterns.', url: 'https://stevoblevo.github.io/knight-side/' },
+  { id: 'foldflow', name: 'Fold / Flow', feat: 'Wear every view in one match', line: 'Bring five lanterns home.', url: 'https://saelion.co/fold-flow' },
+  { id: 'peachball', name: 'Peach Ball', feat: 'Put the Ness down', line: 'A peach, a mood, and nowhere else you need to be.', url: 'https://saelion.co/peach-ball' },
+  { id: 'garden', name: 'Red Rain · Night Garden', feat: 'Recover ten lights in one fall', line: 'Gather five small lights in a garden that remembers.', url: 'https://night-garden-beta.vercel.app/' }
+];
+LL.PLATES = [
+  { f: 'art/title.jpg', name: 'The first plate', line: 'Sent with the words "some concept in game art for direction eventual". It became the title screen and the Cobalt Snow view.' },
+  { f: 'art/concepts/05_original_four_looks_reference.jpg', name: 'The four looks', line: 'Livloch 0.3, before the plate: the four looks built from the Saelion style kits. Kept for reference.' },
+  { f: 'art/concepts/01_gen3_storeybrook.jpg', name: 'Gen 3 · Storeybrook', line: 'The paper theatre. Knight Night and Origami come from here.' },
+  { f: 'art/concepts/02_gen4_fifteen_modes.jpg', name: 'Gen 4 · fifteen modes', line: '"Playable Reality Views". This plate is why views became a mechanic in 0.9.' },
+  { f: 'art/concepts/03_gen5_afterimage.jpg', name: 'Gen 5 · Afterimage', line: 'The radial toggle and the fifteenth mode. Neither is built yet.' },
+  { f: 'art/concepts/04_gen15_skeptic_noir.jpg', name: 'Gen XV · Skeptic Noir', line: '"Recover the light". Inkblot Noir, the small ones that carry lights, and Ever Fallen come from here.' }
+];
 })(typeof window !== 'undefined' ? window : globalThis);
