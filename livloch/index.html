@@ -235,6 +235,12 @@ body[data-look="memory"] #gl { filter: sepia(0.25); }
 #callList { display: grid; gap: 6px; margin: 8px 0 12px; } #callList .cr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
 #callList .cr span { flex: 1 1 200px; } #callList .cr small { display: block; color: var(--paper-dim); }
 #hud #bEcho:disabled { opacity: 0.4; }
+#quest { position: absolute; left: var(--sl); top: calc(var(--st) + 190px); max-width: 46%; font-size: 13.5px; line-height: 1.3; padding: 4px 10px; background: rgba(var(--wash), 0.62); border-left: 2px solid var(--gold); border-radius: 2px; pointer-events: none; }
+#quest small { font-family: var(--f-sc); letter-spacing: 0.12em; color: var(--gold); display: block; font-size: 11px; } #quest b { color: var(--gold); font-weight: 400; }
+#quest.done { animation: qd 0.9s; } @keyframes qd { 0% { background: var(--gold); color: var(--night); } }
+body.touch #quest { top: calc(var(--st) + 156px); } @media (max-width: 760px) { #quest { top: calc(var(--st) + 156px); font-size: 12.5px; } }
+#worlds { font-size: 14px; color: var(--paper-dim); } #worlds a { color: var(--paper); margin-right: 12px; white-space: nowrap; }
+#perf { font-size: 13px; color: var(--paper-dim); margin: 6px 0; font-variant-numeric: tabular-nums; }
 #keys { position: absolute; left: 12px; bottom: calc(var(--sb, 0px) + 8px); font-size: 12px; color: var(--paper-dim); opacity: 0.8; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
 #keys b { color: var(--paper); font-weight: 600; }
 #lean { position: absolute; left: 50%; bottom: calc(var(--sb, 0px) + 14px); transform: translateX(-50%); display: none; gap: 8px; z-index: 6; flex-wrap: wrap; justify-content: center; width: min(560px, 96%); }
@@ -294,6 +300,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="great" hidden></div>
     <div id="buffs" hidden></div>
     <div id="coach" hidden></div>
+    <div id="quest" hidden></div>
     <div id="dreamCard" hidden><small></small><b></b><p></p></div>
     <div id="autoTag" hidden>Auto · the valley plays itself</div>
     <div id="lean" role="group" aria-label="Lean Back controls">
@@ -366,7 +373,8 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-touch"><dt>Left thumb</dt><dd>move</dd><dt>Right thumb</dt><dd>drag to aim; your gun fires on its own when the ring is on a target</dd><dt>Buttons</dt><dd>fire, jump, dash, three abilities, ride thread when it shows</dd></dl>
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
-      <footer>Livloch 0.15 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <p id="worlds">Other doors: </p>
+      <footer>Livloch 0.16 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
     </div>
   </section>
 
@@ -399,6 +407,8 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
       </div>
     </div>
   </section>
+
+  <template id="perfT"><h3>How it is running</h3><p id="perf">Play for a few seconds, then pause again.</p><div class="row"><button class="btn small" id="bPerf">Copy the report</button><span id="perfNote" style="color:var(--paper-dim);font-size:13px"></span></div></template>
 
   <section id="cab" class="screen" hidden>
     <div class="panel">

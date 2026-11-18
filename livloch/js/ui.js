@@ -67,6 +67,9 @@ UI.init = function (handlers) {
   on('bFull', H.full); on('bFull2', H.full);
   on('bShop', () => UI.toggleShop()); on('bDeadShop', () => UI.toggleShop(true)); on('bShopClose', () => UI.toggleShop(false));
   on('bPause', H.pause); on('bResume', H.resume); on('bQuit', H.quit); on('bAgain', () => H.play(false)); on('bTitle', H.quit);
+  { const w = $('worlds'); LL.WORLDS.forEach(function (x) { const a = document.createElement('a'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x.name + ' ↗'; w.appendChild(a); }); }
+  { const t = $('perfT'); document.querySelector('#pause .panel').appendChild(t.content.cloneNode(true));
+    on('bPerf', function () { const r = LL.perfReport(); if (!r) return; const done = function (ok) { $('perfNote').textContent = ok ? 'Copied. Paste it to Claude.' : 'Could not copy; read it off above.'; }; try { navigator.clipboard.writeText(r.text).then(function () { done(true); }, function () { done(false); }); } catch (err) { done(false); } }); }
   on('bEcho', H.echo); on('lEcho', H.echo); on('lFast', function () { $('lFast').textContent = H.fast() + '×'; });
   on('bCopyCalls', function () { const t = UI.callsText(); const done = function (ok) { $('copyNote').textContent = ok ? 'Copied. Paste it to Claude.' : t; }; try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (err) { done(false); } });
   $('cDream').addEventListener('click', function () { cfg.dream = !cfg.dream; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
@@ -264,6 +267,7 @@ UI.fx = function (e) {
     case 'thief': if (e.mark === pl) feed('A hush is out for your souls'); else if (e.mark.struct) feed('A hush is out for a lantern'); break;
     case 'theft': if (e.p) UI.banner('A hush has ' + Math.round(e.amt) + ' of your souls.', 'Catch it before it reaches the gate', 4.5); else feed('A hush robbed ' + hname(e.u)); break;
     case 'moodsolved': UI.unlock('plates'); UI.banner('That is the one.', 'The rain will come thin: no extra hollows, fewer thieves. +80 souls each', 5); break;
+    case 'goal': { const q = $('quest'); feed('<b>Done</b> · ' + e.line + (e.pay ? ' · +' + e.pay : '')); q.classList.remove('done'); void q.offsetWidth; q.classList.add('done'); LL.audio.ui('ok'); break; }
     case 'echo': feed('<b>Echo</b> · ' + Math.round(e.len) + ' seconds of you' + (e.mem ? ', remembered whole' : '')); break;
     case 'echoend': if (e.shots) feed('The echo fired ' + e.shots + ' times and went'); break;
     case 'call': feed('Called to the <b>' + C.LANE_NAME[e.lane] + '</b>'); break;
@@ -330,7 +334,7 @@ function board() {
   return h + '</table>';
 }
 UI.showPause = function (onOff) {
-  if (onOff) { $('sbPause').innerHTML = board(); $('oAuto').checked = H.autoFire(); $('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; show('pause'); }
+  if (onOff) { $('sbPause').innerHTML = board(); $('oAuto').checked = H.autoFire(); $('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; { const r = LL.perfReport(); $('perf').textContent = r ? r.text.split('\n').slice(1, 5).join(' · ') : 'Play for a few seconds, then pause again.'; $('perfNote').textContent = ''; } show('pause'); }
   else show(null);
 };
 UI.showOver = function () {
@@ -417,6 +421,7 @@ UI.frame = function (dt, w, view, info) {
   let can = false; for (let i = 0; i < LL.ITEMS.length; i++) if (p.items.indexOf(i) < 0 && s >= LL.ITEMS[i].cost) { can = true; break; }
   $('souls').classList.toggle('can', can);
   $('clock').textContent = U.fmtTime(W.t) + (W.lens === 'rain' && W.red <= 0 ? ' · rain ' + U.fmtTime(Math.max(0, W.redNext - W.t)) : ''); $('k0').textContent = W.fallen ? W.lights : W.kills[0];
+  { const g = S.goal(), q = $('quest'), t = g ? g.id : ''; if (q.dataset.g !== t) { q.dataset.g = t; q.hidden = !g || W.dream; if (g) q.innerHTML = '<small>NEXT</small>' + g.line + (g.pay ? ' · <b>+' + g.pay + '</b>' : ''); } }
   { const er = S.echoReady(), be = $('bEcho'), le = $('lEcho'); if (be.disabled === er) be.disabled = !er; if (le.disabled === er) le.disabled = !er; }
   if (W.dream) { if (W.mercy && !wasMercy) dreamShow('mercy'); wasMercy = W.mercy; dreamT -= dt; if (dreamT <= 0 && (dreamQ.length || !$('dreamCard').hidden)) dreamNext(); }
   if (W.lean) { const ok = S.leanCrease() >= 0, lf = $('lFold'); if (lf.disabled === ok) lf.disabled = !ok; for (let l = 0; l < 3; l++) { const b = $('lCall' + l), on = String(p.ai.lane === l); if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on); } } $('k1').textContent = W.kills[1];
