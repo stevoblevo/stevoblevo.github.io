@@ -16,6 +16,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U;
 const R = LL.gfx = { ok: false, low: false };
+const SCN = LL.scenery || null; // js/scenery.js: trees, the loch, pools of light, plants, moon, mist, fireflies, petals (null: the old cone trees and flat loch)
 let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
 let world, dyn, sky, stars;
@@ -152,9 +153,12 @@ function construct() {
   scene.add(new T.HemisphereLight(LK.hemi[0], LK.hemi[1], LK.hemi[2]));
   const moon = new T.DirectionalLight(LK.dir[0], LK.dir[1]); moon.position.set(-40, 80, 60); scene.add(moon);
   world = new T.Group(); scene.add(world); dyn = new T.Group(); scene.add(dyn);
-  buildSky(); buildGround(); buildThreads(); buildInstanced(); buildParticles(); buildPools(); buildCreaseArt();
+  if (SCN) SCN.begin(scx()); // scenery: this look's palette, before the ground is tinted
+  buildSky(); buildGround(); buildThreads(); buildInstanced(); buildParticles(); buildPuffs(); buildPools(); buildCreaseArt();
+  if (SCN) SCN.build(scx()); // scenery: the loch, moon, mist and stars (the trees wait for the world, in R.build)
   applyLook();
 }
+function scx() { let id = 'snow'; for (const k in LOOKS) if (LOOKS[k] === LK) id = k; return { T: T, scene: scene, world: world, sky: sky, renderer: renderer, LK: LK, id: id, R: R, groundH: groundH, ground: groundM }; }
 R.setLook = function (id) {
   if (!LOOKS[id] || !R.ok) return;
   LK = LOOKS[id]; R.look = LK; C.TEAM_CSS = LK.css;
@@ -206,7 +210,7 @@ R.init = function (canvas) {
   try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' }); }
   catch (e) { return false; }
   camera = new T.PerspectiveCamera(64, 1, 0.15, 1400);
-  dummy = new T.Object3D(); tmpC = new T.Color(); v1 = new T.Vector3(); v2 = new T.Vector3(); v3 = new T.Vector3();
+  dummy = new T.Object3D(); dummy.rotation.order = 'YXZ'; /* tilt and roll in the unit's own frame, after its facing */ tmpC = new T.Color(); v1 = new T.Vector3(); v2 = new T.Vector3(); v3 = new T.Vector3();
   glowTex = makeGlow(); shadowTex = makeShadow();
   R.ok = true; construct();
   R.resize(); return true;
@@ -266,10 +270,16 @@ function buildSky() {
   const sun = glowSprite(LK.sun[0], 260, sky, 0, 210, 900); sun.material.fog = false; sun.material.userData.lk = true;
   const core = glowSprite(LK.sun[1], 90, sky, 0, 210, 895); core.material.fog = false; core.material.userData.lk = true;
 }
+let wallK = 1, groundM = null;
+/* Height of the valley floor: flat in the field, rising to the walls outside it. Scenery stands trees on it. */
+function groundH(x, z) {
+  const ox = Math.max(0, Math.abs(x) - C.HALF_X), oz = Math.max(0, Math.abs(z) - C.HALF_Z), out = Math.hypot(ox, oz); if (out <= 0) return 0;
+  return (Math.pow(out, 1.3) * 0.5 * (0.55 + noise(x * 0.06, z * 0.06) * 1.1) + noise(x * 0.31 + 9, z * 0.31) * 1.5) * wallK;
+}
 function buildGround() {
   const sx = 2 * C.HALF_X + 190, sz = 2 * C.HALF_Z + 190;
   let g = new T.PlaneGeometry(sx, sz, 100, 150); g.rotateX(-Math.PI / 2);
-  const wallK = FLATS.backdrop && !R.noPaper && LK !== LOOKS.origami ? 0.24 : 1; // with a painted backdrop the valley walls drop to foothills so the painting shows (Origami is daylight: no night ridge)
+  wallK = FLATS.backdrop && !R.noPaper && LK !== LOOKS.origami ? 0.24 : 1; // with a painted backdrop the valley walls drop to foothills so the painting shows (Origami is daylight: no night ridge)
   const p = g.attributes.position, cols = new Float32Array(p.count * 3), q = { s: 0, d: 0 };
   const G = LK.ground, jungA = new T.Color(G.a), jungB = new T.Color(G.b), lane = new T.Color(G.lane), laneC = new T.Color(G.laneC);
   const ember = new T.Color(LK.team[0]), mint = new T.Color(LK.team[1]), rock = new T.Color(G.rock), c = new T.Color();
@@ -278,7 +288,7 @@ function buildGround() {
     let d = 1e9; for (let l = 0; l < 3; l++) { LL.laneNearest(l, x, z, q); if (q.d < d) d = q.d; }
     const ox = Math.max(0, Math.abs(x) - C.HALF_X), oz = Math.max(0, Math.abs(z) - C.HALF_Z), out = Math.hypot(ox, oz);
     const n = noise(x * 0.06, z * 0.06), n2 = noise(x * 0.31 + 9, z * 0.31);
-    p.setY(i, out > 0 ? (Math.pow(out, 1.3) * 0.5 * (0.55 + n * 1.1) + n2 * 1.5) * wallK : 0);
+    p.setY(i, groundH(x, z));
     c.copy(jungA).lerp(jungB, n);
     const base = Math.min(Math.hypot(x, z + C.SPAWN_Z), Math.hypot(x, z - C.SPAWN_Z));
     const lt = Math.max(U.clamp((9.5 - d) / 4.5, 0, 1), U.clamp((30 - base) / 8, 0, 1));
@@ -286,6 +296,7 @@ function buildGround() {
     c.lerp(z < 0 ? ember : mint, 0.05 + 0.1 * U.clamp((Math.abs(z) - 70) / 60, 0, 1));
     if (out > 0) c.lerp(rock, U.clamp(out / 14, 0, 1));
     const ld = Math.hypot(x - C.LOCH.x, z - C.LOCH.z); if (ld < 14) c.lerp(rock, U.clamp((14 - ld) / 4, 0, 1) * 0.75);
+    if (SCN) SCN.groundTint(c, x, z, d, lt, out, n); // scenery: darker, cooler floor away from the threads
     const j = 0.9 + n2 * 0.22;
     cols[i * 3] = c.r * j; cols[i * 3 + 1] = c.g * j; cols[i * 3 + 2] = c.b * j;
   }
@@ -293,19 +304,21 @@ function buildGround() {
   g = g.toNonIndexed(); g.computeVertexNormals();
   // a painted grain multiplied over the vertex colours (0.8 to 1.0), so the snow is not one flat sheet; from the Ford study's snow texture
   const gm = new T.MeshLambertMaterial({ vertexColors: true });
-  if (!R.noPaper) { if (!groundTex) { groundTex = new T.TextureLoader().load('art/ground-detail.webp'); groundTex.wrapS = groundTex.wrapT = T.MirroredRepeatWrapping; groundTex.repeat.set(26, 36); } gm.map = groundTex; }
-  world.add(own(new T.Mesh(g, gm)));
+  if (!R.noPaper && LK !== LOOKS.origami) { if (!groundTex) { groundTex = new T.TextureLoader().load('art/ground-detail.webp'); groundTex.wrapS = groundTex.wrapT = T.MirroredRepeatWrapping; groundTex.repeat.set(26, 36); } gm.map = groundTex; }
+  world.add(groundM = own(new T.Mesh(g, gm)));
   if (LK.grid) { const gh = new T.GridHelper(360, 90, LK.team[0], 0x4a3150); gh.position.y = 0.05; gh.material.transparent = true; gh.material.opacity = 0.5; world.add(own(gh)); }
   // fountains
   for (let t = 0; t < 2; t++) {
     const ring = new T.Mesh(new T.RingGeometry(C.FOUNT_R - 0.5, C.FOUNT_R, 48), new T.MeshBasicMaterial({ color: SRC_TEAM[t], transparent: true, opacity: 0.5, side: T.DoubleSide, depthWrite: false }));
     ring.rotation.x = -Math.PI / 2; ring.position.set(0, 0.06, (t ? 1 : -1) * C.SPAWN_Z); world.add(ring);
   }
-  // the loch
+  // the loch (scenery draws its own shader water)
+  if (!SCN) {
   const water = new T.Mesh(new T.CircleGeometry(C.LOCH.r, 44), new T.MeshBasicMaterial({ color: LK.ground.water, transparent: true, opacity: 0.88, depthWrite: false }));
   own(water); water.rotation.x = -Math.PI / 2; water.position.set(C.LOCH.x, 0.07, C.LOCH.z); world.add(water);
   const shore = new T.Mesh(new T.RingGeometry(C.LOCH.r - 0.35, C.LOCH.r + 0.25, 48), new T.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.4, side: T.DoubleSide, depthWrite: false }));
   shore.rotation.x = -Math.PI / 2; shore.position.set(C.LOCH.x, 0.08, C.LOCH.z); world.add(shore);
+  }
   // camp rings
   C.CAMPS.forEach(function (cp) {
     const ring = new T.Mesh(new T.RingGeometry(4.6, 5, 32), new T.MeshBasicMaterial({ color: 0xc9a0ff, transparent: true, opacity: 0.28, side: T.DoubleSide, depthWrite: false }));
@@ -346,18 +359,10 @@ function initColor(m, cap) { const a = new Float32Array(cap * 3).fill(1); m.inst
 function buildInstanced() {
   shadowI = new T.InstancedMesh(new T.PlaneGeometry(1, 1), shadowMat(0.42), 320); shadowI.userData.cap = 320; shadowI.frustumCulled = false; shadowI.count = 0; shadowI.renderOrder = 1; dyn.add(shadowI);
   bd = { trooper: new Boards('trooper', 90), hush: new Boards('hush', 110), hollow: new Boards('hollow', 40), thief: new Boards('thief', 40), pines: new Boards('pines', 400), rocks: new Boards('rocks', 400) };
-  const bodyG = cyl(0.42, 0.52, 1.0, 6); bodyG.translate(0, 0.75, 0);
-  tr[0] = new T.InstancedMesh(bodyG, new T.MeshLambertMaterial({ color: SRC_TEAM[0], emissive: SRC_TEAM[0], emissiveIntensity: 0.5 }), 90);
-  // the Hush: torn tissue paper, the coldest thing on screen, with pale lilac eyes (Reignfawn)
-  const hushG = new T.CylinderGeometry(0.1, 0.66, 1.4, 9, 3, true); { const hp = hushG.attributes.position; for (let i = 0; i < hp.count; i++) { const y = hp.getY(i); if (y < -0.2) { const k = (y < -0.6 ? 1 : 0.45), j = Math.sin(i * 12.9898) * 43758.5453, r = (j - Math.floor(j)) - 0.5; hp.setX(i, hp.getX(i) * (1 + r * 0.7 * k)); hp.setZ(i, hp.getZ(i) * (1 + r * 0.7 * k)); hp.setY(i, y + r * 0.42 * k); } } }
-  hushG.translate(0, 0.72, 0); const hushGeo = flat(hushG);
-  tr[1] = own(new T.InstancedMesh(hushGeo, new T.MeshLambertMaterial({ color: LK.hush || 0x1c1426, emissive: LK.hushEm || 0x6a5a9a, emissiveIntensity: LK.hushEmI || 0.3, side: T.DoubleSide }), 110));
-  const eyeG = new T.BoxGeometry(0.5, 0.15, 0.08); eyeG.translate(0, 0.96, 0.34);
-  hushEyes = own(new T.InstancedMesh(eyeG, new T.MeshBasicMaterial({ color: 0xf2e2ff, fog: false }), 110));
-  hushEyes.frustumCulled = false; hushEyes.count = 0; dyn.add(hushEyes);
-  for (let t = 0; t < 2; t++) { tr[t].frustumCulled = false; tr[t].count = 0; dyn.add(tr[t]); }
-  const hatG = flat(new T.ConeGeometry(0.66, 0.5, 6)); hatG.translate(0, 1.5, 0);
-  trHat = new T.InstancedMesh(hatG, mat(0x2b1b2f), 180); trHat.frustumCulled = false; trHat.count = 0; dyn.add(trHat);
+  /* 0.20 props (js/props.js): Reign lantern bearers (body with hat; trHat now holds the lit lantern core), Hush tissue
+     wraiths with lilac eyes. Hollows and the lantern glow points are built and driven inside props. */
+  { const PG = LL.props.troopers(T, LK, dyn, glowTex, tc, own); tr[0] = PG.reign; trHat = PG.lantern; tr[1] = PG.hush; hushEyes = PG.eyes; }
+  dyn.add(hushEyes); dyn.add(tr[0]); dyn.add(tr[1]); dyn.add(trHat);
   const pg = new T.PlaneGeometry(1, 1);
   barBg = new T.InstancedMesh(pg, new T.MeshBasicMaterial({ color: 0x120c18, transparent: true, opacity: 0.75, depthWrite: false, fog: false }), 170);
   barFill = new T.InstancedMesh(pg, new T.MeshBasicMaterial({ color: 0xffffff, depthWrite: false, fog: false, transparent: true }), 170);
@@ -452,6 +457,7 @@ R.info = function () { // for the frame-rate report
   let gpu = 'unknown'; try { const gl = renderer.getContext(), x = gl.getExtension('WEBGL_debug_renderer_info'); gpu = x ? gl.getParameter(x.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); } catch (e) {}
   return { gpu: String(gpu).slice(0, 90), w: R.w, h: R.h, pr: renderer ? renderer.getPixelRatio() : 1, low: !!R.low, look: LK.name, gl2: !!(renderer && renderer.capabilities.isWebGL2) };
 };
+R._heroes = function () { return heroM; }; // for tools
 R._phase = function (ph) { heroM.forEach(function (m) { m.phase = ph; }); }; // for tools: pose the walk
 R._flats = function () { return Object.keys(flatTex).map(function (k) { return k + ':' + (flatTex[k].t ? 'loaded' : 'no'); }).join(' '); }; // for tools
 const flatTex = {}; let echoM = null, bd = null, decorPrims = [], decorTrees = [], decorRocks = [], decorHidden = false;
@@ -503,30 +509,83 @@ const PAPER = R.PAPER = { // h: height in metres. hem: where the legs start (0 t
   skein: { src: 'art/heroes/skein.png', h: 2.2, hem: 0.27, motion: 'art/heroes/skein-motion.png', arms: { y: 0.66, x: 0.13, len: 0.352 } }
 };
 const paperTex = {}, PAPER_FLIP = -1;
+/* HERO PAPER SHADER (0.20). The cutouts are unlit, so on their own they sit on the valley like stickers. Two cheap things
+   seat them in it: the feet darken toward the ground (the colour of a contact shadow, from the bottom of the figure up a
+   quarter of its height), and the cut edge catches a thin rim of the view's light, stronger on edges that face up, like
+   the lantern-and-moon rim in the key art. The edge is found by sampling the picture's alpha a couple of texels away in
+   four directions; nothing outside the figure is drawn. */
+function heroize(m, img, cells) {
+  const rim = { value: new T.Color(LK.rim != null ? LK.rim : LK.sun[0]).multiplyScalar(LK.rimK != null ? LK.rimK : 0.5) }, tx = { value: new T.Vector2(2 / (img.width || 1024), 2 / (img.height || 1024)) };
+  m.onBeforeCompile = function (sh) {
+    sh.uniforms.rimC = rim; sh.uniforms.tx = tx;
+    sh.fragmentShader = 'uniform vec3 rimC; uniform vec2 tx;\n' + sh.fragmentShader.replace('#include <map_fragment>', [
+      '#include <map_fragment>',
+      '#ifdef USE_MAP',
+      'float aN = texture2D(map, vUv + vec2(0.0, tx.y)).a, aS = texture2D(map, vUv - vec2(0.0, tx.y)).a;',
+      'float aE = texture2D(map, vUv + vec2(tx.x, 0.0)).a, aW = texture2D(map, vUv - vec2(tx.x, 0.0)).a;',
+      'float edge = smoothstep(0.25, 0.95, 1.0 - min(min(aN, aS), min(aE, aW)));',
+      'float up = clamp((aS - aN) * 1.4 + 0.35, 0.0, 1.0);',
+      'diffuseColor.rgb *= mix(0.6, 1.0, smoothstep(0.0, 0.26, vUv.y));',
+      'diffuseColor.rgb += rimC * edge * up * (0.3 + 0.7 * smoothstep(0.25, 0.9, vUv.y));',
+      '#endif'].join('\n'));
+  };
+  m.customProgramCacheKey = function () { return 'paperHero1'; };
+  return m;
+}
+const ss01 = function (a, b, x) { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+/* Bend the body: q = { bend, head, cloak (screen-right fractions of height), flare, bulge, breath, wave, wph }, inv turns
+   screen-right into the piece's own x (it is mirrored and widened by its parent's scale). */
+function bendBody(ms, q, inv) {
+  const g = ms.geometry, a = g.attributes.position, b = g.userData.base, H = g.userData.H, hw = g.userData.W / 2;
+  for (let i = 0; i < a.count; i++) {
+    const x0 = b[i * 3], y0 = b[i * 3 + 1], f = 1 + y0 / H, lo = 1 - f, lo2 = lo * lo, u = x0 / hw;
+    const sx = (q.bend * f * f + q.head * ss01(0.68, 1, f) + q.cloak * lo2 * lo) * H * inv;
+    const wide = q.flare * lo2 * 1.7 + q.bulge * 4 * f * lo * (0.5 + 0.5 * lo) + q.breath * Math.max(0, 1 - Math.abs(f - 0.6) / 0.22);
+    const dy = (q.flare * 0.1 * lo2 + q.wave * Math.sin(q.wph + u * 2.7) * lo2 * lo) * H; // the hem lifts only a little: the legs hang from just under it
+    a.setXY(i, x0 + sx + x0 * wide, y0 + dy);
+  }
+  a.needsUpdate = true;
+}
+/* Fold a hanging strip at a joint `at` of the way down (knee, elbow) by angle al (+ swings the lower part toward +x). */
+function bendJoint(ms, al, at) {
+  const g = ms.geometry; if (g.userData.al === al) return; g.userData.al = al;
+  const a = g.attributes.position, b = g.userData.base, L = g.userData.H, kd = L * at, kx = g.userData.cx;
+  for (let i = 0; i < a.count; i++) {
+    const x0 = b[i * 3], y0 = b[i * 3 + 1], w = ss01(kd - 0.14 * L, kd + 0.1 * L, -y0);
+    if (w <= 0) { a.setXY(i, x0, y0); continue; }
+    const c = Math.cos(al * w), s = Math.sin(al * w), rx = x0 - kx, ry = y0 + kd;
+    a.setXY(i, kx + rx * c - ry * s, -kd + rx * s + ry * c);
+  }
+  a.needsUpdate = true;
+}
 function paperFor(g, id) {
   const P = PAPER[id]; if (!P || R.noPaper) return;
   const put = function (base) {
     const tex = base.clone(); tex.needsUpdate = true; tex.repeat.set(0.25, 1);
-    const mt = new T.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.45, side: T.DoubleSide }); mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
+    const mt = heroize(new T.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.45, side: T.DoubleSide }), base.image, 4); mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
     /* A paper puppet, cut from the one picture: the body from the hem up, and the legs below it as separate pieces hinged at
        the hem. Front, back and three-quarter views use a left and a right leg; the side view uses the whole leg strip twice,
        one swinging forward and one back. P.hem is how far up the figure the hem is (0 to 1). */
     const wd = P.h * (base.image.width / 4) / base.image.height, hf = P.hem || 0.2, pp = new T.Group();
-    const part = function (u0, u1, v0, v1, m2) {
-      const gq = new T.PlaneGeometry(wd * (u1 - u0), P.h * (v1 - v0)); gq.translate(((u0 + u1) / 2 - 0.5) * wd, -P.h * (v1 - v0) / 2, 0);
+    /* 0.20: every piece is a grid of small quads that remembers its rest shape, so it can bend: the body curves, its hem
+       trails and flares, the head lags, knees and elbows fold (paperBend, below). sx, sy: columns and rows. */
+    const part = function (u0, u1, v0, v1, m2, sx, sy) {
+      const gq = new T.PlaneGeometry(wd * (u1 - u0), P.h * (v1 - v0), sx || 1, sy || 1), cx = ((u0 + u1) / 2 - 0.5) * wd; gq.translate(cx, -P.h * (v1 - v0) / 2, 0);
       const uv = gq.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, u0 + uv.getX(k) * (u1 - u0), v0 + uv.getY(k) * (v1 - v0));
+      gq.userData.base = Float32Array.from(gq.attributes.position.array); gq.userData.H = P.h * (v1 - v0); gq.userData.W = wd * (u1 - u0); gq.userData.cx = cx;
+      gq.boundingSphere = new T.Sphere(new T.Vector3(cx, -gq.userData.H / 2, 0), P.h);
       const ms = new T.Mesh(gq, m2 || mt); pp.add(ms); return ms;
     };
-    const P_ = pp.parts = { body: part(0, 1, Math.max(0, hf - 0.035), 1), legL: part(0, 0.5, 0, hf), legR: part(0.5, 1, 0, hf), legA: part(0, 1, 0, hf), legB: part(0, 1, 0, hf) };
-    P_.body.position.set(0, P.h, 0.03); P_.legB.position.z = -0.02; pp.material = mt; pp.h = P.h; pp.hem = hf * P.h; g.add(pp);
+    const P_ = pp.parts = { body: part(0, 1, Math.max(0, hf - 0.035), 1, null, 6, 14), legL: part(0, 0.5, 0, hf, null, 1, 6), legR: part(0.5, 1, 0, hf, null, 1, 6), legA: part(0, 1, 0, hf, null, 1, 8), legB: part(0, 1, 0, hf, null, 1, 8) };
+    P_.body.position.set(0, P.h, 0.03); P_.legB.position.z = -0.02; pp.material = mt; pp.rotation.order = 'YXZ'; /* so a fall tips the card away from the camera */ pp.h = P.h; pp.hem = hf * P.h; g.add(pp);
     /* The motion sheet, when there is one: bodies drawn without arms (front, side, back), one arm from the side and one from
        the front, and an aiming pose from behind and from the side. The body pieces switch to this picture for those views;
        the arms hang from the shoulders and swing; while the hero is firing the aiming pose is shown. */
     if (P.motion) new T.TextureLoader().load(P.motion, function (t2) {
       t2.minFilter = T.LinearFilter; t2.generateMipmaps = false; t2.repeat.set(1 / 7, 1);
-      pp.mat1 = mt; pp.mat2 = flatMat(t2); pp.r2 = ((t2.image.width / 7) / t2.image.height * P.h) / wd; // how much wider a motion cell is than a turnaround cell
-      if (P.arms) { const ta = t2.clone(); ta.needsUpdate = true; ta.repeat.set(1 / 7, 1); const ma = flatMat(ta); pp.matA = ma;
-        P_.armL = part(0, 1, 1 - P.arms.len, 1, ma); P_.armR = part(0, 1, 1 - P.arms.len, 1, ma); P_.armR.scale.x = -1; }
+      pp.mat1 = mt; pp.mat2 = heroize(flatMat(t2), t2.image, 7); pp.r2 = ((t2.image.width / 7) / t2.image.height * P.h) / wd; // how much wider a motion cell is than a turnaround cell
+      if (P.arms) { const ta = t2.clone(); ta.needsUpdate = true; ta.repeat.set(1 / 7, 1); const ma = heroize(flatMat(ta), t2.image, 7); pp.matA = ma;
+        P_.armL = part(0, 1, 1 - P.arms.len, 1, ma, 1, 6); P_.armR = part(0, 1, 1 - P.arms.len, 1, ma, 1, 6); P_.armR.scale.x = -1; }
     }, undefined, function () {});
     g.paper = pp; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
   };
@@ -680,14 +739,8 @@ function structModel(s) {
     g.spin = mesh(flat(new T.OctahedronGeometry(3, 0)), paper, 0, 7.2, 0, lit);
     g.halo = mesh(new T.TorusGeometry(4.4, 0.14, 5, 28), new T.MeshBasicMaterial({ color: tc }), 0, 7.2, 0, lit);
     g.glow = glowSprite(tc, 22, lit, 0, 7.2, 0);
-  } else {
-    const big = s.kind === 'warden', hh = big ? 7.5 : 5.5;
-    mesh(cyl(s.r * 0.8, s.r, 2, 6), stone, 0, 1, 0, g);
-    mesh(cyl(big ? 1.5 : 1.25, big ? 1.8 : 1.5, hh, 4), paper, 0, 2 + hh / 2, 0, lit);
-    mesh(box(big ? 3.4 : 2.9, 0.3, big ? 3.4 : 2.9), dark, 0, 2 + hh * 0.5, 0, lit).rotation.y = Math.PI / 4;
-    mesh(flat(new T.ConeGeometry(big ? 2.9 : 2.4, 2, 4)), dark, 0, 3 + hh, 0, lit);
-    if (big) mesh(flat(new T.ConeGeometry(1.5, 1.4, 4)), dark, 0, 4.4 + hh, 0, lit);
-    g.glow = glowSprite(tc, big ? 13 : 10, lit, 0, 2 + hh / 2, 0);
+  } else { // 0.20 props (js/props.js): a crooked spire of torn tissue clutching a hoard of cold light
+    const ht = LL.props.hushTower(T, s, g, lit, { glowSprite: glowSprite, teamCol: tc, LK: LK }); g.glow = ht.glow; paper = ht.paper;
   }
   g.add(lit); g.house = s.team === 0 && s.kind !== 'patron';
   const rub = new T.Group(); mesh(flat(new T.IcosahedronGeometry(1.4, 0)), stone, 0.6, 0.5, 0.3, rub); mesh(flat(new T.IcosahedronGeometry(1, 0)), dark, -0.9, 0.4, -0.5, rub); mesh(box(1.6, 0.4, 1.2), stone, 0, 0.2, 1.1, rub).rotation.y = 0.5; rub.visible = false; g.add(rub);
@@ -695,6 +748,7 @@ function structModel(s) {
   ward.position.y = (s.h + 1) / 2; g.add(ward);
   const wr = new T.Mesh(new T.RingGeometry(s.r + 1.1, s.r + 1.6, 40), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.5, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
   wr.material.userData.lk = true; wr.rotation.x = -Math.PI / 2; wr.position.y = 0.06; wr.visible = false; g.add(wr); g.wardRing = wr;
+  if (s.team === 1 && s.kind !== 'patron') { LL.props.hushWard(T, ward); LL.props.hushRuin(T, rub, s, LK); } // 0.20 props: a curtain of cold light for a ward, torn tissue for a ruin
   g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.paper = paper; g.position.set(s.x, 0, s.z); dyn.add(g);
   standFlat(lit, s.team === 0 ? 'house' : 'tower', s.kind === 'patron' ? 2 : (s.kind === 'warden' ? 1 : 0), 14.5, // the sheet draws the three sizes to scale in equal cells, so every cell gets the same height
     function () { return lit.children.filter(function (c) { return c !== g.glow; }).concat(g.children.filter(function (c) { return c.isMesh && c !== ward && c !== wr; })); });
@@ -821,11 +875,7 @@ function buildDecor() {
   if (R.decor) return;
   R.decor = true;
   const obs = W.obstacles, rocks = obs.filter(o => !o.tree), trees = obs.filter(o => o.tree);
-  const rm = new T.InstancedMesh(flat(new T.IcosahedronGeometry(1, 0)), new T.MeshLambertMaterial({ color: 0xffffff }), Math.max(1, rocks.length));
-  rocks.forEach(function (o, i) {
-    dummy.position.set(o.x, o.h * 0.32, o.z); dummy.rotation.set(o.seed * 3, o.seed * 17, o.seed * 7); dummy.scale.set(o.r * 1.12, o.h * 0.75, o.r * 1.12); dummy.updateMatrix();
-    rm.setMatrixAt(i, dummy.matrix); rm.setColorAt(i, tmpC.setHex(0x4a3d52).lerp(new T.Color(0x35454f), o.seed));
-  });
+  const rm = LL.props.rocks(T, rocks, LK, dummy); // 0.20 props (js/props.js): faceted boulders, snow or moss baked in (no separate caps)
   world.add(rm); decorPrims = [rm]; decorTrees = trees; decorRocks = rocks; decorHidden = false;
   const tg = cyl(0.3, 0.55, 3, 5); tg.translate(0, 1.5, 0);
   const c1 = flat(new T.ConeGeometry(2.6, 4.2, 6)); c1.translate(0, 4.6, 0);
@@ -852,18 +902,23 @@ function buildDecor() {
     const cm = new T.InstancedMesh(cg, mat(0xc8ccf0), Math.max(1, trees.length)), cm2 = new T.InstancedMesh(c3, mat(0xc8ccf0), Math.max(1, trees.length));
     trees.forEach(function (o, i) { const sc = 0.85 + o.seed * 0.5; dummy.position.set(o.x, 0, o.z); dummy.rotation.set(0, o.seed * 6, 0); dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); cm.setMatrixAt(i, dummy.matrix); cm2.setMatrixAt(i, dummy.matrix); });
     world.add(cm); world.add(cm2); [cm, cm2].forEach(function (o) { o.userData.tree = true; decorPrims.push(o); });
-    const rs = new T.InstancedMesh(flat(new T.IcosahedronGeometry(1, 0)), mat(0xc8ccf0), Math.max(1, rocks.length));
-    rocks.forEach(function (o, i) { dummy.position.set(o.x, o.h * 0.62, o.z); dummy.rotation.set(o.seed * 3, o.seed * 17, o.seed * 7); dummy.scale.set(o.r * 0.95, o.h * 0.42, o.r * 0.95); dummy.updateMatrix(); rs.setMatrixAt(i, dummy.matrix); });
-    world.add(rs); decorPrims.push(rs);
   }
   dummy.rotation.set(0, 0, 0);
+}
+/* Scenery: blossom and pine trees replace the cones buildDecor made (their geometry is freed; materials are shared). */
+function sceneryTrees() {
+  decorPrims = decorPrims.filter(function (o) { if (!o.userData.tree) return true; world.remove(o); o.geometry.dispose(); return false; });
+  SCN.trees(W, decorTrees).forEach(function (o) { o.userData.tree = true; decorPrims.push(o); });
 }
 R.build = function (w) {
   W = w;
   heroM.concat(structM, strayM).forEach(function (g) { dyn.remove(g); });
   if (!nessM) nessM = nessModel(); nessY = -11;
   heroM = W.heroes.map(heroModel); structM = W.structs.map(structModel); strayM = W.strays.map(strayModel);
+  const freshDecor = !R.decor;
   buildDecor(); buildCues(); buildFruitArt(); buildPet();
+  if (SCN && freshDecor) sceneryTrees();
+  if (SCN) SCN.world(W); // scenery: pools of light for this match's structures
   for (let i = 0; i < PN_MAX; i++) { pLife[i] = 0; pPos[i * 3 + 1] = -999; }
   rings.forEach(r => { r.life = 0; r.m.visible = false; });
   applyLook();
@@ -941,8 +996,11 @@ function sizeBloom() {
          0 painted (Snow), 1 ink: three tones, hatching, heavy line on paper (Skeptic Noir), 2 origami: flat posterised paper with
          drawn folds, 3 bedtime book: watercolour wash inside a deckled page (Storeybrook), 4 zine neon: split channels, line
          glow, scanlines, halftone (Hypermetapunk), 5 lantern: pools of light in the dark (Depthfield night), 6 memory: sepia
-         ledger with a double exposure, 7 rainwake: wet glass and red streaks. */
-      mComp = new T.ShaderMaterial(Object.assign({ uniforms: { t: { value: null }, b: { value: null }, k: { value: 0.8 }, m: { value: 0 }, tm: { value: 0 }, px: { value: new T.Vector2(1, 1) } }, vertexShader: vs, fragmentShader: ' uniform sampler2D t; uniform sampler2D b; uniform float k; uniform float m; uniform float tm; uniform vec2 px; varying vec2 vUv; float lum(vec3 c){ return dot(c, vec3(0.299, 0.587, 0.114)); } float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); } float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y); } float edge(vec2 uv, float w){   vec2 d = px * w;   float a = lum(texture2D(t, uv + vec2(-d.x, -d.y)).rgb), bb = lum(texture2D(t, uv + vec2(0.0, -d.y)).rgb), c = lum(texture2D(t, uv + vec2(d.x, -d.y)).rgb);   float e = lum(texture2D(t, uv + vec2(-d.x, 0.0)).rgb), g = lum(texture2D(t, uv + vec2(d.x, 0.0)).rgb);   float h = lum(texture2D(t, uv + vec2(-d.x, d.y)).rgb), i = lum(texture2D(t, uv + vec2(0.0, d.y)).rgb), j = lum(texture2D(t, uv + vec2(d.x, d.y)).rgb);   float gx = -a - 2.0 * e - h + c + 2.0 * g + j, gy = -a - 2.0 * bb - c + h + 2.0 * i + j; return sqrt(gx * gx + gy * gy); } void main(){   vec2 uv = vUv; vec2 fc = vUv / px; vec2 q = vUv - 0.5; float vig = dot(q, q);   if (m > 6.5) { uv.x += (noise(vec2(uv.x * 60.0, uv.y * 8.0 + tm * 3.0)) - 0.5) * 0.004; uv.y += (noise(uv * 40.0 + tm) - 0.5) * 0.003; }   vec3 c = texture2D(t, uv).rgb + texture2D(b, uv).rgb * k;   if (m < 0.5) { }   else if (m < 1.5) {     float l = lum(c); float e = smoothstep(0.16, 0.45, edge(uv, 1.5));     float h1 = step(0.5, fract((fc.x + fc.y) / 7.0)), h2 = step(0.5, fract((fc.x - fc.y) / 7.0));     float tone = 0.07; if (l > 0.52) tone = 1.0; else if (l > 0.3) tone = mix(0.6, 1.0, h1); else if (l > 0.13) tone = mix(0.22, 0.7, h1 * h2);     vec3 paper = vec3(0.93, 0.90, 0.84) * (0.93 + 0.07 * noise(fc * 0.7));     vec3 tint = clamp(c / max(l, 0.08), 0.0, 2.0);     c = paper * tone * mix(vec3(1.0), tint, 0.42);     c = mix(c, vec3(0.06, 0.05, 0.09), e);   } else if (m < 2.5) {     float e = smoothstep(0.10, 0.30, edge(uv, 1.0));     c = floor(c * 5.0 + 0.5) / 5.0; c *= 0.955 + 0.045 * noise(fc * 0.5);     c = mix(c, c * 0.42, e);   } else if (m < 3.5) {     float e = smoothstep(0.22, 0.55, edge(uv, 2.0));     c = mix(c, floor(c * 7.0 + 0.5) / 7.0, 0.45); c += (noise(fc * 0.22) - 0.5) * 0.05; c = mix(c, c * 0.55, e * 0.65);     float r = length(q * vec2(1.0, 1.12)), dk = (noise(vec2(atan(q.y, q.x) * 7.0, 3.0)) - 0.5) * 0.035;     float page = smoothstep(0.585 + dk, 0.615 + dk, r);     c = mix(c, vec3(0.95, 0.92, 0.84) * (0.94 + 0.06 * noise(fc * 0.6)), page);     c = mix(c, vec3(0.35, 0.27, 0.2), page * (1.0 - smoothstep(0.615 + dk, 0.63 + dk, r)) * 0.6);   } else if (m < 4.5) {     float e = edge(uv, 1.2), off = 0.003;     vec3 ca = vec3(texture2D(t, uv + vec2(off, 0.0)).r, c.g, texture2D(t, uv - vec2(off, 0.0)).b);     c = ca * 0.55 + clamp(c / max(lum(c), 0.1), 0.0, 2.5) * smoothstep(0.15, 0.7, e) * 0.9;     c *= 0.82 + 0.18 * step(0.5, fract(fc.y / 3.0));     float dots = smoothstep(0.35, 0.45, length(fract(fc / 7.0) - 0.5)); c = mix(c, c * 0.7, (1.0 - dots) * smoothstep(0.25, 0.0, lum(c)));   } else if (m < 5.5) {     float l = lum(c); c *= smoothstep(-0.05, 0.45, l) * 1.2; c = mix(c, c * vec3(1.12, 0.9, 0.66), 0.45);     c *= clamp(1.0 - vig * 1.9, 0.0, 1.0); c += texture2D(b, uv).rgb * 0.55;   } else if (m < 6.5) {     c = mix(c, texture2D(t, uv + vec2(0.007, 0.004)).rgb, 0.32);     float l = lum(c); c = mix(vec3(l) * vec3(1.08, 0.96, 0.78), c, 0.22);     c *= 0.9 + 0.1 * step(0.07, fract(fc.y / 30.0)); c += (hash(fc + tm) - 0.5) * 0.07; c *= clamp(1.0 - vig * 1.3, 0.0, 1.0);   } else {     float s = step(0.988, hash(vec2(floor(fc.x / 2.0), floor((fc.y + tm * 900.0) / 46.0))));     c += vec3(0.55, 0.18, 0.18) * s * 0.5; c = mix(c, c * vec3(1.15, 0.78, 0.8), 0.4); c *= clamp(1.0 - vig, 0.0, 1.0);   }   gl_FragColor = vec4(c, 1.0); }' }, o));
+         ledger with a double exposure, 7 rainwake: wet glass and red streaks.
+         0.20: hand 0 (Snow, the default) gets a film grade: a diorama blur toward the top and bottom of the frame (the play
+         band in the middle stays sharp), saturation up, violet lifted into the shadows, warm highlights, a soft S-curve,
+         vignette and a little grain, after the key art. */
+      mComp = new T.ShaderMaterial(Object.assign({ uniforms: { t: { value: null }, b: { value: null }, k: { value: 0.8 }, m: { value: 0 }, tm: { value: 0 }, px: { value: new T.Vector2(1, 1) } }, vertexShader: vs, fragmentShader: ' uniform sampler2D t; uniform sampler2D b; uniform float k; uniform float m; uniform float tm; uniform vec2 px; varying vec2 vUv; float lum(vec3 c){ return dot(c, vec3(0.299, 0.587, 0.114)); } float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); } float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y); } float edge(vec2 uv, float w){   vec2 d = px * w;   float a = lum(texture2D(t, uv + vec2(-d.x, -d.y)).rgb), bb = lum(texture2D(t, uv + vec2(0.0, -d.y)).rgb), c = lum(texture2D(t, uv + vec2(d.x, -d.y)).rgb);   float e = lum(texture2D(t, uv + vec2(-d.x, 0.0)).rgb), g = lum(texture2D(t, uv + vec2(d.x, 0.0)).rgb);   float h = lum(texture2D(t, uv + vec2(-d.x, d.y)).rgb), i = lum(texture2D(t, uv + vec2(0.0, d.y)).rgb), j = lum(texture2D(t, uv + vec2(d.x, d.y)).rgb);   float gx = -a - 2.0 * e - h + c + 2.0 * g + j, gy = -a - 2.0 * bb - c + h + 2.0 * i + j; return sqrt(gx * gx + gy * gy); } void main(){   vec2 uv = vUv; vec2 fc = vUv / px; vec2 q = vUv - 0.5; float vig = dot(q, q);   if (m > 6.5) { uv.x += (noise(vec2(uv.x * 60.0, uv.y * 8.0 + tm * 3.0)) - 0.5) * 0.004; uv.y += (noise(uv * 40.0 + tm) - 0.5) * 0.003; }   vec3 c = texture2D(t, uv).rgb + texture2D(b, uv).rgb * k;   if (m < 0.5) {     float band = smoothstep(0.27, 0.5, abs(vUv.y - 0.5));     if (band > 0.01) { vec3 acc = c; float r = band * 7.0;       acc += texture2D(t, uv + vec2( 0.9,  0.2) * px * r).rgb; acc += texture2D(t, uv + vec2(-0.7,  0.6) * px * r).rgb;       acc += texture2D(t, uv + vec2( 0.1, -0.95) * px * r).rgb; acc += texture2D(t, uv + vec2(-0.5, -0.5) * px * r).rgb;       acc += texture2D(t, uv + vec2( 0.45, 0.85) * px * r * 0.6).rgb; acc += texture2D(t, uv + vec2(-0.95, -0.1) * px * r * 0.6).rgb;       acc += texture2D(t, uv + vec2( 0.6, -0.6) * px * r * 0.5).rgb; acc += texture2D(t, uv + vec2(-0.2,  0.4) * px * r * 0.4).rgb;       c = mix(c, acc / 9.0 + texture2D(b, uv).rgb * k * (8.0 / 9.0), band); }     float l = lum(c);     c = max(mix(vec3(l), c, 1.2), 0.0);     c += vec3(0.075, 0.035, 0.15) * (1.0 - smoothstep(0.0, 0.42, l));     c *= mix(vec3(1.0), vec3(1.07, 0.97, 0.86), smoothstep(0.42, 1.0, l));     vec3 cc = clamp(c, 0.0, 1.0); c = mix(c, cc * cc * (3.0 - 2.0 * cc), 0.3);     c *= 1.0 - smoothstep(0.08, 0.5, vig) * 0.42;     c += (hash(fc + fract(tm * 7.0) * 91.0) - 0.5) * 0.022;   }   else if (m < 1.5) {     float l = lum(c); float e = smoothstep(0.16, 0.45, edge(uv, 1.5));     float h1 = step(0.5, fract((fc.x + fc.y) / 7.0)), h2 = step(0.5, fract((fc.x - fc.y) / 7.0));     float tone = 0.07; if (l > 0.52) tone = 1.0; else if (l > 0.3) tone = mix(0.6, 1.0, h1); else if (l > 0.13) tone = mix(0.22, 0.7, h1 * h2);     vec3 paper = vec3(0.93, 0.90, 0.84) * (0.93 + 0.07 * noise(fc * 0.7));     vec3 tint = clamp(c / max(l, 0.08), 0.0, 2.0);     c = paper * tone * mix(vec3(1.0), tint, 0.42);     c = mix(c, vec3(0.06, 0.05, 0.09), e);   } else if (m < 2.5) {     float e = smoothstep(0.10, 0.30, edge(uv, 1.0));     c = floor(c * 5.0 + 0.5) / 5.0; c *= 0.955 + 0.045 * noise(fc * 0.5);     c = mix(c, c * 0.42, e);   } else if (m < 3.5) {     float e = smoothstep(0.22, 0.55, edge(uv, 2.0));     c = mix(c, floor(c * 7.0 + 0.5) / 7.0, 0.45); c += (noise(fc * 0.22) - 0.5) * 0.05; c = mix(c, c * 0.55, e * 0.65);     float r = length(q * vec2(1.0, 1.12)), dk = (noise(vec2(atan(q.y, q.x) * 7.0, 3.0)) - 0.5) * 0.035;     float page = smoothstep(0.585 + dk, 0.615 + dk, r);     c = mix(c, vec3(0.95, 0.92, 0.84) * (0.94 + 0.06 * noise(fc * 0.6)), page);     c = mix(c, vec3(0.35, 0.27, 0.2), page * (1.0 - smoothstep(0.615 + dk, 0.63 + dk, r)) * 0.6);   } else if (m < 4.5) {     float e = edge(uv, 1.2), off = 0.003;     vec3 ca = vec3(texture2D(t, uv + vec2(off, 0.0)).r, c.g, texture2D(t, uv - vec2(off, 0.0)).b);     c = ca * 0.55 + clamp(c / max(lum(c), 0.1), 0.0, 2.5) * smoothstep(0.15, 0.7, e) * 0.9;     c *= 0.82 + 0.18 * step(0.5, fract(fc.y / 3.0));     float dots = smoothstep(0.35, 0.45, length(fract(fc / 7.0) - 0.5)); c = mix(c, c * 0.7, (1.0 - dots) * smoothstep(0.25, 0.0, lum(c)));   } else if (m < 5.5) {     float l = lum(c); c *= smoothstep(-0.05, 0.45, l) * 1.2; c = mix(c, c * vec3(1.12, 0.9, 0.66), 0.45);     c *= clamp(1.0 - vig * 1.9, 0.0, 1.0); c += texture2D(b, uv).rgb * 0.55;   } else if (m < 6.5) {     c = mix(c, texture2D(t, uv + vec2(0.007, 0.004)).rgb, 0.32);     float l = lum(c); c = mix(vec3(l) * vec3(1.08, 0.96, 0.78), c, 0.22);     c *= 0.9 + 0.1 * step(0.07, fract(fc.y / 30.0)); c += (hash(fc + tm) - 0.5) * 0.07; c *= clamp(1.0 - vig * 1.3, 0.0, 1.0);   } else {     float s = step(0.988, hash(vec2(floor(fc.x / 2.0), floor((fc.y + tm * 900.0) / 46.0))));     c += vec3(0.55, 0.18, 0.18) * s * 0.5; c = mix(c, c * vec3(1.15, 0.78, 0.8), 0.4); c *= clamp(1.0 - vig, 0.0, 1.0);   }   gl_FragColor = vec4(c, 1.0); }' }, o));
     }
     [rtScene, rtA, rtB].forEach(function (r) { if (r) r.dispose(); });
     const pr = renderer.getPixelRatio(), w = Math.max(4, Math.floor(R.w * pr)), h = Math.max(4, Math.floor(R.h * pr));
@@ -997,7 +1055,86 @@ R.project = function (x, y, z, out) {
 R.shake = function (a) { shake = Math.max(shake, a); };
 
 /* ---------- frame ---------- */
-const cp = { x: 0, y: 0, z: 0, dx: 0, dy: 0, dz: 1, dist: 5 };
+const cp = { x: 0, y: 0, z: 0, dx: 0, dy: 0, dz: 1, dist: 5 }, scr = { r: 0, f: 0 }, bq = {};
+/* DUST AND AFTERIMAGES (0.20). Soft puffs where a foot comes down, a ring of them on landing, a burst when a dash starts;
+   pale fading copies of the figure while dashing or riding a thread. Puffs are normal-blended (dust is not light), so
+   they are their own little instanced system with a fade per puff, not the glow particles. */
+const PUFF_N = 72; let puffM = null, puffA = null, puffC = null, puffs = [], puffK = 0, ghosts = [], ghostK = 0;
+function buildPuffs() {
+  puffs = []; ghosts = []; puffK = ghostK = 0;
+  const g = new T.PlaneGeometry(1, 1); puffA = new T.InstancedBufferAttribute(new Float32Array(PUFF_N), 1); puffC = new T.InstancedBufferAttribute(new Float32Array(PUFF_N * 3), 3);
+  g.setAttribute('aA', puffA); g.setAttribute('aC', puffC);
+  const mtl = new T.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: {},
+    vertexShader: 'attribute float aA; attribute vec3 aC; varying float vA; varying vec3 vC; varying vec2 vU; void main(){ vU = uv; vA = aA; vC = aC; vec4 c = modelViewMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0); float s = length(instanceMatrix[0].xyz); c.xy += position.xy * s; gl_Position = projectionMatrix * c; }',
+    fragmentShader: 'varying float vA; varying vec3 vC; varying vec2 vU; void main(){ vec2 q = vU - 0.5; float r = length(q) * 2.0; float a = smoothstep(1.0, 0.1, r * (0.9 + 0.1 * sin(atan(q.y, q.x) * 3.0 + vA * 7.0))) * vA; if (a < 0.004) discard; gl_FragColor = vec4(vC, a); }' });
+  mtl.userData.lk = mtl.userData.bl = mtl.userData.solid = true;
+  puffM = new T.InstancedMesh(g, mtl, PUFF_N); puffM.frustumCulled = false; puffM.count = 0; puffM.userData.rt = true; puffM.renderOrder = 3; dyn.add(puffM);
+  for (let i = 0; i < PUFF_N; i++) puffs.push({ life: 0, t: 0, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, s0: 0, s1: 0, a: 0 });
+}
+function puffCol() { const G = LK.ground; return tmpC.setHex(LK === LOOKS.snow ? 0xdfe0ff : (LK === LOOKS.origami ? 0xb8ab94 : G.laneC)).lerp(new T.Color(0xffffff), LK === LOOKS.snow ? 0 : 0.35); }
+function puff(x, y, z, vx, vy, vz, s0, s1, life, a) {
+  if (!puffM) return; const p = puffs[puffK]; puffK = (puffK + 1) % PUFF_N;
+  p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.life = life; p.t = 0; p.a = a; puffCol(); p.r = tmpC.r; p.g = tmpC.g; p.b = tmpC.b;
+}
+function stepPuffs(dt) {
+  if (!puffM) return; let n = 0;
+  for (let i = 0; i < PUFF_N; i++) { const p = puffs[i]; if (p.life <= 0) continue; p.t += dt; const f = p.t / p.life; if (f >= 1) { p.life = 0; continue; }
+    const dmp = Math.exp(-dt * 4); p.vx *= dmp; p.vz *= dmp; p.vy = p.vy * dmp + 0.2 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+    const sc = p.s0 + (p.s1 - p.s0) * (1 - (1 - f) * (1 - f)); dummy.position.set(p.x, p.y, p.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(sc, sc, sc); dummy.updateMatrix();
+    puffM.setMatrixAt(n, dummy.matrix); puffA.setX(n, p.a * Math.pow(1 - f, 1.6) * Math.min(1, p.t * 14)); puffC.setXYZ(n, p.r, p.g, p.b); n++; }
+  puffM.count = n; puffM.instanceMatrix.needsUpdate = true; puffA.needsUpdate = true; puffC.needsUpdate = true;
+}
+function heroDust(m, h, st, dt) {
+  const fx = Math.sin(h.yaw), fz = Math.cos(h.yaw);
+  if (st.contact && h.onGround && !h.zip) { const sd = st.contact === 1 ? 1 : -1, sp = Math.hypot(h.vx, h.vz);
+    for (let k = 0; k < 2; k++) puff(h.x - fx * 0.15 + fz * 0.18 * sd + (Math.random() - 0.5) * 0.2, 0.12, h.z - fz * 0.15 - fx * 0.18 * sd + (Math.random() - 0.5) * 0.2, -h.vx * 0.12 + (Math.random() - 0.5) * 0.5, 0.35 + Math.random() * 0.3, -h.vz * 0.12 + (Math.random() - 0.5) * 0.5, 0.22, 0.6 + sp * 0.03, 0.5, 0.34); }
+  if (st.landed) for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283 + Math.random() * 0.3, v = 2.4 + st.landed * 2.2; puff(h.x + Math.cos(a) * 0.35, 0.12, h.z + Math.sin(a) * 0.35, Math.cos(a) * v, 0.3 + Math.random() * 0.3, Math.sin(a) * v, 0.3, 1.0, 0.62, 0.42); }
+  if (h.dashT > 0 && !m.dashing) for (let k = 0; k < 7; k++) puff(h.x - fx * 0.4 + (Math.random() - 0.5) * 0.6, 0.2 + Math.random() * 0.4, h.z - fz * 0.4 + (Math.random() - 0.5) * 0.6, -fx * (2 + Math.random() * 2), 0.4, -fz * (2 + Math.random() * 2), 0.35, 1.2, 0.55, 0.4);
+  m.dashing = h.dashT > 0;
+  // afterimages: a copy of the full painted figure every 35 ms while dashing or riding
+  const P = PAPER[h.def.id], pt = paperTex[h.def.id];
+  if ((h.dashT > 0 || h.zip) && P && pt && m.paper) { m.ghostT = (m.ghostT || 0) - dt; if (m.ghostT <= 0) { m.ghostT = 0.035; ghost(m, h, P, pt); } }
+}
+function ghost(m, h, P, pt) {
+  let gh = ghosts[ghostK];
+  if (!gh) { const g = new T.PlaneGeometry(1, 1); g.translate(0, 0.5, 0);
+    const mt = new T.MeshBasicMaterial({ map: pt, transparent: true, depthWrite: false, alphaTest: 0.05, side: T.DoubleSide, blending: LK.add ? T.AdditiveBlending : T.NormalBlending });
+    mt.userData.lk = mt.userData.bl = mt.userData.solid = true; gh = ghosts[ghostK] = new T.Mesh(g, mt); gh.renderOrder = 2; dyn.add(gh); }
+  ghostK = (ghostK + 1) % 10;
+  if (gh.material.map !== pt) { gh.material.map = pt; gh.material.needsUpdate = true; }
+  const v = m.paper.v == null ? 2 : m.paper.v, uv = gh.geometry.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setX(k, (k % 2 ? 1 : 0) * 0.25 + v * 0.25); uv.needsUpdate = true;
+  const wd = P.h * (pt.image.width / 4) / pt.image.height; gh.position.set(h.x, h.y, h.z); gh.rotation.set(0, Math.atan2(camPos.x - h.x, camPos.z - h.z), 0);
+  gh.scale.set(wd * (m.paper.sign || 1), P.h, 1); gh.material.color.setHex(LK.team[h.team]).multiplyScalar(LK.add ? 0.55 : 1); gh.life = 0.24; gh.t = 0; gh.visible = true;
+}
+function stepGhosts(dt) { for (let i = 0; i < ghosts.length; i++) { const g = ghosts[i]; if (!g || !g.visible) continue; g.t += dt; const f = g.t / g.life; if (f >= 1) { g.visible = false; continue; } g.material.opacity = (LK.add ? 0.7 : 0.35) * (1 - f) * (1 - f); g.scale.y *= 1 + dt * 0.3; } }
+/* TITLE CAMERA (0.20). The title screen used to circle the valley from high up. Now it is a slow trailer: a run of
+   shots, each a gentle move with eased ends — gliding low along the middle thread, craning up over the loch, circling a
+   lantern house, drifting past the Hush side, then the wide view — cut together, about twelve seconds each. Reduced
+   motion keeps the old wide circle, slowed. */
+let shotI = 0, shotT = 0;
+const cpos = { x: 0, y: 0, z: 0 }, clook = { x: 0, y: 0, z: 0 }, LP = { x: 0, z: 0, dx: 0, dz: 1 };
+const SHOTS = [
+  { d: 13, fov: 52, f: function (k) { const L = LL.lanes[1].len, s = L * (0.18 + 0.22 * k); LL.lanePoint(1, s, LP); cpos.x = LP.x + 4.5; cpos.y = 2.6 + k * 1.4; cpos.z = LP.z;
+      LL.lanePoint(1, s + 38, LP); clook.x = LP.x; clook.y = 3.2; clook.z = LP.z; } },
+  { d: 12, fov: 50, f: function (k) { const lx = C.LOCH.x, lz = C.LOCH.z, a = 2.4 + k * 0.5; cpos.x = lx + Math.cos(a) * (22 - k * 4); cpos.y = 1.6 + k * k * 15; cpos.z = lz + Math.sin(a) * (22 - k * 4);
+      clook.x = lx; clook.y = 1 + k * 2; clook.z = lz; } },
+  { d: 12, fov: 46, f: function (k) { const ss = W && W.structs.filter(function (o) { return o.alive && o.team === 0 && o.kind !== 'patron'; }), o = ss && ss.length ? ss[Math.floor(shotI / SHOTS.length) % ss.length] : { x: 0, z: -60 };
+      const a = k * 1.1 + 0.4; cpos.x = o.x + Math.cos(a) * 17; cpos.y = 4.5 + Math.sin(k * 3.14) * 2; cpos.z = o.z + Math.sin(a) * 17; clook.x = o.x; clook.y = 4; clook.z = o.z; } },
+  { d: 12, fov: 54, f: function (k) { const z0 = 40 + k * 46; cpos.x = -30 + k * 14; cpos.y = 6 + k * 3; cpos.z = z0; clook.x = 10; clook.y = 4; clook.z = z0 + 40; } },
+  { d: 16, fov: 58, f: function (k) { const a = shotI * 0.7 + k * 0.6, fz = Math.sin(shotI * 1.3) * 30; cpos.x = Math.sin(a) * 66; cpos.y = 26 - k * 6; cpos.z = fz + Math.cos(a) * 66; clook.x = 0; clook.y = 3; clook.z = fz; } }
+];
+function attractCam(dt) {
+  if (R.reduced || !LL.lanes) {
+    const a = time * 0.03, fz = Math.sin(time * 0.02) * 40;
+    camPos.x = Math.sin(a) * 62; camPos.y = 24; camPos.z = fz + Math.cos(a) * 62; camera.position.set(camPos.x, camPos.y, camPos.z); camera.lookAt(0, 3, fz); camera.fov = R.portrait ? 78 : 58; return;
+  }
+  shotT += dt; let S = SHOTS[shotI % SHOTS.length]; if (shotT >= S.d) { shotT = 0; shotI++; S = SHOTS[shotI % SHOTS.length]; }
+  const u = shotT / S.d, k = u * u * (3 - 2 * u) * 0.7 + u * 0.3; // eased ends, never quite stopped
+  S.f(k); camPos.x = cpos.x; camPos.y = cpos.y; camPos.z = cpos.z;
+  camera.position.set(cpos.x, cpos.y, cpos.z); camera.lookAt(clook.x, clook.y, clook.z);
+  const dd = Math.hypot(clook.x - cpos.x, clook.z - cpos.z) || 1; camDir.x = (clook.x - cpos.x) / dd; camDir.z = (clook.z - cpos.z) / dd;
+  camera.fov = (R.portrait ? 1.35 : 1) * S.fov;
+}
 R.frame = function (dt, view) {
   if (!R.ok || !W) return;
   time += dt;
@@ -1005,9 +1142,22 @@ R.frame = function (dt, view) {
   // heroes
   for (i = 0; i < heroM.length; i++) {
     const m = heroM[i], h = m.unit;
-    m.visible = h.alive; if (!h.alive) continue;
+    /* A FALL (0.20): a hero who goes down tips over backward like a card knocked flat, with a puff of dust, instead of
+       vanishing. Presentation only: the model has already removed them. */
+    if (!h.alive) {
+      if (m.wasAlive && m.paper && !R.reduced) { m.dieT = 0; for (let k = 0; k < 10; k++) { const a = k / 10 * 6.283; puff(h.x + Math.cos(a) * 0.5, 0.2, h.z + Math.sin(a) * 0.5, Math.cos(a) * 2.5, 0.5, Math.sin(a) * 2.5, 0.4, 1.3, 0.7, 0.45); } }
+      m.wasAlive = false;
+      if (m.dieT != null && m.dieT < 0.9 && m.paper) { m.dieT += dt; const f = Math.min(1, m.dieT / 0.45), e = f * f; m.visible = true; m.paper.rotation.x = -e * 1.5; m.paper.position.y = -0.02 * e; m.ring.visible = m.shield.visible = false; m.shadow.visible = f < 1; m.paper.visible = m.dieT < 0.8 || Math.floor(m.dieT * 30) % 2 === 0; continue; }
+      m.visible = false; continue;
+    }
+    if (!m.wasAlive) { m.wasAlive = true; m.dieT = null; if (m.paper) { m.paper.rotation.x = 0; m.paper.position.y = 0; m.paper.visible = true; } m.shadow.visible = true; }
+    // a hit knocks the springs: the body gives and the head snaps
+    if (h.flash > (m.lastFlash || 0) + 0.01 && m.rig.s && !R.reduced) { m.rig.s.qv -= 2.5; m.rig.s.hv += (Math.random() < 0.5 ? -1 : 1) * 0.9; m.rig.s.cv += (Math.random() - 0.5) * 2; }
+    m.lastFlash = h.flash;
     m.position.set(h.x, h.y, h.z); m.rotation.y = h.yaw;
-    const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced);
+    const ce = camera.matrixWorld.elements; scr.r = h.vx * ce[0] + h.vz * ce[2]; scr.f = -(h.vx * ce[8] + h.vz * ce[10]);
+    const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr);
+    if (!R.reduced) heroDust(m, h, st, dt);
     m.phase = st.phase;
     const sw = h.zip ? 0.55 : (h.onGround ? st.sway * 0.8 : 0.5);
     m.legL.rotation.x = sw; m.legR.rotation.x = h.zip ? -0.35 : -sw;
@@ -1043,14 +1193,14 @@ R.frame = function (dt, view) {
       let squeeze = 1;
       if (pp.ft != null) { pp.ft += dt; const f = pp.ft / pp.fdur; if (f >= 0.5 && !pp.swapped) { apply(); pp.swapped = true; } squeeze = Math.max(0.05, Math.abs(Math.cos(Math.PI * Math.min(1, f)))); if (f >= 1) pp.ft = null; }
       // squash on landing, stretch going up, a small give when firing
-      const sq = st.squash * 0.13 + st.recoil * 0.025, sx = 1 + sq * 0.6 - Math.max(0, st.stretch) * 0.04, sy = 1 - sq + Math.max(0, st.stretch) * 0.07 - Math.max(0, -st.stretch) * 0.02;
+      const sq = st.squash * 0.13 + st.recoil * 0.025 + (h.onGround ? st.run * 0.07 : 0), sx = 1 + sq * 0.45 - Math.max(0, st.stretch) * 0.04, sy = 1 - sq + Math.max(0, st.stretch) * 0.07 - Math.max(0, -st.stretch) * 0.02;
       pp.rotation.y = toCam - h.yaw;
       pp.scale.set(pp.sign * (pp.wide || 1) * squeeze * sx, sy, 1);
       /* LEAN. Paper cannot lean toward the camera, so it leans across the screen: into the direction the hero is moving
          as seen from here, more when dashing. Eased, so starting and stopping read as weight. */
       const e = camera.matrixWorld.elements, vRight = h.vx * e[0] + h.vz * e[2];
-      const leanT = R.reduced ? 0 : Math.max(-0.16, Math.min(0.16, -vRight * (h.dashT > 0 ? 0.03 : 0.016)));
-      m.lean += (leanT - m.lean) * (1 - Math.exp(-dt * 9)); pp.rotation.z = m.lean; pp.rotation.x = 0;
+      const leanT = R.reduced ? 0 : Math.max(-0.12, Math.min(0.12, -vRight * (h.dashT > 0 ? 0.02 : 0.01)));
+      m.lean += (leanT - m.lean) * (1 - Math.exp(-dt * 9)); pp.rotation.z = m.lean;
       // arms: hang from the shoulders and swing against the legs; hidden while the painted aim pose is showing
       if (P_.armL) { const A = PAPER[h.def.id].arms, show = pp.useM && pp.cell < 3, sy2 = A.y * pp.h, sx2 = A.x * pp.h / (pp.wide || 1), asw = h.onGround ? st.sway : -0.5;
         P_.armL.visible = show; P_.armR.visible = show && pp.cell !== 1;
@@ -1061,7 +1211,7 @@ R.frame = function (dt, view) {
       const sideLegs = pp.cell === 1 || pp.cell === 6 || (!pp.useM && v === 1);
       P_.legL.visible = P_.legR.visible = !sideLegs; P_.legA.visible = P_.legB.visible = sideLegs;
       if (!h.onGround && !h.zip) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = 0.42; P_.legB.rotation.z = -0.18; P_.legL.position.y = pp.hem + pp.hem * 0.22; P_.legR.position.y = pp.hem + pp.hem * 0.1; P_.legL.rotation.z = P_.legR.rotation.z = 0; }
-      else if (sideLegs) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = st.sway * 0.62; P_.legB.rotation.z = -st.sway * 0.62; }
+      else if (sideLegs) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = st.sway * 0.74; P_.legB.rotation.z = -st.sway * 0.74; }
       else { P_.legL.position.y = pp.hem + st.liftL * pp.hem * 3; P_.legR.position.y = pp.hem + st.liftR * pp.hem * 3; P_.legL.rotation.z = st.sway * 0.1 + st.liftL * 0.25; P_.legR.rotation.z = st.sway * 0.1 - st.liftR * 0.25; P_.legL.position.x = -st.sway * 0.012 * pp.h; P_.legR.position.x = -st.sway * 0.012 * pp.h; }
       // the body rides the step: up twice per stride, rolls with the step and the turn, breathes when standing
       P_.body.position.y = pp.h + (h.onGround ? st.body - st.recoil * 0.045 : 0.04);
@@ -1070,6 +1220,22 @@ R.frame = function (dt, view) {
       P_.body.position.x = fb ? -st.sway * 0.035 * pp.h : 0;
       P_.body.rotation.z = st.roll * (fb ? 2.2 : 1); P_.body.scale.y = 1 + (R.reduced ? 0 : Math.sin(time * 2.1 + h.id) * 0.01 * (1 - st.mix));
       if (P_.armL && P_.armL.visible && fb) { P_.armL.position.x += P_.body.position.x; P_.armR.position.x += P_.body.position.x; }
+      /* BENDS (0.20). The body curves into its motion from the hips up, the cloak hem trails and flares and ripples, the head
+         lags a change of speed, it bulges as it squashes and breathes at rest. In the side view the knees fold backward,
+         most while a leg swings through, and the swinging arm bends at the elbow. Reduced motion: rest shape. */
+      if (pp.sign) {
+        const inv = 1 / (pp.sign * (pp.wide || 1)), red = R.reduced ? 0 : 1;
+        bq.bend = red * Math.max(-0.1, Math.min(0.1, vRight * (h.dashT > 0 ? 0.016 : 0.01))); bq.head = red * st.head; bq.cloak = red * st.cloak;
+        bq.flare = red * st.flare; bq.bulge = red * Math.max(0, sq) * 0.5; bq.breath = red * Math.sin(time * 2.1 + h.id) * 0.012 * (1 - st.mix);
+        bq.wave = red * st.wave; bq.wph = st.phase * 2 + time * 3.1;
+        bendBody(P_.body, bq, inv);
+        // which way the figure faces in its own x: the facing seen on screen, through the mirror
+        const fR = Math.sin(h.yaw) * e[0] + Math.cos(h.yaw) * e[2], fwd = (fR >= 0 ? 1 : -1) * pp.sign;
+        if (sideLegs && h.onGround && !h.zip) { bendJoint(P_.legA, -st.kneeA * 0.95 * fwd * red, 0.5); bendJoint(P_.legB, -st.kneeB * 0.95 * fwd * red, 0.5); }
+        else if (sideLegs) { bendJoint(P_.legA, -0.7 * fwd * red, 0.5); bendJoint(P_.legB, -0.35 * fwd * red, 0.5); }
+        else { bendJoint(P_.legL, 0, 0.5); bendJoint(P_.legR, 0, 0.5); }
+        if (P_.armL && P_.armL.visible) bendJoint(P_.armL, pp.cell === 1 ? (0.25 + Math.max(0, -st.sway) * 0.7) * fwd * red * (h.onGround ? 1 : 0.4) : 0, 0.48);
+      }
     }
     m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
@@ -1091,22 +1257,31 @@ R.frame = function (dt, view) {
   petStep(dt);
   // troopers
   let n0 = 0, n1 = 0, nh = 0; shadowN = 0;
+  LL.props.begin(time, R.reduced, renderer.domElement.height); // 0.20 props: sway clock, lantern glows and hollows start the frame
   for (i = 0; i < W.structs.length; i++) { const o = W.structs[i]; if (o.alive) shadowPut(o.x, o.z, o.r * 2.1, 1); }
   const bT = bd.trooper.begin(), bH = bd.hush.begin(), bB = bd.hollow.begin(), bS = bd.thief.begin();
   const ts = W.troopers;
   for (i = 0; i < ts.length; i++) {
     const t = ts[i]; if (!t.alive) continue;
     const moving = Math.abs(t.vx) + Math.abs(t.vz) > 0.1;
-    /* A trooper hops. At the bottom of each hop it squashes, at the top it stretches; hollows are slow and heavy. */
-    const rate = t.big ? 5.5 : 9, ph = time * rate + t.id, hs = Math.abs(Math.sin(ph)), hop = moving ? hs * (t.big ? 0.12 : 0.2) : 0;
-    const sq = moving && !R.reduced ? (1 - hs) * (t.big ? 0.16 : 0.1) : 0, sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
+    /* GAITS (0.20). A Reign trooper marches: a hop per step, squashing at the bottom and waddling side to side with it.
+       A Hush wraith does not step at all: it glides a hand above the snow, bobbing slowly, leaning into its way and
+       swaying like cloth in water. A hollow lumbers: slow heavy steps, the weight rolling from side to side. */
+    const hush = t.team === 1, rate = t.big ? 3.4 : 9, ph = time * rate + t.id, hs = Math.abs(Math.sin(ph)), red = R.reduced ? 0 : 1;
+    let hop = moving ? hs * (t.big ? 0.1 : 0.2) : 0, sq = moving && !R.reduced ? (1 - hs) * (t.big ? 0.12 : 0.1) : 0, tilt = moving ? 0.08 : 0, roll = 0;
+    if (hush && !t.big) { hop = 0.16 + 0.1 * Math.sin(time * 2.6 + t.id * 1.7) * red; sq = -0.035 * Math.sin(time * 3.1 + t.id) * red; tilt = moving ? 0.2 : 0.04; roll = Math.sin(time * 2.2 + t.id) * 0.1 * red; }
+    else if (t.big) { roll = (moving ? Math.sin(ph) * 0.09 : Math.sin(time * 1.3 + t.id) * 0.03) * red; tilt = moving ? 0.12 : 0.03; }
+    else roll = (moving ? Math.sin(ph) * 0.07 : 0) * red;
+    if (t.flash > 0) tilt -= 0.25 * red; // a hit rocks it back
+    const sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
     shadowPut(t.x, t.z, (t.big ? 2.3 : 1.15) * (1 - hop * 0.6), 1);
     const sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1);
     { const B = t.team === 0 ? (bT ? bd.trooper : null) : (t.big ? (bB ? bd.hollow : null) : (bH ? bd.hush : null));
       if (B) { let d = Math.atan2(camPos.x - t.x, camPos.z - t.z) - t.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
         B.put(Math.abs(d) < 1.57 ? 0 : 1, t.x, hop, t.z, (t.big ? 4.4 : (t.ranged ? 2.2 : 1.9)) * sc, d * PAPER_FLIP > 0, moving ? Math.sin(time * 9 + t.id) * 0.06 : 0); continue; } }
-    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(moving ? 0.08 : 0, t.yaw, t.team === 1 ? Math.sin(time * 5 + t.id) * 0.08 : 0); dummy.scale.set(sx * sc * (1 + sq * 0.6), sy * sc * (1 - sq), sx * sc * (1 + sq * 0.6)); dummy.updateMatrix();
-    if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix); }
+    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(tilt, t.yaw, roll); dummy.scale.set(sx * sc * (1 + sq * 0.6), sy * sc * (1 - sq), sx * sc * (1 + sq * 0.6)); dummy.updateMatrix();
+    if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix); LL.props.lantern(dummy.matrix, t); } // 0.20 props: the lantern's glow
+    else if (t.big && LL.props.hollow(dummy.matrix)) { /* 0.20 props: a hollow has its own shape */ }
     else if (n1 < 110) { hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix); }
   }
   for (i = 0; i < W.thieves.length; i++) {
@@ -1116,13 +1291,14 @@ R.frame = function (dt, view) {
       if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0); continue; }
     dummy.position.set(t.x, Math.abs(Math.sin(time * 14 + t.id)) * 0.3, t.z); dummy.rotation.set(0.35, t.yaw, 0); dummy.scale.set(sc, sc * 0.9, sc); dummy.updateMatrix();
     hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix);
+    if (t.state === 1) LL.props.stolen(dummy.matrix, t.carry); // 0.20 props: a thief carries the light it took
     if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0);
   }
   dummy.rotation.set(0, 0, 0);
   if (LK.weather === 'rain' && W.red <= 0 && !R.reduced) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 2 : 5); k++) emit(cx + (Math.random() - 0.5) * 46, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 46, 1, 0x6a64d8, 0.3, 0.7, -22, 26); }
   if (LK.weather === 'snow' && W.red <= 0 && !R.reduced) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 1 : 3); k++) emit(cx + (Math.random() - 0.5) * 50, 8 + Math.random() * 8, cz + (Math.random() - 0.5) * 50, 1, Math.random() < 0.16 ? 0xff9ac8 : 0xdfe6ff, 0.5, 2.4, -3.2, 1.2); }
   if (W.red > 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 3 : 8); k++) emit(cx + (Math.random() - 0.5) * 44, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 44, 1, 0xff3a3a, 0.3, 0.75, -20, 26); }
-  tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh;
+  tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh; LL.props.end(); // 0.20 props
   if (shadowI) { shadowI.count = shadowN; shadowI.instanceMatrix.needsUpdate = true; }
   bd.trooper.end(); bd.hush.end(); bd.hollow.end(); bd.thief.end();
   { const bp = bd.pines.begin(), br = bd.rocks.begin(); // painted scenery, once its sheets exist
@@ -1239,14 +1415,11 @@ R.frame = function (dt, view) {
     const e = 1 - (1 - f) * (1 - f), rad = U.lerp(r.r0, r.r1, e);
     r.m.ring.scale.set(rad, rad, 1); r.m.disc.scale.set(rad, rad, 1); r.m.ring.material.opacity = 0.5 * (1 - f); r.m.disc.material.opacity = 0.08 * (1 - f);
   }
-  stepParticles(dt);
+  stepParticles(dt); stepPuffs(dt); stepGhosts(dt);
   // camera
   const pl = view.target;
   if (view.mode === 'attract' || !pl) {
-    const a = time * 0.05, fz = Math.sin(time * 0.031) * 40;
-    camPos.x = Math.sin(a) * 62; camPos.y = 24 + Math.sin(time * 0.07) * 6; camPos.z = fz + Math.cos(a) * 62;
-    camera.position.set(camPos.x, camPos.y, camPos.z); camera.lookAt(0, 3, fz);
-    camera.fov = R.portrait ? 78 : 58;
+    attractCam(dt);
   } else {
     /* CAMERA. Aim stays exact (yaw and pitch are never smoothed); the follow height lags a little behind jumps and landings,
        a wall pulls the camera in at once and lets it out slowly, and a dash or a thread ride widens the view a touch. */
@@ -1286,9 +1459,11 @@ R.frame = function (dt, view) {
     nb++;
   }
   drawCues();
+  if (SCN) SCN.frame(dt, time, camera); // scenery: shared time, camera and point scale; pools dim with their structures
   barBg.count = barFill.count = nb; barBg.instanceMatrix.needsUpdate = barFill.instanceMatrix.needsUpdate = true;
   if (barFill.instanceColor) barFill.instanceColor.needsUpdate = true;
   draw();
 };
 R.cam = function () { return camPos; };
+R._calls = function () { return renderer ? renderer.info.render.calls : 0; }; // for tools: draw calls in the last pass rendered (the final post quad when post is on)
 })();
