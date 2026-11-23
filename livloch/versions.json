@@ -1,7 +1,13 @@
 {
-  "current": "0.18",
+  "current": "0.19",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.19",
+      "path": "v0.19/",
+      "source": "release/0.19",
+      "note": "Motion: distance-driven walk, paper-card turns, squash and stretch, contact shadows; the guardian fox; the painted far ridge"
+    },
     {
       "v": "0.18",
       "path": "v0.18/",

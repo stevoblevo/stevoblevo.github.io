@@ -11,7 +11,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
@@ -28,18 +28,19 @@ const autoFireOn = () => cfg.autoFire == null ? I.device === 'touch' : cfg.autoF
 
 /* Changing the view is a player action. The model is told (S.setLens) and owns what it means; the renderer just follows. */
 function setLook(id) { if (!R.LOOKS[id]) id = 'snow'; cfg.look = id; save(); document.body.setAttribute('data-look', id); R.setLook(id); UI.lookChips(); if (W && (state === 'play' || state === 'pause')) S.setLens(id); }
+function restoreLook() { if (R.look !== R.LOOKS[cfg.look]) { document.body.setAttribute('data-look', cfg.look); R.setLook(cfg.look); } } // after a Dreamwalk, the saved look comes back
 function nextView() { const L = C.LENSES; setLook(L[(L.indexOf(cfg.look) + 1) % L.length]); }
 /* Inkblot view is a way of looking, never a rule: it flips the look and back. */
 function toggleInk() { if (cfg.look === 'ink') setLook(R.LOOKS[cfg.lookPrev] && cfg.lookPrev !== 'ink' ? cfg.lookPrev : 'snow'); else { cfg.lookPrev = cfg.look; setLook('ink'); } }
 function attract() {
   W = S.newWorld({ auto: true, difficulty: 1, seed: (Date.now() & 0xffff) + 3 });
-  W.fx.length = 0; R.build(W);
+  W.fx.length = 0; restoreLook(); R.build(W);
   view.mode = 'attract'; view.target = null; state = 'title'; I.play = false;
 }
 function play(auto) {
   A.init(); A.setVol(cfg.vol); A.ui('ok');
   W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look, mode: cfg.mode, lean: !auto && cfg.lean, dream: !auto && cfg.dream }); speed = 1;
-  lens0 = W.lens; R.build(W); UI.startHUD(W);
+  lens0 = W.lens; restoreLook(); R.build(W); UI.startHUD(W);
   view.mode = 'play'; view.target = W.player; view.yaw = 0; view.pitch = -0.08; view.zoom = 0;
   state = 'play'; I.play = true; counted = !auto; overT = 0; I.lookX = I.lookY = 0;
   coach.step = (!auto && !W.lean && I.device === 'touch' && !cfg.coached) ? 0 : -1; coach.x = W.player.x; coach.z = W.player.z; coach.t = 0; coach.look = 0; UI.coach('');
@@ -119,6 +120,11 @@ LL.perfReport = function () {
 };
 function feats(e) {
   if ((W.auto && !W.lean) || W.dream) return;
+  // Earn the guardian fox by bringing back a stolen light (PR #6). It changes no rule.
+  if (!cfg.petUnlocked && ((e.k === 'thiefdown' && e.p && e.carry) || (e.k === 'relit' && e.recovered))) {
+    cfg.petUnlocked = cfg.pet = true; save(); R.setPet(true); UI.petStatus();
+    UI.banner('A small guardian has found you.', 'It follows, and points at thieves carrying light. Settings can send it home', 5);
+  }
   const U_ = UI.unlock;
   if (e.k === 'thiefdown' && e.p) U_('snuff'); else if (e.k === 'relit' && e.recovered) { U_('snuff'); if (e.n >= 10) U_('garden'); }
   else if (e.k === 'fruit' && C.FRUIT_INFO[e.kind].big) U_('peachfall');
@@ -151,6 +157,7 @@ function frame(now) {
     for (let i = 0; i < W.fx.length; i++) {
       const e = W.fx[i];
       R.fx(e);
+      if (e.k === 'lens' && W.dream && R.look !== R.LOOKS[e.id]) { document.body.setAttribute('data-look', e.id); R.setLook(e.id); } // Dreamwalk: show the view the director chose (issue #7); cfg.look is not changed
       if (state === 'play') {
         A.fx(e, W, cam); UI.fx(e);
         if (e.k === 'respawn' && e.u === W.player && !W.player.useAI) { view.yaw = 0; view.pitch = -0.06; }
@@ -176,7 +183,7 @@ function frame(now) {
 function boot() {
   UI.init({
     play: play, pause: pause, resume: resume, quit: quit, save: save,
-    apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); },
+    apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet); },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
     look: setLook, ink: toggleInk, view: nextView,
     call: function (l) { if (state === 'play') S.call(l); }, echo: function () { if (state === 'play') S.echo(); }, fast: function () { speed = speed >= 4 ? 1 : speed * 2; return speed; }, leanFold: function () { if (state === 'play') S.leanFold(); },
@@ -190,7 +197,7 @@ function boot() {
   I.onUnlock = function () { if (state === 'play' && UI.screen === null && !W.over && !W.auto) pause(); };
   if (cfg.mode !== 'fallen' && cfg.mode !== 'short') cfg.mode = cfg.v17 ? 'match' : 'short'; cfg.v17 = true; // First Rain is where a new or returning player starts
   if (!window.THREE || !R.init(canvas)) { UI.error('This browser would not hand over WebGL, so the valley cannot be drawn here. Try another browser or device.'); return; }
-  R.setQuality(cfg.low);
+  R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet);
   if (!R.LOOKS[cfg.look]) cfg.look = 'snow';
   document.body.setAttribute('data-look', cfg.look); if (cfg.look !== 'snow') R.setLook(cfg.look); else LL.C.TEAM_CSS = R.look.css; UI.lookChips();
   window.addEventListener('resize', R.resize);

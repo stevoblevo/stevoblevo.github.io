@@ -20,7 +20,8 @@ let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
 let world, dyn, sky, stars;
 let tr = [null, null], hushEyes, trHat, barBg, barFill, projMesh, orbMesh, parts, staticGlow;
-let nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [], fruitM = [];
+let nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [], fruitM = [], groundTex = null, petM = null, petThread = null, fovKick = 0, pivotY = null, camBtS = 1;
+R.petEnabled = false;
 R.reduced = false; try { R.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 let heroM = [], structM = [], strayM = [], knotPool = [], fawnPool = [], zonePool = [], rings = [];
 let shake = 0, camPos = { x: 0, y: 30, z: -60 }, camDir = { x: 0, y: 0, z: 1 }, camDist = 5.4;
@@ -145,7 +146,7 @@ function applyLook() {
 }
 function construct() {
   if (scene) scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose) o.material.dispose(); });
-  mats = {}; tcCache = {}; fruitM = []; cueDash = null; cueRings = []; creaseM = []; heroM = []; echoM = null; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
+  mats = {}; tcCache = {}; fruitM = []; cueDash = null; cueRings = []; creaseM = []; heroM = []; echoM = null; petM = null; petThread = null; pivotY = null; camBtS = 1; structM = []; strayM = []; knotPool = []; fawnPool = []; zonePool = []; rings = []; nessM = null; R.decor = false;
   renderer.setClearColor(LK.clear);
   scene = new T.Scene(); scene.fog = new T.Fog(LK.fog[0], LK.fog[1], LK.fog[2]);
   scene.add(new T.HemisphereLight(LK.hemi[0], LK.hemi[1], LK.hemi[2]));
@@ -182,6 +183,18 @@ function makeGlow() {
   g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
   return new T.CanvasTexture(c);
 }
+/* A soft contact shadow: black in the middle, gone at the edge. Painted cutouts float without one. */
+function makeShadow() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(0,0,0,0.75)'); gr.addColorStop(0.5, 'rgba(0,0,0,0.42)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return new T.CanvasTexture(c);
+}
+let shadowTex = null, shadowI = null, shadowN = 0;
+function shadowMat(op) { const m = new T.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: op, color: 0x0b0814, polygonOffset: true, polygonOffsetFactor: -2 }); m.userData.lk = true; m.userData.solid = true; return m; }
+function shadowBlob(r) { const m = new T.Mesh(new T.PlaneGeometry(2 * r, 2 * r), shadowMat(0.5)); m.rotation.x = -Math.PI / 2; m.renderOrder = 1; return m; }
+function shadowPut(x, z, r, k) { if (!shadowI || shadowN >= shadowI.userData.cap) return; dummy.position.set(x, 0.035, z); dummy.rotation.set(-Math.PI / 2, 0, 0); dummy.scale.set(r * (k || 1), r * (k || 1) * 0.7, 1); dummy.updateMatrix(); shadowI.setMatrixAt(shadowN++, dummy.matrix); }
 function glowSprite(col, size, parent, x, y, z) {
   const s = new T.Sprite(new T.SpriteMaterial({ map: glowTex, color: col, blending: T.AdditiveBlending, depthWrite: false, transparent: true }));
   s.scale.set(size, size, 1); s.position.set(x || 0, y || 0, z || 0); if (parent) parent.add(s); return s;
@@ -194,7 +207,7 @@ R.init = function (canvas) {
   catch (e) { return false; }
   camera = new T.PerspectiveCamera(64, 1, 0.15, 1400);
   dummy = new T.Object3D(); tmpC = new T.Color(); v1 = new T.Vector3(); v2 = new T.Vector3(); v3 = new T.Vector3();
-  glowTex = makeGlow();
+  glowTex = makeGlow(); shadowTex = makeShadow();
   R.ok = true; construct();
   R.resize(); return true;
 };
@@ -219,10 +232,13 @@ function buildSky() {
   g.setAttribute('color', new T.BufferAttribute(cols, 3));
   sky = new T.Mesh(g, new T.MeshBasicMaterial({ vertexColors: true, side: T.BackSide, fog: false, depthWrite: false }));
   own(sky); scene.add(sky);
-  flatLoad('backdrop', function (t) { // the far ridge: one wide painting wrapped round the valley, mirrored so the seam never shows
-    t.wrapS = T.MirroredRepeatWrapping; t.repeat.x = 2; t.needsUpdate = true;
-    const mt = new T.MeshBasicMaterial({ map: t, side: T.BackSide, fog: false }); // opaque and depth-writing, so the sky dome behind it cannot paint over it mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
-    const hgt = 2 * Math.PI * 560 / 2 * (t.image.height / t.image.width), c = new T.Mesh(new T.CylinderGeometry(560, 560, hgt, 48, 1, true), mt); c.position.y = hgt * 0.4; c.scale.x = -1; scene.add(c);
+  if (LK !== LOOKS.origami) flatLoad('backdrop', function (t) { // the far ridge: one wide painting wrapped round the valley, mirrored so the seam never shows
+    t.wrapS = T.MirroredRepeatWrapping; t.repeat.x = 4; t.needsUpdate = true; // four mirrored copies round the valley keep the mountains near their painted proportions
+    // opaque and depth-writing, so the sky dome behind it cannot paint over it. Tinted toward each view's horizon, because the painting is a blue night
+    const mt = new T.MeshBasicMaterial({ map: t, side: T.BackSide, fog: false }); mt.userData.lk = true; mt.userData.solid = true; mt.userData.bl = true;
+    if (LK !== LOOKS.snow) mt.color.set(0xffffff).lerp(new T.Color(LK.sky[2]), 0.55).multiplyScalar(1.15);
+    // proportions from the Ford study: the painted peaks sit just above the lowered valley walls
+    const c = new T.Mesh(new T.CylinderGeometry(500, 500, 370, 56, 1, true), mt); c.position.y = 98; c.rotation.y = Math.PI / 2.5; c.scale.x = -1; scene.add(c);
   });
   const n = 420, sp = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
@@ -253,7 +269,7 @@ function buildSky() {
 function buildGround() {
   const sx = 2 * C.HALF_X + 190, sz = 2 * C.HALF_Z + 190;
   let g = new T.PlaneGeometry(sx, sz, 100, 150); g.rotateX(-Math.PI / 2);
-  const wallK = FLATS.backdrop && !R.noPaper ? 0.2 : 1; // with a painted backdrop the valley walls drop to foothills so the painting shows
+  const wallK = FLATS.backdrop && !R.noPaper && LK !== LOOKS.origami ? 0.24 : 1; // with a painted backdrop the valley walls drop to foothills so the painting shows (Origami is daylight: no night ridge)
   const p = g.attributes.position, cols = new Float32Array(p.count * 3), q = { s: 0, d: 0 };
   const G = LK.ground, jungA = new T.Color(G.a), jungB = new T.Color(G.b), lane = new T.Color(G.lane), laneC = new T.Color(G.laneC);
   const ember = new T.Color(LK.team[0]), mint = new T.Color(LK.team[1]), rock = new T.Color(G.rock), c = new T.Color();
@@ -275,7 +291,10 @@ function buildGround() {
   }
   g.setAttribute('color', new T.BufferAttribute(cols, 3));
   g = g.toNonIndexed(); g.computeVertexNormals();
-  world.add(own(new T.Mesh(g, new T.MeshLambertMaterial({ vertexColors: true }))));
+  // a painted grain multiplied over the vertex colours (0.8 to 1.0), so the snow is not one flat sheet; from the Ford study's snow texture
+  const gm = new T.MeshLambertMaterial({ vertexColors: true });
+  if (!R.noPaper) { if (!groundTex) { groundTex = new T.TextureLoader().load('art/ground-detail.webp'); groundTex.wrapS = groundTex.wrapT = T.MirroredRepeatWrapping; groundTex.repeat.set(26, 36); } gm.map = groundTex; }
+  world.add(own(new T.Mesh(g, gm)));
   if (LK.grid) { const gh = new T.GridHelper(360, 90, LK.team[0], 0x4a3150); gh.position.y = 0.05; gh.material.transparent = true; gh.material.opacity = 0.5; world.add(own(gh)); }
   // fountains
   for (let t = 0; t < 2; t++) {
@@ -325,6 +344,7 @@ function buildThreads() {
 /* r128 sizes instanceColor from .count at first setColorAt, so allocate it at full capacity up front. */
 function initColor(m, cap) { const a = new Float32Array(cap * 3).fill(1); m.instanceColor = new T.BufferAttribute(a, 3); }
 function buildInstanced() {
+  shadowI = new T.InstancedMesh(new T.PlaneGeometry(1, 1), shadowMat(0.42), 320); shadowI.userData.cap = 320; shadowI.frustumCulled = false; shadowI.count = 0; shadowI.renderOrder = 1; dyn.add(shadowI);
   bd = { trooper: new Boards('trooper', 90), hush: new Boards('hush', 110), hollow: new Boards('hollow', 40), thief: new Boards('thief', 40), pines: new Boards('pines', 400), rocks: new Boards('rocks', 400) };
   const bodyG = cyl(0.42, 0.52, 1.0, 6); bodyG.translate(0, 0.75, 0);
   tr[0] = new T.InstancedMesh(bodyG, new T.MeshLambertMaterial({ color: SRC_TEAM[0], emissive: SRC_TEAM[0], emissiveIntensity: 0.5 }), 90);
@@ -426,6 +446,8 @@ function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissiv
    To switch one on, add a line:  FLATS.house = { src: 'art/flats/house.png', cells: 3 };  See art/flats/README.md. */
 const FLATS = R.FLATS = {};
 FLATS.house = { src: 'art/flats/house.png', cells: 3 };
+/* The far ridge: painted for the Lantern Ford study by the owner's other agent (art/ford-ridge.webp there, described as an original generated backdrop). */
+FLATS.backdrop = { src: 'art/backdrop-ridge.webp', cells: 1 };
 R.info = function () { // for the frame-rate report
   let gpu = 'unknown'; try { const gl = renderer.getContext(), x = gl.getExtension('WEBGL_debug_renderer_info'); gpu = x ? gl.getParameter(x.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); } catch (e) {}
   return { gpu: String(gpu).slice(0, 90), w: R.w, h: R.h, pr: renderer ? renderer.getPixelRatio() : 1, low: !!R.low, look: LK.name, gl2: !!(renderer && renderer.capabilities.isWebGL2) };
@@ -511,6 +533,70 @@ function paperFor(g, id) {
   if (paperTex[id]) { put(paperTex[id]); return; }
   new T.TextureLoader().load(P.src, function (t) { t.minFilter = T.LinearFilter; t.generateMipmaps = false; paperTex[id] = t; if (g.parent) put(t); }, undefined, function () {});
 }
+/* GUARDIAN FOX. From PR #6 (feature/guardian-fox-v011, the owner's other agent): earned by bringing back a stolen light,
+   toggled in Settings, follows the hero and draws a thread to the nearest Hush thief carrying light. Visual guidance only:
+   no hitbox, no attack, nothing in the model. 0.19 kept its rules and shapes and gave it motion: it trots by distance on
+   the shared rig, follows on a spring instead of a straight slide, turns smoothly, wags with speed and sits when you stop. */
+function buildPet() {
+  if (petM && petM.parent) petM.parent.remove(petM); if (petThread && petThread.parent) petThread.parent.remove(petThread); // one fox, even when the valley is rebuilt
+  const g = new T.Group(), body = new T.Group(); g.add(body); g.body = body;
+  const gold = new T.MeshLambertMaterial({ color: 0xffc778, emissive: 0xffa440, emissiveIntensity: 0.35 });
+  const pale = new T.MeshLambertMaterial({ color: 0xffecc1, emissive: 0xffdca0, emissiveIntensity: 0.25 });
+  const ink = new T.MeshLambertMaterial({ color: 0x443046 });
+  [gold, pale, ink].forEach(m => { m.userData.lk = true; m.userData.solid = true; });
+  mesh(flat(new T.IcosahedronGeometry(0.47, 0)), gold, 0, 0.66, 0, body).scale.set(1.25, 0.7, 1.6);
+  const head = new T.Group(); head.position.set(0, 1.05, 0.62); body.add(head); g.head = head;
+  mesh(flat(new T.IcosahedronGeometry(0.36, 0)), pale, 0, 0, 0, head).scale.set(1.05, 0.85, 1.15);
+  mesh(flat(new T.ConeGeometry(0.11, 0.42, 4)), pale, 0, -0.06, 0.36, head).rotation.x = Math.PI / 2; // muzzle
+  mesh(flat(new T.ConeGeometry(0.18, 0.58, 4)), gold, -0.24, 0.42, -0.06, head).rotation.z = 0.22;
+  mesh(flat(new T.ConeGeometry(0.18, 0.58, 4)), gold, 0.24, 0.42, -0.06, head).rotation.z = -0.22;
+  mesh(flat(new T.IcosahedronGeometry(0.075, 0)), ink, -0.17, 0.06, 0.3, head);
+  mesh(flat(new T.IcosahedronGeometry(0.075, 0)), ink, 0.17, 0.06, 0.3, head);
+  const legs = []; [[-0.28, 0.42], [0.28, 0.42], [-0.28, -0.42], [0.28, -0.42]].forEach(function (q, k) { const l = new T.Group(); l.position.set(q[0], 0.52, q[1]); mesh(flat(new T.ConeGeometry(0.1, 0.52, 4)), k < 2 ? pale : gold, 0, -0.26, 0, l).rotation.x = Math.PI; body.add(l); legs.push(l); }); g.legs = legs;
+  const tail = new T.Group(); tail.position.set(0, 0.78, -0.62);
+  mesh(flat(new T.ConeGeometry(0.3, 1.25, 5)), gold, 0, 0, -0.55, tail).rotation.x = -1.2;
+  mesh(flat(new T.ConeGeometry(0.2, 0.5, 5)), pale, 0, 0.18, -1.12, tail).rotation.x = -1.2;
+  body.add(tail); g.tail = tail;
+  const halo = glowSprite(0xffd890, 3.6, g, 0, 1.0, 0); halo.material.userData.lk = true; g.halo = halo;
+  g.shadow = shadowBlob(0.7); g.add(g.shadow);
+  g.scale.setScalar(0.72); g.visible = R.petEnabled; g.rig = LL.paperMotion.create(); g.vel = { x: 0, z: 0 }; g.face = 0; g.sit = 0;
+  dyn.add(g); petM = g;
+  const line = new T.BufferGeometry(); line.setAttribute('position', new T.BufferAttribute(new Float32Array(6), 3));
+  const lm = new T.LineBasicMaterial({ color: 0xffcf85, transparent: true, opacity: 0.6, depthWrite: false, fog: false }); lm.userData.lk = true;
+  petThread = new T.Line(line, lm); petThread.visible = false; petThread.frustumCulled = false; dyn.add(petThread);
+}
+R.setPet = function (on) { R.petEnabled = !!on; if (petM) petM.visible = R.petEnabled; if (petThread) petThread.visible = false; };
+function petStep(dt) {
+  if (!petM) return;
+  const h = W.player, pm = petM; pm.visible = !!(R.petEnabled && h && h.alive && (!W.auto || W.lean));
+  if (!pm.visible) { if (petThread) petThread.visible = false; return; }
+  // a place to the hero's right as the camera sees it, a little further from the camera, so it is never between the camera and
+  // the hero whichever way the hero faces; a spring pulls the fox toward it
+  let fx = camDir.x, fz = camDir.z; const fl = Math.hypot(fx, fz) || 1; fx /= fl; fz /= fl;
+  const tx = h.x + fx * 0.9 - fz * 1.9, tz = h.z + fz * 0.9 + fx * 1.9;
+  if (!pm.userData.arrived || Math.hypot(tx - pm.position.x, tz - pm.position.z) > 14) { pm.position.set(tx, 0, tz); pm.vel.x = pm.vel.z = 0; pm.userData.arrived = true; }
+  const k = 38, c = 11; pm.vel.x += ((tx - pm.position.x) * k - pm.vel.x * c) * dt; pm.vel.z += ((tz - pm.position.z) * k - pm.vel.z * c) * dt;
+  pm.position.x += pm.vel.x * dt; pm.position.z += pm.vel.z * dt;
+  const sp = Math.hypot(pm.vel.x, pm.vel.z);
+  let target = null, dist = 40;
+  for (const t of W.thieves) { if (!t.alive || t.state !== 1 || !t.carry) continue; const dd = Math.hypot(t.x - h.x, t.z - h.z); if (dd < dist) { dist = dd; target = t; } }
+  const want = target ? Math.atan2(target.x - pm.position.x, target.z - pm.position.z) : (sp > 0.6 ? Math.atan2(pm.vel.x, pm.vel.z) : h.yaw);
+  let dy = want - pm.face; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); pm.face += dy * (1 - Math.exp(-dt * 8)); pm.rotation.y = pm.face;
+  const st = LL.paperMotion.pose(pm.rig, { x: pm.position.x, z: pm.position.z, yaw: pm.face, onGround: true, rig: 'fox' }, dt, W.t, R.reduced);
+  const trot = R.reduced ? 0 : Math.sin(st.phase * 2) * st.mix;
+  pm.body.position.y = R.reduced ? 0 : Math.abs(Math.sin(st.phase * 2)) * 0.12 * st.mix;
+  pm.body.rotation.x = R.reduced ? 0 : -0.06 * st.mix + Math.sin(st.phase * 2) * 0.04 * st.mix;
+  pm.body.rotation.z = R.reduced ? 0 : Math.max(-0.2, Math.min(0.2, -st.turn * 0.05));
+  pm.legs.forEach(function (l, j) { l.rotation.x = (j === 0 || j === 3 ? 1 : -1) * trot * 0.7; });
+  // sitting: when the hero stands still for a moment the fox sits and looks up
+  pm.sit += ((sp < 0.3 && !target ? 1 : 0) - pm.sit) * (1 - Math.exp(-dt * 3)); pm.body.rotation.x -= pm.sit * 0.35; pm.body.position.y -= pm.sit * 0.12;
+  pm.head.rotation.x = -pm.sit * 0.25 + (target ? 0.1 : 0);
+  pm.tail.rotation.y = R.reduced ? 0 : Math.sin(time * (5 + st.mix * 6)) * (0.18 + st.mix * 0.35 + (target ? 0.25 : 0));
+  pm.tail.rotation.x = 0.15 + pm.sit * 0.4;
+  pm.halo.material.opacity = 0.65 + (target ? 0.3 * Math.abs(Math.sin(time * 6)) : 0);
+  petThread.visible = !!target;
+  if (target) { const a = petThread.geometry.attributes.position; a.setXYZ(0, pm.position.x, 0.8, pm.position.z); a.setXYZ(1, target.x, 1.4, target.z); a.needsUpdate = true; }
+}
 function heroModel(h) {
   const d = h.def, g = new T.Group(), body = new T.Group(); g.add(body);
   const skin = hm(0xe8c4a0), dark = hm(0x2b1b2f), tc = SRC_TEAM[h.team];
@@ -553,6 +639,7 @@ function heroModel(h) {
   const shield = new T.Mesh(new T.SphereGeometry(1.25, 12, 8), new T.MeshBasicMaterial({ color: 0xfff0c8, transparent: true, opacity: 0.16, blending: T.AdditiveBlending, depthWrite: false }));
   shield.position.y = 1; shield.visible = false; g.add(shield);
   g.body = body; g.legL = legL; g.legR = legR; g.arm = arm; g.ring = ring; g.shield = shield; g.phase = 0; g.recoil = 0; g.unit = h;
+  g.rig = LL.paperMotion.create(); g.lean = 0; g.shadow = shadowBlob(0.62); g.add(g.shadow);
   dyn.add(g); paperFor(g, d.id); return g;
 }
 let deerT = null;
@@ -606,9 +693,11 @@ function structModel(s) {
   const rub = new T.Group(); mesh(flat(new T.IcosahedronGeometry(1.4, 0)), stone, 0.6, 0.5, 0.3, rub); mesh(flat(new T.IcosahedronGeometry(1, 0)), dark, -0.9, 0.4, -0.5, rub); mesh(box(1.6, 0.4, 1.2), stone, 0, 0.2, 1.1, rub).rotation.y = 0.5; rub.visible = false; g.add(rub);
   const ward = new T.Mesh(new T.CylinderGeometry(s.r + 1.4, s.r + 1.4, s.h + 1, 14, 1, true), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.13, side: T.DoubleSide, blending: T.AdditiveBlending, depthWrite: false }));
   ward.position.y = (s.h + 1) / 2; g.add(ward);
+  const wr = new T.Mesh(new T.RingGeometry(s.r + 1.1, s.r + 1.6, 40), new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: 0.5, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
+  wr.material.userData.lk = true; wr.rotation.x = -Math.PI / 2; wr.position.y = 0.06; wr.visible = false; g.add(wr); g.wardRing = wr;
   g.lit = lit; g.rub = rub; g.ward = ward; g.unit = s; g.paper = paper; g.position.set(s.x, 0, s.z); dyn.add(g);
   standFlat(lit, s.team === 0 ? 'house' : 'tower', s.kind === 'patron' ? 2 : (s.kind === 'warden' ? 1 : 0), 14.5, // the sheet draws the three sizes to scale in equal cells, so every cell gets the same height
-    function () { return lit.children.filter(function (c) { return c !== g.glow; }).concat(g.children.filter(function (c) { return c.isMesh && c !== ward; })); });
+    function () { return lit.children.filter(function (c) { return c !== g.glow; }).concat(g.children.filter(function (c) { return c.isMesh && c !== ward && c !== wr; })); });
   return g;
 }
 function strayModel(s) {
@@ -741,6 +830,9 @@ function buildDecor() {
   const tg = cyl(0.3, 0.55, 3, 5); tg.translate(0, 1.5, 0);
   const c1 = flat(new T.ConeGeometry(2.6, 4.2, 6)); c1.translate(0, 4.6, 0);
   const c2 = flat(new T.ConeGeometry(1.9, 3.6, 6)); c2.translate(0, 7.2, 0);
+  /* In Cobalt Snow the trees take the painted ridge's night pines (navy and slate) with a few in cherry blossom, as in the
+     key art, instead of the palette's magenta. Other views recolour them as before. */
+  const night = LK === LOOKS.snow;
   const tm = new T.InstancedMesh(tg, mat(0x3a2a3c), Math.max(1, trees.length));
   const m1 = new T.InstancedMesh(c1, new T.MeshLambertMaterial({ color: 0xffffff }), Math.max(1, trees.length));
   const m2 = new T.InstancedMesh(c2, new T.MeshLambertMaterial({ color: 0xffffff }), Math.max(1, trees.length));
@@ -749,8 +841,10 @@ function buildDecor() {
     dummy.position.set(o.x, 0, o.z); dummy.rotation.set(0, o.seed * 6, 0); dummy.scale.set(sc, sc, sc); dummy.updateMatrix();
     tm.setMatrixAt(i, dummy.matrix); m1.setMatrixAt(i, dummy.matrix); m2.setMatrixAt(i, dummy.matrix);
     const rose = o.seed > 0.72;
-    m1.setColorAt(i, tmpC.setHex(rose ? 0x9a3f4a : 0x24505a)); m2.setColorAt(i, tmpC.setHex(rose ? 0xc4605a : 0x2f6a6a));
+    if (night) { m1.setColorAt(i, tmpC.setHex(rose ? 0xc0508a : [0x1d2d43, 0x22344d, 0x1a283d][i % 3])); m2.setColorAt(i, tmpC.setHex(rose ? 0xf08ab8 : [0x2c4462, 0x34506f, 0x2a3f5b][i % 3])); }
+    else { m1.setColorAt(i, tmpC.setHex(rose ? 0x9a3f4a : 0x24505a)); m2.setColorAt(i, tmpC.setHex(rose ? 0xc4605a : 0x2f6a6a)); }
   });
+  if (night) { m1.userData.ilk = m2.userData.ilk = true; } // kept as painted: the Snow palette would turn these red
   world.add(tm); world.add(m1); world.add(m2); [tm, m1, m2].forEach(function (o) { o.userData.tree = true; decorPrims.push(o); });
   if (LK.snowcaps) {
     const cg = flat(new T.ConeGeometry(1.25, 1.7, 6)); cg.translate(0, 8.35, 0);
@@ -769,7 +863,7 @@ R.build = function (w) {
   heroM.concat(structM, strayM).forEach(function (g) { dyn.remove(g); });
   if (!nessM) nessM = nessModel(); nessY = -11;
   heroM = W.heroes.map(heroModel); structM = W.structs.map(structModel); strayM = W.strays.map(strayModel);
-  buildDecor(); buildCues(); buildFruitArt();
+  buildDecor(); buildCues(); buildFruitArt(); buildPet();
   for (let i = 0; i < PN_MAX; i++) { pLife[i] = 0; pPos[i * 3 + 1] = -999; }
   rings.forEach(r => { r.life = 0; r.m.visible = false; });
   applyLook();
@@ -878,7 +972,7 @@ function dist2cam(x, z) { return Math.hypot(x - camPos.x, z - camPos.z); }
 R.camPose = function (h, yaw, pitch, zoom, out) {
   const cp = Math.cos(pitch), fx = Math.sin(yaw) * cp, fy = Math.sin(pitch), fz = Math.cos(yaw) * cp;
   const rx = -Math.cos(yaw), rz = Math.sin(yaw);
-  const px = h.x, py = h.y + 1.65, pz = h.z;
+  const px = h.x, py = (W && h === W.player && pivotY != null ? pivotY : h.y) + 1.65, pz = h.z; // the follow height is smoothed in R.frame
   const dist = U.lerp(R.portrait ? 6.4 : 5.4, 3.3, zoom), side = 0.85 * (1 - zoom * 0.3);
   let cx = px - fx * dist + rx * side, cy = py - fy * dist + 0.35, cz = pz - fz * dist + rz * side;
   if (cy < 0.35) cy = 0.35;
@@ -891,6 +985,7 @@ R.camPose = function (h, yaw, pitch, zoom, out) {
     const o = W.structs[i]; if (!o.alive || Math.abs(o.x - px) > 12 || Math.abs(o.z - pz) > 12) continue;
     const t = S.segCyl(px, py, pz, cx, cy, cz, o.x, o.z, o.r + 0.3, -1, o.h); if (t >= 0 && t < bt) bt = t;
   }
+  if (W && h === W.player) { R._btRaw = bt; if (bt > camBtS) bt = camBtS; } // pulled in at once by a wall, eased back out in R.frame
   if (bt < 1) { bt = Math.max(0.12, bt - 0.06); cx = px + (cx - px) * bt; cy = py + (cy - py) * bt; cz = pz + (cz - pz) * bt; }
   out.x = cx; out.y = cy; out.z = cz; out.dx = fx; out.dy = fy; out.dz = fz; out.dist = dist * bt; return out;
 };
@@ -912,41 +1007,69 @@ R.frame = function (dt, view) {
     const m = heroM[i], h = m.unit;
     m.visible = h.alive; if (!h.alive) continue;
     m.position.set(h.x, h.y, h.z); m.rotation.y = h.yaw;
-    const sp = Math.hypot(h.vx, h.vz);
-    m.phase += dt * Math.min(sp, 9) * 1.7;
-    const sw = h.zip ? 0.55 : (h.onGround ? Math.sin(m.phase) * Math.min(1, sp / 5) * 0.8 : 0.5);
+    const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced);
+    m.phase = st.phase;
+    const sw = h.zip ? 0.55 : (h.onGround ? st.sway * 0.8 : 0.5);
     m.legL.rotation.x = sw; m.legR.rotation.x = h.zip ? -0.35 : -sw;
     m.body.rotation.x = h.dashT > 0 || h.zip ? 0.45 : Math.min(0.22, sp * 0.02);
     if (h.zip && Math.random() < dt * 40) emit(h.x, 0.25, h.z, 1, 0xffe2a0, 1.5, 0.6, 1.2, 0);
-    m.body.position.y = h.onGround ? Math.abs(Math.sin(m.phase)) * 0.05 * Math.min(1, sp / 5) : 0;
+    m.body.position.y = h.onGround ? st.body : 0;
     if (m.recoil > 0) m.recoil = Math.max(0, m.recoil - dt * 9);
     m.arm.rotation.x = -h.pitch - m.body.rotation.x - m.recoil * 0.25;
     m.arm.position.z = 0.1 - m.recoil * 0.12;
+    { const up = Math.max(0, h.y), k = 1 / (1 + up * 0.45); m.shadow.position.y = 0.035 - h.y; m.shadow.scale.set(k, k, k); m.shadow.material.opacity = 0.5 * k; } // the shadow stays on the ground and shrinks as the hero rises
     if (m.paper) { // face the camera; pick the painted view from the angle between the hero's facing and the camera
+      const pp = m.paper, P_ = pp.parts;
       const toCam = Math.atan2(camera.position.x - h.x, camera.position.z - h.z); let d = toCam - h.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
-      const ad = Math.abs(d), v = ad < 0.5 ? 0 : (ad < 1.2 ? 3 : (ad < 2.2 ? 1 : 2));
-      const pp = m.paper, P_ = pp.parts, mv = Math.min(1, sp / 5), sw = h.onGround ? Math.sin(m.phase) * mv : 0.7, side = v === 1;
-      const flip = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1, firing = W.t - h.lastShotT < 0.32;
-      // which picture and which cell: the motion sheet for front, side and back once it has loaded; the aiming pose while firing
-      let useM = !!pp.mat2 && v !== 3, cell = v, wide = 1;
-      if (useM) { cell = v === 0 ? 0 : (v === 1 ? 1 : 2); if (firing && v === 2) cell = 5; else if (firing && v === 1) cell = 6; wide = pp.r2; }
-      const mat = useM ? pp.mat2 : (pp.mat1 || pp.material);
-      if (P_.body.material !== mat) { P_.body.material = P_.legL.material = P_.legR.material = P_.legA.material = P_.legB.material = mat; }
-      mat.map.offset.x = useM ? cell / 7 : v * 0.25; pp.rotation.y = toCam - h.yaw;
-      pp.scale.x = flip * wide;
-      pp.rotation.x = h.dashT > 0 || h.zip ? -0.3 : 0;
-      if (P_.armL) { const A = PAPER[h.def.id].arms, show = useM && cell < 3, sy = A.y * pp.h, sx = A.x * pp.h / wide;
-        P_.armL.visible = show; P_.armR.visible = show && !side;
-        if (show) { pp.matA.map.offset.x = (side ? 3 : 4) / 7;
-          if (side) { P_.armL.position.set(0, sy, 0.05); P_.armL.rotation.z = -sw * 0.5; }
-          else { P_.armL.position.set(-sx, sy + Math.max(0, -sw) * 0.03, -0.02); P_.armR.position.set(sx, sy + Math.max(0, sw) * 0.03, -0.02); P_.armL.rotation.z = -0.05 - sw * 0.06; P_.armR.rotation.z = 0.05 - sw * 0.06; } } }
-      // walking: seen from the side the legs scissor; seen from front or back they lift in turn
-      P_.legL.visible = P_.legR.visible = !side; P_.legA.visible = P_.legB.visible = side;
-      if (side) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = sw * 0.62; P_.legB.rotation.z = -sw * 0.62; }
-      else { const lift = pp.hem * 0.42; P_.legL.position.y = pp.hem + Math.max(0, sw) * lift; P_.legR.position.y = pp.hem + Math.max(0, -sw) * lift; P_.legL.rotation.z = sw * 0.07; P_.legR.rotation.z = sw * 0.07; }
-      // the body rides the step: up twice per stride, a little sway, a breath when standing
-      P_.body.position.y = pp.h + (h.onGround ? Math.abs(Math.sin(m.phase)) * 0.07 * mv : 0.05);
-      P_.body.rotation.z = Math.sin(m.phase) * 0.045 * mv; P_.body.scale.y = 1 + Math.sin(time * 2.1) * 0.008 * (1 - mv);
+      const ad = Math.abs(d);
+      /* Which painted view. Bands: 0 front [0, .5), 3 three-quarter [.5, 1.2), 1 side [1.2, 2.2), 2 back. A tenth of a radian of
+         hysteresis, so standing on a boundary does not flicker between two pictures. */
+      const raw = ad < 0.5 ? 0 : (ad < 1.2 ? 3 : (ad < 2.2 ? 1 : 2)), BAND = { 0: [-1, 0.5], 3: [0.5, 1.2], 1: [1.2, 2.2], 2: [2.2, 9] };
+      let v = pp.v; if (v == null || (raw !== v && (ad < BAND[v][0] - 0.1 || ad > BAND[v][1] + 0.1))) v = raw; pp.v = v;
+      const side = v === 1, sign = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1;
+      pp.aiming = pp.aiming ? st.aim > 0.2 : st.aim > 0.55;
+      let useM = !!pp.mat2 && v !== 3, cell = v;
+      if (useM) { cell = v === 0 ? 0 : (v === 1 ? 1 : 2); if (pp.aiming && v === 2) cell = 5; else if (pp.aiming && v === 1) cell = 6; }
+      const key = (useM ? 'm' : 't') + cell + (sign > 0 ? '+' : '-');
+      const apply = function () {
+        const mat = useM ? pp.mat2 : (pp.mat1 || pp.material);
+        if (P_.body.material !== mat) { P_.body.material = P_.legL.material = P_.legR.material = P_.legA.material = P_.legB.material = mat; }
+        mat.map.offset.x = useM ? cell / 7 : v * 0.25; pp.wide = useM ? pp.r2 : 1; pp.sign = sign; pp.key = key; pp.cell = cell; pp.useM = useM;
+      };
+      /* PAPER TURN. A change of picture is a card turning over: it narrows to an edge, the picture changes, it opens again.
+         0.15 s for a change of view, 0.09 s for raising or lowering the aim. Reduced motion: an instant change. */
+      if (pp.key == null || R.reduced) apply();
+      else if (key !== pp.key && pp.ft == null) { pp.ft = 0; pp.fdur = (pp.key.slice(0, 2) !== key.slice(0, 2) && (pp.cell >= 5 || cell >= 5)) ? 0.09 : 0.15; pp.swapped = false; }
+      let squeeze = 1;
+      if (pp.ft != null) { pp.ft += dt; const f = pp.ft / pp.fdur; if (f >= 0.5 && !pp.swapped) { apply(); pp.swapped = true; } squeeze = Math.max(0.05, Math.abs(Math.cos(Math.PI * Math.min(1, f)))); if (f >= 1) pp.ft = null; }
+      // squash on landing, stretch going up, a small give when firing
+      const sq = st.squash * 0.13 + st.recoil * 0.025, sx = 1 + sq * 0.6 - Math.max(0, st.stretch) * 0.04, sy = 1 - sq + Math.max(0, st.stretch) * 0.07 - Math.max(0, -st.stretch) * 0.02;
+      pp.rotation.y = toCam - h.yaw;
+      pp.scale.set(pp.sign * (pp.wide || 1) * squeeze * sx, sy, 1);
+      /* LEAN. Paper cannot lean toward the camera, so it leans across the screen: into the direction the hero is moving
+         as seen from here, more when dashing. Eased, so starting and stopping read as weight. */
+      const e = camera.matrixWorld.elements, vRight = h.vx * e[0] + h.vz * e[2];
+      const leanT = R.reduced ? 0 : Math.max(-0.16, Math.min(0.16, -vRight * (h.dashT > 0 ? 0.03 : 0.016)));
+      m.lean += (leanT - m.lean) * (1 - Math.exp(-dt * 9)); pp.rotation.z = m.lean; pp.rotation.x = 0;
+      // arms: hang from the shoulders and swing against the legs; hidden while the painted aim pose is showing
+      if (P_.armL) { const A = PAPER[h.def.id].arms, show = pp.useM && pp.cell < 3, sy2 = A.y * pp.h, sx2 = A.x * pp.h / (pp.wide || 1), asw = h.onGround ? st.sway : -0.5;
+        P_.armL.visible = show; P_.armR.visible = show && pp.cell !== 1;
+        if (show) { pp.matA.map.offset.x = (pp.cell === 1 ? 3 : 4) / 7;
+          if (pp.cell === 1) { P_.armL.position.set(0, sy2 + st.body, 0.05); P_.armL.rotation.z = -asw * 0.55; }
+          else { P_.armL.position.set(-sx2, sy2 + st.body + Math.max(0, -asw) * 0.03, -0.02); P_.armR.position.set(sx2, sy2 + st.body + Math.max(0, asw) * 0.03, -0.02); P_.armL.rotation.z = -0.06 - asw * 0.07 - Math.max(0, st.stretch) * 0.5; P_.armR.rotation.z = 0.06 - asw * 0.07 + Math.max(0, st.stretch) * 0.5; } } }
+      // legs: seen from the side they scissor; from front or back they lift in turn; in the air they tuck
+      const sideLegs = pp.cell === 1 || pp.cell === 6 || (!pp.useM && v === 1);
+      P_.legL.visible = P_.legR.visible = !sideLegs; P_.legA.visible = P_.legB.visible = sideLegs;
+      if (!h.onGround && !h.zip) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = 0.42; P_.legB.rotation.z = -0.18; P_.legL.position.y = pp.hem + pp.hem * 0.22; P_.legR.position.y = pp.hem + pp.hem * 0.1; P_.legL.rotation.z = P_.legR.rotation.z = 0; }
+      else if (sideLegs) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = st.sway * 0.62; P_.legB.rotation.z = -st.sway * 0.62; }
+      else { P_.legL.position.y = pp.hem + st.liftL * pp.hem * 3; P_.legR.position.y = pp.hem + st.liftR * pp.hem * 3; P_.legL.rotation.z = st.sway * 0.1 + st.liftL * 0.25; P_.legR.rotation.z = st.sway * 0.1 - st.liftR * 0.25; P_.legL.position.x = -st.sway * 0.012 * pp.h; P_.legR.position.x = -st.sway * 0.012 * pp.h; }
+      // the body rides the step: up twice per stride, rolls with the step and the turn, breathes when standing
+      P_.body.position.y = pp.h + (h.onGround ? st.body - st.recoil * 0.045 : 0.04);
+      // seen from front or back, a step moves the weight from foot to foot: the body shifts toward the planted leg and rolls more
+      const fb = !sideLegs && h.onGround && !R.reduced;
+      P_.body.position.x = fb ? -st.sway * 0.035 * pp.h : 0;
+      P_.body.rotation.z = st.roll * (fb ? 2.2 : 1); P_.body.scale.y = 1 + (R.reduced ? 0 : Math.sin(time * 2.1 + h.id) * 0.01 * (1 - st.mix));
+      if (P_.armL && P_.armL.visible && fb) { P_.armL.position.x += P_.body.position.x; P_.armR.position.x += P_.body.position.x; }
     }
     m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
@@ -965,25 +1088,30 @@ R.frame = function (dt, view) {
       m.material.userData.lk = true; m.material.userData.bl = true; m.material.userData.solid = true; echoM = m; dyn.add(m); }
     if (echoM) { echoM.visible = !!e; if (e) { echoM.position.set(e.x, echoM.userData.hy + Math.sin(time * 6) * 0.05, e.z); echoM.rotation.y = Math.atan2(camPos.x - e.x, camPos.z - e.z); if (Math.random() < dt * 14) emit(e.x, 0.3 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 0.6, 0.5, 1.4, 0); } }
   }
+  petStep(dt);
   // troopers
-  let n0 = 0, n1 = 0, nh = 0;
+  let n0 = 0, n1 = 0, nh = 0; shadowN = 0;
+  for (i = 0; i < W.structs.length; i++) { const o = W.structs[i]; if (o.alive) shadowPut(o.x, o.z, o.r * 2.1, 1); }
   const bT = bd.trooper.begin(), bH = bd.hush.begin(), bB = bd.hollow.begin(), bS = bd.thief.begin();
   const ts = W.troopers;
   for (i = 0; i < ts.length; i++) {
     const t = ts[i]; if (!t.alive) continue;
     const moving = Math.abs(t.vx) + Math.abs(t.vz) > 0.1;
-    const hop = moving ? Math.abs(Math.sin(time * 9 + t.id)) * 0.2 : 0, sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
+    /* A trooper hops. At the bottom of each hop it squashes, at the top it stretches; hollows are slow and heavy. */
+    const rate = t.big ? 5.5 : 9, ph = time * rate + t.id, hs = Math.abs(Math.sin(ph)), hop = moving ? hs * (t.big ? 0.12 : 0.2) : 0;
+    const sq = moving && !R.reduced ? (1 - hs) * (t.big ? 0.16 : 0.1) : 0, sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
+    shadowPut(t.x, t.z, (t.big ? 2.3 : 1.15) * (1 - hop * 0.6), 1);
     const sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1);
     { const B = t.team === 0 ? (bT ? bd.trooper : null) : (t.big ? (bB ? bd.hollow : null) : (bH ? bd.hush : null));
       if (B) { let d = Math.atan2(camPos.x - t.x, camPos.z - t.z) - t.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
         B.put(Math.abs(d) < 1.57 ? 0 : 1, t.x, hop, t.z, (t.big ? 4.4 : (t.ranged ? 2.2 : 1.9)) * sc, d * PAPER_FLIP > 0, moving ? Math.sin(time * 9 + t.id) * 0.06 : 0); continue; } }
-    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(0, t.yaw, t.team === 1 ? Math.sin(time * 5 + t.id) * 0.08 : 0); dummy.scale.set(sx * sc, sy * sc, sx * sc); dummy.updateMatrix();
+    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(moving ? 0.08 : 0, t.yaw, t.team === 1 ? Math.sin(time * 5 + t.id) * 0.08 : 0); dummy.scale.set(sx * sc * (1 + sq * 0.6), sy * sc * (1 - sq), sx * sc * (1 + sq * 0.6)); dummy.updateMatrix();
     if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix); }
     else if (n1 < 110) { hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix); }
   }
   for (i = 0; i < W.thieves.length; i++) {
     const t = W.thieves[i]; if (!t.alive || n1 >= 110) continue;
-    const sc = t.flash > 0 ? 1.05 : 0.85;
+    const sc = t.flash > 0 ? 1.05 : 0.85; shadowPut(t.x, t.z, 0.9, 1);
     if (bS) { let d = Math.atan2(camPos.x - t.x, camPos.z - t.z) - t.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); bd.thief.put(Math.abs(d) < 1.57 ? 0 : 1, t.x, Math.abs(Math.sin(time * 14 + t.id)) * 0.3, t.z, 1.5 * sc, d * PAPER_FLIP > 0, 0.12);
       if (t.state === 1 && Math.random() < dt * 30) emit(t.x, 1.1, t.z, 1, t.carry ? 0xffd28a : 0xffe9a8, 1.2, 0.6, 1.5, 0); continue; }
     dummy.position.set(t.x, Math.abs(Math.sin(time * 14 + t.id)) * 0.3, t.z); dummy.rotation.set(0.35, t.yaw, 0); dummy.scale.set(sc, sc * 0.9, sc); dummy.updateMatrix();
@@ -995,6 +1123,7 @@ R.frame = function (dt, view) {
   if (LK.weather === 'snow' && W.red <= 0 && !R.reduced) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 1 : 3); k++) emit(cx + (Math.random() - 0.5) * 50, 8 + Math.random() * 8, cz + (Math.random() - 0.5) * 50, 1, Math.random() < 0.16 ? 0xff9ac8 : 0xdfe6ff, 0.5, 2.4, -3.2, 1.2); }
   if (W.red > 0) { const cx = camPos.x + camDir.x * 14, cz = camPos.z + camDir.z * 14; for (let k = 0; k < (R.low ? 3 : 8); k++) emit(cx + (Math.random() - 0.5) * 44, 10 + Math.random() * 8, cz + (Math.random() - 0.5) * 44, 1, 0xff3a3a, 0.3, 0.75, -20, 26); }
   tr[0].count = n0; tr[1].count = n1; hushEyes.count = n1; trHat.count = nh;
+  if (shadowI) { shadowI.count = shadowN; shadowI.instanceMatrix.needsUpdate = true; }
   bd.trooper.end(); bd.hush.end(); bd.hollow.end(); bd.thief.end();
   { const bp = bd.pines.begin(), br = bd.rocks.begin(); // painted scenery, once its sheets exist
     if ((bp || br) && !decorHidden) { decorHidden = true; decorPrims.forEach(function (o) { if ((o.userData.tree && bp) || (!o.userData.tree && br)) o.visible = false; }); }
@@ -1005,7 +1134,8 @@ R.frame = function (dt, view) {
   for (i = 0; i < structM.length; i++) {
     const m = structM[i], s = m.unit;
     m.lit.visible = s.alive; m.rub.visible = !s.alive;
-    m.ward.visible = s.alive && !S.vuln(s);
+    { const on = s.alive && !S.vuln(s), flat = !!(m.lit && m.lit.flat); m.ward.visible = on && !flat; m.wardRing.visible = on && flat; // a painted house gets a ring of light on the ground, not a glass box
+      if (on && flat) m.wardRing.material.opacity = 0.35 + 0.2 * Math.sin(time * 2.4 + s.x); }
     if (s.alive) {
       if (m.spin) { m.spin.rotation.y += dt * 0.7; m.spin.position.y = 7.2 + Math.sin(time * 1.3 + s.team) * 0.4; m.halo.rotation.x = Math.PI / 2 + Math.sin(time * 0.8) * 0.3; m.halo.rotation.y += dt * 0.5; }
       const pulse = 1 + Math.sin(time * 2 + i) * 0.06 + (s.flash > 0 ? 0.35 : 0);
@@ -1118,13 +1248,18 @@ R.frame = function (dt, view) {
     camera.position.set(camPos.x, camPos.y, camPos.z); camera.lookAt(0, 3, fz);
     camera.fov = R.portrait ? 78 : 58;
   } else {
+    /* CAMERA. Aim stays exact (yaw and pitch are never smoothed); the follow height lags a little behind jumps and landings,
+       a wall pulls the camera in at once and lets it out slowly, and a dash or a thread ride widens the view a touch. */
+    if (pivotY == null || Math.abs(pl.y - pivotY) > 4 || R.reduced) pivotY = pl.y; else pivotY += (pl.y - pivotY) * (1 - Math.exp(-dt * (pl.y > pivotY ? 9 : 13)));
     R.camPose(pl, view.yaw, view.pitch, view.zoom, cp);
+    { const raw = R._btRaw == null ? 1 : R._btRaw; camBtS = raw < camBtS ? raw : camBtS + (raw - camBtS) * (1 - Math.exp(-dt * 3.5)); }
+    fovKick += (((pl.dashT > 0 || pl.zip) && !R.reduced ? 1 : 0) - fovKick) * (1 - Math.exp(-dt * 7));
     camPos.x = cp.x; camPos.y = cp.y; camPos.z = cp.z; camDir.x = cp.dx; camDir.y = cp.dy; camDir.z = cp.dz; camDist = cp.dist;
     if (R.reduced) shake = 0;
     let sx = 0, sy = 0; if (shake > 0) { sx = (Math.random() - 0.5) * shake * 0.5; sy = (Math.random() - 0.5) * shake * 0.5; shake = Math.max(0, shake - dt * 2.2); }
     camera.position.set(cp.x + sx, cp.y + sy, cp.z);
     camera.lookAt(cp.x + sx + cp.dx * 50, cp.y + sy + cp.dy * 50, cp.z + cp.dz * 50);
-    camera.fov = (R.portrait ? 82 : 64) * (1 - view.zoom * 0.3);
+    camera.fov = (R.portrait ? 82 : 64) * (1 - view.zoom * 0.3) * (1 + fovKick * 0.07);
     heroM.forEach(m => { if (m.unit === pl && cp.dist < 1.4) m.visible = false; });
   }
   camera.updateProjectionMatrix(); camera.updateMatrixWorld();
