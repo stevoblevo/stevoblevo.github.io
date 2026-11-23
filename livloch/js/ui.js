@@ -84,7 +84,7 @@ UI.init = function (handlers) {
     if (type === 'c') el.checked = !!cfg[key]; else el.value = cfg[key];
     el.addEventListener('input', function () { cfg[key] = type === 'c' ? el.checked : +el.value; H.save(); H.apply(); });
   };
-  bind('oSens', 'sens'); bind('oVol', 'vol'); bind('oInv', 'invert', 'c'); bind('oAssist', 'assist', 'c'); bind('oLow', 'low', 'c');
+  bind('oSens', 'sens'); bind('oVol', 'vol'); bind('oInv', 'invert', 'c'); bind('oAssist', 'assist', 'c'); bind('oLow', 'low', 'c'); bind('oPet', 'pet', 'c'); UI.petStatus();
   $('oAuto').addEventListener('input', function () { cfg.autoFire = $('oAuto').checked; H.save(); });
 };
 UI.lookChips = function () { const k = LL.cfg.look; document.querySelectorAll('[data-look]').forEach(b => { if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.getAttribute('data-look') === k)); }); const L = LL.gfx.LOOKS[k]; $('lookLine').textContent = L ? 'Look: ' + L.name + ', from ' + L.kit + '.' : ''; };
@@ -139,6 +139,11 @@ function snuffStart() {
   })(performance.now());
 }
 UI.showCab = function () { $('snuff').hidden = true; $('plates').hidden = true; $('plateBig').hidden = true; snuffRun = null; cabDraw(); show('cab'); };
+UI.petStatus = function () {
+  const box = $('oPet'), cap = $('petCaption'); if (!box || !cap) return;
+  box.disabled = !LL.cfg.petUnlocked; box.checked = !!LL.cfg.petUnlocked && !!LL.cfg.pet;
+  cap.textContent = LL.cfg.petUnlocked ? 'Guardian fox · follows and points at stolen light' : 'Guardian fox · rescue a stolen light to unlock';
+};
 UI.record = function () { const c = LL.cfg; $('rec').textContent = (c.wins + c.losses) ? 'Your record: ' + c.wins + ' won, ' + c.losses + ' lost' : ''; };
 UI.error = function (msg) { const e = $('err'); e.hidden = false; e.textContent = msg; $('bPlay').disabled = true; $('bWatch').disabled = true; };
 function show(name) {
