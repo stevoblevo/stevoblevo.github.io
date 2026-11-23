@@ -1,7 +1,13 @@
 {
-  "current": "0.19",
+  "current": "0.20",
   "source": "https://github.com/stevoblevo/livloch (private)",
   "versions": [
+    {
+      "v": "0.20",
+      "path": "v0.20/",
+      "source": "release/0.20",
+      "note": "Bending paper heroes with follow-through, dust and afterimages; Hush tissue spires, lantern-bearer troopers; blossom trees, a glowing loch, pools of lantern light, a ringed moon"
+    },
     {
       "v": "0.19",
       "path": "v0.19/",
