@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10",
+   "short": "AND SO 10",
+   "name": "AND SO 10 · Three Faces",
+   "date": "2026-11-23",
+   "line": "Day, night and dusk: Storeybrook, Depthfield and Hypermetapunk draw the same voices in the same valleys, the night and the dusk with each kit's own pen. Z turns the face. The night's weather follows the music.",
+   "path": "/and-so/v10/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "836a929559fd0d541fadc1b9216e696bb66fda4fe25d6c18c3ce916536004d68"
+  },
+  {
    "id": "9",
    "short": "AND SO 9",
    "name": "AND SO 9 · Open Door",
    "date": "2026-11-16",
    "line": "First steps for a first visit: four things to do with your own hands, and the first find is yours. One find a day, with a nougat for it. Saedo waits until you are through.",
    "path": "/and-so/v9/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "5d923b896657f9a934da433bb50f4be1789b225c8ff13ce3a4ce561debcaa1eb"
+   "commit": "4c8a73e",
+   "sha256": "a78eaee8f6fcdb2e368e41282173218affc18ad2b3597758b5c24b4ba2ec0529"
   },
   {
    "id": "8.3",

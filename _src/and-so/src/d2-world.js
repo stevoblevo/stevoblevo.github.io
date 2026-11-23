@@ -97,7 +97,7 @@ function applyPreset(p, name) {
 const TUPN = { 2: 'eighths', 3: 'triplets', 4: 'sixteenths', 5: 'quintuplets', 6: 'sextuplets', 7: 'septuplets', 8: 'thirty-seconds', 9: 'nonuplets' };
 const TUPC = { 2: 'eighths. plain.', 3: 'triplets. it swings now.', 4: 'sixteenths. home.', 5: 'quintuplets. silly, as requested.', 6: 'sextuplets.', 7: 'septuplets. good luck dancing.', 8: 'thirty-seconds. busy.', 9: 'nonuplets. this is a cry for help.' };
 function setTuplet(n, quiet) { n = clamp(n, 2, 9); if (n === tuplet) return; tuplet = n; rhy.base = null; syncUI(); if (!quiet) { caption(TUPC[n], 2200); haptic(6); } if (n === 5 || n === 7 || n === 9) discover('x-tuplet'); emit('tuplet', { v: n }); }
-const SKINS = ['sb-daylight', 'sb-knight', 'sb-inkblot', 'sb-comix', 'sb-origami', 'sb-skein', 'obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall'];
+const SKINS = ['sb-daylight', 'sb-knight', 'sb-inkblot', 'sb-comix', 'sb-origami', 'sb-skein', 'obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall', 'df-night', 'hm-dusk'];
 // the Storeybrook looks other than Meta Daylight open with their stones on the brook (or all at once, in early access)
 const LOOK_STONE = { 'sb-knight': 'knight', 'sb-inkblot': 'ink', 'sb-comix': 'comix', 'sb-origami': 'origami', 'sb-skein': 'skein' };
 const lookOpen = s => !LOOK_STONE[s] || MIR.depth > 0 || REEL.on || stoneOpen(STONE.get(LOOK_STONE[s]));
@@ -109,7 +109,8 @@ function setSkin(s, force) {
   if (s === 'story' && entered && !REEL.on) openStory(storyCur);   // the story look opens a story, with its words in it (not mid-reel)
   if (entered && s !== was && (s === 'bw2' || s === 'fieldstone' || s === 'glasshouse' || s === 'peachfall')) discover('x-' + s);
   if (entered && s !== was && SB_LOOK[s] && s !== 'sb-daylight') discover('x-look');
-  resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || s}`);
+  faceSeen(s);
+  resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || KIT_NAMES[s] || s}`);
 }
 
 // ---------- black hole ----------
@@ -375,7 +376,7 @@ function syncUI() {
   $('boxLocked').classList.toggle('hidden', UNL.box); $('boxWrap').classList.toggle('hidden', !UNL.box); $('bAutoV').classList.toggle('on', BOX.auto);
   $('holeLocked').classList.toggle('hidden', UNL.hole); $('holeRow').classList.toggle('hidden', !UNL.hole); $('holeNote').classList.toggle('hidden', !UNL.hole);
   $('petLocked').classList.toggle('hidden', UNL.pet); $('petWrap').classList.toggle('hidden', !UNL.pet);
-  document.querySelectorAll('#themeBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.th === skin));
+  document.querySelectorAll('#themeBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.th === skin)); facesUI();
   document.querySelectorAll('[data-ref]').forEach(b => b.classList.toggle('on', Math.abs(+b.dataset.ref - SET.ref) < 0.01));
   document.querySelectorAll('#formBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.f === SET.petForm));
   $('mLight').classList.toggle('on', md === 'light'); $('mLean').classList.toggle('on', md === 'lean'); $('mFrol').classList.toggle('on', md === 'frolic'); $('mNorm').classList.toggle('on', !!SET.normie);

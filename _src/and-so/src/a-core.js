@@ -301,6 +301,8 @@ const CAT = [
   ['x-device', 'any', 'ev', '', 'device lab', 'simulated a screen', 'the copy believes it is a phone, a tablet or a TV, to the pixel, and lays itself out to match.', 'open a window in the mirror'],
   ['x-table', 'any', 'ev', '', 'the table', 'a TV or e-paper on the table', 'windows you can drag, fold and turn to face the other side of a table.', 'open a TV or e-paper window in the mirror'],
   ['x-61', 'any', 'ev', '', 'as it was', 'opened 6.1', 'AND SO 6.1, frozen the night 7 began, playing in a window of 7.', 'open 6.1 in the mirror'],
+  ['x-faces', 'any', 'ev', '', 'three faces', 'one state, many faces', 'day, night and dusk: three design kits drawing the same voices in the same valleys.', 'wear all three faces in one visit'],
+  ['x-sunset', 'any', 'ev', '', 'sundown', 'the sun goes down when you ask', 'touch the dusk sun and it sets behind the grid. the night comes up after it; touch the moon and it is day.', 'at dusk, touch the sun'],
   ['x-look', 'any', 'ev', '', 'Storeybrook', 'a paper look', 'the same world printed in ink on watercolor paper, comic halftone, folded paper or knitted silk.', 'try a Storeybrook look'],
   ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook'],
   ['x-heard', 'any', 'ev', '', 'overheard', 'Saelion heard some words', 'the plain words come first. the mishearings come later, on purpose.', 'whisper something to Saelion, in the gamut'],

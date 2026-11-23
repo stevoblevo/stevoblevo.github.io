@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="AND SO 9 · Open Door: a microtonal instrument you play by letting go. First steps for a first visit, one find a day, a board you sign with your own key, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
+<meta name="description" content="AND SO 10 · Three Faces: a microtonal instrument you play by letting go, drawn by three design kits: day, night and dusk. First steps for a first visit, one find a day, a board you sign with your own key, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
 <meta name="theme-color" content="#f4f6f2">
 <link rel="manifest" href="/and-so/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/and-so/icons/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%23e7b23a'/%3E%3C/svg%3E">
 <meta name="color-scheme" content="light dark">
-<title>AND SO 9</title>
+<title>AND SO 10</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
 <style id="andso-css">
@@ -1170,6 +1170,16 @@ body.first #quests, body.first #hint, body.reel #first, body.reel #firstRing { d
 #qToday.done { color: var(--ink-muted, rgba(240, 228, 214, .7)); font-weight: 400 }
 .fine.today { margin-top: 8px; font-weight: 700; color: var(--accent, #f6d7a0) }
 .fine.today.done { font-weight: 400; color: inherit }
+
+/* ---------- three faces (AND SO 10): the night wears Depthfield's tokens, the dusk Hypermetapunk's ----------
+   The family keeps shared names for shared roles (paper, surface, page, line, ink, ink-muted, accent, cue), so the
+   Storeybrook panels take another kit's values by name. Values are each kit's tokens.json: Depthfield 2.3.0 night,
+   Hypermetapunk 0.3.0 dusk. */
+body[data-skin="df-night"] { --ground: #07110f; --ink: #e9f5ef; --ink-soft: rgba(233, 245, 239, .7); --ink-faint: rgba(233, 245, 239, .48); --gold: #5ef2b8; --gold-soft: rgba(94, 242, 184, .38); --mint: #c9e6ff; --rose: #ff8a7a; --glass: rgba(20, 36, 32, .86); --glass-line: rgba(94, 242, 184, .22); --page: #142420; --line: #23352f; --ink-muted: #93aaa1; --accent: #5ef2b8; --sap: #5ef2b8 }
+body[data-skin="df-night"] .sbi { --paper: #07110f; --surface: #0d1a17; --page: #142420; --line: #23352f; --ink: #e9f5ef; --ink-muted: #93aaa1; --accent: #5ef2b8; --on-accent: #07110f; --cue: #c9e6ff; --focus: #c9e6ff }
+body[data-skin="hm-dusk"] { --ground: #0b0618; --ink: #f7f2ff; --ink-soft: rgba(201, 189, 240, .94); --ink-faint: rgba(201, 189, 240, .64); --gold: #ff6fb5; --gold-soft: rgba(255, 111, 181, .42); --mint: #05ffa1; --rose: #ff2e88; --glass: rgba(22, 13, 46, .92); --glass-line: #3d2c70; --page: #211543; --line: #3d2c70; --ink-muted: #c9bdf0; --accent: #ff6fb5; --sap: #05ffa1 }
+body[data-skin="hm-dusk"] .sbi { --paper: #0b0618; --surface: #160d2e; --page: #211543; --line: #3d2c70; --ink: #f7f2ff; --ink-muted: #c9bdf0; --accent: #ff6fb5; --on-accent: #14061f; --cue: #05ffa1; --focus: #e8ff00 }
+body[data-skin="hm-dusk"] :is(#toast, #quests, #first) { box-shadow: 4px 4px 0 #ff2e88 }   /* the kit's slap: a hard offset, never over words */
 /* ===== AND SO 8: the book, the wing, tune together, dreamwalk, Mag ===== */
 .book-mark { position: fixed; z-index: 47; left: max(14px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #f3e6c8; cursor: pointer }
 .book-mark svg { width: 28px; height: 28px }
@@ -1309,7 +1319,7 @@ body.first #hud.on { opacity: 1 }
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
     <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reels first</button></div>
-    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 9 · Open Door<span class="ver-more"> · every version</span></button></p>
+    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 10 · Three Faces<span class="ver-more"> · every version</span></button></p>
     <p class="dream-line"><button type="button" id="dreamMark">dream</button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
     <p class="fine today" id="ovToday" hidden></p>
@@ -1409,6 +1419,10 @@ body.first #hud.on { opacity: 1 }
     <div class="btns"><button class="pill" data-jam="1">one chord</button><button class="pill" data-jam="2">twelve bars</button><button class="pill" data-jam="3">the turnaround</button></div>
     <div class="btns"><button class="pill" id="gLiner">liner notes &amp; sources</button></div>
     <div class="note">a play-along band in the manner of Jamey Aebersold's records, in 7-limit just intonation and 31-EDO. play the pad, the home row (A to ' and Q to P), or drag across the sky. the horn plays two bars; answer it in the next two.</div>
+
+    <div class="sec">three faces</div>
+    <div class="btns" id="faceBtns"><button class="pill" data-face="sb-daylight">day · Storeybrook</button><button class="pill" data-face="hm-dusk">dusk · Hypermetapunk</button><button class="pill" data-face="df-night">night · Depthfield</button></div>
+    <div class="note">three design kits, one state: the same voices, valleys and finds, the dusk and the night drawn by each kit’s own pen. Z turns to the next face. the night’s weather follows the music.</div>
 
     <div class="sec">looks</div>
     <div class="btns" id="lookBtns"><button class="pill" data-look="sb-daylight">Meta Daylight</button><button class="pill" data-look="sb-knight">Knight Night</button><button class="pill" data-look="sb-inkblot">Ink Blot</button><button class="pill" data-look="sb-comix">Comix</button><button class="pill" data-look="sb-origami">Origami</button><button class="pill" data-look="sb-skein">Skein silk</button></div>
@@ -2418,12 +2432,258 @@ body.first #hud.on { opacity: 1 }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', ensureDefs); else ensureDefs();
 })(window, document);
 
+/* Depthfield 2.3.0 · the pen: a look's inks and its world, for games that draw on canvas (family task F4).
+   Depthfield.looks          the seven looks as data (id, name, light, motion, print)
+   Depthfield.pen(look)      resolved inks, the four weathers, and a pen that draws the world: sky, sun, stars, three
+                             ridges with their rim light, haze and vignette
+   An add-on: load it after bundle.js, or alone (a single-file game needs nothing else). It reads no CSS. The numbers
+   are project/tokens.json resolved to RGB; tools/pen-inks.py fails when they drift. */
+(function (w, d) {
+  'use strict';
+  var D = w.Depthfield = w.Depthfield || {};
+  if (D.pen) return;
+  var VERSION = '2.3.0';
+  var LOOKS = [
+    { id: 'night', name: 'Night · mint', light: false, motion: true, print: false, weather: 'night' },
+    { id: 'day', name: 'Day · mint', light: true, motion: true, print: true, weather: 'mint' },
+    { id: 'peach-night', name: 'Night · peach', light: false, motion: true, print: false, weather: 'peach' },
+    { id: 'peach-day', name: 'Day · peach', light: true, motion: true, print: true, weather: 'peach' },
+    { id: 'thread-night', name: 'Night · thread', light: false, motion: true, print: false, weather: 'night' },
+    { id: 'thread-day', name: 'Day · thread', light: true, motion: true, print: true, weather: 'night' },
+    { id: 'contrast', name: 'High contrast', light: false, motion: false, print: false, weather: 'night' }
+  ];
+  var WEATHER = [{ id: 'peach', name: 'peach fall' }, { id: 'rain', name: 'red rain' }, { id: 'mint', name: 'mint clearing' }, { id: 'night', name: 'night garden' }];
+  var BASE = { 'wx-peach-sky-top': [38, 26, 44], 'wx-peach-sky-low': [255, 150, 120], 'wx-peach-sun': [255, 200, 160], 'wx-peach-ridge-1': [60, 34, 52], 'wx-peach-ridge-2': [86, 44, 58], 'wx-peach-ridge-3': [120, 60, 64], 'wx-peach-rim': [255, 180, 138], 'wx-rain-sky-top': [22, 14, 24], 'wx-rain-sky-low': [150, 40, 52], 'wx-rain-sun': [255, 110, 110], 'wx-rain-ridge-1': [40, 18, 28], 'wx-rain-ridge-2': [58, 22, 32], 'wx-rain-ridge-3': [80, 28, 38], 'wx-rain-rim': [255, 107, 107], 'wx-mint-sky-top': [10, 26, 28], 'wx-mint-sky-low': [40, 130, 110], 'wx-mint-sun': [200, 255, 230], 'wx-mint-ridge-1': [14, 46, 42], 'wx-mint-ridge-2': [18, 66, 56], 'wx-mint-ridge-3': [30, 96, 80], 'wx-mint-rim': [94, 242, 184], 'wx-night-sky-top': [10, 14, 26], 'wx-night-sky-low': [34, 48, 80], 'wx-night-sun': [201, 230, 255], 'wx-night-ridge-1': [18, 24, 40], 'wx-night-ridge-2': [24, 32, 52], 'wx-night-ridge-3': [32, 42, 66], 'wx-night-rim': [201, 230, 255], 'gh-sky-top': [8, 28, 25], 'gh-sky-top-end': [14, 42, 48], 'gh-sky-low': [18, 72, 60], 'gh-sky-low-end': [96, 150, 150], 'gh-ridge-1': [12, 46, 38], 'gh-ridge-2': [16, 66, 52], 'gh-ridge-3': [30, 104, 82], 'gh-shaft': [160, 255, 215], 'gh-glow': [201, 255, 230], 'gh-haze': [140, 230, 195], 'eye-white': [233, 245, 239], 'eye-iris': [94, 242, 184], 'eye-pupil': [7, 17, 15], 'eye-glint': [255, 255, 255], 'lamp': [255, 214, 160] };
+  var INKS = {
+    'night': { 'void': [7, 17, 15], 'surface': [13, 26, 23], 'surface-raised': [20, 36, 32], 'line': [35, 53, 47], 'ink': [233, 245, 239], 'ink-muted': [147, 170, 161], 'accent': [94, 242, 184], 'accent-soft': [15, 58, 44], 'on-accent': [7, 17, 15], 'cue': [201, 230, 255], 'on-cue': [7, 17, 15], 'link': [94, 242, 184], 'danger': [255, 138, 122], 'focus': [201, 230, 255], 'scrim': [7, 17, 15, 0.7], 'chrome': [20, 36, 32, 0.86], 'mint': [94, 242, 184], 'mint-soft': [15, 58, 44], 'on-mint': [7, 17, 15], 'frost': [201, 230, 255], 'frost-soft': [38, 51, 53], 'on-frost': [7, 17, 15], 'peach': [255, 180, 138], 'peach-soft': [47, 43, 35], 'on-peach': [17, 23, 34], 'rain': [255, 107, 107], 'rain-soft': [47, 31, 30], 'thread': [242, 201, 138], 'thread-soft': [45, 46, 35], 'on-thread': [27, 21, 48], 'tag-gold': [243, 207, 138], 'tag-rose': [242, 159, 176], 'tag-violet': [196, 162, 255], 'tag-sea': [143, 240, 210], 'tag-peach': [255, 180, 138], 'art-void': [7, 17, 15], 'art-ink': [233, 245, 239], 'art-ink-muted': [147, 170, 161], 'art-accent': [94, 242, 184], 'art-on-accent': [7, 17, 15], 'art-cue': [201, 230, 255], 'lens-c': [54, 224, 255], 'lens-m': [255, 79, 184], 'lens-y': [255, 225, 77] },
+    'day': { 'void': [238, 246, 242], 'surface': [227, 238, 233], 'surface-raised': [255, 255, 255], 'line': [205, 220, 213], 'ink': [13, 26, 23], 'ink-muted': [79, 100, 96], 'accent': [11, 114, 85], 'accent-soft': [211, 242, 229], 'on-accent': [255, 255, 255], 'cue': [31, 95, 143], 'on-cue': [255, 255, 255], 'link': [11, 114, 85], 'danger': [179, 38, 30], 'focus': [13, 26, 23], 'scrim': [238, 246, 242, 0.82], 'chrome': [255, 255, 255, 0.9], 'mint': [11, 114, 85], 'mint-soft': [211, 242, 229], 'on-mint': [255, 255, 255], 'frost': [31, 95, 143], 'frost-soft': [233, 239, 244], 'on-frost': [255, 255, 255], 'peach': [165, 70, 31], 'peach-soft': [246, 236, 233], 'on-peach': [255, 255, 255], 'rain': [180, 45, 45], 'rain-soft': [248, 234, 234], 'thread': [143, 97, 22], 'thread-soft': [244, 239, 232], 'on-thread': [251, 247, 238], 'tag-gold': [128, 90, 14], 'tag-rose': [168, 57, 94], 'tag-violet': [91, 63, 160], 'tag-sea': [29, 115, 87], 'tag-peach': [168, 76, 34], 'art-void': [7, 17, 15], 'art-ink': [233, 245, 239], 'art-ink-muted': [147, 170, 161], 'art-accent': [94, 242, 184], 'art-on-accent': [7, 17, 15], 'art-cue': [201, 230, 255], 'lens-c': [10, 134, 166], 'lens-m': [194, 24, 122], 'lens-y': [154, 125, 0] },
+    'peach-night': { 'void': [17, 23, 34], 'surface': [22, 28, 41], 'surface-raised': [27, 34, 48], 'line': [44, 52, 68], 'ink': [243, 236, 230], 'ink-muted': [169, 163, 168], 'accent': [255, 180, 138], 'accent-soft': [55, 48, 51], 'on-accent': [17, 23, 34], 'cue': [201, 230, 255], 'on-cue': [17, 23, 34], 'link': [255, 180, 138], 'danger': [255, 138, 122], 'focus': [201, 230, 255], 'scrim': [17, 23, 34, 0.72], 'chrome': [27, 34, 48, 0.86], 'mint': [94, 242, 184], 'mint-soft': [29, 58, 58], 'on-mint': [17, 23, 34], 'frost': [201, 230, 255], 'frost-soft': [46, 56, 69], 'on-frost': [17, 23, 34], 'peach': [255, 180, 138], 'peach-soft': [55, 48, 51], 'on-peach': [17, 23, 34], 'rain': [255, 107, 107], 'rain-soft': [55, 36, 46], 'thread': [242, 201, 138], 'thread-soft': [53, 51, 51], 'on-thread': [27, 21, 48], 'tag-gold': [243, 207, 138], 'tag-rose': [242, 159, 176], 'tag-violet': [196, 162, 255], 'tag-sea': [143, 240, 210], 'tag-peach': [255, 180, 138], 'art-void': [17, 23, 34], 'art-ink': [243, 236, 230], 'art-ink-muted': [169, 163, 168], 'art-accent': [255, 180, 138], 'art-on-accent': [17, 23, 34], 'art-cue': [201, 230, 255], 'lens-c': [54, 224, 255], 'lens-m': [255, 79, 184], 'lens-y': [255, 225, 77] },
+    'peach-day': { 'void': [246, 239, 233], 'surface': [242, 235, 229], 'surface-raised': [255, 255, 255], 'line': [220, 205, 194], 'ink': [27, 33, 48], 'ink-muted': [90, 85, 96], 'accent': [165, 70, 31], 'accent-soft': [246, 236, 233], 'on-accent': [255, 255, 255], 'cue': [31, 95, 143], 'on-cue': [255, 255, 255], 'link': [165, 70, 31], 'danger': [179, 38, 30], 'focus': [27, 33, 48], 'scrim': [246, 239, 233, 0.84], 'chrome': [255, 255, 255, 0.9], 'mint': [11, 114, 85], 'mint-soft': [231, 241, 238], 'on-mint': [255, 255, 255], 'frost': [31, 95, 143], 'frost-soft': [233, 239, 244], 'on-frost': [255, 255, 255], 'peach': [165, 70, 31], 'peach-soft': [246, 236, 233], 'on-peach': [255, 255, 255], 'rain': [180, 45, 45], 'rain-soft': [248, 234, 234], 'thread': [143, 97, 22], 'thread-soft': [244, 239, 232], 'on-thread': [251, 247, 238], 'tag-gold': [128, 90, 14], 'tag-rose': [168, 57, 94], 'tag-violet': [91, 63, 160], 'tag-sea': [29, 115, 87], 'tag-peach': [168, 76, 34], 'art-void': [17, 23, 34], 'art-ink': [243, 236, 230], 'art-ink-muted': [169, 163, 168], 'art-accent': [255, 180, 138], 'art-on-accent': [17, 23, 34], 'art-cue': [201, 230, 255], 'lens-c': [10, 134, 166], 'lens-m': [194, 24, 122], 'lens-y': [154, 125, 0] },
+    'thread-night': { 'void': [13, 11, 28], 'surface': [21, 18, 43], 'surface-raised': [31, 26, 58], 'line': [58, 51, 88], 'ink': [243, 236, 224], 'ink-muted': [189, 179, 204], 'accent': [242, 201, 138], 'accent-soft': [50, 41, 46], 'on-accent': [27, 21, 48], 'cue': [201, 230, 255], 'on-cue': [13, 11, 28], 'link': [242, 201, 138], 'danger': [255, 138, 122], 'focus': [242, 201, 138], 'scrim': [13, 11, 28, 0.74], 'chrome': [21, 18, 43, 0.86], 'mint': [94, 242, 184], 'mint-soft': [26, 48, 53], 'on-mint': [13, 11, 28], 'frost': [201, 230, 255], 'frost-soft': [43, 46, 64], 'on-frost': [13, 11, 28], 'peach': [255, 180, 138], 'peach-soft': [52, 38, 46], 'on-peach': [17, 23, 34], 'rain': [255, 107, 107], 'rain-soft': [52, 26, 41], 'thread': [242, 201, 138], 'thread-soft': [50, 41, 46], 'on-thread': [27, 21, 48], 'tag-gold': [243, 207, 138], 'tag-rose': [242, 159, 176], 'tag-violet': [196, 162, 255], 'tag-sea': [143, 240, 210], 'tag-peach': [255, 180, 138], 'art-void': [13, 11, 28], 'art-ink': [243, 236, 224], 'art-ink-muted': [189, 179, 204], 'art-accent': [242, 201, 138], 'art-on-accent': [27, 21, 48], 'art-cue': [201, 230, 255], 'lens-c': [54, 224, 255], 'lens-m': [255, 79, 184], 'lens-y': [255, 225, 77] },
+    'thread-day': { 'void': [239, 232, 218], 'surface': [229, 219, 198], 'surface-raised': [251, 247, 238], 'line': [205, 191, 166], 'ink': [33, 27, 48], 'ink-muted': [85, 73, 106], 'accent': [143, 97, 22], 'accent-soft': [244, 239, 232], 'on-accent': [251, 247, 238], 'cue': [31, 95, 143], 'on-cue': [255, 255, 255], 'link': [143, 97, 22], 'danger': [179, 38, 30], 'focus': [143, 97, 22], 'scrim': [239, 232, 218, 0.84], 'chrome': [251, 247, 238, 0.9], 'mint': [11, 114, 85], 'mint-soft': [231, 241, 238], 'on-mint': [255, 255, 255], 'frost': [31, 95, 143], 'frost-soft': [233, 239, 244], 'on-frost': [255, 255, 255], 'peach': [165, 70, 31], 'peach-soft': [246, 236, 233], 'on-peach': [255, 255, 255], 'rain': [180, 45, 45], 'rain-soft': [248, 234, 234], 'thread': [143, 97, 22], 'thread-soft': [244, 239, 232], 'on-thread': [251, 247, 238], 'tag-gold': [128, 90, 14], 'tag-rose': [168, 57, 94], 'tag-violet': [91, 63, 160], 'tag-sea': [29, 115, 87], 'tag-peach': [168, 76, 34], 'art-void': [13, 11, 28], 'art-ink': [243, 236, 224], 'art-ink-muted': [189, 179, 204], 'art-accent': [242, 201, 138], 'art-on-accent': [27, 21, 48], 'art-cue': [201, 230, 255], 'lens-c': [10, 134, 166], 'lens-m': [194, 24, 122], 'lens-y': [154, 125, 0] },
+    'contrast': { 'void': [0, 0, 0], 'surface': [7, 11, 10], 'surface-raised': [14, 21, 19], 'line': [143, 167, 157], 'ink': [255, 255, 255], 'ink-muted': [211, 224, 218], 'accent': [125, 255, 201], 'accent-soft': [20, 41, 32], 'on-accent': [0, 0, 0], 'cue': [214, 236, 255], 'on-cue': [0, 0, 0], 'link': [125, 255, 201], 'danger': [255, 168, 156], 'focus': [255, 255, 255], 'scrim': [0, 0, 0, 0.86], 'chrome': [14, 21, 19, 0.96], 'mint': [125, 255, 201], 'mint-soft': [20, 41, 32], 'on-mint': [0, 0, 0], 'frost': [214, 236, 255], 'frost-soft': [34, 38, 41], 'on-frost': [0, 0, 0], 'peach': [255, 196, 163], 'peach-soft': [41, 31, 26], 'on-peach': [0, 0, 0], 'rain': [255, 143, 143], 'rain-soft': [41, 23, 23], 'thread': [255, 217, 158], 'thread-soft': [41, 35, 25], 'on-thread': [0, 0, 0], 'tag-gold': [243, 207, 138], 'tag-rose': [242, 159, 176], 'tag-violet': [196, 162, 255], 'tag-sea': [143, 240, 210], 'tag-peach': [255, 180, 138], 'art-void': [0, 0, 0], 'art-ink': [255, 255, 255], 'art-ink-muted': [211, 224, 218], 'art-accent': [125, 255, 201], 'art-on-accent': [0, 0, 0], 'art-cue': [214, 236, 255], 'lens-c': [54, 224, 255], 'lens-m': [255, 79, 184], 'lens-y': [255, 225, 77] }
+  };
+  var P = [], seed = 20261123, i;
+  for (i = 0; i < 512; i++) { seed = (seed * 1664525 + 1013904223) >>> 0; P.push(seed / 4294967296); }   /* a fixed table: the same ridges for everyone */
+  function noise(x) { var n = Math.floor(x), f = x - n, u = f * f * (3 - 2 * f); return P[n & 511] * (1 - u) + P[(n + 1) & 511] * u; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function mixc(a, b, k) { return [Math.round(a[0] + (b[0] - a[0]) * k), Math.round(a[1] + (b[1] - a[1]) * k), Math.round(a[2] + (b[2] - a[2]) * k)]; }
+  function still() { try { return !!(D.reducedMotion ? D.reducedMotion() : w.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+  function lookId(look) {
+    var id = typeof look === 'string' ? look : look && look.closest ? ((look.closest('[data-theme]') || d.documentElement).getAttribute('data-theme')) : d.documentElement.getAttribute('data-theme');
+    return INKS[id] ? id : 'night';
+  }
+  function pen(look, opt) {
+    var id = lookId(look), L = LOOKS.filter(function (x) { return x.id === id; })[0], I = {}, k, held = !!(opt && opt.still), bare = id === 'contrast';
+    for (k in BASE) I[k] = BASE[k];
+    for (k in INKS[id]) I[k] = INKS[id][k];
+    function ink(name) { return I[name] || I.ink; }
+    function rgb(name, a) { var c = typeof name === 'string' ? ink(name) : name; return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (a == null ? (c.length > 3 ? c[3] : 1) : a) + ')'; }
+    /* a weather's palette. Pass an id, a number from 0 (peach fall) to 3 (night garden) to blend between neighbours,
+       or four weights [peach, rain, mint, night] to blend any of them (a game whose weather follows its music). */
+    function one(n) { var p = 'wx-' + WEATHER[n].id + '-'; return { sky: [ink(p + 'sky-top'), ink(p + 'sky-low')], sun: ink(p + 'sun'), ridge: [ink(p + 'ridge-1'), ink(p + 'ridge-2'), ink(p + 'ridge-3')], rim: ink(p + 'rim') }; }
+    function weather(wx) {
+      if (wx == null) wx = L.weather;
+      if (typeof wx === 'string') { for (var n = 0; n < 4; n++) if (WEATHER[n].id === wx) return one(n); return one(3); }
+      if (wx && wx.length === 4) {
+        var all = [one(0), one(1), one(2), one(3)], sum = (wx[0] + wx[1] + wx[2] + wx[3]) || 1;
+        var blend = function (get) { var o = [0, 0, 0], q, c; for (q = 0; q < 4; q++) { c = get(all[q]); o[0] += c[0] * wx[q] / sum; o[1] += c[1] * wx[q] / sum; o[2] += c[2] * wx[q] / sum; } return [Math.round(o[0]), Math.round(o[1]), Math.round(o[2])]; };
+        return { sky: [blend(function (p) { return p.sky[0]; }), blend(function (p) { return p.sky[1]; })], sun: blend(function (p) { return p.sun; }), ridge: [0, 1, 2].map(function (j) { return blend(function (p) { return p.ridge[j]; }); }), rim: blend(function (p) { return p.rim; }) };
+      }
+      var f = clamp(wx, 0, 3), i0 = Math.min(2, Math.floor(f)), t = f - i0, a = one(i0), b = one(i0 + 1);
+      return { sky: [mixc(a.sky[0], b.sky[0], t), mixc(a.sky[1], b.sky[1], t)], sun: mixc(a.sun, b.sun, t), ridge: a.ridge.map(function (c, j) { return mixc(c, b.ridge[j], t); }), rim: mixc(a.rim, b.rim, t) };
+    }
+    function time(o) { return held || still() ? 0 : (o.t || 0); }
+    /* the sky: the weather's two tones, top to low. High contrast prints the void. */
+    function sky(ctx, o) {
+      var x = o.x || 0, y = o.y || 0, S = weather(o.weather), g;
+      if (bare) { ctx.fillStyle = rgb('art-void'); ctx.fillRect(x, y, o.w, o.h); return; }
+      g = ctx.createLinearGradient(0, y, 0, y + o.h * 0.85); g.addColorStop(0, rgb(S.sky[0])); g.addColorStop(1, rgb(S.sky[1])); ctx.fillStyle = g; ctx.fillRect(x, y, o.w, o.h);
+    }
+    /* the sun (or the night garden's moon): a wide glow and a small disc at (x, y) */
+    function sun(ctx, o) {
+      var S = weather(o.weather), R = o.glow == null ? Math.max(o.w || 0, o.h || 0) * 0.55 || (o.r || 20) * 12 : o.glow, r = o.r == null ? Math.min(o.w || 400, o.h || 400) * 0.045 : o.r, g;
+      if (!bare) { g = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, R); g.addColorStop(0, rgb(S.sun, 0.55)); g.addColorStop(0.2, rgb(S.sun, 0.18)); g.addColorStop(1, rgb(S.sun, 0)); ctx.fillStyle = g; ctx.fillRect(o.x - R, o.y - R, R * 2, R * 2); }
+      ctx.fillStyle = bare ? rgb('art-ink') : rgb(S.sun, 0.9); ctx.beginPath(); ctx.arc(o.x, o.y, r, 0, 7); ctx.fill();
+    }
+    /* stars: ninety fixed points in the top of the box, twinkling unless motion is held */
+    function stars(ctx, o) {
+      var x = o.x || 0, y = o.y || 0, S = weather(o.weather), t = time(o), a = o.alpha == null ? 1 : o.alpha, n;
+      for (n = 0; n < (o.count || 90); n++) { ctx.fillStyle = rgb(bare ? ink('art-ink') : S.rim, a * (0.3 + 0.5 * Math.abs(Math.sin(t + n)))); ctx.fillRect(x + P[n] * o.w, y + P[n + 100] * o.h * (o.depth || 0.55), 1.4, 1.4); }
+    }
+    /* where ridge `n` (0 the far one, 2 the near one) stands at x. `par` slides the ridges past each other (-0.5 to 0.5). */
+    function ridgeY(n, px, o) {
+      var h = o.h, f = [0.0015, 0.0023, 0.0033][n], amp = (o.amp || [0.15, 0.12, 0.1])[n] * h, base = (o.base || [0.6, 0.72, 0.84])[n] * h, par = clamp(o.par || 0, -0.5, 0.5) * [18, 36, 64][n];
+      return (o.y || 0) + base - amp * (noise((px + par) * f + n * 40 + time(o) * 0.015) * 1.2 + noise((px + par) * f * 3 + n * 9) * 0.35);
+    }
+    /* three ridges, far to near, each lit along its edge by the weather's rim colour and falling to the void */
+    function ridges(ctx, o) {
+      var x = o.x || 0, y = o.y || 0, S = weather(o.weather), n, px, top, g, from = o.from || 0, to = o.to == null ? 2 : o.to;
+      ctx.save(); ctx.beginPath(); ctx.rect(x, y, o.w, o.h); ctx.clip();
+      for (n = from; n <= to; n++) {
+        ctx.beginPath(); ctx.moveTo(x, y + o.h); for (px = 0; px <= o.w + 8; px += 8) ctx.lineTo(x + px, ridgeY(n, px, o)); ctx.lineTo(x + o.w, y + o.h); ctx.closePath();
+        if (bare) ctx.fillStyle = rgb('art-void');
+        else { top = ridgeY(n, o.w / 2, o) - 80; g = ctx.createLinearGradient(0, top, 0, y + o.h); g.addColorStop(0, rgb(S.ridge[n].map(function (v) { return Math.min(255, v + 26); }))); g.addColorStop(0.3, rgb(S.ridge[n])); g.addColorStop(1, rgb('art-void')); ctx.fillStyle = g; }
+        ctx.fill();
+        ctx.strokeStyle = bare ? rgb('art-ink', 0.9 - n * 0.2) : rgb(S.rim, 0.3 - n * 0.07); ctx.lineWidth = bare ? 1.6 : 1.2; ctx.beginPath();
+        for (px = 0; px <= o.w + 8; px += 8) { if (px) ctx.lineTo(x + px, ridgeY(n, px, o)); else ctx.moveTo(x + px, ridgeY(n, px, o)); } ctx.stroke();
+      }
+      ctx.restore();
+    }
+    /* a band of mist across the box (nothing in High contrast) */
+    function haze(ctx, o) {
+      if (bare) return; var y = o.y || 0, g = ctx.createLinearGradient(0, y, 0, y + o.h), c = o.ink ? ink(o.ink) : weather(o.weather).rim, a = o.amount == null ? 0.08 : o.amount;
+      g.addColorStop(0, rgb(c, 0)); g.addColorStop(0.5, rgb(c, a)); g.addColorStop(1, rgb(c, 0)); ctx.fillStyle = g; ctx.fillRect(o.x || 0, y, o.w, o.h);
+    }
+    /* the dark corners that hold the eye in the middle (nothing in High contrast) */
+    function vignette(ctx, o) {
+      if (bare) return; var x = o.x || 0, y = o.y || 0, cx = x + o.w / 2, cy = y + o.h / 2, g = ctx.createRadialGradient(cx, cy, Math.min(o.w, o.h) * 0.35, cx, cy, Math.max(o.w, o.h) * 0.75);
+      g.addColorStop(0, rgb('art-void', 0)); g.addColorStop(1, rgb('art-void', o.amount == null ? 0.75 : o.amount)); ctx.fillStyle = g; ctx.fillRect(x, y, o.w, o.h);
+    }
+    /* the whole world in one call: sky, sun, stars at night, ridges, vignette */
+    function world(ctx, o) {
+      var x = o.x || 0, y = o.y || 0, wx = o.weather == null ? L.weather : o.weather, night = wx === 'night' || wx >= 2.5 || (wx && wx.length === 4 && wx[3] > 0.5);
+      sky(ctx, o); sun(ctx, { x: x + o.w * (o.sunX == null ? 0.7 : o.sunX), y: y + o.h * (o.sunY == null ? 0.24 : o.sunY), w: o.w, h: o.h, weather: wx });
+      if (night || bare) stars(ctx, o);
+      ridges(ctx, o); if (o.vignette !== false) vignette(ctx, o);
+    }
+    return { look: id, name: L.name, light: L.light, inks: I, rgb: rgb, weathers: WEATHER.slice(), weather: weather, sky: sky, sun: sun, stars: stars, ridgeY: ridgeY, ridges: ridges, haze: haze, vignette: vignette, world: world };
+  }
+  D.looks = D.looks || LOOKS; D.pen = pen; D.penVersion = VERSION;
+})(window, document);
+
+/* Hypermetapunk 0.3.0 · the pen: a theme's inks and its horizon, for games that draw on canvas (plan C4, family F4).
+   Hypermetapunk.looks        the three themes as data (id, name, light, motion, print)
+   Hypermetapunk.pen(theme)   resolved inks, and a pen that draws the dusk band, the banded sun, the grid floor, chrome
+                              and misregistered lettering, and the print materials
+   An add-on: load it after bundle.js, or alone (a single-file game needs nothing else). It reads no CSS. */
+(function (w, d) {
+  'use strict';
+  var H = w.Hypermetapunk = w.Hypermetapunk || {};
+  if (H.pen) return;
+  var VERSION = '0.3.0', root = d.documentElement;
+  var LOOKS = [
+    { id: 'dusk', name: 'Dusk', light: false, motion: true, print: false, line: 'Neon at the horizon, chrome over violet' },
+    { id: 'zine', name: 'Zine', light: true, motion: true, print: true, line: 'Photocopied in daylight, stapled, stickered' },
+    { id: 'contrast', name: 'High contrast', light: false, motion: false, print: false, line: 'Black, white and acid, nothing lost' }
+  ];
+  function token(name, el) { try { return getComputedStyle(el || root).getPropertyValue('--' + name).trim(); } catch (e) { return ''; } }
+  function reduced() { try { return root.classList.contains('hmp-still') || w.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
+  function rand(seed) { var s = (seed >>> 0) || 1; return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  /* The numbers in INKS are project/tokens.json resolved to RGB; tools/pen-inks.py fails when they drift. A host asks
+     for a colour by its token name, never by a hex value, so the same drawing code prints in every theme. */
+  var INKS = {
+    dusk: { 'void': [11, 6, 24], 'paper': [11, 6, 24], 'surface': [22, 13, 46], 'surface-raised': [33, 21, 67], 'page': [33, 21, 67], 'line': [61, 44, 112], 'ink': [247, 242, 255], 'ink-muted': [201, 189, 240], 'accent': [255, 111, 181], 'accent-soft': [255, 111, 181, 0.16], 'on-accent': [20, 6, 31], 'cue': [5, 255, 161], 'on-cue': [4, 20, 12], 'link': [127, 233, 255], 'focus': [232, 255, 0], 'chrome-1': [253, 253, 255], 'chrome-2': [201, 214, 255], 'chrome-3': [127, 127, 213], 'chrome-4': [255, 113, 206], 'chrome-5': [1, 205, 254], 'wave-abyss': [6, 3, 15], 'wave-indigo': [27, 15, 58], 'wave-violet': [61, 22, 99], 'wave-magenta': [255, 46, 136], 'wave-tangerine': [255, 184, 107], 'wave-sun': [255, 251, 150], 'wave-cyan': [1, 205, 254], 'wave-mint': [5, 255, 161], 'punk-acid': [232, 255, 0], 'punk-orange': [255, 90, 0], 'punk-magenta': [255, 0, 168], 'punk-ink': [13, 13, 18], 'slap': [255, 46, 136], 'punk-paper': [244, 239, 227], 'punk-tape': [255, 235, 150, 0.78], 'scrawl': [255, 113, 206] },
+    zine: { 'void': [244, 239, 227], 'paper': [244, 239, 227], 'surface': [233, 226, 207], 'surface-raised': [255, 253, 246], 'page': [255, 253, 246], 'line': [201, 192, 168], 'ink': [13, 13, 18], 'ink-muted': [70, 64, 77], 'accent': [194, 0, 106], 'accent-soft': [194, 0, 106, 0.1], 'on-accent': [255, 255, 255], 'cue': [0, 106, 70], 'on-cue': [255, 255, 255], 'link': [0, 80, 168], 'focus': [255, 90, 0], 'chrome-1': [122, 122, 146], 'chrome-2': [52, 52, 74], 'chrome-3': [13, 13, 18], 'chrome-4': [74, 74, 102], 'chrome-5': [13, 13, 18], 'wave-abyss': [244, 239, 227], 'wave-indigo': [238, 226, 242], 'wave-violet': [246, 207, 230], 'wave-magenta': [255, 155, 203], 'wave-tangerine': [255, 207, 158], 'wave-sun': [255, 243, 166], 'wave-cyan': [1, 165, 212], 'wave-mint': [0, 194, 122], 'punk-acid': [232, 255, 0], 'punk-orange': [255, 90, 0], 'punk-magenta': [255, 0, 168], 'punk-ink': [13, 13, 18], 'slap': [13, 13, 18], 'punk-paper': [255, 253, 246], 'punk-tape': [255, 230, 140, 0.85], 'scrawl': [194, 0, 106] },
+    contrast: { 'void': [0, 0, 0], 'paper': [0, 0, 0], 'surface': [11, 11, 11], 'surface-raised': [20, 20, 20], 'page': [20, 20, 20], 'line': [255, 255, 255], 'ink': [255, 255, 255], 'ink-muted': [232, 232, 232], 'accent': [232, 255, 0], 'accent-soft': [232, 255, 0, 0.18], 'on-accent': [0, 0, 0], 'cue': [5, 255, 161], 'on-cue': [0, 0, 0], 'link': [127, 233, 255], 'focus': [232, 255, 0], 'chrome-1': [255, 255, 255], 'chrome-2': [255, 255, 255], 'chrome-3': [232, 232, 232], 'chrome-4': [255, 255, 255], 'chrome-5': [232, 255, 0], 'wave-abyss': [0, 0, 0], 'wave-indigo': [0, 0, 0], 'wave-violet': [17, 17, 17], 'wave-magenta': [51, 51, 51], 'wave-tangerine': [119, 119, 119], 'wave-sun': [255, 255, 255], 'wave-cyan': [255, 255, 255], 'wave-mint': [255, 255, 255], 'punk-acid': [232, 255, 0], 'punk-orange': [255, 255, 255], 'punk-magenta': [255, 255, 255], 'punk-ink': [0, 0, 0], 'slap': [255, 255, 255], 'punk-paper': [255, 255, 255], 'punk-tape': [255, 255, 255, 0.9], 'scrawl': [232, 255, 0] }
+  };
+  var BAND = [['wave-abyss', 0], ['wave-indigo', 0.34], ['wave-violet', 0.52], ['wave-magenta', 0.72], ['wave-tangerine', 0.9], ['wave-sun', 1.08]];
+  var SUN_BARS = [[0, 0.52], [0.55, 0.64], [0.68, 0.76], [0.81, 0.88], [0.94, 1]];   /* the lit bands of the disc; the gaps are the cuts */
+  var GRAIN = { dusk: 0.24, zine: 0.28, contrast: 0 };
+  function penLook(look) {
+    var id = typeof look === 'string' ? look : look && look.closest ? (look.closest('[data-theme]') || root).getAttribute('data-theme') : root.getAttribute('data-theme');
+    return INKS[id] ? id : 'dusk';
+  }
+  function pen(look, opt) {
+    var id = penLook(look), I = INKS[id], T = LOOKS.filter(function (x) { return x.id === id; })[0], held = !!(opt && opt.still), tiles = {};
+    function ink(name) { return I[name] || I.ink; }
+    function rgb(name, a) { var c = typeof name === 'string' ? ink(name) : name; return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (a == null ? (c.length > 3 ? c[3] : 1) : a) + ')'; }
+    function mix(a, b, k) { return [Math.round(a[0] + (b[0] - a[0]) * k), Math.round(a[1] + (b[1] - a[1]) * k), Math.round(a[2] + (b[2] - a[2]) * k)]; }
+    function band(k) {   /* the dusk gradient at k (0 the top of the sky, 1.08 past the sun) */
+      for (var i = 1; i < BAND.length; i++) if (k <= BAND[i][1]) return mix(ink(BAND[i - 1][0]), ink(BAND[i][0]), (k - BAND[i - 1][1]) / (BAND[i][1] - BAND[i - 1][1]));
+      return ink('wave-sun');
+    }
+    /* the sky: the gradient stepped down in hard toner bands, with the printer's lines across it. Its bottom edge is the horizon.
+       `ease` above 1 holds the dark longer and keeps the hot bands close to the horizon, for a sky with words over it. */
+    function sky(ctx, o) {
+      var x = o.x || 0, y = o.y || 0, n = Math.max(2, o.steps || 14), span = o.span == null ? 0.9 : o.span, ease = o.ease > 0 ? o.ease : 1, i, y0, y1;
+      ctx.save();
+      if (id === 'contrast') { ctx.fillStyle = rgb('void'); ctx.fillRect(x, y, o.w, o.h); ctx.restore(); return; }
+      for (i = 0; i < n; i++) { y0 = Math.floor(y + (o.h * i) / n); y1 = Math.ceil(y + (o.h * (i + 1)) / n); ctx.fillStyle = rgb(band(Math.pow((i + 0.5) / n, ease) * span)); ctx.fillRect(x, y0, o.w, y1 - y0); }
+      if (o.lines !== false) { ctx.fillStyle = 'rgba(0,0,0,0.115)'; for (i = y; i < y + o.h; i += 5) ctx.fillRect(x, i, o.w, 2); }
+      ctx.restore();
+    }
+    /* the sun: a banded disc with its base on (x, y). Dusk prints the gradient with a glow, Zine prints it flat magenta, High contrast in ink. */
+    function sun(ctx, o) {
+      var r = o.r, cx = o.x, cy = o.y - r, top = cy - r, g, i;
+      ctx.save();
+      if (id === 'dusk' && o.glow !== false) { g = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, r * 1.7); g.addColorStop(0, rgb('chrome-4', 0.4)); g.addColorStop(1, rgb('chrome-4', 0)); ctx.fillStyle = g; ctx.fillRect(cx - r * 1.7, cy - r * 1.7, r * 3.4, r * 3.4); }
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+      if (id === 'zine') ctx.fillStyle = rgb('punk-magenta'); else if (id === 'contrast') ctx.fillStyle = rgb('ink');
+      else { g = ctx.createLinearGradient(0, top, 0, top + 2 * r); g.addColorStop(0, rgb('wave-sun')); g.addColorStop(0.42, rgb('wave-tangerine')); g.addColorStop(0.78, rgb('wave-magenta')); g.addColorStop(1, rgb('chrome-4')); ctx.fillStyle = g; }
+      for (i = 0; i < SUN_BARS.length; i++) ctx.fillRect(cx - r, top + 2 * r * SUN_BARS[i][0], 2 * r, 2 * r * (SUN_BARS[i][1] - SUN_BARS[i][0]) + 0.5);
+      if (o.tape !== false && id !== 'contrast') { ctx.translate(cx, top + 2 * r * 0.355); ctx.rotate(-4 * Math.PI / 180); ctx.fillStyle = rgb('punk-tape'); ctx.fillRect(-r * 1.1, -r * 0.13, r * 2.2, r * 0.26); }
+      ctx.restore();
+    }
+    /* the grid floor: rows that close up toward the horizon (its top edge) and lines that fan from the vanishing point. `t` in seconds drifts the rows toward the viewer; it holds still under reduced motion and "hold still". */
+    function floor(ctx, o) {
+      var x = o.x || 0, y = o.y, w = o.w, h = o.h, vx = o.vx == null ? x + w / 2 : o.vx, rows = o.rows || 11, gap = o.gap || Math.max(40, w / 12), spread = o.spread || 3;
+      var ph = held || reduced() ? 0 : (((o.t || 0) / 3.2) % 1 + 1) % 1, i, k, yy, a, j, n, bx;
+      var hc = id === 'dusk' ? ink('wave-cyan') : id === 'zine' ? ink('punk-ink') : ink('ink'), vc = id === 'dusk' ? ink('wave-magenta') : hc;
+      var ha = id === 'dusk' ? 0.55 : id === 'zine' ? 0.5 : 0.9, va = id === 'dusk' ? 0.45 : id === 'zine' ? 0.35 : 0.7;
+      ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.lineWidth = o.line || 2;
+      for (i = 0; i <= rows; i++) {
+        k = (i + ph) / rows; yy = y + h * Math.pow(k, 2.1); a = Math.min(1, (yy - y) / (h * 0.16)) * Math.min(1, (1.02 - k) * 7);   /* thin out where the rows crowd the horizon */
+        if (a <= 0.01) continue;
+        ctx.strokeStyle = rgb(hc, ha * a); ctx.beginPath(); ctx.moveTo(x, Math.round(yy) + 0.5); ctx.lineTo(x + w, Math.round(yy) + 0.5); ctx.stroke();
+      }
+      n = Math.ceil((w / 2 + Math.abs(vx - (x + w / 2))) / (gap * 0.3)) + 1;
+      var g = ctx.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, rgb(vc, 0)); g.addColorStop(0.3, rgb(vc, va)); g.addColorStop(0.86, rgb(vc, va)); g.addColorStop(1, rgb(vc, 0)); ctx.strokeStyle = g;
+      for (j = -n; j <= n; j++) { bx = vx + j * gap * spread; ctx.beginPath(); ctx.moveTo(vx + j * gap * 0.3, y); ctx.lineTo(bx, y + h); ctx.stroke(); }
+      ctx.restore();
+    }
+    /* sky, sun and floor in one call. `at` is where the horizon sits (0 to 1 down the box). */
+    function horizon(ctx, o) {
+      var x = o.x || 0, y = o.y || 0, hy = Math.round(y + o.h * (o.at == null ? 0.58 : o.at)), r = o.sunR == null ? Math.min(o.w, o.h) * 0.2 : o.sunR;
+      sky(ctx, { x: x, y: y, w: o.w, h: hy - y, steps: o.steps, lines: o.lines });
+      if (r > 0) sun(ctx, { x: o.sunX == null ? x + o.w / 2 : o.sunX, y: hy, r: r, tape: o.tape });
+      ctx.fillStyle = rgb(id === 'zine' ? 'paper' : 'void'); ctx.fillRect(x, hy, o.w, y + o.h - hy);
+      floor(ctx, { x: x, y: hy, w: o.w, h: y + o.h - hy, vx: o.sunX, t: o.t });
+      return hy;
+    }
+    /* print materials as patterns: `scan` (the printer's lines), `halftone` (a dot screen), `xerox` (photocopy speckle) */
+    function material(ctx, kind) {
+      if (tiles[kind]) return ctx.createPattern(tiles[kind], 'repeat');
+      var c = d.createElement('canvas'), k = c.getContext('2d'), i, R;
+      if (kind === 'scan') { c.width = 4; c.height = 5; k.fillStyle = 'rgba(0,0,0,0.115)'; k.fillRect(0, 0, 4, 2); }
+      else if (kind === 'halftone') { c.width = c.height = 8; k.fillStyle = rgb(id === 'dusk' ? 'wave-abyss' : id === 'zine' ? 'punk-ink' : 'ink', id === 'dusk' ? 0.5 : 0.32); k.beginPath(); k.arc(2, 2, 1.5, 0, 7); k.arc(6, 6, 1.5, 0, 7); k.fill(); }
+      else { c.width = c.height = 128; R = rand(1977); for (i = 0; i < 2600; i++) { k.fillStyle = R() < 0.5 ? 'rgba(255,255,255,' + (0.1 + R() * 0.5) + ')' : 'rgba(0,0,0,' + (0.1 + R() * 0.5) + ')'; k.fillRect((R() * 128) | 0, (R() * 128) | 0, 1 + ((R() * 2) | 0), 1); } }
+      tiles[kind] = c; return ctx.createPattern(c, 'repeat');
+    }
+    /* lay the theme's photocopy grain over a box (nothing in High contrast) */
+    function grain(ctx, o) {
+      var a = (o.amount == null ? GRAIN[id] : o.amount); if (a <= 0) return;
+      ctx.save(); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = material(ctx, 'xerox'); ctx.fillRect(o.x || 0, o.y || 0, o.w, o.h); ctx.restore();
+    }
+    function face(o) { return (o.weight || '') + ' ' + o.size + 'px ' + (o.font || token('font-display') || '"Archivo Black", "Arial Black", Impact, sans-serif'); }
+    /* chrome lettering: the mirror gradient over a slipped magenta plate. Zine prints it dark with the plate dropped; High contrast prints solid ink on a ground-coloured keyline. */
+    function chrome(ctx, text, x, y, o) {
+      var s = o.size, g, slip = Math.max(2, s * (id === 'zine' ? 0.07 : 0.045));
+      ctx.save(); ctx.font = face(o); ctx.textAlign = o.align || 'left'; ctx.textBaseline = 'alphabetic';
+      if (id === 'contrast') { ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(3, s * 0.12); ctx.strokeStyle = rgb('void'); ctx.strokeText(text, x, y); ctx.fillStyle = rgb('ink'); ctx.fillText(text, x, y); ctx.restore(); return; }
+      ctx.fillStyle = rgb('punk-magenta'); ctx.fillText(text, x + slip, y + slip);
+      g = ctx.createLinearGradient(0, y - s * 0.78, 0, y + s * 0.06);
+      g.addColorStop(0, rgb('chrome-1')); g.addColorStop(0.32, rgb('chrome-2')); g.addColorStop(0.5, rgb('chrome-3')); if (id === 'dusk') g.addColorStop(0.54, 'rgb(234,246,255)'); g.addColorStop(0.76, rgb('chrome-4')); g.addColorStop(1, rgb('chrome-5'));
+      ctx.fillStyle = g; ctx.fillText(text, x, y); ctx.restore();
+    }
+    /* misregistered type: a cyan plate and a magenta plate slipped either side of the ink */
+    function misreg(ctx, text, x, y, o) {
+      var dx = o.dx == null ? Math.max(1.5, o.size * 0.035) : o.dx;
+      ctx.save(); ctx.font = face(o); ctx.textAlign = o.align || 'left'; ctx.textBaseline = 'alphabetic';
+      if (id !== 'contrast') { ctx.fillStyle = rgb('wave-cyan', 0.85); ctx.fillText(text, x - dx, y - dx * 0.4); ctx.fillStyle = rgb('punk-magenta', 0.85); ctx.fillText(text, x + dx, y + dx * 0.4); }
+      ctx.fillStyle = rgb(o.ink || 'ink'); ctx.fillText(text, x, y); ctx.restore();
+    }
+    return { look: id, name: T.name, light: T.light, inks: I, rgb: rgb, band: band, sky: sky, sun: sun, floor: floor, horizon: horizon, material: material, grain: grain, chrome: chrome, misreg: misreg };
+  }
+  H.looks = H.looks || LOOKS; H.pen = pen; H.penVersion = VERSION;
+})(window, document);
+
 </script>
 <script id="andso-js">
 (() => {
 'use strict';
-const ANDSO_VERSION = '9';
-const ANDSO_VERSIONS = [{"id": "9", "short": "AND SO 9", "name": "AND SO 9 · Open Door", "date": "2026-11-16", "line": "First steps for a first visit: four things to do with your own hands, and the first find is yours. One find a day, with a nougat for it. Saedo waits until you are through.", "path": "/and-so/v9/", "latest": true}, {"id": "8.3", "short": "AND SO 8.3", "name": "AND SO 8.3 · The board", "date": "2026-11-12", "line": "A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio.", "path": "/and-so/v8.3/"}, {"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/"}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
+const ANDSO_VERSION = '10';
+const ANDSO_VERSIONS = [{"id": "10", "short": "AND SO 10", "name": "AND SO 10 · Three Faces", "date": "2026-11-23", "line": "Day, night and dusk: Storeybrook, Depthfield and Hypermetapunk draw the same voices in the same valleys, the night and the dusk with each kit's own pen. Z turns the face. The night's weather follows the music.", "path": "/and-so/v10/", "latest": true}, {"id": "9", "short": "AND SO 9", "name": "AND SO 9 · Open Door", "date": "2026-11-16", "line": "First steps for a first visit: four things to do with your own hands, and the first find is yours. One find a day, with a nougat for it. Saedo waits until you are through.", "path": "/and-so/v9/"}, {"id": "8.3", "short": "AND SO 8.3", "name": "AND SO 8.3 · The board", "date": "2026-11-12", "line": "A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio.", "path": "/and-so/v8.3/"}, {"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/"}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
 const BOOK_DATA = [
  {
   "id": "st-louis",
@@ -6725,6 +6985,8 @@ const CAT = [
   ['x-device', 'any', 'ev', '', 'device lab', 'simulated a screen', 'the copy believes it is a phone, a tablet or a TV, to the pixel, and lays itself out to match.', 'open a window in the mirror'],
   ['x-table', 'any', 'ev', '', 'the table', 'a TV or e-paper on the table', 'windows you can drag, fold and turn to face the other side of a table.', 'open a TV or e-paper window in the mirror'],
   ['x-61', 'any', 'ev', '', 'as it was', 'opened 6.1', 'AND SO 6.1, frozen the night 7 began, playing in a window of 7.', 'open 6.1 in the mirror'],
+  ['x-faces', 'any', 'ev', '', 'three faces', 'one state, many faces', 'day, night and dusk: three design kits drawing the same voices in the same valleys.', 'wear all three faces in one visit'],
+  ['x-sunset', 'any', 'ev', '', 'sundown', 'the sun goes down when you ask', 'touch the dusk sun and it sets behind the grid. the night comes up after it; touch the moon and it is day.', 'at dusk, touch the sun'],
   ['x-look', 'any', 'ev', '', 'Storeybrook', 'a paper look', 'the same world printed in ink on watercolor paper, comic halftone, folded paper or knitted silk.', 'try a Storeybrook look'],
   ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook'],
   ['x-heard', 'any', 'ev', '', 'overheard', 'Saelion heard some words', 'the plain words come first. the mishearings come later, on purpose.', 'whisper something to Saelion, in the gamut'],
@@ -8201,7 +8463,7 @@ function applyPreset(p, name) {
 const TUPN = { 2: 'eighths', 3: 'triplets', 4: 'sixteenths', 5: 'quintuplets', 6: 'sextuplets', 7: 'septuplets', 8: 'thirty-seconds', 9: 'nonuplets' };
 const TUPC = { 2: 'eighths. plain.', 3: 'triplets. it swings now.', 4: 'sixteenths. home.', 5: 'quintuplets. silly, as requested.', 6: 'sextuplets.', 7: 'septuplets. good luck dancing.', 8: 'thirty-seconds. busy.', 9: 'nonuplets. this is a cry for help.' };
 function setTuplet(n, quiet) { n = clamp(n, 2, 9); if (n === tuplet) return; tuplet = n; rhy.base = null; syncUI(); if (!quiet) { caption(TUPC[n], 2200); haptic(6); } if (n === 5 || n === 7 || n === 9) discover('x-tuplet'); emit('tuplet', { v: n }); }
-const SKINS = ['sb-daylight', 'sb-knight', 'sb-inkblot', 'sb-comix', 'sb-origami', 'sb-skein', 'obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall'];
+const SKINS = ['sb-daylight', 'sb-knight', 'sb-inkblot', 'sb-comix', 'sb-origami', 'sb-skein', 'obsidian', 'dawn', 'daybreak', 'hmp', 'story', 'eink', 'bw2', 'fieldstone', 'glasshouse', 'peachfall', 'df-night', 'hm-dusk'];
 // the Storeybrook looks other than Meta Daylight open with their stones on the brook (or all at once, in early access)
 const LOOK_STONE = { 'sb-knight': 'knight', 'sb-inkblot': 'ink', 'sb-comix': 'comix', 'sb-origami': 'origami', 'sb-skein': 'skein' };
 const lookOpen = s => !LOOK_STONE[s] || MIR.depth > 0 || REEL.on || stoneOpen(STONE.get(LOOK_STONE[s]));
@@ -8213,7 +8475,8 @@ function setSkin(s, force) {
   if (s === 'story' && entered && !REEL.on) openStory(storyCur);   // the story look opens a story, with its words in it (not mid-reel)
   if (entered && s !== was && (s === 'bw2' || s === 'fieldstone' || s === 'glasshouse' || s === 'peachfall')) discover('x-' + s);
   if (entered && s !== was && SB_LOOK[s] && s !== 'sb-daylight') discover('x-look');
-  resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || s}`);
+  faceSeen(s);
+  resize(); syncUI(); persistSoon(); if (entered) jlog(`look: ${SB_NAMES[s] || KIT_NAMES[s] || s}`);
 }
 
 // ---------- black hole ----------
@@ -8479,7 +8742,7 @@ function syncUI() {
   $('boxLocked').classList.toggle('hidden', UNL.box); $('boxWrap').classList.toggle('hidden', !UNL.box); $('bAutoV').classList.toggle('on', BOX.auto);
   $('holeLocked').classList.toggle('hidden', UNL.hole); $('holeRow').classList.toggle('hidden', !UNL.hole); $('holeNote').classList.toggle('hidden', !UNL.hole);
   $('petLocked').classList.toggle('hidden', UNL.pet); $('petWrap').classList.toggle('hidden', !UNL.pet);
-  document.querySelectorAll('#themeBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.th === skin));
+  document.querySelectorAll('#themeBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.th === skin)); facesUI();
   document.querySelectorAll('[data-ref]').forEach(b => b.classList.toggle('on', Math.abs(+b.dataset.ref - SET.ref) < 0.01));
   document.querySelectorAll('#formBtns .pill').forEach(b => b.classList.toggle('on', b.dataset.f === SET.petForm));
   $('mLight').classList.toggle('on', md === 'light'); $('mLean').classList.toggle('on', md === 'lean'); $('mFrol').classList.toggle('on', md === 'frolic'); $('mNorm').classList.toggle('on', !!SET.normie);
@@ -8662,6 +8925,7 @@ hitEl.addEventListener('pointerdown', e => {
   for (let i = 0; i < 5; i++) { const q = latPos(i); if (Math.hypot(px - q[0], py - q[1]) < (phone ? 26 : 18) * Math.max(S, 0.9)) { p.role = 'node'; p.i = i; return; } }
   let hit = null, bd = phone ? 42 : 30;
   for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const b = ballPos(v), d = Math.hypot(b.X - px, b.Y - py); if (d < bd) { bd = d; hit = v; } }
+  if (!hit && faceTap(px, py)) { p.role = 'none'; return; }   // the dusk sun, the night's moon
   if (!hit && reg === 'terrain' && !(skin === 'hmp' && tab !== 'resonance' && !phone)) {
     const x = xFromS(px); hit = addVoice(x, { temp: 0 }); if (hit) firstEvent('tap');
     if (!hit) { let nd = 1e9; for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const d = Math.abs(v.x - x); if (d < nd) { nd = d; hit = v; } } }
@@ -8675,7 +8939,7 @@ hitEl.addEventListener('pointerdown', e => {
     p.role = 'view'; viewDown(p); return;
   }
   if (wxHit(px, py)) { p.role = 'none'; return; }
-  if (wxWorld()) wxRipple(px, py, 0.7);
+  if (wxWorld() || skin === 'df-night') wxRipple(px, py, 0.7);
   p.role = 'harp'; p.h = { pool: harpPool(), idx: -1, lastT: 0 };
 });
 hitEl.addEventListener('pointermove', e => {
@@ -8898,6 +9162,7 @@ window.addEventListener('keydown', e => {
   else if (k === 'd') setArtic(SET.artic === 'pluck' ? 'drone' : 'pluck');
   else if (k === 'c') ($('brookMap').classList.contains('on') ? closeBrook() : openBrook());
   else if (k === 'e') cycleLook();
+  else if (k === 'z') cycleFace();
   else if (k === 's' && MIR.depth === 0) boardOpen();
   else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); if ($('story').classList.contains('on')) closeStory(); }
 });
@@ -9018,6 +9283,7 @@ function spaced(s, x, y, sp) { for (const ch of s) { ctx.fillText(ch, x, y); x +
 
 function drawBg() {
   if (wxWorld()) { drawWorldBg(); return; }
+  if (kitLook() && drawFaceBg()) return;   // the night and the dusk are drawn by their kits' pens
   if (typeof paintLookArt === 'function' && paintLookArt()) return;
   // paper: the canvas stays clear so the watercolor page shows through; CSS prints what is drawn here in ink
   if (paperLook()) { ctx.clearRect(0, 0, W, H); if (era || flash55 > 0.02) { ctx.fillStyle = `rgba(120,80,30,${(era ? 0.1 : 0) + 0.2 * flash55})`; ctx.fillRect(0, 0, W, H); } return; }
@@ -9847,7 +10113,7 @@ function draw() {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   const hmp = skin === 'hmp';
   const paper = paperLook();
-  drawBg(); if (wxWorld()) {} else if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2' && !paper) drawStars();
+  drawBg(); if (wxWorld()) {} else if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2' && !paper && !kitLook()) drawStars();
   drawWorldMid();
   if (latticeOn) { ctx.save(); ctx.translate(0, PANEL_DY); if (M.easy) drawEasyPanel(); else if (M.key === 'just') drawLattice(); else drawRing(); ctx.restore(); }
   const vw = viewOn();
@@ -11092,7 +11358,7 @@ function wxTick(dt) {
     for (let k = 0; k < 31; k++) F.hit[k] += (tgt[k] - F.hit[k]) * (1 - Math.exp(-dt * 6));
     F.z += dt * (reduceMotion ? 0 : 0.32);
   }
-  if (!wxWorld()) { WX.rip.length = 0; return; }
+  if (!wxWorld() && skin !== 'df-night') { WX.rip.length = 0; return; }   // Depthfield's night listens to the same weather
   // weather follows the music: tension rains, a settled chord clears to mint, a quiet room turns to night
   let tw;
   if (WX.force) tw = WX.force;
@@ -14973,6 +15239,77 @@ function landingNote() {
   if (f && found.size > 0) f.textContent = `welcome back. ${found.size} of ${CAT.length} found, ${GAME.nougats} nougat${GAME.nougats === 1 ? '' : 's'} in the jar.`;
 }
 
+// ===== AND SO 10 · Three Faces: the toolkit family draws the same state =====
+// Storeybrook is the day, Depthfield the night, Hypermetapunk the dusk. The night and the dusk are drawn by the kits'
+// own pens (vendor/depthfield-pen-*.js and vendor/hypermetapunk-pen-*.js, pinned by version in build.py), so the canvas
+// stands in the same world as each kit's own pages. One state: the voices, the valleys, the finds and the sound do not
+// change when the face does. If a pen is missing (an old mirror copy, say) the plain night is drawn instead.
+const FACES = [{ id: 'sb-daylight', kit: 'Storeybrook', name: 'day' }, { id: 'hm-dusk', kit: 'Hypermetapunk', name: 'dusk' }, { id: 'df-night', kit: 'Depthfield', name: 'night' }];
+const KIT_NAMES = { 'df-night': 'Depthfield night', 'hm-dusk': 'Hypermetapunk dusk' };
+const FACE = { seen: new Set(), df: null, hm: null, orb: null, setT: 0 };   // orb: where the sun or the moon stands, for a touch
+const kitLook = () => skin === 'df-night' || skin === 'hm-dusk';
+function facePen() {
+  try {
+    if (skin === 'df-night') return FACE.df || (FACE.df = window.Depthfield && window.Depthfield.pen ? window.Depthfield.pen('night') : null);
+    if (skin === 'hm-dusk') return FACE.hm || (FACE.hm = window.Hypermetapunk && window.Hypermetapunk.pen ? window.Hypermetapunk.pen('dusk') : null);
+  } catch (e) {}
+  return null;
+}
+// the ground of a kit face. false when the kit's pen is not on the page.
+function drawFaceBg() {
+  const P = facePen(); if (!P) return false;
+  const tt = reduceMotion ? 0 : t;
+  if (skin === 'df-night') {
+    // Depthfield's world at night. The room's weather still follows the music (peach when it plays, red rain when it
+    // is tense, a mint clearing on a settled chord, the night garden when it is quiet), but here it only tints the
+    // night: the near ridge falls to the void under the terrain, so the instrument always reads.
+    const w = WX.w, wx = [w[0] * 0.1, w[1] * 0.5, w[2] * 0.5, w[3] + w[0] * 0.9 + (w[1] + w[2]) * 0.5];
+    P.sky(ctx, { x: 0, y: 0, w: W, h: Math.max(LT, 200), weather: wx });
+    const mr = Math.max(22, Math.min(W, H) * 0.045), mx0 = (phone ? 0.78 : 0.72) * W + MO.px * 14, my0 = TOPH + (LT - TOPH) * (phone ? 0.42 : 0.2);
+    P.sun(ctx, { x: mx0, y: my0, r: mr, w: W, h: H, weather: wx });
+    FACE.orb = { x: mx0, y: my0, hit: Math.max(34, mr * 1.4), maxY: LT };
+    P.stars(ctx, { x: 0, y: TOPH, w: W, h: LT, weather: wx, t: tt, alpha: 0.25 + 0.75 * wx[3] });
+    P.ridges(ctx, { x: 0, y: 0, w: W, h: H, weather: wx, t: tt, par: (WX.mx - 0.5) + MO.px * 0.4, base: [(LT * 0.8) / H, (LT * 0.93) / H, (LT * 1.05) / H], amp: [0.085, 0.065, 0.05] });
+    WX.w = wx; drawWxParts(wxPal(), false); WX.w = w;   // fireflies, with rain or motes when the music calls them
+    return true;
+  }
+  // Hypermetapunk's horizon: toner bands down to a horizon inside the terrain, the banded sun standing on it, and the
+  // grid floor running out under the hills. The sky is eased so the hot bands stay by the horizon and the words above
+  // it sit on the dark.
+  const hy = Math.round(LT + (LB - LT) * 0.3), r = Math.max(40, Math.min(MR * 0.72, W * (phone ? 0.11 : 0.14))), sx = phone ? W - r - 14 : Math.min(W - r - 50, MX + MR * 2.45);
+  // a touched sun sets: it sinks behind the floor and the sky cools, then the night comes up
+  const sink = FACE.setT ? clamp((t - FACE.setT) / 0.8, 0, 1) : 0, sk = sink * sink;
+  P.sky(ctx, { x: 0, y: 0, w: W, h: hy, steps: 18, span: 0.8 - 0.34 * sk, ease: 2.6 });
+  P.sun(ctx, { x: sx, y: hy + r * 2.1 * sk, r });
+  FACE.orb = { x: sx, y: hy - r, hit: r, maxY: hy };
+  ctx.fillStyle = P.rgb('void'); ctx.fillRect(0, hy, W, H - hy);
+  P.floor(ctx, { x: 0, y: hy, w: W, h: H - hy, vx: sx, t: tt, rows: 10 });
+  P.grain(ctx, { w: W, h: H, amount: 0.14 });
+  return true;
+}
+function cycleFace() {
+  const i = FACES.findIndex(f => f.id === skin), nx = FACES[(i + 1) % FACES.length].id;
+  turnPage(() => setSkin(nx, true));
+}
+// the sun at dusk and the moon at night can be touched: the sun sets into the night, the moon gives way to the day
+function faceTap(px, py) {
+  const o = FACE.orb; if (!kitLook() || !o || FACE.setT || py > o.maxY || Math.hypot(px - o.x, py - o.y) > o.hit) return false;
+  if (skin === 'hm-dusk') {
+    FACE.setT = t; discover('x-sunset');
+    setTimeout(() => { FACE.setT = 0; if (skin === 'hm-dusk') turnPage(() => setSkin('df-night', true)); }, reduceMotion ? 0 : 820);
+  } else turnPage(() => setSkin('sb-daylight', true));
+  return true;
+}
+function faceSeen(s) {
+  FACE.orb = null; FACE.setT = 0;
+  if (!entered || REEL.on || !FACES.some(f => f.id === s)) return;
+  FACE.seen.add(s);
+  if (KIT_NAMES[s]) caption(`${KIT_NAMES[s]}. the same voices, the same valleys.`, 3000);
+  if (FACE.seen.size >= 3) discover('x-faces');
+}
+function facesUI() { document.querySelectorAll('#faceBtns .pill').forEach(b => { const on = b.dataset.face === skin; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); }); }
+document.querySelectorAll('#faceBtns .pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.face !== skin) turnPage(() => setSkin(b.dataset.face, true)); }));
+
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;
 const PERF_LOCK = (() => { try { return /[?&]hq\b/.test(location.search); } catch (e) { return false; } })();
@@ -15175,7 +15512,7 @@ function boot(hotData) {
   REF = SET.ref / 440;
   // AND SO 7 opens on paper: a Storeybrook look you pick is kept, while the older looks (a preset, a brook stone, the
   // older-looks row) last for the visit, so the page never reopens in one of them; a mirror copy opens in the look it was handed
-  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] ? savedSkin : 'sb-daylight';
+  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] || KIT_NAMES[savedSkin] ? savedSkin : 'sb-daylight';
   document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
   inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
   $('stText').value = STORY;
@@ -15228,6 +15565,7 @@ try {
     hearText, spawnGuard, guardsSleep, mishear, earNorm, guards: () => EAR.guards.map(g => ({ id: g.id, x: Math.round(g.x), y: Math.round(g.y), on: !!(GFEAT[g.id] && GFEAT[g.id].on()) })), ear: () => ({ q: EAR.q.map(q => q.id), heard: EAR.heardS, miss: EAR.missS, met: GAME.met.slice() }),
     nougat: n => nougat(n, W / 2, H / 2, 'a test'), played: s => { GAME.played = s; }, deep: d => { MIR.deep = d; }, folds: d => { depth = d; }, petForm: f => { SET.petForm = f; }, pet: () => ({ x: pet.x, y: pet.y, say: pet.say }),
     mo: () => ({ twistA: +MO.twistA.toFixed(1), sinceShake: +(performance.now() / 1000 - MO.shakeT).toFixed(2), sinceTwist: +(performance.now() / 1000 - MO.twistT).toFixed(2), on: MO.on, live: MO.live, sign: MO.sign, gx: +MO.gx.toFixed(3), gy: +MO.gy.toFixed(3), tx: +MO.tx.toFixed(3), ty: +MO.ty.toFixed(3), lean: +MO.lean.toFixed(2), rolling: MO.rolling, hops: MO.hops, busy: +MO.busy.toFixed(2), gesture: MO.gesture, hz: Math.round(MO.hz) }),
+    face: () => ({ skin, orb: FACE.orb, seen: [...FACE.seen] }),
     wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),
     hill: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; let bx = v.x, be = -1; for (let x = Math.max(160, v.x - 320); x <= Math.min(XMAX - 160, v.x + 320); x += 4) { const d = Dv(v, x), e = (d - wxFloor(v, x, d)) / D0; if (e > be) { be = e; bx = x; } } return { x: bx, X: xToS(bx), e: +be.toFixed(3) }; },
     pair: (x1, x2) => +(dTones(fOf(x1), fOf(x2)) / D0).toFixed(3), wxForce: f => { WX.force = f || null; }, crack: g => { WX.crack.grow = g; WX.crack.hotT = t; },

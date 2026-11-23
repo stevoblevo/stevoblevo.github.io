@@ -200,7 +200,7 @@ function boot(hotData) {
   REF = SET.ref / 440;
   // AND SO 7 opens on paper: a Storeybrook look you pick is kept, while the older looks (a preset, a brook stone, the
   // older-looks row) last for the visit, so the page never reopens in one of them; a mirror copy opens in the look it was handed
-  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] ? savedSkin : 'sb-daylight';
+  skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] || KIT_NAMES[savedSkin] ? savedSkin : 'sb-daylight';
   document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
   inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
   $('stText').value = STORY;
@@ -253,6 +253,7 @@ try {
     hearText, spawnGuard, guardsSleep, mishear, earNorm, guards: () => EAR.guards.map(g => ({ id: g.id, x: Math.round(g.x), y: Math.round(g.y), on: !!(GFEAT[g.id] && GFEAT[g.id].on()) })), ear: () => ({ q: EAR.q.map(q => q.id), heard: EAR.heardS, miss: EAR.missS, met: GAME.met.slice() }),
     nougat: n => nougat(n, W / 2, H / 2, 'a test'), played: s => { GAME.played = s; }, deep: d => { MIR.deep = d; }, folds: d => { depth = d; }, petForm: f => { SET.petForm = f; }, pet: () => ({ x: pet.x, y: pet.y, say: pet.say }),
     mo: () => ({ twistA: +MO.twistA.toFixed(1), sinceShake: +(performance.now() / 1000 - MO.shakeT).toFixed(2), sinceTwist: +(performance.now() / 1000 - MO.twistT).toFixed(2), on: MO.on, live: MO.live, sign: MO.sign, gx: +MO.gx.toFixed(3), gy: +MO.gy.toFixed(3), tx: +MO.tx.toFixed(3), ty: +MO.ty.toFixed(3), lean: +MO.lean.toFixed(2), rolling: MO.rolling, hops: MO.hops, busy: +MO.busy.toFixed(2), gesture: MO.gesture, hz: Math.round(MO.hz) }),
+    face: () => ({ skin, orb: FACE.orb, seen: [...FACE.seen] }),
     wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),
     hill: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; let bx = v.x, be = -1; for (let x = Math.max(160, v.x - 320); x <= Math.min(XMAX - 160, v.x + 320); x += 4) { const d = Dv(v, x), e = (d - wxFloor(v, x, d)) / D0; if (e > be) { be = e; bx = x; } } return { x: bx, X: xToS(bx), e: +be.toFixed(3) }; },
     pair: (x1, x2) => +(dTones(fOf(x1), fOf(x2)) / D0).toFixed(3), wxForce: f => { WX.force = f || null; }, crack: g => { WX.crack.grow = g; WX.crack.hotT = t; },

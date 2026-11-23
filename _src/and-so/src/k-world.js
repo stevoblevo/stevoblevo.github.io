@@ -79,7 +79,7 @@ function wxTick(dt) {
     for (let k = 0; k < 31; k++) F.hit[k] += (tgt[k] - F.hit[k]) * (1 - Math.exp(-dt * 6));
     F.z += dt * (reduceMotion ? 0 : 0.32);
   }
-  if (!wxWorld()) { WX.rip.length = 0; return; }
+  if (!wxWorld() && skin !== 'df-night') { WX.rip.length = 0; return; }   // Depthfield's night listens to the same weather
   // weather follows the music: tension rains, a settled chord clears to mint, a quiet room turns to night
   let tw;
   if (WX.force) tw = WX.force;

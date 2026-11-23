@@ -405,3 +405,13 @@ body.first #quests, body.first #hint, body.reel #first, body.reel #firstRing { d
 #qToday.done { color: var(--ink-muted, rgba(240, 228, 214, .7)); font-weight: 400 }
 .fine.today { margin-top: 8px; font-weight: 700; color: var(--accent, #f6d7a0) }
 .fine.today.done { font-weight: 400; color: inherit }
+
+/* ---------- three faces (AND SO 10): the night wears Depthfield's tokens, the dusk Hypermetapunk's ----------
+   The family keeps shared names for shared roles (paper, surface, page, line, ink, ink-muted, accent, cue), so the
+   Storeybrook panels take another kit's values by name. Values are each kit's tokens.json: Depthfield 2.3.0 night,
+   Hypermetapunk 0.3.0 dusk. */
+body[data-skin="df-night"] { --ground: #07110f; --ink: #e9f5ef; --ink-soft: rgba(233, 245, 239, .7); --ink-faint: rgba(233, 245, 239, .48); --gold: #5ef2b8; --gold-soft: rgba(94, 242, 184, .38); --mint: #c9e6ff; --rose: #ff8a7a; --glass: rgba(20, 36, 32, .86); --glass-line: rgba(94, 242, 184, .22); --page: #142420; --line: #23352f; --ink-muted: #93aaa1; --accent: #5ef2b8; --sap: #5ef2b8 }
+body[data-skin="df-night"] .sbi { --paper: #07110f; --surface: #0d1a17; --page: #142420; --line: #23352f; --ink: #e9f5ef; --ink-muted: #93aaa1; --accent: #5ef2b8; --on-accent: #07110f; --cue: #c9e6ff; --focus: #c9e6ff }
+body[data-skin="hm-dusk"] { --ground: #0b0618; --ink: #f7f2ff; --ink-soft: rgba(201, 189, 240, .94); --ink-faint: rgba(201, 189, 240, .64); --gold: #ff6fb5; --gold-soft: rgba(255, 111, 181, .42); --mint: #05ffa1; --rose: #ff2e88; --glass: rgba(22, 13, 46, .92); --glass-line: #3d2c70; --page: #211543; --line: #3d2c70; --ink-muted: #c9bdf0; --accent: #ff6fb5; --sap: #05ffa1 }
+body[data-skin="hm-dusk"] .sbi { --paper: #0b0618; --surface: #160d2e; --page: #211543; --line: #3d2c70; --ink: #f7f2ff; --ink-muted: #c9bdf0; --accent: #ff6fb5; --on-accent: #14061f; --cue: #05ffa1; --focus: #e8ff00 }
+body[data-skin="hm-dusk"] :is(#toast, #quests, #first) { box-shadow: 4px 4px 0 #ff2e88 }   /* the kit's slap: a hard offset, never over words */

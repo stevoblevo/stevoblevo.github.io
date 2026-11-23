@@ -17,13 +17,15 @@ VENDOR = ROOT / "vendor"
 JS = ["a-core.js", "b-audio.js", "c-music.js", "d-game.js", "d2-world.js", "e-input.js", "f-draw.js", "f2-terrain.js",
       "h-listen.js", "i-views.js", "j-motion.js", "k-world.js", "l-reel.js", "m-paper.js", "n-mirror.js", "o-jam.js",
       "p-brook.js", "y-voice.js", "q-guard.js", "r-versions.js", "s-hide.js",
-      "t-book.js", "u-wing.js", "v-tune.js", "w-dream.js", "x-mag.js", "z-board.js", "z-app.js", "zz-first.js", "g-loop.js"]
+      "t-book.js", "u-wing.js", "v-tune.js", "w-dream.js", "x-mag.js", "z-board.js", "z-app.js", "zz-first.js", "zy-faces.js", "g-loop.js"]
 FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
          "&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600"
          "&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800"
          "&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1"
          "&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap")
-VERSION = "9"
+VERSION = "10"
+# the toolkit family, pinned by version: Storeybrook is vendored as before; the night and the dusk draw with the kits' pens
+KIT_PENS = ["depthfield-pen-2.3.0.js", "hypermetapunk-pen-0.3.0.js"]
 
 
 def main() -> None:
@@ -31,7 +33,8 @@ def main() -> None:
     sb_css = (VENDOR / "storeybrook-tokens.css").read_text() + (VENDOR / "storeybrook.css").read_text()
     css_sb = (SRC / "style-sb.css").read_text() + (SRC / "style-book.css").read_text()
     body = (SRC / "body.html").read_text()
-    sb_js = (VENDOR / "storeybrook.js").read_text()
+    # the pens ride in the same script element as Storeybrook, so the mirror carries them into its inner copies
+    sb_js = (VENDOR / "storeybrook.js").read_text() + "".join("\n" + (VENDOR / name).read_text() for name in KIT_PENS)
     vers = [{k: v[k] for k in ("id", "short", "name", "date", "line", "path", "latest", "edition") if k in v} for v in VERSIONS]
     book = (SRC / "book.json").read_text().strip()
     wing = (SRC / "wing.json").read_text().strip()
@@ -48,7 +51,7 @@ def main() -> None:
     body = f'<div id="andso-app">\n{body}</div>\n'
     scripts = f"<script id=\"sb-js\">\n{sb_js}\n</script>\n<script id=\"andso-js\">\n(() => {{\n'use strict';\nconst ANDSO_VERSION = '{VERSION}';\n{script}\n}})();\n</script>\n"
     page = (
-        "<title>AND SO 9</title>\n"
+        "<title>AND SO 10</title>\n"
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
         f"{styles}{body}\n{scripts}"
@@ -64,7 +67,7 @@ def main() -> None:
     (dist / "and-so.html").write_text(
         '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
-        '<meta name="description" content="AND SO 9 · Open Door: a microtonal instrument you play by letting go. First steps for a first visit, one find a day, a board you sign with your own key, a lead sheet on the same clock, and a classical wing. '
+        '<meta name="description" content="AND SO 10 · Three Faces: a microtonal instrument you play by letting go, drawn by three design kits: day, night and dusk. First steps for a first visit, one find a day, a board you sign with your own key, a lead sheet on the same clock, and a classical wing. '
         'voices roll into the valleys where notes agree.">\n'
         '<meta name="theme-color" content="#f4f6f2">\n'
         # installable on stevoblevo.github.io: the manifest, worker and icons are copied next to the page below
@@ -73,7 +76,7 @@ def main() -> None:
         '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3E%3Ccircle cx=\'8\' cy=\'8\' r=\'5\' fill=\'%23e7b23a\'/%3E%3C/svg%3E">\n'
         # the page draws both light and dark looks itself, so a browser's own dark mode has nothing to repaint
         '<meta name="color-scheme" content="light dark">\n'
-        '<title>AND SO 9</title>\n'
+        '<title>AND SO 10</title>\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
         f"{styles}</head>\n<body>\n{body}\n{scripts}</body>\n</html>\n")

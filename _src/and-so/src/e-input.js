@@ -146,6 +146,7 @@ hitEl.addEventListener('pointerdown', e => {
   for (let i = 0; i < 5; i++) { const q = latPos(i); if (Math.hypot(px - q[0], py - q[1]) < (phone ? 26 : 18) * Math.max(S, 0.9)) { p.role = 'node'; p.i = i; return; } }
   let hit = null, bd = phone ? 42 : 30;
   for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const b = ballPos(v), d = Math.hypot(b.X - px, b.Y - py); if (d < bd) { bd = d; hit = v; } }
+  if (!hit && faceTap(px, py)) { p.role = 'none'; return; }   // the dusk sun, the night's moon
   if (!hit && reg === 'terrain' && !(skin === 'hmp' && tab !== 'resonance' && !phone)) {
     const x = xFromS(px); hit = addVoice(x, { temp: 0 }); if (hit) firstEvent('tap');
     if (!hit) { let nd = 1e9; for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const d = Math.abs(v.x - x); if (d < nd) { nd = d; hit = v; } } }
@@ -159,7 +160,7 @@ hitEl.addEventListener('pointerdown', e => {
     p.role = 'view'; viewDown(p); return;
   }
   if (wxHit(px, py)) { p.role = 'none'; return; }
-  if (wxWorld()) wxRipple(px, py, 0.7);
+  if (wxWorld() || skin === 'df-night') wxRipple(px, py, 0.7);
   p.role = 'harp'; p.h = { pool: harpPool(), idx: -1, lastT: 0 };
 });
 hitEl.addEventListener('pointermove', e => {
@@ -382,6 +383,7 @@ window.addEventListener('keydown', e => {
   else if (k === 'd') setArtic(SET.artic === 'pluck' ? 'drone' : 'pluck');
   else if (k === 'c') ($('brookMap').classList.contains('on') ? closeBrook() : openBrook());
   else if (k === 'e') cycleLook();
+  else if (k === 'z') cycleFace();
   else if (k === 's' && MIR.depth === 0) boardOpen();
   else if (k === 'escape') { if ($('result').classList.contains('on')) endRoundUI(false); if ($('story').classList.contains('on')) closeStory(); }
 });

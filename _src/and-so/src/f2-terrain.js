@@ -356,7 +356,7 @@ function draw() {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   const hmp = skin === 'hmp';
   const paper = paperLook();
-  drawBg(); if (wxWorld()) {} else if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2' && !paper) drawStars();
+  drawBg(); if (wxWorld()) {} else if (skin === 'fieldstone') drawMotes(); else if (skin !== 'eink' && skin !== 'bw2' && !paper && !kitLook()) drawStars();
   drawWorldMid();
   if (latticeOn) { ctx.save(); ctx.translate(0, PANEL_DY); if (M.easy) drawEasyPanel(); else if (M.key === 'just') drawLattice(); else drawRing(); ctx.restore(); }
   const vw = viewOn();
