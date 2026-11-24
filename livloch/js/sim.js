@@ -450,7 +450,7 @@ function damage(t, amt, src, kind, crit) {
   }
   if (kind !== 'dot') {
     const pl = W.player, p = hero && hero === pl ? 1 : (t === pl ? 2 : 0);
-    fx({ k: 'hit', x: t.x, y: t.y + t.h * 0.7, z: t.z, amt: amt, crit: !!crit, p: p, kind: kind, tk: t.kind });
+    fx({ k: 'hit', x: t.x, y: t.y + t.h * 0.7, z: t.z, amt: amt, crit: !!crit, p: p, kind: kind, tk: t.kind, team: t.team, big: !!t.big, struct: !!t.struct });
   }
   if (t.hp <= 0) { t.hp = 0; kill(t, src, hero); }
   return amt;
@@ -474,7 +474,7 @@ function kill(t, src, hero) {
   t.alive = false;
   const kt = hero ? hero.team : (src ? src.team : -1);
   const min = W.t / 60;
-  fx({ k: 'death', u: t, x: t.x, y: t.y, z: t.z, team: t.team, kind: t.kind });
+  fx({ k: 'death', u: t, x: t.x, y: t.y, z: t.z, team: t.team, kind: t.kind, by: hero }); // by: who to credit on screen (0.23); no rule reads it
   if (t.kind === 'trooper') {
     if (t.big && !t.extra) W.hollowT[t.lane0] = [30, 24, 18][W.diff];
     if (kt === 0 || kt === 1) {

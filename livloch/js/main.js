@@ -14,6 +14,7 @@ const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, 
 const KEY = 'livelock.v1';
 const cfg = LL.cfg = { sens: 1, vol: 0.6, music: 0.7, sfx: 0.9, mute: false, micro: false, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
+if (LL.wardrobe) LL.wardrobe.adopt(cfg, KEY, save); // 0.23 wardrobe: its saved fields (stars all told, goals ever done, what is worn), with defaults for old saves
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
 function save() { try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) {} }
@@ -165,6 +166,7 @@ function frame(now) {
         feats(e);
         if (e.k === 'over') { overT = 2.6; I.unlock(); if (e.short && W.auto === W.lean && e.n > (cfg.bestStars || 0)) { cfg.bestStars = e.n; save(); }
           if (e.fallen && W.auto === W.lean && e.t > cfg.bestT) { cfg.bestT = e.t; cfg.bestL = e.lights; save(); } if (counted && !e.fallen && !e.short && !W.lean) { if (e.winner === 0) cfg.wins++; else cfg.losses++; save(); } }
+        if (LL.wardrobe) LL.wardrobe.fx(e, W); // 0.23 wardrobe: counts stars, goals and lights after the Cabinet has had the event; says when something new is earned
       }
     }
     W.fx.length = 0;

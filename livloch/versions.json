@@ -1,7 +1,13 @@
 {
-  "current": "0.22",
+  "current": "0.23",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.23",
+      "path": "v0.23/",
+      "source": "release/0.23",
+      "note": "Shot, hit and kill feel (paper bits, crumples, torn tissue, muzzle flashes); the wardrobe: 17 things to earn and wear"
+    },
     {
       "v": "0.22",
       "path": "v0.22/",
