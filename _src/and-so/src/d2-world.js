@@ -369,7 +369,7 @@ function syncUI() {
   $('bLean').textContent = lit ? 'glide' : 'lean'; $('dLean').firstChild.textContent = lit ? '∿' : '≈'; $('dLean').lastChild.textContent = lit ? 'glide' : 'lean';
   $('bRound').textContent = round ? '■ round' : '▶ round'; $('bRound').classList.toggle('hot', !!round); $('dRound').classList.toggle('hot', !!round);
   $('gRound').textContent = round ? '■ end this round' : '▶ play a round';
-  $('sFlip').checked = !!SET.flip; $('sRhy').checked = rhy.on; $('sHole').checked = hole.on; $('sPetLock').checked = pet.lock;
+  $('sFaceClock').checked = !!SET.faceClock; $('sFlip').checked = !!SET.flip; $('sRhy').checked = rhy.on; $('sHole').checked = hole.on; $('sPetLock').checked = pet.lock;
   [['sHp', 'hp'], ['sSpark', 'sparkle'], ['sChime', 'chimes'], ['sBird', 'bird'], ['sReg', 'reg'], ['sBells', 'bells'], ['sWind', 'wind'], ['sRain', 'rain'], ['sTrain', 'train'], ['sHap', 'haptics']].forEach(([id, k]) => ($(id).checked = !!SET[k]));
   [['sShim', 'shim'], ['sSpace', 'space'], ['sTease', 'tease'], ['sPace', 'pace'], ['sWarm', 'warm'], ['sVol', 'vol'], ['sTune', 'tune']].forEach(([id, k]) => ($(id).value = Math.round(SET[k] * 100)));
   placeChrome();

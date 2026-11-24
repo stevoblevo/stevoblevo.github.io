@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.1",
+   "short": "AND SO 10.1",
+   "name": "AND SO 10.1 · Three Faces",
+   "date": "2026-11-23",
+   "line": "The whole scene in each kit's hand: the instrument's words and marks in the kit's inks, chrome lettering at dusk, air and a vignette at night, a watercolour sun by day. Every face has a light to touch, and the face can keep your hours.",
+   "path": "/and-so/v10.1/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "90c24fc900a2b698b350795516e959d87e45c8a218d34d6cf5e2087ec75d9a33"
+  },
+  {
    "id": "10",
    "short": "AND SO 10",
    "name": "AND SO 10 · Three Faces",
    "date": "2026-11-23",
    "line": "Day, night and dusk: Storeybrook, Depthfield and Hypermetapunk draw the same voices in the same valleys, the night and the dusk with each kit's own pen. Z turns the face. The night's weather follows the music.",
    "path": "/and-so/v10/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "836a929559fd0d541fadc1b9216e696bb66fda4fe25d6c18c3ce916536004d68"
+   "commit": "a41df47",
+   "sha256": "bdc059e712ce96f451b439b3d43e90ce747a23a433d73180b5de38ab38b11ebe"
   },
   {
    "id": "9",

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="AND SO 10 · Three Faces: a microtonal instrument you play by letting go, drawn by three design kits: day, night and dusk. First steps for a first visit, one find a day, a board you sign with your own key, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
+<meta name="description" content="AND SO 10.1 · Three Faces: a microtonal instrument you play by letting go, drawn by three design kits: day, night and dusk. First steps for a first visit, one find a day, a board you sign with your own key, a lead sheet on the same clock, and a classical wing. voices roll into the valleys where notes agree.">
 <meta name="theme-color" content="#f4f6f2">
 <link rel="manifest" href="/and-so/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/and-so/icons/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%23e7b23a'/%3E%3C/svg%3E">
 <meta name="color-scheme" content="light dark">
-<title>AND SO 10</title>
+<title>AND SO 10.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&family=IM+Fell+English:ital@0;1&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
 <style id="andso-css">
@@ -1180,6 +1180,14 @@ body[data-skin="df-night"] .sbi { --paper: #07110f; --surface: #0d1a17; --page: 
 body[data-skin="hm-dusk"] { --ground: #0b0618; --ink: #f7f2ff; --ink-soft: rgba(201, 189, 240, .94); --ink-faint: rgba(201, 189, 240, .64); --gold: #ff6fb5; --gold-soft: rgba(255, 111, 181, .42); --mint: #05ffa1; --rose: #ff2e88; --glass: rgba(22, 13, 46, .92); --glass-line: #3d2c70; --page: #211543; --line: #3d2c70; --ink-muted: #c9bdf0; --accent: #ff6fb5; --sap: #05ffa1 }
 body[data-skin="hm-dusk"] .sbi { --paper: #0b0618; --surface: #160d2e; --page: #211543; --line: #3d2c70; --ink: #f7f2ff; --ink-muted: #c9bdf0; --accent: #ff6fb5; --on-accent: #14061f; --cue: #05ffa1; --focus: #e8ff00 }
 body[data-skin="hm-dusk"] :is(#toast, #quests, #first) { box-shadow: 4px 4px 0 #ff2e88 }   /* the kit's slap: a hard offset, never over words */
+/* the instrument's own chrome (pills, section words, switches) in each kit's accent, as glasshouse and peachfall do */
+body[data-skin="hm-dusk"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(255, 111, 181, .8); background: rgba(255, 111, 181, .16); color: #f7f2ff }
+body[data-skin="hm-dusk"] :is(.sec, .tk, .qh) { color: rgba(5, 255, 161, .88) }
+body[data-skin="hm-dusk"] .sw:checked { background: rgba(255, 111, 181, .85) }
+body[data-skin="df-night"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(94, 242, 184, .7); background: rgba(94, 242, 184, .12); color: #e9f5ef }
+body[data-skin="df-night"] :is(.sec, .tk, .qh) { color: rgba(94, 242, 184, .85) }
+body[data-skin="df-night"] .sw:checked { background: rgba(94, 242, 184, .8) }
+body:is([data-skin="hm-dusk"], [data-skin="df-night"]) :is(#toast, #round, #result, #viewChip, #reelHud) { border-color: color-mix(in srgb, var(--gold) 45%, transparent) }
 /* ===== AND SO 8: the book, the wing, tune together, dreamwalk, Mag ===== */
 .book-mark { position: fixed; z-index: 47; left: max(14px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #f3e6c8; cursor: pointer }
 .book-mark svg { width: 28px; height: 28px }
@@ -1319,7 +1327,7 @@ body.first #hud.on { opacity: 1 }
     <h1 class="big">AND SO</h1>
     <p class="sub serif">every valley is a little sun</p>
     <div class="ov-btns"><button id="enter" class="btn">Enter</button><button id="enterReel" class="btn2">or watch the reels first</button></div>
-    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 10 · Three Faces<span class="ver-more"> · every version</span></button></p>
+    <p class="ver"><button id="verBtn" class="ver-btn" type="button" aria-haspopup="dialog">AND SO 10.1 · Three Faces<span class="ver-more"> · every version</span></button></p>
     <p class="dream-line"><button type="button" id="dreamMark">dream</button></p>
     <p class="fine" id="enterFine">drag a voice and let go: it rolls home to the nearest place where the notes agree, and rings like a music box. tap the terrain to add one. sound on, headphones welcome.</p>
     <p class="fine today" id="ovToday" hidden></p>
@@ -1423,6 +1431,7 @@ body.first #hud.on { opacity: 1 }
     <div class="sec">three faces</div>
     <div class="btns" id="faceBtns"><button class="pill" data-face="sb-daylight">day · Storeybrook</button><button class="pill" data-face="hm-dusk">dusk · Hypermetapunk</button><button class="pill" data-face="df-night">night · Depthfield</button></div>
     <div class="note">three design kits, one state: the same voices, valleys and finds, the dusk and the night drawn by each kit’s own pen. Z turns to the next face. the night’s weather follows the music.</div>
+    <label class="row"><span>the face follows your clock</span><input type="checkbox" class="sw" id="sFaceClock"></label>
 
     <div class="sec">looks</div>
     <div class="btns" id="lookBtns"><button class="pill" data-look="sb-daylight">Meta Daylight</button><button class="pill" data-look="sb-knight">Knight Night</button><button class="pill" data-look="sb-inkblot">Ink Blot</button><button class="pill" data-look="sb-comix">Comix</button><button class="pill" data-look="sb-origami">Origami</button><button class="pill" data-look="sb-skein">Skein silk</button></div>
@@ -2682,8 +2691,8 @@ body.first #hud.on { opacity: 1 }
 <script id="andso-js">
 (() => {
 'use strict';
-const ANDSO_VERSION = '10';
-const ANDSO_VERSIONS = [{"id": "10", "short": "AND SO 10", "name": "AND SO 10 · Three Faces", "date": "2026-11-23", "line": "Day, night and dusk: Storeybrook, Depthfield and Hypermetapunk draw the same voices in the same valleys, the night and the dusk with each kit's own pen. Z turns the face. The night's weather follows the music.", "path": "/and-so/v10/", "latest": true}, {"id": "9", "short": "AND SO 9", "name": "AND SO 9 · Open Door", "date": "2026-11-16", "line": "First steps for a first visit: four things to do with your own hands, and the first find is yours. One find a day, with a nougat for it. Saedo waits until you are through.", "path": "/and-so/v9/"}, {"id": "8.3", "short": "AND SO 8.3", "name": "AND SO 8.3 · The board", "date": "2026-11-12", "line": "A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio.", "path": "/and-so/v8.3/"}, {"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/"}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
+const ANDSO_VERSION = '10.1';
+const ANDSO_VERSIONS = [{"id": "10.1", "short": "AND SO 10.1", "name": "AND SO 10.1 · Three Faces", "date": "2026-11-23", "line": "The whole scene in each kit's hand: the instrument's words and marks in the kit's inks, chrome lettering at dusk, air and a vignette at night, a watercolour sun by day. Every face has a light to touch, and the face can keep your hours.", "path": "/and-so/v10.1/", "latest": true}, {"id": "10", "short": "AND SO 10", "name": "AND SO 10 · Three Faces", "date": "2026-11-23", "line": "Day, night and dusk: Storeybrook, Depthfield and Hypermetapunk draw the same voices in the same valleys, the night and the dusk with each kit's own pen. Z turns the face. The night's weather follows the music.", "path": "/and-so/v10/"}, {"id": "9", "short": "AND SO 9", "name": "AND SO 9 · Open Door", "date": "2026-11-16", "line": "First steps for a first visit: four things to do with your own hands, and the first find is yours. One find a day, with a nougat for it. Saedo waits until you are through.", "path": "/and-so/v9/"}, {"id": "8.3", "short": "AND SO 8.3", "name": "AND SO 8.3 · The board", "date": "2026-11-12", "line": "A board for your resonance: pick a name, and a key this browser keeps (or a Solana wallet) signs your score. Installs as an app, opens offline, and a signed score can travel by radio.", "path": "/and-so/v8.3/"}, {"id": "8.1", "short": "AND SO 8.1", "name": "AND SO 8.1 · The Book, in the jam", "date": "2026-10-30", "line": "The fake book plays inside the jam, on the same clock, with a lead sheet and real controls. The narrator uses an English accent from outside your own region.", "path": "/and-so/v8.1/"}, {"id": "8", "short": "AND SO 8", "name": "AND SO 8 · The Book", "date": "2026-10-30", "line": "A book of changes you can play with, a classical wing, Tune together when another copy is listening, Dreamwalk, and Mag, who finds you with a bunny behind her.", "path": "/and-so/v8/"}, {"id": "7", "short": "AND SO 7", "name": "AND SO 7 · Everfallen", "date": "2026-10-27", "line": "Plucked notes, a jam band, the brook and its nougats, the mirror, Storeybrook looks, guardians born from misheard words, and a reel for every look.", "path": "/and-so/v7/"}, {"id": "6.1", "short": "AND SO 6.1", "name": "AND SO 6.1", "date": "2026-10-24", "line": "Dark by default. Tilt, shake and twist, the guided reel, 31-EDO, the glasshouse and peachfall looks.", "path": "/and-so/v6.1/"}, {"id": "6", "short": "AND SO 6", "name": "AND SO 6", "date": "2026-10-23", "line": "Tilt, shake and twist; a guided reel; 31-EDO; the glasshouse and peachfall looks.", "path": "/and-so/v6/"}, {"id": "2026-10-22", "short": "AND SO, 22 Oct", "name": "AND SO, 22 October", "date": "2026-10-22", "line": "Cymatics, the lattice cube, a 5D experiment, and the bw2 and fieldstone looks.", "path": "/and-so/2026-10-22/"}, {"id": "2026-10-12", "short": "AND SO, 12 Oct", "name": "AND SO, 12 October", "date": "2026-10-12", "line": "The first AND SO: a microtonal instrument you can hum to.", "path": "/and-so/2026-10-12/"}, {"id": "gamut-43", "short": "Gamut Field Guide", "name": "Gamut Field Guide", "date": "2026-10-22", "line": "The field-guide edition: an appoggiatura you can hold, and 43 things to discover across alternate tunings.", "path": "/and-so/gamut-43/", "edition": true}];
 const BOOK_DATA = [
  {
   "id": "st-louis",
@@ -6986,7 +6995,8 @@ const CAT = [
   ['x-table', 'any', 'ev', '', 'the table', 'a TV or e-paper on the table', 'windows you can drag, fold and turn to face the other side of a table.', 'open a TV or e-paper window in the mirror'],
   ['x-61', 'any', 'ev', '', 'as it was', 'opened 6.1', 'AND SO 6.1, frozen the night 7 began, playing in a window of 7.', 'open 6.1 in the mirror'],
   ['x-faces', 'any', 'ev', '', 'three faces', 'one state, many faces', 'day, night and dusk: three design kits drawing the same voices in the same valleys.', 'wear all three faces in one visit'],
-  ['x-sunset', 'any', 'ev', '', 'sundown', 'the sun goes down when you ask', 'touch the dusk sun and it sets behind the grid. the night comes up after it; touch the moon and it is day.', 'at dusk, touch the sun'],
+  ['x-sunset', 'any', 'ev', '', 'sundown', 'the sun goes down when you ask', 'touch the dusk sun and it sets behind the grid. the night comes up after it. every face has a light you can touch.', 'at dusk, touch the sun'],
+  ['x-hours', 'any', 'ev', '', 'kept your hours', 'the light changed while you played', 'the face followed your clock from one light to the next, and nothing in the music moved.', 'let the face follow your clock, and be here when the light changes'],
   ['x-look', 'any', 'ev', '', 'Storeybrook', 'a paper look', 'the same world printed in ink on watercolor paper, comic halftone, folded paper or knitted silk.', 'try a Storeybrook look'],
   ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook'],
   ['x-heard', 'any', 'ev', '', 'overheard', 'Saelion heard some words', 'the plain words come first. the mishearings come later, on purpose.', 'whisper something to Saelion, in the gamut'],
@@ -7005,7 +7015,7 @@ const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pac
   flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
   view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5,
   // AND SO 7 · Everfallen: notes instead of drones, easy listening first, the hummer only when asked, words only when they matter
-  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true,
+  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true, faceClock: false,
   // the reels run on into each other unless this is off
   reelAuto: true };
 const LIGHT = () => !!SET.light && !SET.frolic;
@@ -7983,7 +7993,7 @@ function zoomBy(f) { setZoom(zoomLevel() * f, (VIEW.x0 + VIEW.x1) / 2); }
 // ===== game: saving, the field guide, score and combos, quests, rounds, Claude-hosted capabilities =====
 const SAVE_KEY = 'andso:v8';   // AND SO 8 keeps its own save, so playing 7 (andso:v7) or an older one never takes anything away
 const OLD_SAVE_KEYS = ['andso:v7', 'andso:v2'];   // read every time and merged in: counts take the larger, found things and stones the union
-const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude', 'reelAuto'];
+const PREF_KEYS = ['hp', 'shim', 'space', 'sparkle', 'tease', 'pace', 'warm', 'vol', 'chimes', 'bird', 'haptics', 'flip', 'tune', 'ref', 'reg', 'bells', 'wind', 'rain', 'train', 'petForm', 'ui', 'light', 'follow', 'view', 'cymShape', 'cymLines', 'cymPowder', 'x5d', 'x5dSpeed', 'x5dDepth', 'detect', 'motion', 'roll', 'tiltK', 'artic', 'bed', 'autoHum', 'easyStart', 'quiet', 'petEerie', 'earClaude', 'reelAuto', 'faceClock'];
 let userP = {}, savedSkin = null;
 const CAP = { db: null, user: null, uid: null, dl: null, sample: null, ref: null, dbOk: false, writing: false, dirty: false, timer: 0, selfHost: false };
 
@@ -8735,7 +8745,7 @@ function syncUI() {
   $('bLean').textContent = lit ? 'glide' : 'lean'; $('dLean').firstChild.textContent = lit ? '∿' : '≈'; $('dLean').lastChild.textContent = lit ? 'glide' : 'lean';
   $('bRound').textContent = round ? '■ round' : '▶ round'; $('bRound').classList.toggle('hot', !!round); $('dRound').classList.toggle('hot', !!round);
   $('gRound').textContent = round ? '■ end this round' : '▶ play a round';
-  $('sFlip').checked = !!SET.flip; $('sRhy').checked = rhy.on; $('sHole').checked = hole.on; $('sPetLock').checked = pet.lock;
+  $('sFaceClock').checked = !!SET.faceClock; $('sFlip').checked = !!SET.flip; $('sRhy').checked = rhy.on; $('sHole').checked = hole.on; $('sPetLock').checked = pet.lock;
   [['sHp', 'hp'], ['sSpark', 'sparkle'], ['sChime', 'chimes'], ['sBird', 'bird'], ['sReg', 'reg'], ['sBells', 'bells'], ['sWind', 'wind'], ['sRain', 'rain'], ['sTrain', 'train'], ['sHap', 'haptics']].forEach(([id, k]) => ($(id).checked = !!SET[k]));
   [['sShim', 'shim'], ['sSpace', 'space'], ['sTease', 'tease'], ['sPace', 'pace'], ['sWarm', 'warm'], ['sVol', 'vol'], ['sTune', 'tune']].forEach(([id, k]) => ($(id).value = Math.round(SET[k] * 100)));
   placeChrome();
@@ -9670,7 +9680,7 @@ function drawReadout() {
   const y0 = Math.min(MY + MR * 1.36 + 28, LT - 52 - (phone ? 0 : 26));
   ctx.save(); ctx.textAlign = 'center';
   if (chordNow) {
-    ctx.fillStyle = 'rgba(248,232,204,0.95)'; ctx.font = fnt(24 * S, 's', 'italic'); ctx.fillText(chordNow.str, MX, y0);
+    if (!faceChord(chordNow.str, MX, y0)) { ctx.fillStyle = 'rgba(248,232,204,0.95)'; ctx.font = fnt(24 * S, 's', 'italic'); ctx.fillText(chordNow.str, MX, y0); }
     ctx.fillStyle = 'rgba(234,220,198,0.55)'; ctx.font = fnt(10 * S + 1, 'm');
     ctx.fillText(chordNow.name + (chordNow.shimmer ? ' · shimmering on purpose' : chordNow.beatless ? ' · beatless' : ''), MX, y0 + 18 * S);
   } else if (entered) {
@@ -10126,7 +10136,7 @@ function draw() {
   drawGlyphs(); drawSpag(); drawHarp(); drawFloaters();
   if (!paper) { ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H); }
   drawTip(); quietChord();
-  ctx3.clearRect(0, 0, W, H); if (skin === 'story') drawStory3(); else if (paper) drawPaper3();
+  ctx3.clearRect(0, 0, W, H); if (skin === 'story') drawStory3(); else if (paper) { drawPaper3(); drawDaySun(); }
   ctx2.clearRect(0, 0, W, H); drawPet(ctx2); if (typeof drawMag === 'function') drawMag(ctx2); drawGuards(ctx2); drawBubble(ctx2); drawRail(ctx2); drawReelFx(ctx2);
   drawPad();
 }
@@ -15246,7 +15256,8 @@ function landingNote() {
 // change when the face does. If a pen is missing (an old mirror copy, say) the plain night is drawn instead.
 const FACES = [{ id: 'sb-daylight', kit: 'Storeybrook', name: 'day' }, { id: 'hm-dusk', kit: 'Hypermetapunk', name: 'dusk' }, { id: 'df-night', kit: 'Depthfield', name: 'night' }];
 const KIT_NAMES = { 'df-night': 'Depthfield night', 'hm-dusk': 'Hypermetapunk dusk' };
-const FACE = { seen: new Set(), df: null, hm: null, orb: null, setT: 0 };   // orb: where the sun or the moon stands, for a touch
+const FACE = { seen: new Set(), df: null, hm: null, orb: null, setT: 0, clock: '' };   // orb: where the sun or the moon stands, for a touch
+const faceLook = () => FACES.some(f => f.id === skin);
 const kitLook = () => skin === 'df-night' || skin === 'hm-dusk';
 function facePen() {
   try {
@@ -15254,6 +15265,48 @@ function facePen() {
     if (skin === 'hm-dusk') return FACE.hm || (FACE.hm = window.Hypermetapunk && window.Hypermetapunk.pen ? window.Hypermetapunk.pen('dusk') : null);
   } catch (e) {}
   return null;
+}
+// The instrument's own three inks (the cream of its words, its gold, its mint) are written all through the drawing code
+// as night colours. On a kit face they are swapped for the kit's ink, accent and cue as they reach the canvas, so the
+// words, ticks and highlights are printed in the kit's inks without a second copy of the drawing. Voices keep their own
+// colours: they are the state, not the face.
+const KIT_INKS = {
+  'hm-dusk': [['234,220,198', '247,242,255'], ['248,232,204', '247,242,255'], ['246,195,95', '255,111,181'], ['126,224,195', '5,255,161']],
+  'df-night': [['234,220,198', '233,245,239'], ['248,232,204', '233,245,239'], ['246,195,95', '94,242,184'], ['126,224,195', '201,230,255']]
+};
+function kitInk(v) {
+  const M = KIT_INKS[skin]; if (!M || typeof v !== 'string' || v.charCodeAt(0) !== 114) return v;   // 'r' of rgb( and rgba(
+  const i = v.indexOf('(') + 1;
+  for (let k = 0; k < M.length; k++) if (v.startsWith(M[k][0], i) && v.charCodeAt(i + M[k][0].length) !== 46 && !(v.charCodeAt(i + M[k][0].length) >= 48 && v.charCodeAt(i + M[k][0].length) <= 57)) return v.slice(0, i) + M[k][1] + v.slice(i + M[k][0].length);
+  return v;
+}
+function kitCanvas(c) {
+  ['fillStyle', 'strokeStyle', 'shadowColor'].forEach(name => {
+    const d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, name); if (!d || !d.set) return;
+    Object.defineProperty(c, name, { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, KIT_INKS[skin] ? kitInk(v) : v); } });
+  });
+}
+// the chord's name in the kit's own lettering. false leaves it to the instrument's serif.
+function faceChord(str, x, y) {
+  if (skin !== 'hm-dusk' || QUIET()) return false;
+  const P = facePen(); if (!P) return false;
+  P.chrome(ctx, str, x, y + 4 * S, { size: Math.round(30 * S), font: F_SERIF, weight: 'italic 700', align: 'center' });
+  return true;
+}
+// the day's sun, in watercolour on the paper: a gamboge disc with the pigment pooled at its edge and a few pencil rays
+function drawDaySun() {
+  if (skin !== 'sb-daylight') return;
+  const P = paperPal(), g = ctx3, r = clamp(22 * S, 18, 34), x = phone ? W * 0.86 : W * 0.3, y = TOPH + (LT - TOPH) * (phone ? 0.84 : 0.42);
+  const sink = FACE.setT ? clamp((t - FACE.setT) / 0.8, 0, 1) : 0, a = 1 - sink, yy = y + sink * sink * (LT - y), br = reduceMotion ? 0 : Math.sin(t * 0.7);
+  const gam = [212, 146, 15];
+  g.save(); g.globalAlpha = a;
+  const w = g.createRadialGradient(x, yy, r * 0.6, x, yy, r * 2.6); w.addColorStop(0, rgba(P.sun, 0.55)); w.addColorStop(1, rgba(P.sun, 0)); g.fillStyle = w; g.fillRect(x - r * 3, yy - r * 3, r * 6, r * 6);
+  const d = g.createRadialGradient(x - r * 0.2, yy - r * 0.25, r * 0.1, x, yy, r); d.addColorStop(0, rgba(mix(P.sun, gam, 0.35), 0.9)); d.addColorStop(0.82, rgba(mix(P.sun, gam, 0.6), 0.92)); d.addColorStop(1, rgba(gam, 0.95));
+  g.fillStyle = d; g.beginPath(); g.arc(x, yy, r, 0, TAU); g.fill();
+  g.strokeStyle = rgba(P.ink, 0.5); g.lineWidth = 1.2; g.lineCap = 'round';
+  for (let i = 0; i < 9; i++) { const an = (i / 9) * TAU + 0.2 + br * 0.03, r0 = r * (1.34 + 0.04 * br), r1 = r * (i % 2 ? 1.62 : 1.82) + br * 1.5; g.beginPath(); g.moveTo(x + Math.cos(an) * r0, yy + Math.sin(an) * r0); g.lineTo(x + Math.cos(an) * r1, yy + Math.sin(an) * r1); g.stroke(); }
+  g.restore();
+  FACE.orb = { x, y, hit: Math.max(34, r * 1.7), maxY: LT };
 }
 // the ground of a kit face. false when the kit's pen is not on the page.
 function drawFaceBg() {
@@ -15270,7 +15323,9 @@ function drawFaceBg() {
     FACE.orb = { x: mx0, y: my0, hit: Math.max(34, mr * 1.4), maxY: LT };
     P.stars(ctx, { x: 0, y: TOPH, w: W, h: LT, weather: wx, t: tt, alpha: 0.25 + 0.75 * wx[3] });
     P.ridges(ctx, { x: 0, y: 0, w: W, h: H, weather: wx, t: tt, par: (WX.mx - 0.5) + MO.px * 0.4, base: [(LT * 0.8) / H, (LT * 0.93) / H, (LT * 1.05) / H], amp: [0.085, 0.065, 0.05] });
+    P.haze(ctx, { x: 0, y: LT * 0.62, w: W, h: LT * 0.5, weather: wx, amount: 0.035 + 0.045 * peak });   // air between the ridges, and it breathes with the sound
     WX.w = wx; drawWxParts(wxPal(), false); WX.w = w;   // fireflies, with rain or motes when the music calls them
+    P.vignette(ctx, { x: 0, y: 0, w: W, h: H, amount: 0.42 });
     return true;
   }
   // Hypermetapunk's horizon: toner bands down to a horizon inside the terrain, the banded sun standing on it, and the
@@ -15291,15 +15346,32 @@ function cycleFace() {
   const i = FACES.findIndex(f => f.id === skin), nx = FACES[(i + 1) % FACES.length].id;
   turnPage(() => setSkin(nx, true));
 }
-// the sun at dusk and the moon at night can be touched: the sun sets into the night, the moon gives way to the day
+// The lights can be touched, and the day goes round: the day's sun goes down into the dusk, the dusk sun sets into the
+// night, and the moon gives way to the day.
 function faceTap(px, py) {
-  const o = FACE.orb; if (!kitLook() || !o || FACE.setT || py > o.maxY || Math.hypot(px - o.x, py - o.y) > o.hit) return false;
-  if (skin === 'hm-dusk') {
-    FACE.setT = t; discover('x-sunset');
-    setTimeout(() => { FACE.setT = 0; if (skin === 'hm-dusk') turnPage(() => setSkin('df-night', true)); }, reduceMotion ? 0 : 820);
-  } else turnPage(() => setSkin('sb-daylight', true));
+  const o = FACE.orb; if (!faceLook() || !o || FACE.setT || py > o.maxY || Math.hypot(px - o.x, py - o.y) > o.hit) return false;
+  if (skin === 'df-night') { turnPage(() => setSkin('sb-daylight', true)); return true; }
+  const from = skin, to = from === 'hm-dusk' ? 'df-night' : 'hm-dusk';
+  FACE.setT = t; if (from === 'hm-dusk') discover('x-sunset');
+  setTimeout(() => { FACE.setT = 0; if (skin === from) turnPage(() => setSkin(to, true)); }, reduceMotion ? 0 : 820);
   return true;
 }
+// The face can keep your hours: day from 7, dusk from 17, night from 20. A face you choose by hand stays until the
+// light next changes.
+function clockFace() { const h = new Date().getHours(); return h >= 7 && h < 17 ? 'sb-daylight' : h >= 17 && h < 20 ? 'hm-dusk' : 'df-night'; }
+function faceClockTick(first) {
+  if (!SET.faceClock || REEL.on || MIR.depth > 0) return;
+  const f = clockFace(); if (f === FACE.clock) return;
+  const was = FACE.clock; FACE.clock = f; if (f === skin) return;
+  if (first || !entered) { setSkin(f, true); return; }
+  turnPage(() => setSkin(f, true)); if (was) discover('x-hours');
+}
+function setFaceClock(on, quiet) {
+  SET.faceClock = !!on; FACE.clock = ''; const s = $('sFaceClock'); if (s) s.checked = SET.faceClock;
+  if (SET.faceClock) { faceClockTick(false); if (!quiet) caption('the face keeps your hours now: day, dusk, night.', 2600); }
+  persistSoon();
+}
+setInterval(() => faceClockTick(false), 30000);
 function faceSeen(s) {
   FACE.orb = null; FACE.setT = 0;
   if (!entered || REEL.on || !FACES.some(f => f.id === s)) return;
@@ -15309,6 +15381,7 @@ function faceSeen(s) {
 }
 function facesUI() { document.querySelectorAll('#faceBtns .pill').forEach(b => { const on = b.dataset.face === skin; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); }); }
 document.querySelectorAll('#faceBtns .pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.face !== skin) turnPage(() => setSkin(b.dataset.face, true)); }));
+$('sFaceClock').addEventListener('change', e => setFaceClock(e.target.checked));
 
 // ===== the loop and the boot =====
 let perfAcc = 0, perfN = 0, perfT = 0;
@@ -15513,8 +15586,9 @@ function boot(hotData) {
   // AND SO 7 opens on paper: a Storeybrook look you pick is kept, while the older looks (a preset, a brook stone, the
   // older-looks row) last for the visit, so the page never reopens in one of them; a mirror copy opens in the look it was handed
   skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] || KIT_NAMES[savedSkin] ? savedSkin : 'sb-daylight';
+  if (SET.faceClock && !(MIR.depth > 0)) { FACE.clock = clockFace(); skin = FACE.clock; }   // the face that keeps your hours
   document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
-  inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
+  kitCanvas(ctx); kitCanvas(ctx2); inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
   $('stText').value = STORY;
   $('enterFine').insertAdjacentText('beforeend', ` there are ${CAT.length} things to find.`);
   checkUnlocks(true); renderGuide(); renderPresets(); scoreUI(); renderQuests(); saveNote(); reelUI();

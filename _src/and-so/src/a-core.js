@@ -302,7 +302,8 @@ const CAT = [
   ['x-table', 'any', 'ev', '', 'the table', 'a TV or e-paper on the table', 'windows you can drag, fold and turn to face the other side of a table.', 'open a TV or e-paper window in the mirror'],
   ['x-61', 'any', 'ev', '', 'as it was', 'opened 6.1', 'AND SO 6.1, frozen the night 7 began, playing in a window of 7.', 'open 6.1 in the mirror'],
   ['x-faces', 'any', 'ev', '', 'three faces', 'one state, many faces', 'day, night and dusk: three design kits drawing the same voices in the same valleys.', 'wear all three faces in one visit'],
-  ['x-sunset', 'any', 'ev', '', 'sundown', 'the sun goes down when you ask', 'touch the dusk sun and it sets behind the grid. the night comes up after it; touch the moon and it is day.', 'at dusk, touch the sun'],
+  ['x-sunset', 'any', 'ev', '', 'sundown', 'the sun goes down when you ask', 'touch the dusk sun and it sets behind the grid. the night comes up after it. every face has a light you can touch.', 'at dusk, touch the sun'],
+  ['x-hours', 'any', 'ev', '', 'kept your hours', 'the light changed while you played', 'the face followed your clock from one light to the next, and nothing in the music moved.', 'let the face follow your clock, and be here when the light changes'],
   ['x-look', 'any', 'ev', '', 'Storeybrook', 'a paper look', 'the same world printed in ink on watercolor paper, comic halftone, folded paper or knitted silk.', 'try a Storeybrook look'],
   ['x-skein', 'any', 'ev', '', 'the silk doll', 'Saelion, knitted', 'button eyes, copper braids, mint stitches. she never blinks, which means she has seen everything.', 'walk to SKEIN silk on the brook'],
   ['x-heard', 'any', 'ev', '', 'overheard', 'Saelion heard some words', 'the plain words come first. the mishearings come later, on purpose.', 'whisper something to Saelion, in the gamut'],
@@ -321,7 +322,7 @@ const SET = { hp: false, shim: 0.38, space: 0.62, sparkle: true, tease: 0.5, pac
   flip: true, tune: 0.5, ref: 440, reg: true, bells: true, wind: false, rain: false, train: false, frolic: false, normie: false, light: true, petForm: 'bunny', ui: 0, follow: 'harmony',
   view: 'mandala', cymShape: 'square', cymLines: true, cymPowder: false, x5d: false, x5dSpeed: 0.4, x5dDepth: 0.5, detect: false, motion: true, roll: true, tiltK: 0.5,
   // AND SO 7 · Everfallen: notes instead of drones, easy listening first, the hummer only when asked, words only when they matter
-  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true,
+  artic: 'pluck', bed: false, autoHum: false, easyStart: true, quiet: false, petEerie: true, earClaude: true, faceClock: false,
   // the reels run on into each other unless this is off
   reelAuto: true };
 const LIGHT = () => !!SET.light && !SET.frolic;

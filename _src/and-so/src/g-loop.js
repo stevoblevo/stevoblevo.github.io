@@ -201,8 +201,9 @@ function boot(hotData) {
   // AND SO 7 opens on paper: a Storeybrook look you pick is kept, while the older looks (a preset, a brook stone, the
   // older-looks row) last for the visit, so the page never reopens in one of them; a mirror copy opens in the look it was handed
   skin = MIR.depth > 0 && SKINS.includes(MIR.look) ? MIR.look : SB_LOOK[savedSkin] || KIT_NAMES[savedSkin] ? savedSkin : 'sb-daylight';
+  if (SET.faceClock && !(MIR.depth > 0)) { FACE.clock = clockFace(); skin = FACE.clock; }   // the face that keeps your hours
   document.body.dataset.skin = skin; applyLook(); document.body.classList.add('landing');
-  inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
+  kitCanvas(ctx); kitCanvas(ctx2); inkCanvas(ctx); quietCanvas(ctx); quietCanvas(ctx2); document.body.classList.toggle('quiet', !!SET.quiet);   // quiet wraps ink, so quiet hides the halos too
   $('stText').value = STORY;
   $('enterFine').insertAdjacentText('beforeend', ` there are ${CAT.length} things to find.`);
   checkUnlocks(true); renderGuide(); renderPresets(); scoreUI(); renderQuests(); saveNote(); reelUI();

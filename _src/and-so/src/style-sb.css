@@ -415,3 +415,11 @@ body[data-skin="df-night"] .sbi { --paper: #07110f; --surface: #0d1a17; --page: 
 body[data-skin="hm-dusk"] { --ground: #0b0618; --ink: #f7f2ff; --ink-soft: rgba(201, 189, 240, .94); --ink-faint: rgba(201, 189, 240, .64); --gold: #ff6fb5; --gold-soft: rgba(255, 111, 181, .42); --mint: #05ffa1; --rose: #ff2e88; --glass: rgba(22, 13, 46, .92); --glass-line: #3d2c70; --page: #211543; --line: #3d2c70; --ink-muted: #c9bdf0; --accent: #ff6fb5; --sap: #05ffa1 }
 body[data-skin="hm-dusk"] .sbi { --paper: #0b0618; --surface: #160d2e; --page: #211543; --line: #3d2c70; --ink: #f7f2ff; --ink-muted: #c9bdf0; --accent: #ff6fb5; --on-accent: #14061f; --cue: #05ffa1; --focus: #e8ff00 }
 body[data-skin="hm-dusk"] :is(#toast, #quests, #first) { box-shadow: 4px 4px 0 #ff2e88 }   /* the kit's slap: a hard offset, never over words */
+/* the instrument's own chrome (pills, section words, switches) in each kit's accent, as glasshouse and peachfall do */
+body[data-skin="hm-dusk"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(255, 111, 181, .8); background: rgba(255, 111, 181, .16); color: #f7f2ff }
+body[data-skin="hm-dusk"] :is(.sec, .tk, .qh) { color: rgba(5, 255, 161, .88) }
+body[data-skin="hm-dusk"] .sw:checked { background: rgba(255, 111, 181, .85) }
+body[data-skin="df-night"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-color: rgba(94, 242, 184, .7); background: rgba(94, 242, 184, .12); color: #e9f5ef }
+body[data-skin="df-night"] :is(.sec, .tk, .qh) { color: rgba(94, 242, 184, .85) }
+body[data-skin="df-night"] .sw:checked { background: rgba(94, 242, 184, .8) }
+body:is([data-skin="hm-dusk"], [data-skin="df-night"]) :is(#toast, #round, #result, #viewChip, #reelHud) { border-color: color-mix(in srgb, var(--gold) 45%, transparent) }

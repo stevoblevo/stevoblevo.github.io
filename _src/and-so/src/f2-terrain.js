@@ -369,7 +369,7 @@ function draw() {
   drawGlyphs(); drawSpag(); drawHarp(); drawFloaters();
   if (!paper) { ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H); }
   drawTip(); quietChord();
-  ctx3.clearRect(0, 0, W, H); if (skin === 'story') drawStory3(); else if (paper) drawPaper3();
+  ctx3.clearRect(0, 0, W, H); if (skin === 'story') drawStory3(); else if (paper) { drawPaper3(); drawDaySun(); }
   ctx2.clearRect(0, 0, W, H); drawPet(ctx2); if (typeof drawMag === 'function') drawMag(ctx2); drawGuards(ctx2); drawBubble(ctx2); drawRail(ctx2); drawReelFx(ctx2);
   drawPad();
 }

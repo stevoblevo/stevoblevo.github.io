@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10 · Three Faces.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.1 · Three Faces.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -70,6 +70,24 @@ The voices, valleys, finds and sound do not change when the face does (family pl
 - Two finds: `x-faces` (wear all three in one visit) and `x-sunset` (touch the dusk sun). 141 finds in all.
 - `__andso.face()` (with `?debug`) reports the skin and where the sun or moon stands.
 
+### 10.1: the whole scene in each kit's hand
+
+- **Kit inks on the canvas.** The drawing code writes the instrument's three inks (cream words, gold, mint) as night
+  colours in hundreds of places. `kitCanvas()` wraps `fillStyle`, `strokeStyle` and `shadowColor` on the world
+  canvases, and on a kit face `kitInk()` swaps those three for the kit's ink, accent and cue as they are set
+  (`KIT_INKS` in `zy-faces.js`). Voices keep their own colours: they are the state, not the face. To ink another colour,
+  add a pair to `KIT_INKS`; do not fork the drawing code per face.
+- **Lettering.** At dusk the chord's name is set with `P.chrome` (`faceChord()`, called from `drawReadout`).
+- **Night.** `P.haze` between the ridges breathes with the sound; `P.vignette` holds the eye in the middle.
+- **Day.** `drawDaySun()` paints a watercolour sun on the paper canvas (`ctx3`). Storeybrook's pen has no sun of its own
+  yet; if it gains one, call it here.
+- **The lights go round by touch.** The day's sun goes down into the dusk, the dusk sun sets into the night, the moon
+  gives way to the day (`faceTap()`).
+- **The clock.** "the face follows your clock" in the gamut (`SET.faceClock`, off by default): day from 7, dusk from 17,
+  night from 20. A face chosen by hand stays until the light next changes. The find `x-hours` is for being here when
+  it changes. 142 finds in all.
+- The instrument's own chrome (pills, section words, switches) takes each kit's accent in `style-sb.css`.
+
 ## Where AND SO is published (16 Nov 2026)
 
 - `stevoblevo.github.io/and-so/` is this source, built. Every version keeps its address under `/and-so/v*/`.
@@ -87,8 +105,8 @@ The voices, valleys, finds and sound do not change when the face does (family pl
 
 ## Next (ideas, not promises)
 
-- 10.x: draw the rest of the scene with the pens too (the mandala's ink, voices and labels from `P.inks`), and give
-  the day a pen-drawn ground from `Storeybrook.pen` so all three faces are drawn the same way.
+- 10.x: gradients still carry the night colours (only solid styles are inked); a `sun` for `Storeybrook.pen` so the
+  day's sun comes from the kit; `P.misreg` for the landing title at dusk.
 - Carry the three faces onto the saelion.co line once its first-steps port (pull request 38) is promoted.
 - A mastery ladder on the board: today's find and round times as their own columns.
 - Bring the recorded story voices from the saelion.co line into `y-voice.js`.

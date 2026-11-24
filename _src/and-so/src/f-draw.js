@@ -394,7 +394,7 @@ function drawReadout() {
   const y0 = Math.min(MY + MR * 1.36 + 28, LT - 52 - (phone ? 0 : 26));
   ctx.save(); ctx.textAlign = 'center';
   if (chordNow) {
-    ctx.fillStyle = 'rgba(248,232,204,0.95)'; ctx.font = fnt(24 * S, 's', 'italic'); ctx.fillText(chordNow.str, MX, y0);
+    if (!faceChord(chordNow.str, MX, y0)) { ctx.fillStyle = 'rgba(248,232,204,0.95)'; ctx.font = fnt(24 * S, 's', 'italic'); ctx.fillText(chordNow.str, MX, y0); }
     ctx.fillStyle = 'rgba(234,220,198,0.55)'; ctx.font = fnt(10 * S + 1, 'm');
     ctx.fillText(chordNow.name + (chordNow.shimmer ? ' · shimmering on purpose' : chordNow.beatless ? ' · beatless' : ''), MX, y0 + 18 * S);
   } else if (entered) {
