@@ -11,7 +11,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, music: 0.7, sfx: 0.9, mute: false, micro: false, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
 cfg.hero = U.clamp(cfg.hero | 0, 0, LL.HEROES.length - 1); cfg.diff = U.clamp(cfg.diff | 0, 0, 2);
@@ -35,10 +35,10 @@ function toggleInk() { if (cfg.look === 'ink') setLook(R.LOOKS[cfg.lookPrev] && 
 function attract() {
   W = S.newWorld({ auto: true, difficulty: 1, seed: (Date.now() & 0xffff) + 3 });
   W.fx.length = 0; restoreLook(); R.build(W);
-  view.mode = 'attract'; view.target = null; state = 'title'; I.play = false;
+  view.mode = 'attract'; view.target = null; state = 'title'; I.play = false; A.duck(false); A.cue('title');
 }
 function play(auto) {
-  A.init(); A.setVol(cfg.vol); A.ui('ok');
+  A.init(); A.ui('ok'); A.duck(false); A.cue('valley');
   W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look, mode: cfg.mode, lean: !auto && cfg.lean, dream: !auto && cfg.dream }); speed = 1;
   lens0 = W.lens; restoreLook(); R.build(W); UI.startHUD(W);
   view.mode = 'play'; view.target = W.player; view.yaw = 0; view.pitch = -0.08; view.zoom = 0;
@@ -46,8 +46,8 @@ function play(auto) {
   coach.step = (!auto && !W.lean && I.device === 'touch' && !cfg.coached) ? 0 : -1; coach.x = W.player.x; coach.z = W.player.z; coach.t = 0; coach.look = 0; UI.coach('');
   if (!auto && !W.lean) I.lock();
 }
-function pause() { if (state !== 'play' || W.over) return; if (UI.screen === 'shop') UI.toggleShop(false); state = 'pause'; pausedAt = performance.now(); I.play = false; UI.showPause(true); I.unlock(); }
-function resume() { if (state !== 'pause') return; state = 'play'; I.play = true; UI.showPause(false); I.lock(); last = performance.now(); }
+function pause() { if (state !== 'play' || W.over) return; if (UI.screen === 'shop') UI.toggleShop(false); state = 'pause'; pausedAt = performance.now(); I.play = false; UI.showPause(true); I.unlock(); A.duck(true); }
+function resume() { if (state !== 'pause') return; state = 'play'; I.play = true; UI.showPause(false); I.lock(); last = performance.now(); A.duck(false); }
 function quit() { I.unlock(); UI.showTitle(); attract(); }
 
 function playerControl(dt) {
@@ -180,10 +180,16 @@ function frame(now) {
   if (state === 'play' && !cfg.low && !autoLowered) { if (dt > 1 / 26) slowFrames++; else slowFrames = Math.max(0, slowFrames - 2); if (slowFrames > 120) { autoLowered = true; R.setQuality(true); } }
 }
 
+/* SOUND SETTINGS (0.21): master, music and effects volumes, mute, and the 31-step tuning switch. Browsers only start
+   audio after a gesture, so the first tap or key anywhere starts it (and the title music); the mute button and M work
+   on every screen. */
+function soundApply() { A.setVol(cfg.vol, cfg.music, cfg.sfx); A.setMute(cfg.mute); A.setMicro(cfg.micro); UI.muteShow(cfg.mute); }
+function toggleMute() { cfg.mute = !cfg.mute; save(); A.init(); soundApply(); }
+function firstGesture(ev) { if (ev && ev.target && ev.target.closest && ev.target.closest('.mute')) return; A.init(); soundApply(); }
 function boot() {
   UI.init({
     play: play, pause: pause, resume: resume, quit: quit, save: save,
-    apply: function () { A.setVol(cfg.vol); R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet); },
+    apply: function () { soundApply(); R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet); },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
     look: setLook, ink: toggleInk, view: nextView,
     call: function (l) { if (state === 'play') S.call(l); }, echo: function () { if (state === 'play') S.echo(); }, fast: function () { speed = speed >= 4 ? 1 : speed * 2; return speed; }, leanFold: function () { if (state === 'play') S.leanFold(); },
@@ -192,6 +198,10 @@ function boot() {
     auto: function () { S.setAuto(!W.auto); counted = false; document.body.classList.toggle('lean', !!W.lean); document.getElementById('bAuto').textContent = W.auto ? 'Take the wheel' : 'Let it play itself'; resume(); },
     full: function () { try { const el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) { const p = el.requestFullscreen(); if (p && p.catch) p.catch(function () {}); } } catch (e) {} }
   });
+  soundApply();
+  ['pointerdown', 'keydown', 'touchend'].forEach(function (k) { document.addEventListener(k, firstGesture, { capture: true, passive: true }); });
+  document.addEventListener('keydown', function (ev) { if (ev.code === 'KeyM' && !ev.repeat && !(ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName))) toggleMute(); });
+  document.querySelectorAll('.mute').forEach(function (b) { b.addEventListener('click', function (ev) { ev.stopPropagation(); toggleMute(); b.blur(); }); });
   I.init(canvas, app);
   document.addEventListener('click', function (ev) { const b = ev.target.closest ? ev.target.closest('#hud button') : null; if (b) b.blur(); });
   I.onUnlock = function () { if (state === 'play' && UI.screen === null && !W.over && !W.auto) pause(); };

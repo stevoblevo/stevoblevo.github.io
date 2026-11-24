@@ -66,6 +66,15 @@ button { font: inherit; color: inherit; }
 #score b { font-family: var(--f-display); font-weight: 400; font-size: 21px; font-variant-numeric: tabular-nums; }
 #clock { font-family: var(--f-display); font-size: 19px; font-variant-numeric: tabular-nums; color: var(--paper); min-width: 3.2em; text-align: center; }
 #topR { position: absolute; right: var(--sr); top: var(--st); display: flex; align-items: center; gap: 8px; }
+/* 0.21 mute: one button over the title and menus, one in the match HUD; same state, key M */
+#bMute { position: absolute; z-index: 40; right: var(--sr); top: calc(var(--st) + 6px); width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.28); background: rgba(12,10,28,0.55); color: #f3ead8; display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background 0.2s, transform 0.15s; }
+#bMute:hover { background: rgba(40,30,70,0.75); transform: scale(1.06); }
+#hud:not([hidden]) ~ #bMute { display: none; }
+.mute svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mute svg .spk { fill: currentColor; stroke: none; }
+.mute .off { display: none; } .mute[aria-pressed="true"] .off { display: inline; } .mute[aria-pressed="true"] .on { display: none; }
+#bMuteH { padding: 4px 8px; display: inline-grid; place-items: center; }
+#bMuteH svg { width: 18px; height: 18px; }
 #souls { font-family: var(--f-display); font-size: 21px; font-variant-numeric: tabular-nums; color: var(--gold); text-shadow: 0 1px 3px var(--shc); display: inline-flex; align-items: center; gap: 6px; }
 #souls i { width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg); background: radial-gradient(circle at 35% 30%, #fff, var(--gold) 55%, #8a5a1c); box-shadow: 0 0 8px rgba(233, 180, 76, 0.7); }
 #souls.can { animation: can 1.2s infinite; }
@@ -293,7 +302,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="nums"></div>
     <canvas id="mini" width="208" height="352" aria-label="Map"></canvas>
     <div id="score"><span class="t0"><span class="nm">Reign </span><b id="k0">0</b></span><span id="clock">0:00</span><span class="t1"><b id="k1">0</b><span class="nm"> Hush</span></span><div id="moons" title="The moons fill until the rain comes down red"><i></i><i></i><i></i><i></i><i></i></div></div>
-    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bEcho" title="Replay your last seconds beside you (C)">Echo</button><button class="btn small" id="bInk" title="Change the view (V)">View</button><button class="btn small" id="bShop">Shop</button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
+    <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bEcho" title="Replay your last seconds beside you (C)">Echo</button><button class="btn small" id="bInk" title="Change the view (V)">View</button><button class="btn small" id="bShop">Shop</button><button class="btn small mute" id="bMuteH" aria-pressed="false" aria-label="Mute (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z"/><path class="on" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.5 6a8 8 0 0 1 0 12"/><path class="off" d="M16 9l6 6M22 9l-6 6"/></svg></button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
     <div id="feed"></div>
     <div id="banner"></div>
     <div id="cross"><u></u><i></i><div id="hitm"></div></div>
@@ -330,6 +339,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="dead" hidden><div><h2 id="deadH">You came apart.</h2><p>Re-threading in <b id="deadT">0</b></p><button class="btn" id="bDeadShop">Spend souls while you wait</button></div></div>
   </div>
 
+  <button class="mute" id="bMute" aria-pressed="false" aria-label="Mute (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z"/><path class="on" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.5 6a8 8 0 0 1 0 12"/><path class="off" d="M16 9l6 6M22 9l-6 6"/></svg></button>
   <section id="title" class="screen">
     <div class="col">
       <h1>Liv<em>loch</em></h1>
@@ -378,7 +388,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
       <p id="worlds">Other doors: </p>
-      <footer>Livloch 0.20 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · sounds tuned in 31 equal steps</footer>
+      <footer>Livloch 0.21 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · part of <a href="https://saelion.co">Saelion</a> · music made with ElevenLabs Music</footer>
     </div>
   </section>
 
@@ -403,6 +413,10 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
       <div class="opt">
         <label for="oSens">Look speed <input type="range" id="oSens" min="0.3" max="2.5" step="0.05" value="1"></label>
         <label for="oVol">Volume <input type="range" id="oVol" min="0" max="1" step="0.05" value="0.6"></label>
+        <label for="oMusic">Music <input type="range" id="oMusic" min="0" max="1" step="0.05" value="0.7"></label>
+        <label for="oSfx">Sound effects <input type="range" id="oSfx" min="0" max="1" step="0.05" value="0.9"></label>
+        <label for="oMute">Mute everything (M) <input type="checkbox" id="oMute"></label>
+        <label for="oMicro">Saelion tuning: effects in 31 steps to the octave <input type="checkbox" id="oMicro"></label>
         <label for="oInv">Invert look up/down <input type="checkbox" id="oInv"></label>
         <label for="oAuto">Fire by itself when on target <input type="checkbox" id="oAuto"></label>
         <label for="oAssist">Aim help (touch and controller) <input type="checkbox" id="oAssist"></label>

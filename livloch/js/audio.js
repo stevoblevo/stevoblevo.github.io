@@ -1,50 +1,72 @@
-/* LIVLOCH · audio: small WebAudio synth, pitched in 31 equal steps to the octave.
+/* LIVLOCH · audio: a recorded score and a small WebAudio synth for effects.
 
-   DESIGN
-   - No samples. Every sound is a few oscillators or filtered noise, so the game stays one small folder.
-   - All pitches come from edo(n) = 110 Hz * 2^(n/31). In 31-EDO, 10 steps is a near-just major third, 18 a fifth,
-     25 the harmonic seventh; 0-10-18-25 is close to 4:5:6:7. Good news rises through those, bad news falls.
-   - Securing soul orbs climbs a ladder of those steps while a combo lasts. That ladder is the seed of "thread tuning".
-   - Nobody has listened to this. Levels were set from offline measurement (A.offline, docs/evidence/audio-signal.txt). */
+   MUSIC (0.21)
+   - The score is eight recorded cues in art/music/ (made with ElevenLabs Music from prompts in docs/MUSIC.md): a title
+     theme, two takes of the calm match music and two of the battle music that alternate so a long match doesn't loop
+     one track, a Red Rain cue, and victory and defeat stingers. Home key A major, tense cues in its relative F sharp
+     minor, so the effects (below) sit in the same key.
+   - Two decks crossfade: a cue change fades over about 2.5 s, and a cue loops by starting its next take on the other
+     deck a few seconds before the end. Stingers play over the top while the loop fades out.
+   - What plays follows the model: title outside a match; in a match the calm music, the battle music while the fight
+     is hot (hurt recently, enemy heroes close, or a structure falling), the Red Rain cue while W.red > 0; the stinger
+     on 'over'. Hysteresis keeps it from flapping.
+   - Volumes: master x (music | effects), and a mute that silences everything at once (button always on screen, key M).
+
+   EFFECTS
+   - No samples. Every sound is a few oscillators or filtered noise.
+   - Pitches come from edo(n), written in 31 equal steps to the octave (10 steps a major third, 18 a fifth, 25 the
+     harmonic seventh). Since 0.21 they are rounded to the nearest ordinary semitone unless the player turns on
+     "Saelion tuning" in Settings, so by default every chime is in tune with the score (A major).
+   - Securing soul orbs climbs a ladder of those steps while a combo lasts.
+   - Nobody in this project has listened to the mix on real speakers yet; levels were set by measurement
+     (LUFS for the score, A.offline for effects). */
 (function () {
 'use strict';
 const LL = window.LL;
-const A = LL.audio = { on: false, vol: 0.6 };
-let ctx = null, master = null, nbuf = null, drone = null, combo = 0, comboT = 0, shotBudget = 0, lastT = 0;
-const edo = n => 110 * Math.pow(2, n / 31);
+const A = LL.audio = { on: false, vol: 0.6, music: 0.7, sfx: 0.9, muted: false, micro: false };
+let ctx = null, master = null, sfxBus = null, musBus = null, nbuf = null, drone = null, combo = 0, comboT = 0, shotBudget = 0, lastT = 0;
+const edo = n => 110 * Math.pow(2, A.micro ? n / 31 : Math.round(n * 12 / 31) / 12);
 const LADDER = [31, 36, 41, 49, 54, 59, 62, 67, 72, 80, 85, 93];
 
 A.init = function () {
   if (ctx) { if (ctx.state === 'suspended') ctx.resume().catch(function () {}); return; }
   try {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-    ctx = new AC(); master = ctx.createGain(); master.gain.value = A.vol;
+    ctx = new AC(); master = ctx.createGain(); master.gain.value = A.muted ? 0 : A.vol;
     const comp = ctx.createDynamicsCompressor(); master.connect(comp); comp.connect(ctx.destination);
+    sfxBus = ctx.createGain(); sfxBus.gain.value = A.sfx; sfxBus.connect(master);
+    musBus = ctx.createGain(); musBus.gain.value = A.music; musBus.connect(master);
     nbuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    A.on = true; startDrone();
+    A.on = true; if (A.micro) startDrone(); musicStart();
   } catch (e) { ctx = null; }
 };
 /* For evidence runs: render one event offline, with no drone, and report its level. It measures; it does not listen. */
 A.offline = function (ev, W, cam, secs) {
   const OC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if (!OC) return Promise.resolve(null);
-  const keep = { ctx: ctx, master: master, nbuf: nbuf, drone: drone, on: A.on, combo: combo, budget: shotBudget };
+  const keep = { ctx: ctx, master: master, sfxBus: sfxBus, nbuf: nbuf, drone: drone, on: A.on, combo: combo, budget: shotBudget };
   const oc = new OC(1, Math.floor(44100 * (secs || 2)), 44100);
-  ctx = oc; master = oc.createGain(); master.gain.value = 1; master.connect(oc.destination); drone = null;
+  ctx = oc; master = oc.createGain(); master.gain.value = 1; master.connect(oc.destination); sfxBus = master; drone = null;
   nbuf = oc.createBuffer(1, 44100, 44100); const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   A.on = true; shotBudget = 6; let threw = null;
   try { A.fx(ev, W, cam); } catch (e) { threw = e.message; }
-  ctx = keep.ctx; master = keep.master; nbuf = keep.nbuf; drone = keep.drone; A.on = keep.on; combo = keep.combo; shotBudget = keep.budget;
+  ctx = keep.ctx; master = keep.master; sfxBus = keep.sfxBus; nbuf = keep.nbuf; drone = keep.drone; A.on = keep.on; combo = keep.combo; shotBudget = keep.budget;
   return oc.startRendering().then(function (buf) { const x = buf.getChannelData(0); let pk = 0, acc = 0, last = 0; for (let i = 0; i < x.length; i++) { const a = Math.abs(x[i]); if (a > pk) pk = a; acc += a * a; if (a > 0.002) last = i; } return { peak: pk, rms: Math.sqrt(acc / x.length), seconds: last / 44100, threw: threw }; });
 };
-A.setVol = function (v) { A.vol = v; if (master) master.gain.value = v; };
+A.setVol = function (v, music, sfx) {
+  A.vol = v; if (music != null) A.music = music; if (sfx != null) A.sfx = sfx;
+  if (!ctx) return; const t = ctx.currentTime;
+  master.gain.setTargetAtTime(A.muted ? 0 : A.vol, t, 0.05); musBus.gain.setTargetAtTime(A.music, t, 0.05); sfxBus.gain.setTargetAtTime(A.sfx, t, 0.05);
+};
+A.setMute = function (m) { A.muted = !!m; if (ctx) master.gain.setTargetAtTime(A.muted ? 0 : A.vol, ctx.currentTime, 0.04); };
+A.setMicro = function (m) { A.micro = !!m; if (!ctx) return; if (A.micro && !drone) startDrone(); else if (!A.micro && drone) { drone.g.gain.setTargetAtTime(0, ctx.currentTime, 0.4); const d = drone; drone = null; setTimeout(function () { try { d.g.disconnect(); } catch (e) {} }, 2500); } };
 function tone(f, dur, type, g, slide, delay) {
   if (!A.on || g <= 0.002) return;
   const t = ctx.currentTime + (delay || 0), o = ctx.createOscillator(), a = ctx.createGain();
   o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
   if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, slide), t + dur);
   a.gain.setValueAtTime(0.0001, t); a.gain.exponentialRampToValueAtTime(g, t + 0.006); a.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(a); a.connect(master); o.start(t); o.stop(t + dur + 0.02);
+  o.connect(a); a.connect(sfxBus); o.start(t); o.stop(t + dur + 0.02);
 }
 function noise(dur, g, f, q, type, delay, slide) {
   if (!A.on || g <= 0.002) return;
@@ -52,21 +74,75 @@ function noise(dur, g, f, q, type, delay, slide) {
   s.buffer = nbuf; s.loop = true; fl.type = type || 'bandpass'; fl.frequency.setValueAtTime(f, t); fl.Q.value = q || 1;
   if (slide) fl.frequency.exponentialRampToValueAtTime(slide, t + dur);
   a.gain.setValueAtTime(g, t); a.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  s.connect(fl); fl.connect(a); a.connect(master); s.start(t, Math.random()); s.stop(t + dur + 0.02);
+  s.connect(fl); fl.connect(a); a.connect(sfxBus); s.start(t, Math.random()); s.stop(t + dur + 0.02);
 }
 function bell(n, g, dur) { const f = edo(n); [1, 2.01, 2.76, 5.4, 8.9].forEach(function (p, i) { tone(f * p, dur / (1 + i * 0.5), 'sine', g / (1 + i * 1.3)); }); }
 function startDrone() {
   const g = ctx.createGain(); g.gain.value = 0.05; const fl = ctx.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 220; fl.Q.value = 2;
   [0, 18, 31 + 9].forEach(function (n, i) { const o = ctx.createOscillator(); o.type = i === 2 ? 'triangle' : 'sawtooth'; o.frequency.value = edo(n - 31) * (1 + i * 0.002); o.connect(fl); o.start(); });
   const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 0.07; lg.gain.value = 70; lfo.connect(lg); lg.connect(fl.frequency); lfo.start();
-  fl.connect(g); g.connect(master); drone = { g: g, fl: fl };
+  fl.connect(g); g.connect(sfxBus); drone = { g: g, fl: fl };
 }
 A.ui = function (kind) {
   if (kind === 'ok') { tone(edo(62), 0.09, 'triangle', 0.12); tone(edo(72), 0.12, 'triangle', 0.1, 0, 0.06); }
   else if (kind === 'no') tone(edo(20), 0.14, 'square', 0.06, edo(14));
   else tone(edo(54), 0.05, 'triangle', 0.08);
 };
+/* MUSIC ------------------------------------------------------------------------------------------------------- */
+const CUES = { title: ['title'], valley: ['valley-1', 'valley-2'], battle: ['battle-1', 'battle-2'], red: ['red'], win: ['win'], lose: ['lose'] };
+const STING = { win: 1, lose: 1 }, LVL = { title: 0.9, valley: 0.8, battle: 0.85, red: 0.9, win: 1, lose: 1.15 };
+const XF = 2.6, LOOPXF = 4;
+let decks = [], deckI = 0, cue = null, want = 'title', take = {}, sting = null, after = null, heat = 0, battleT = 0, duck = 1, timer = 0;
+A.base = 'art/music/';
+function deck() {
+  const el = new Audio(); el.preload = 'auto'; el.crossOrigin = 'anonymous';
+  const d = { el: el, g: ctx.createGain(), name: null, fading: false };
+  try { ctx.createMediaElementSource(el).connect(d.g); } catch (e) { d.direct = true; }
+  d.g.gain.value = 0; d.g.connect(musBus); return d;
+}
+function fadeTo(d, v, secs) { const t = ctx.currentTime; d.g.gain.cancelScheduledValues(t); d.g.gain.setValueAtTime(d.g.gain.value, t); d.g.gain.linearRampToValueAtTime(v, t + secs); if (d.direct) d.el.volume = Math.min(1, v); }
+function startOn(d, name, lvl, secs) {
+  d.name = name; d.el.src = A.base + name + '.mp3'; d.el.currentTime = 0; d.fading = false;
+  const p = d.el.play(); if (p && p.catch) p.catch(function () {}); fadeTo(d, lvl * duck, secs);
+}
+function stopDeck(d, secs) { if (!d || !d.name) return; d.fading = true; fadeTo(d, 0, secs); const el = d.el, nm = d.name; setTimeout(function () { if (d.fading && d.name === nm) { el.pause(); d.name = null; } }, secs * 1000 + 120); }
+function nextTake(c) { const L = CUES[c]; take[c] = ((take[c] == null ? -1 : take[c]) + 1) % L.length; return L[take[c]]; }
+function play(c, secs) {
+  if (!ctx || !decks.length) return; const cur = decks[deckI];
+  if (STING[c]) { if (!sting) sting = deck(); stopDeck(cur, 1.2); cue = c; startOn(sting, CUES[c][0], LVL[c], 0.05); sting.el.onended = function () { sting.name = null; cue = null; if (after) A.cue(after); }; return; }
+  deckI = 1 - deckI; const nd = decks[deckI]; stopDeck(cur, secs); cue = c; startOn(nd, nextTake(c), LVL[c], secs);
+}
+function musicStart() { if (!ctx) return; decks = [deck(), deck()]; timer = setInterval(musicTick, 250); if (want) play(want, 1.5); }
+/* Every quarter second: crossfade a cue into its next take before it runs out, and follow the wanted cue. */
+function musicTick() {
+  if (!ctx || ctx.state !== 'running') return;
+  if (want && want !== cue && !(sting && sting.name)) play(want, XF);
+  const d = decks[deckI]; if (!d || !d.name || !cue || STING[cue]) return;
+  const el = d.el; if (el.duration && el.currentTime > el.duration - LOOPXF) play(cue, LOOPXF);
+}
+/* A.cue(name): what the model says should be playing. 'title', 'valley', 'battle', 'red', or a stinger 'win'/'lose'
+   followed by `then` once it ends. */
+A.cue = function (c, then) { if (STING[c]) { after = then || 'title'; want = null; if (ctx && decks.length) play(c); else want = then || 'title'; return; } want = c; };
+A.duck = function (on) { duck = on ? 0.45 : 1; if (!ctx) return; decks.forEach(function (d) { if (d.name && !d.fading) fadeTo(d, LVL[cue] * duck, 0.4); }); };
+A.state = function () { return { cue: cue, want: want, heat: +heat.toFixed(2), decks: decks.map(function (d) { return d.name ? d.name + '@' + d.el.currentTime.toFixed(1) : '-'; }) }; };
+/* In a match: how hot is the fight around the player? Hurt in the last 4 s, a crowd of Hush within about 24 m (a
+   hollow counts as four), a structure falling nearby. Battle music comes in above 0.55 held for a second and leaves after 7 s below 0.25. */
+function musicFrame(dt, W) {
+  const p = W.player; if (!p) return;
+  if (W.over) return;
+  let h = 0;
+  if (W.t - (p.lastHurt == null ? -99 : p.lastHurt) < 4) h = 1;
+  let n = 0; const T = W.troopers || [];
+  for (let i = 0; i < T.length; i++) { const o = T[i]; if (o.team !== p.team && o.alive && Math.abs(o.x - p.x) < 24 && Math.abs(o.z - p.z) < 24) n += o.big ? 4 : 1; }
+  for (let i = 0; i < W.heroes.length; i++) { const o = W.heroes[i]; if (o.team !== p.team && o.alive && Math.hypot(o.x - p.x, o.z - p.z) < 28) n += 4; }
+  h = Math.max(h, Math.min(1, n / 7) * 0.8);
+  heat += (h - heat) * Math.min(1, dt * (h > heat ? 3 : 0.6));
+  if (heat > 0.55) battleT = Math.min(battleT + dt, 8); else if (heat < 0.25) battleT = Math.max(0, battleT - dt * 0.15); 
+  const fight = (want === 'battle') ? (heat > 0.25 || battleT > 0.9) : (heat > 0.55 && battleT > 1);
+  if (W.red > 0) want = 'red'; else want = fight ? 'battle' : 'valley';
+}
 A.frame = function (dt, W) {
+  if (W) musicFrame(dt, W);
   if (!A.on) return;
   comboT -= dt; if (comboT <= 0) combo = 0;
   shotBudget = Math.min(6, shotBudget + dt * 14);
@@ -106,7 +182,7 @@ A.fx = function (e, W, cam) {
       else bell(e.victim.team === 0 ? 22 : 40, 0.07, 1);
       break;
     }
-    case 'structdown': noise(1.4, 0.4, 700, 0.6, 'lowpass', 0, 60); bell(e.u.team === 0 ? 9 : 18, 0.22, 3); bell(e.u.team === 0 ? 0 : 31, 0.16, 3.5); break;
+    case 'structdown': if (near(e.u.x, e.u.z, 60) > 0.3) heat = Math.max(heat, 0.8); noise(1.4, 0.4, 700, 0.6, 'lowpass', 0, 60); bell(e.u.team === 0 ? 9 : 18, 0.22, 3); bell(e.u.team === 0 ? 0 : 31, 0.16, 3.5); break;
     case 'explode': noise(0.35, 0.3 * near(e.x, e.z, 60), 900, 0.7, 'lowpass', 0, 120); break;
     case 'nova': noise(0.3, 0.25 * near(e.x, e.z, 60), 1500, 1, 'bandpass', 0, 300); tone(edo(31), 0.3, 'sine', 0.12 * near(e.x, e.z, 60), edo(13)); break;
     case 'toll': bell(0, 0.4 * near(e.x, e.z, 90), 3.5); noise(0.7, 0.3 * near(e.x, e.z, 90), 500, 0.6, 'lowpass', 0, 80); break;
@@ -120,7 +196,7 @@ A.fx = function (e, W, cam) {
     case 'buy': if (e.u === pl) { tone(edo(62), 0.12, 'sine', 0.14); tone(edo(80), 0.2, 'sine', 0.12, 0, 0.09); } break;
     case 'level': if (e.u === pl) [49, 59, 67, 80].forEach((n, i) => tone(edo(n), 0.2, 'sine', 0.1, 0, i * 0.06)); break;
     case 'respawn': if (e.u === pl) bell(49, 0.12, 1.4); break;
-    case 'over': if (e.winner === 0) [31, 41, 49, 59, 62, 72, 80, 93].forEach((n, i) => tone(edo(n), 0.9, 'triangle', 0.13, 0, i * 0.12)); else [62, 59, 49, 44, 31, 22, 13, 0].forEach((n, i) => tone(edo(n), 0.9, 'triangle', 0.12, 0, i * 0.16)); break;
+    case 'over': A.cue(e.winner === 0 && !e.fallen ? 'win' : 'lose', 'title'); break; // the recorded stinger replaces the old synth arpeggio
     case 'fray': case 'gutter': bell(13, 0.2, 3); break;
     case 'fruit': { const big = !!LL.C.FRUIT_INFO[e.kind].big; if (!e.p && !big) break; const st = big ? [31, 41, 49, 59, 72] : { lemon: [62, 72, 80], hips: [49, 59, 67], lime: [54, 64, 72] }[e.kind]; st.forEach((n, i) => tone(edo(n), 0.22, 'triangle', 0.16, 0, i * 0.07)); if (big) bell(31, 0.2, 2.4); } break;
     case 'fruitripe': if (e.lens) bell(49, 0.1, 1.8); break;
