@@ -17,6 +17,7 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', 
 UI.init = function (handlers) {
   H = handlers;
   const cfg = LL.cfg;
+  hatHudInit(); // 0.26 guard: Dora's hat and the touch Hat button
   // heroes
   const hw = $('heroes');
   LL.HEROES.forEach(function (d, i) {
@@ -159,12 +160,42 @@ function show(name) {
 }
 UI.show = function (name) { show(name); }; // 0.23 wardrobe: js/wardrobe.js opens its own screen (#ward) through this
 UI.showTitle = function () { $('hud').hidden = true; document.body.classList.remove('lean'); show('title'); UI.record(); if (UI.modeLine) UI.modeLine(); };
+
+/* 0.26 shots: the ammo row. One icon in the shape of the gun's shot per round (or per few rounds for a big magazine, at most
+   AMMO_MAX icons); full ones in the hero's colour, spent ones faint; while reloading they fill from the left. */
+const AMMO_MAX = 14, AMMO_SHAPES = {
+  dora: '<circle cx="5" cy="14" r="4.3"/><path d="M5 1.5 7.6 8H2.4z" opacity=".7"/>',
+  anna: '<rect x="3.9" y="7" width="2.2" height="14.5" rx="1"/><rect x="0.8" y="1.5" width="8.4" height="5.6" rx="1.2"/>',
+  myra: '<rect x="0.8" y="1.5" width="8.4" height="3.4" rx="1.2"/><rect x="2.8" y="4.5" width="4.4" height="12" rx="1"/><rect x="0.8" y="16.1" width="8.4" height="3.4" rx="1.2"/><path d="M7 19 8.6 22" stroke="currentColor" stroke-width="1" fill="none"/>',
+  skein: '<path d="M4.4 3.5h1.2v14.6L5 22l-.6-3.9z"/><ellipse cx="5" cy="3.8" rx="1.5" ry="2.4" fill="none" stroke="currentColor" stroke-width=".9"/>',
+  rook: '<path d="M5 1.5 9 10.5 5 20.5 1 10.5z"/><path d="M5 7.5 6.8 11 5 15 3.2 11z" class="ic2"/>'
+};
+let ammoPer = 1, ammoIcons = [], ammoKey = '', relMax = 0;
+function ammoBuild(d) {
+  const row = $('ammoI'); if (!row) return;
+  const mag = d.gun.mag; ammoPer = Math.ceil(mag / AMMO_MAX); const n = Math.ceil(mag / ammoPer);
+  const sh = AMMO_SHAPES[d.id] || AMMO_SHAPES.dora; let h = '';
+  for (let i = 0; i < n; i++) h += '<svg viewBox="0 0 10 23" aria-hidden="true">' + sh + '</svg>';
+  row.innerHTML = h; row.dataset.hero = d.id; row.style.setProperty('--n', n);
+  ammoIcons = Array.prototype.slice.call(row.children); ammoKey = ''; relMax = 0;
+}
+function ammoRow(p) {
+  if (!ammoIcons.length) return;
+  let have = p.ammo;
+  if (p.reloadT > 0) { relMax = Math.max(relMax, p.reloadT); have = p.magSize * (1 - p.reloadT / (relMax || 1)); } else relMax = 0;
+  const key = Math.round(have * 4) + (p.reloadT > 0 ? 'r' : ''); if (key === ammoKey) return; ammoKey = key;
+  for (let i = 0; i < ammoIcons.length; i++) {
+    const f = Math.max(0, Math.min(1, (have - i * ammoPer) / ammoPer)); ammoIcons[i].style.opacity = (0.2 + 0.8 * f).toFixed(2);
+    ammoIcons[i].classList.toggle('on', f >= 0.99);
+  }
+}
 UI.startHUD = function (w) {
   W = w; const p = W.player, d = p.def;
   $('hud').hidden = false; show(null);
   $('hud').style.setProperty('--hc', d.css);
   for (let i = 0; i < 3; i++) { const b = $('ab' + i); b.querySelector('span').textContent = d.ab[i].name; b.title = d.ab[i].name + ': ' + d.ab[i].desc; }
   $('gunN').textContent = d.gun.name;
+  ammoBuild(d); // 0.26 shots: a row of icons in the gun's shape
   $('feed').innerHTML = ''; $('dead').hidden = true; lastSouls = -1; hurt = 0;
   nums.forEach(n => { n.life = 0; n.el.style.opacity = 0; });
   document.body.classList.toggle('lean', !!W.lean); dreamSeen = []; dreamQ = []; dreamT = 0; wasMercy = false; $('dreamCard').hidden = true; $('lFast').hidden = !W.dream; $('lFast').textContent = '1×'; $('calls').hidden = true;
@@ -198,6 +229,7 @@ function sysOf(e) {
     case 'fruit': return C.FRUIT_INFO[e.kind].big ? 'bigfruit' : 'fruit'; case 'relit': return e.recovered ? 'relit' : null;
     case 'dream': return e.sys; case 'echo': return 'echo';
     case 'lastbreath': case 'nessup': case 'nessdown': case 'redwarn': case 'moodmiss': case 'moodsolved': case 'red': case 'fold': case 'fishing': case 'fray': case 'gutter': case 'structdown': return e.k;
+    case 'nesschomp': return e.hit && e.u ? 'nesschomp' : null; case 'flood': return 'flood'; // 0.26 ness
   }
   return null;
 }
@@ -225,6 +257,7 @@ UI.fx = function (e) {
         const hm = $('hitm'); if (hm.className !== 'kill' || !hm.getAnimations || !hm.getAnimations().length) { hm.className = ''; void hm.offsetWidth; hm.className = 'on'; }
       } else if (e.p === 2) { hurt = Math.min(1, hurt + 0.25 + e.amt / 300); if (e.amt > 30) LL.input.rumble(0.5, 120); }
       break;
+    case 'boon': if (e.u === pl || (e.who || []).indexOf(pl) >= 0) (e.who || []).forEach(function (u) { num(u.x, u.y + u.h + 0.2, u.z, '+' + Math.round(e.amt), 'mend'); }); break; // 0.26 guard: Myra Belle's boon, the mending it gave
     case 'soul':
       if (e.p && e.kind === 'secured') num(e.x, e.y, e.z, '+' + Math.round(e.val) + ' secured', 'soul');
       else if (e.p && e.kind === 'denied') num(e.x, e.y, e.z, 'denied +' + Math.round(e.val), 'soul');
@@ -278,6 +311,12 @@ UI.fx = function (e) {
     case 'death': if (e.kind === 'trooper' && e.by && e.by === W.player) { const hm = $('hitm'); hm.className = ''; void hm.offsetWidth; hm.className = 'pop'; } // 0.23: your trooper kills tick the crosshair
       if (e.kind === 'stray' && Math.hypot(e.x - C.CREASE_X[0], e.z) < 14 && !W.creaseHint) { W.creaseHint = true; feed('The ground under it is creased'); } break;
     case 'nessup': UI.banner('Something large is in the loch.', 'Kill the Ness for the Greatness: ' + C.GREAT_T + ' seconds of harder hits for your whole side', 6); feed('The <b>Ness</b> has surfaced'); break;
+    /* 0.26 ness: the chomp and the flood, said once each in the game's own voice */
+    case 'nesstell': if (e.p && !W.chompHint) { W.chompHint = true; UI.banner('The Ness has seen you.', 'Jump over the bite, dash off the ring, or take a thread', 3); } break;
+    case 'nesschomp': if (e.p && e.held) { feed('The <b>Ness</b> has you. Mash jump'); LL.input.rumble(1, 300); } else if (e.u) feed('The <b>Ness</b> took ' + hname(e.u)); else if (!e.hit && Math.hypot(e.tx - pl.x, e.tz - pl.z) < 6) feed('It missed. Its head is down'); break;
+    case 'floodwarn': UI.banner('The loch is rising.', 'The threads stay dry. The Ness will not', 4.5); feed('The <b>loch</b> is rising'); break;
+    case 'flood': feed('The valley is under water'); break;
+    case 'floodend': if (!e.dry) feed('The water has gone back'); break;
     case 'nessdown':
       if (e.team === pl.team) UI.banner('Your side has the Greatness.', '+350 souls each · guns, abilities and troopers hit harder for ' + C.GREAT_T + ' seconds', 5);
       else if (e.team >= 0) UI.banner('Hush has the Greatness.', 'Hold your structures for ' + C.GREAT_T + ' seconds', 5);
@@ -354,7 +393,7 @@ function minimap(view) {
   LL.lanes.forEach(function (L) { g.beginPath(); L.pts.forEach((p, i) => i ? g.lineTo(X(p[0]), Y(p[1])) : g.moveTo(X(p[0]), Y(p[1]))); g.stroke(); });
   g.setLineDash([5, 4]); g.lineWidth = 1.5; g.strokeStyle = LL.gfx.look.ui.line; C.CREASE_X.forEach(function (cx, i) { const c = W.creases[i]; g.strokeStyle = c.t > 0 ? '#fff0a0' : LL.gfx.look.ui.line; g.beginPath(); g.moveTo(X(cx), Y(-13)); g.lineTo(X(cx), Y(13)); g.stroke(); }); g.setLineDash([]);
   g.fillStyle = 'rgba(60,150,170,0.55)'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), C.LOCH.r * sc, 0, 6.3); g.fill();
-  if (W.ness.alive) { g.fillStyle = '#fff0a0'; g.beginPath(); g.arc(X(C.LOCH.x), Y(C.LOCH.z), 5.5, 0, 6.3); g.fill(); }
+  if (W.ness.alive) { g.fillStyle = '#fff0a0'; g.beginPath(); g.arc(X(W.ness.x), Y(W.ness.z), 5.5, 0, 6.3); g.fill(); } // 0.26 ness: where it is, which in a flood is not the loch
   W.fruit.forEach(function (f) { if (!f.ripe || (f.lens && f.lens !== W.lens)) return; g.fillStyle = C.FRUIT_INFO[f.k].css; g.beginPath(); g.arc(X(f.x), Y(f.z), f.lens ? 6 : 3, 0, 6.3); g.fill(); });
   W.strays.forEach(function (s) { if (!s.alive) return; g.fillStyle = 'rgba(201,160,255,0.8)'; g.beginPath(); g.arc(X(s.x), Y(s.z), 3, 0, 6.3); g.fill(); });
   W.troopers.forEach(function (t) { if (!t.alive) return; g.fillStyle = C.TEAM_CSS[t.team]; const z = t.big ? 4.5 : 1.5; g.fillRect(X(t.x) - z, Y(t.z) - z, z * 2, z * 2); });
@@ -373,6 +412,24 @@ function minimap(view) {
   });
   const p = W.player;
   if (p.alive) { g.save(); g.translate(X(p.x), Y(p.z)); g.rotate(-view.yaw); g.fillStyle = LL.gfx.look.ui.me; g.strokeStyle = LL.gfx.look.ui.edge; g.lineWidth = 2; g.beginPath(); g.moveTo(0, -10); g.lineTo(7, 7); g.lineTo(0, 3); g.lineTo(-7, 7); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+}
+/* 0.26 guard: Dora's straw hat. Three pips fill with thread boosts; charged, the hat glows and says its key (G, or R3 on a
+   pad), and on touch the Hat button appears; while it flies the hat is dim. Hidden for heroes without a hat. */
+function hatHudInit() {
+  const hud = document.createElement('div'); hud.id = 'hatHud'; hud.hidden = true; hud.setAttribute('aria-label', 'Hat');
+  hud.innerHTML = '<svg viewBox="0 0 28 16" aria-hidden="true"><path d="M1 12.6 Q14 9.6 27 12.6 L25.2 14.6 Q14 12.4 2.8 14.6Z"/><path d="M6.2 11.6 L14 1.6 L21.8 11.6 Q14 10 6.2 11.6Z"/></svg><i></i><i></i><i></i><b></b>';
+  const bt = $('bottom'); if (bt) bt.appendChild(hud);
+  const tb = document.createElement('button'); tb.className = 'tb'; tb.id = 'tHat'; tb.setAttribute('data-btn', 'hat'); tb.hidden = true; tb.textContent = 'Hat';
+  const t = $('touch'); if (t) t.appendChild(tb);
+}
+function hatHud(p) {
+  const hud = $('hatHud'), tb = $('tHat'); if (!hud) return; const Ht = p.def.air && p.def.air.hat, show = !!Ht && p.alive && !W.lean;
+  if (hud.hidden === show) hud.hidden = !show; if (!show) { if (tb && !tb.hidden) tb.hidden = true; return; }
+  const n = Math.min(p.hatN || 0, Ht.need), ready = n >= Ht.need && !p.hat, pips = hud.querySelectorAll('i');
+  for (let i = 0; i < pips.length; i++) { const on = p.hat ? false : i < n; if (pips[i].classList.contains('on') !== on) pips[i].classList.toggle('on', on); }
+  hud.classList.toggle('ready', ready); hud.classList.toggle('away', !!p.hat);
+  const k = LL.input.device === 'pad' ? 'R3' : 'G', kb = hud.querySelector('b'); if (kb.textContent !== k) kb.textContent = k;
+  if (tb && tb.hidden === ready) tb.hidden = !ready;
 }
 UI.frame = function (dt, w, view, info) {
   W = w; if ($('hud').hidden || !W.player) return;
@@ -404,6 +461,7 @@ UI.frame = function (dt, w, view, info) {
   $('hpFill').style.width = (hpF * 100) + '%'; $('shFill').style.width = Math.min(100, p.shield / p.maxHp * 100) + '%';
   $('hpTxt').textContent = Math.ceil(p.hp) + ' / ' + Math.round(p.maxHp);
   const am = $('ammo'); am.classList.toggle('rel', p.reloadT > 0); $('ammoN').textContent = p.reloadT > 0 ? '· · ·' : p.ammo + ' / ' + p.magSize;
+  ammoRow(p); // 0.26 shots
   const st = $('stam'); if (st.children.length !== p.st.stam) { st.innerHTML = ''; for (let i = 0; i < p.st.stam; i++) st.appendChild(document.createElement('i')); }
   for (let i = 0; i < st.children.length; i++) st.children[i].className = i < p.stamina ? 'on' : '';
   const s = Math.floor(p.souls); $('soulN').textContent = s; $('lvl').textContent = 'Lv ' + p.level;
@@ -419,6 +477,7 @@ UI.frame = function (dt, w, view, info) {
     const kb = LL.input.device === 'kbm' && !W.lean, k = $('keys'); if (k.hidden === kb) k.hidden = !kb;
     const t = kb ? 'Press B to spend souls while you wait' : 'Spend souls while you wait', d = $('bDeadShop'); if (d.textContent !== t) d.textContent = t; }
   $('autoTag').hidden = !W.auto;
+  hatHud(p); // 0.26 guard: Dora's hat and the touch Hat button
   { const bf = $('buffs'), a = []; if (p.zestT > 0) a.push('Lemon ' + Math.ceil(p.zestT)); if (p.furyT > 0) a.push('Verde Limón ' + Math.ceil(p.furyT)); if (p.hipsT > 0) a.push('Rose hips ' + Math.ceil(p.hipsT)); if (W.pull[p.team] > 0) a.push('orbs come to you ' + Math.ceil(W.pull[p.team]));
     bf.hidden = !a.length; if (a.length) { const t = a.join(' · '); if (bf.textContent !== t) bf.textContent = t; } }
   { const mo = $('moons'), pp = W.red > 0 ? 1 : U.clamp(1 - (W.redNext - W.t) / W.redEvery, 0, 1); mo.classList.toggle('red', W.red > 0); for (let i = 0; i < 5; i++) mo.children[i].style.setProperty('--ph', U.clamp(pp * 5 - i, 0, 1).toFixed(2)); }

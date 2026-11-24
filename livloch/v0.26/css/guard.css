@@ -1,0 +1,15 @@
+/* LIVLOCH · 0.26 guard: Dora's hat on the HUD (three pips that fill with thread boosts) and the touch Hat button, which
+   shows only while the hat is charged. The elements are made by ui.js (UI.init, "0.26 guard"). */
+#hatHud { position: absolute; left: 0; top: -2px; display: flex; align-items: center; gap: 4px; pointer-events: none; color: var(--paper); opacity: 0.8; }
+#hatHud svg { width: 26px; height: 15px; fill: currentColor; }
+#hatHud i { width: 6px; height: 6px; border-radius: 50%; border: 1px solid rgba(var(--ink), 0.55); background: transparent; }
+#hatHud i.on { background: var(--gold); border-color: var(--gold); }
+#hatHud b { font-family: var(--f-sc); font-weight: 400; font-size: 12px; letter-spacing: 0.06em; color: var(--gold); display: none; }
+#hatHud.ready { color: var(--gold); opacity: 1; } #hatHud.ready svg { filter: drop-shadow(0 0 4px rgba(233, 180, 76, 0.85)); } #hatHud.ready b { display: inline; }
+#hatHud.away { opacity: 0.35; }
+body.touch #hatHud { right: calc(var(--sr) + 180px); left: auto; top: auto; bottom: calc(var(--sb) + 142px); } body.touch #hatHud b { display: none; }
+#tHat { right: calc(var(--sr) + 178px); bottom: calc(var(--sb) + 80px); width: 54px; height: 54px; border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(233, 180, 76, 0.45); }
+body.lean #hatHud { display: none !important; }
+@media (prefers-reduced-motion: no-preference) { #hatHud.ready svg { animation: hatGlow 1.4s ease-in-out infinite; } }
+@keyframes hatGlow { 50% { filter: drop-shadow(0 0 7px rgba(233, 180, 76, 1)); } }
+#nums .mend { color: #d8b8ff; font-family: var(--f-sc); font-size: 16px; } /* Myra Belle's boon: what it mended */

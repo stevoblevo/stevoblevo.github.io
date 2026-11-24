@@ -26,11 +26,16 @@
        souls and orbs   half a kill's worth is banked, half floats up as an orb you shoot to secure (or deny)
        the fold         a crease under a stray or under the Ness folds two threads together for 45 s
        the Ness         a loch boss; the last hit gives the whole side the Greatness for 90 s
+                        (0.26) it chomps what comes in reach, after a tell you can jump, dash or ride past, and now
+                        and then floods the valley and swims out among the threads. Rules at NESS.
        fruit            lemon = quick feet, rose hips = mending, Verde Limon = sour shots, and one big lime for everyone
    - The Hush has no heroes. It has hollows (one heavy unit per thread, respawning), thieves (take souls or a guardian's
      light and run for the gate), and red rain every 300 s. This is Reignfawn's Hush, not a mirror team.
    - AIR (0.25): each hero moves through the air its own way, from `air` on its row in core.js: Dora one jump, Anna and
      the Skein Doll a second jump, Myra Belle a short hanging flight on her wings. Rules at heroJump.
+   - GUARDS (0.26): the second jump opens a short guard (Anna's aegis, Dora's bubble, Skye's fray), a jump over a thread
+     while moving along it is boosted, three boosts charge Dora's hat, a boosted hover ending on the thread mends Myra
+     Belle's side, and Rook's dash aloft is a barrel roll. Rules in the "0.26 guard" section after heroLand.
    - Pacing borrowed from Knight Side: Last Breath (once per life under 30% health) and Mercy (the Hush eases off when
      the Reign is two structures behind).
    - The sim talks to the outside only through W.fx, a list of plain event objects drained every frame by gfx, audio
@@ -252,34 +257,270 @@ function fruitStep(dt) {
     for (let j = 0; j < W.heroes.length; j++) { const h = W.heroes[j]; if (h.alive && h.y < 2.5 && hyp(h.x - f.x, h.z - f.z) < reach) { eat(h, f); break; } }
   }
 }
+/* ---------- the Ness (0.26 ness: the chomp and the flood) ----------
+   The owner: "Nessy needs to be able to just chomp someone and also flood the whole field to move more during
+   interactions." So the loch boss now has a bite and a way out of the loch. All numbers are in NESS, below.
+
+   THE CHOMP. Anything that is not the Ness's and stands within its reach (NESS.REACH from the middle of the loch, or
+   NESS.ROAM_REACH from its body while it swims the flood) can be bitten. First the tell: it rears for NESS.TELL seconds
+   and marks the spot it will bite ('nesstell'). The spot follows its prey until NESS.LOCK seconds before the bite, then
+   stays put ('nesslock'). The jaws close on the spot ('nesschomp'): a hero inside NESS.BITE_R of it, on the ground or
+   lower than NESS.JUMP_Y, is caught. So a jump timed over the bite, a second jump, a dash out of the ring or riding a
+   thread all dodge it. A caught hero takes NESS.BITE (+NESS.BITE_MIN a minute) through damage(), is held in the jaws
+   for NESS.HOLD seconds (each press of jump or dash takes NESS.MASH off; the Ness also lets go when it has lost
+   NESS.LETGO of its health since the bite, so a friend can shoot you free), then is thrown clear ('nessrelease') and
+   cannot be picked again for NESS.SAFE seconds. Small troopers in the ring are eaten, up to three; a hollow is bitten
+   for NESS.BITE_BIG. A miss leaves its head on the ground: for NESS.OPEN seconds it does nothing and takes
+   NESS.OPEN_MUL times the damage. The chomp never starts while the slam is winding up, nor the slam during a chomp.
+
+   THE FLOOD. Once each rising: when the Ness falls under NESS.FLOOD_HP of its health (provoked), or, left alone,
+   NESS.FLOOD_FIRST seconds after it surfaces. If it lives on, again NESS.FLOOD_EVERY seconds after the last flood.
+   A flood by the clock never starts during a red rain or inside 25 s of one. Then the loch floods the valley. W.flood holds it: 'swell' for NESS.SWELL
+   seconds (the warning, 'floodwarn'), then 'rise': a front runs out from the loch at NESS.FRONT m/s ('flood'), 'high'
+   for NESS.HIGH seconds, then 'drain': the front runs back in ('flooddrain', then 'floodend'). It always ends: every
+   phase is a timer, and the Ness dying starts the drain at once. S.waterAt(x, z) is how deep a place is, 0 to 1.
+   In the water: a hero on the ground wades at NESS.WADE of its speed and is carried along the nearest thread by the
+   current (NESS.CUR m/s, out from the middle of the valley while the water is up, back in while it drains); a hero in
+   the air moves at NESS.AIR of its speed and a dash skims (it lasts NESS.SKIM longer); small troopers float at
+   NESS.FLOAT of their speed and drift with the current; a thread is above the water, so riding one is untouched and
+   out of the jaws. While the water is up the Ness leaves the loch (n.out): it swims after whoever hurt it, else the
+   nearest hero in the water, else troopers, at NESS.SWIM m/s, chomps, wanders on, and spits only at what it cannot
+   bite. NESS.HOMING seconds before the drain it turns for the loch; if the water leaves it first it dives ('nessdive')
+   and comes up at home ('nesshome'). The Greatness is unchanged: the last hit, wherever it lands. */
+const NESS = S.NESS = {
+  REACH: 14, ROAM_REACH: 7.5, TELL: 0.9, LOCK: 0.35, BITE_R: 2.6, JUMP_Y: 1.2, BITE: 120, BITE_MIN: 8, BITE_BIG: 420, HOLD: 1.1, MASH: 0.25, LETGO: 0.05,
+  SAFE: 2.5, CD: 7, ROAM_CD: 4.5, OPEN: 1.6, OPEN_MUL: 1.5, FLING: 15, FLING_UP: 8.5, MOUTH: 4.2, MOUTH_Y: 4.4,
+  FLOOD_HP: 0.6, FLOOD_FIRST: 70, FLOOD_EVERY: 240, SWELL: 3.5, FRONT: 62, EDGE: 14, HIGH: 12, HOMING: 2.5, DEPTH: 0.75, FAR: 188,
+  WADE: 0.65, AIR: 1.25, SKIM: 0.4, CUR: 2.2, FLOAT: 0.6, DRIFT: 1.5, SWIM: 10.5, HOME: 17, TURN: 2.4, WANDER: 2.5,
+  WAY: [[0, -24], [0, 24], [46, -32], [46, 32], [-44, -8], [-44, 14], [24, -48], [24, 48], [-22, 40], [-22, -40]]
+};
 function buildNess() {
   const n = mk('ness', 2, C.LOCH.x, C.LOCH.z, 2.6, 7, 5200);
   n.alive = false; n.respT = 180; n.aggro = null; n.count = 0; n.spitT = 0; n.slamT = 0; n.rise = 0;
-  W.ness = n;
+  n.hx = n.x; n.hz = n.z; n.out = false; n.chomp = null; n.chompT = 0; n.openT = 0; n.biteX = n.x; n.biteZ = n.z; n.prey = null; n.huntT = 0; n.wanderT = 0; n.wx = n.x; n.wz = n.z;
+  n.floodAt = 1e9; n.floodHp = false; n.tells = 0; n.bites = 0; n.misses = 0;
+  W.ness = n; W.flood = null; W.floodN = 0;
 }
-function nessStep(n, dt) {
-  if (!n.alive) {
-    n.respT -= dt;
-    if (n.respT <= 0) { n.alive = true; n.count++; n.maxHp = 3400 + 800 * n.count + (W.t / 60) * 110; n.hp = n.maxHp; n.aggro = null; n.rise = 0; n.lastHurt = -99; n.upT = W.t; W.rushNext[0] = W.t + 10 + W.rng() * 30; W.rushNext[1] = W.t + 10 + W.rng() * 30; fx({ k: 'nessup', x: n.x, z: n.z }); }
+S.waterAt = function (x, z) {
+  const F = W && W.flood; if (!F || F.reach <= 0) return 0;
+  return U.clamp((F.reach - hyp(x - C.LOCH.x, z - C.LOCH.z)) / NESS.EDGE, 0, 1);
+};
+function floodStart(why) {
+  if (W.flood || !W.ness.alive) return false;
+  W.flood = { ph: 'swell', t: NESS.SWELL, reach: 0, why: why || 'time', age: 0 }; W.floodN++; W.ness.floodHp = true;
+  fx({ k: 'floodwarn', x: C.LOCH.x, z: C.LOCH.z, t: NESS.SWELL, why: W.flood.why, n: W.floodN });
+  return true;
+}
+function floodStep(dt) {
+  const F = W.flood, n = W.ness; if (!F) return;
+  F.age += dt;
+  if (F.ph === 'swell') { if (!n.alive) { W.flood = null; fx({ k: 'floodend', dry: true }); return; } if ((F.t -= dt) <= 0) { F.ph = 'rise'; F.reach = C.LOCH.r; n.out = true; n.wanderT = 0; n.huntT = 0; n.prey = null; fx({ k: 'flood', x: C.LOCH.x, z: C.LOCH.z, n: W.floodN }); } }
+  else if (F.ph === 'rise') { F.reach += NESS.FRONT * dt; if (F.reach >= NESS.FAR) { F.reach = NESS.FAR; F.ph = 'high'; F.t = NESS.HIGH; } }
+  else if (F.ph === 'high') { if ((F.t -= dt) <= 0) floodDrain(); }
+  else { F.reach -= NESS.FRONT * dt; if (F.reach <= 0) { W.flood = null; n.floodAt = W.t + NESS.FLOOD_EVERY; if (n.alive && n.out) nessHome(n, true); fx({ k: 'floodend' }); } }
+}
+function floodDrain() { const F = W.flood; if (!F || F.ph === 'drain') return; if (F.ph === 'swell') { W.flood = null; fx({ k: 'floodend', dry: true }); return; } F.ph = 'drain'; fx({ k: 'flooddrain', x: C.LOCH.x, z: C.LOCH.z }); }
+/* The current: along the nearest thread within 7 m, out from the middle of the valley while the water is up, back in
+   (half again as fast) while it drains. Returns metres per second along +s of that thread, and leaves its direction in P. */
+function floodCurrent(x, z, w) {
+  let bl = -1, bd = 7; for (let i = 0; i < 3; i++) { LL.laneNearest(i, x, z, Q); if (Q.d < bd) { bd = Q.d; bl = i; } }
+  if (bl < 0) return 0;
+  LL.laneNearest(bl, x, z, Q); LL.lanePoint(bl, Q.s, P);
+  return (z >= 0 ? 1 : -1) * (W.flood.ph === 'drain' ? -1.5 : 1) * NESS.CUR * w;
+}
+/* A hero in the flood: the factor on its own speed this step. Wading is pushed by the current; a dash skims. */
+function floodHero(h, dt) {
+  const w = S.waterAt(h.x, h.z); h.wet = w; if (w <= 0 || h.zip) return 1;
+  if (h.dashT > 0) h.dashT += dt * NESS.SKIM * w;
+  if (!h.onGround) return 1 + (NESS.AIR - 1) * w;
+  const c = floodCurrent(h.x, h.z, w); if (c) { h.x += P.dx * c * dt; h.z += P.dz * c * dt; }
+  return 1 - (1 - NESS.WADE) * w;
+}
+/* A trooper in the flood: small ones float (slower) and drift along their thread; a hollow is too heavy to drift. */
+function floodTrooper(u, dt) {
+  const w = S.waterAt(u.x, u.z); u.wet = w; if (w <= 0) return 1;
+  if (u.big) return 1 - 0.2 * w;
+  const dr = (u.z >= 0 ? 1 : -1) * (W.flood.ph === 'drain' ? -1.5 : 1) * NESS.DRIFT * w * dt, s0 = u.s;
+  u.s = U.clamp(u.s + dr, 0, lanes[u.lane].len); LL.lanePoint(u.lane, u.s, P); u.x += P.dx * (u.s - s0); u.z += P.dz * (u.s - s0);
+  return 1 - (1 - NESS.FLOAT) * w;
+}
+function nessCollide(n) {
+  n.x = U.clamp(n.x, -70, 70); n.z = U.clamp(n.z, -92, 92);
+  for (let i = 0; i < W.structs.length; i++) { const o = W.structs[i]; if (!o.alive) continue; const dx = n.x - o.x, dz = n.z - o.z, m = o.r + n.r + 0.5, d = hyp(dx, dz); if (d < m) { const k = d || 0.001; n.x = o.x + dx / k * m; n.z = o.z + dz / k * m; } }
+}
+/* Back to the loch. dive: it goes under where it is and comes up at home. */
+function nessHome(n, dive) {
+  nessRelease(n, 'time');
+  if (dive && hyp(n.x - n.hx, n.z - n.hz) > 3) { fx({ k: 'nessdive', x: n.x, z: n.z }); n.rise = 0; fx({ k: 'nesshome', x: n.hx, z: n.hz }); }
+  n.x = n.hx; n.z = n.hz; n.vx = n.vz = 0; n.out = false; n.prey = null;
+}
+function nessCanBite(n, u) {
+  if (!u || !u.alive || u.struct || u.team === 2 || u.zip || u.held || (u.safeT || 0) > W.t) return false;
+  if (u.kind === 'hero') return u.y < 4;
+  return u.kind === 'trooper' || u.kind === 'thief';
+}
+function nessTell(n, u) {
+  n.chomp = { ph: 'tell', t: NESS.TELL, tgt: u, tx: u.x, tz: u.z, locked: false, hp0: n.hp, id: ++n.tells };
+  n.vx = n.vz = 0;
+  fx({ k: 'nesstell', x: n.x, z: n.z, tx: u.x, tz: u.z, u: u, p: !!u.isPlayer, t: NESS.TELL });
+}
+function nessRelease(n, why) {
+  const ch = n.chomp; if (!ch || ch.ph !== 'hold') return; n.chomp = null;
+  const h = ch.tgt; h.held = null; n.chompT = n.out ? NESS.ROAM_CD : NESS.CD; if (n.out) n.wanderT = NESS.WANDER;
+  if (!h.alive) return;
+  let dx = h.x - n.x, dz = h.z - n.z; const d = hyp(dx, dz);
+  if (d < 0.5) { dx = Math.sin(n.yaw); dz = Math.cos(n.yaw); } else { dx /= d; dz /= d; }
+  h.vx = dx * NESS.FLING; h.vz = dz * NESS.FLING; h.vy = NESS.FLING_UP; h.onGround = false; h.jumps = 1; h.safeT = W.t + NESS.SAFE;
+  fx({ k: 'nessrelease', u: h, p: !!h.isPlayer, why: why, x: h.x, y: h.y, z: h.z });
+}
+/* A hero in the jaws: carried to the mouth, nothing works but mashing jump or dash. Called in place of its own step. */
+function nessHold(h, dt) {
+  const n = h.held, c = h.ctl, ch = n.chomp;
+  if (ch && ch.ph === 'hold' && (c.jump || c.dash)) { ch.t -= NESS.MASH; ch.mash = (ch.mash || 0) + 1; }
+  const mx = n.x + Math.sin(n.yaw) * NESS.MOUTH, mz = n.z + Math.cos(n.yaw) * NESS.MOUTH, k = Math.min(1, dt * 7);
+  h.x += (mx - h.x) * k; h.z += (mz - h.z) * k; h.y += (NESS.MOUTH_Y - h.y) * k; h.vx = h.vy = h.vz = 0;
+  h.onGround = false; h.zip = null; h.dashT = 0; h.liftT = 0; h.glide = false; if (h.hoverT > 0) hoverEnd(h, 'release');
+  c.jump = c.dash = c.zip = c.reload = false; c.ab[0] = c.ab[1] = c.ab[2] = false; c.zipDir = 0; c.fire = false;
+}
+function nessChompStep(n, dt) {
+  const ch = n.chomp, min = W.t / 60;
+  if (ch.ph === 'hold') {
+    const h = ch.tgt;
+    if (!h.alive) { h.held = null; n.chomp = null; n.chompT = n.out ? NESS.ROAM_CD : NESS.CD; return; }
+    ch.t -= dt;
+    if (ch.t <= 0) nessRelease(n, ch.mash ? 'mash' : 'time'); else if (n.hp < ch.hp0 - n.maxHp * NESS.LETGO) nessRelease(n, 'shot');
     return;
   }
-  n.rise = Math.min(1, n.rise + dt * 0.5); if (n.slowT > 0) n.slowT -= dt; n.spitT -= dt; n.slamT -= dt;
+  const u = ch.tgt, reach = (n.out ? NESS.ROAM_REACH : NESS.REACH) + 1.5;
+  if (!ch.locked) {
+    if (u.alive) { ch.tx = u.x; ch.tz = u.z; }
+    const dx = ch.tx - n.x, dz = ch.tz - n.z, d = hyp(dx, dz); if (d > reach) { ch.tx = n.x + dx / d * reach; ch.tz = n.z + dz / d * reach; }
+    if (ch.t <= NESS.LOCK) { ch.locked = true; fx({ k: 'nesslock', tx: ch.tx, tz: ch.tz, u: u, p: !!u.isPlayer }); }
+  }
+  n.yaw += U.angDiff(Math.atan2(ch.tx - n.x, ch.tz - n.z), n.yaw) * Math.min(1, dt * 8);
+  if ((ch.t -= dt) > 0) return;
+  // the jaws close on the spot
+  n.biteX = ch.tx; n.biteZ = ch.tz; n.chomp = null;
+  let got = null, gd = 1e9, eaten = 0; const us = W.units;
+  for (let i = 0; i < us.length; i++) {
+    const o = us[i]; if (o.kind !== 'hero' || !nessCanBite(n, o) || o.y >= NESS.JUMP_Y) continue;
+    const d = hyp(o.x - ch.tx, o.z - ch.tz); if (d < NESS.BITE_R + o.r && (o === u ? -1 : d) < gd) { gd = o === u ? -1 : d; got = o; }
+  }
+  for (let i = 0; i < us.length && eaten < 3; i++) {
+    const o = us[i]; if (o.kind === 'hero' || !nessCanBite(n, o) || hyp(o.x - ch.tx, o.z - ch.tz) > NESS.BITE_R + o.r) continue;
+    eaten++; damage(o, o.big ? NESS.BITE_BIG : o.maxHp * 4, n, 'unit');
+  }
+  if (got) {
+    damage(got, NESS.BITE + NESS.BITE_MIN * min, n, 'unit');
+    if (got.alive) { got.held = n; n.chomp = { ph: 'hold', t: NESS.HOLD, tgt: got, hp0: n.hp, mash: 0 }; }
+  }
+  const hit = !!got || eaten > 0;
+  if (hit) n.bites++; else { n.misses++; n.openT = NESS.OPEN; }
+  if (!n.chomp) { n.chompT = n.out ? NESS.ROAM_CD : NESS.CD; if (n.out) n.wanderT = NESS.WANDER; }
+  fx({ k: 'nesschomp', x: n.x, z: n.z, tx: ch.tx, tz: ch.tz, hit: hit, u: got, p: !!(got && got.isPlayer), held: !!n.chomp, eaten: eaten });
+}
+/* Who the swimming Ness goes for: whoever hurt it, else the nearest hero in the water, else the nearest trooper. */
+function nessPrey(n, a) {
+  const ok = function (u) { return nessCanBite(n, u) && Math.abs(u.z) < 96 && S.waterAt(u.x, u.z) > 0.3; };
+  if (a && ok(a) && hyp(a.x - n.x, a.z - n.z) < 70) return a;
+  let best = null, bd = 60;
+  for (let i = 0; i < W.heroes.length; i++) { const h = W.heroes[i]; if (!ok(h)) continue; const d = hyp(h.x - n.x, h.z - n.z); if (d < bd) { bd = d; best = h; } }
+  if (best) return best;
+  bd = 45; for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (!ok(u)) continue; const d = hyp(u.x - n.x, u.z - n.z) + (u.big ? 12 : 0); if (d < bd) { bd = d; best = u; } }
+  return best;
+}
+function nessRoam(n, dt, a) {
+  const F = W.flood, homing = !F || F.ph === 'drain' || (F.ph === 'high' && F.t < NESS.HOMING);
+  let gx, gz, prey = null, sp = NESS.SWIM;
+  if (homing) {
+    gx = n.hx; gz = n.hz; sp = NESS.HOME;
+    if (hyp(n.x - gx, n.z - gz) < 2.5) { nessHome(n, false); return; }
+    if (!F || S.waterAt(n.x, n.z) < 0.3) { nessHome(n, true); return; }
+  } else {
+    if (n.wanderT > 0) n.wanderT -= dt;
+    if ((n.huntT -= dt) <= 0) {
+      n.huntT = 0.5; n.prey = n.wanderT > 0 ? null : nessPrey(n, a);
+      if (!n.prey && (n.wayT == null || W.t > n.wayT || hyp(n.x - n.wx, n.z - n.wz) < 6)) { const w = NESS.WAY[Math.floor(W.rng() * NESS.WAY.length)]; n.wx = w[0]; n.wz = w[1]; n.wayT = W.t + 6; }
+    }
+    prey = n.prey; if (prey && !nessCanBite(n, prey)) prey = n.prey = null;
+    if (prey) { gx = prey.x; gz = prey.z; } else { gx = n.wx; gz = n.wz; }
+  }
+  const dx = gx - n.x, dz = gz - n.z, d = hyp(dx, dz), off = U.angDiff(Math.atan2(dx, dz), n.yaw);
+  n.yaw += U.clamp(off, -NESS.TURN * dt, NESS.TURN * dt);
+  if (prey && d < NESS.ROAM_REACH * 0.6) sp *= 0.25;
+  if (n.slowT > 0) sp *= 1 - n.slowAmt;
+  sp *= Math.max(0.35, Math.cos(off));
+  n.vx = Math.sin(n.yaw) * sp; n.vz = Math.cos(n.yaw) * sp; n.x += n.vx * dt; n.z += n.vz * dt; nessCollide(n);
+  if (prey && n.chompT <= 0 && d < NESS.ROAM_REACH + prey.r && Math.abs(off) < 1) nessTell(n, prey);
+}
+function nessStep(n, dt) {
+  floodStep(dt);
+  if (!n.alive) {
+    n.respT -= dt;
+    if (n.respT <= 0) {
+      n.alive = true; n.count++; n.maxHp = 3400 + 800 * n.count + (W.t / 60) * 110; n.hp = n.maxHp; n.aggro = null; n.rise = 0; n.lastHurt = -99; n.upT = W.t; W.rushNext[0] = W.t + 10 + W.rng() * 30; W.rushNext[1] = W.t + 10 + W.rng() * 30;
+      n.x = n.hx; n.z = n.hz; n.out = false; n.chomp = null; n.chompT = 3; n.openT = 0; n.floodHp = false; n.floodAt = W.t + NESS.FLOOD_FIRST;
+      fx({ k: 'nessup', x: n.x, z: n.z });
+    }
+    return;
+  }
+  n.rise = Math.min(1, n.rise + dt * 0.5); if (n.slowT > 0) n.slowT -= dt; n.spitT -= dt; n.slamT -= dt; n.chompT -= dt;
+  if (!W.flood && n.rise >= 1 && !n.chomp) {
+    if (!n.floodHp && n.hp < n.maxHp * NESS.FLOOD_HP) { n.floodHp = true; floodStart('hurt'); }
+    else if (W.t >= n.floodAt && W.red <= 0 && W.redNext - W.t > 25) floodStart('time');
+  }
   let a = n.aggro;
-  if (a && (!a.alive || hyp(a.x - n.x, a.z - n.z) > 32 || W.t - n.lastHurt > 8)) a = n.aggro = null;
-  if (!a) { if (W.t - n.lastHurt > 5) heal(n, n.maxHp * 0.06 * dt); n.yaw += dt * 0.3; return; }
+  if (a && (!a.alive || hyp(a.x - n.x, a.z - n.z) > (n.out ? 70 : 32) || W.t - n.lastHurt > 8)) a = n.aggro = null;
+  if (n.chomp) { nessChompStep(n, dt); return; }
+  if (n.openT > 0) { n.openT -= dt; n.vx = n.vz = 0; return; }
+  if (n.out) nessRoam(n, dt, a);
+  else if (n.rise >= 1 && n.chompT <= 0 && n.slamT <= 4.9) {
+    let prey = null, bk = 1e9; const us = W.units;
+    for (let i = 0; i < us.length; i++) { const o = us[i]; if (!nessCanBite(n, o)) continue; const d = hyp(o.x - n.x, o.z - n.z); if (d > NESS.REACH) continue; const k = d + (o === a ? 0 : (o.kind === 'hero' ? 100 : 200)); if (k < bk) { bk = k; prey = o; } }
+    if (prey) { nessTell(n, prey); return; }
+  }
+  if (n.chomp) return;
+  if (!a) { if (W.t - n.lastHurt > 5) heal(n, n.maxHp * 0.06 * dt); if (!n.out) n.yaw += dt * 0.3; return; }
   const dx = a.x - n.x, dz = a.z - n.z, d = hyp(dx, dz) || 1, min = W.t / 60;
-  n.yaw += U.angDiff(Math.atan2(dx, dz), n.yaw) * Math.min(1, dt * 4);
-  if (n.spitT <= 0) {
+  if (!n.out) n.yaw += U.angDiff(Math.atan2(dx, dz), n.yaw) * Math.min(1, dt * 4);
+  if (n.spitT <= 0 && (!n.out || a.zip || a.y > NESS.JUMP_Y || d > 16)) {
     n.spitT = 1.5;
-    const ox = n.x + Math.sin(n.yaw) * 2.6, oy = 6.4, oz = n.z + Math.cos(n.yaw) * 2.6, sp = 38, lead = d / sp * 0.7;
+    const sy = n.out ? Math.atan2(dx, dz) : n.yaw, ox = n.x + Math.sin(sy) * 2.6, oy = 6.4, oz = n.z + Math.cos(sy) * 2.6, sp = 38, lead = d / sp * 0.7;
     let vx = a.x + a.vx * lead - ox, vy = a.y + 1 - oy, vz = a.z + a.vz * lead - oz; const m = hyp(vx, vy, vz) || 1;
     spawnProj({ x: ox, y: oy, z: oz, vx: vx / m * sp, vy: vy / m * sp, vz: vz / m * sp, grav: 0, life: 1.6, dmg: 62 + 6 * min, aoe: 3.5, team: 2, owner: n, r: 0.6, kind: 'orb', size: 0.85, col: 0x7fe0ff, dot: 0, dotT: 0, slow: 0.2, slowT: 1.5 });
     fx({ k: 'nessspit', x: ox, z: oz });
   }
-  if (n.slamT <= 0) {
+  if (n.slamT <= 0 && !n.out) {
     let close = false; for (let i = 0; i < W.heroes.length; i++) { const h = W.heroes[i]; if (h.alive && hyp(h.x - n.x, h.z - n.z) < 9) close = true; }
     if (close) { n.slamT = 6; W.zones.push({ x: n.x, z: n.z, r: 10.5, life: 0.5, delay: 1.1, team: 2, owner: n, dps: 0, heal: 0, burst: 150 + 10 * min, t: 0, tick: 0, done: false, fx: 'toll', col: 0x7fe0ff, follow: null }); fx({ k: 'nesswind', x: n.x, z: n.z }); }
   }
+}
+/* The Ness is down: it lets go of whoever it holds, and the water starts back at once. Called from kill(). */
+function nessDown(n) { if (n.chomp && n.chomp.ph === 'hold') { const h = n.chomp.tgt; n.chomp = null; h.held = null; if (h.alive) { h.vy = 3; h.onGround = false; h.jumps = 1; fx({ k: 'nessrelease', u: h, p: !!h.isPlayer, why: 'dead', x: h.x, y: h.y, z: h.z }); } } n.chomp = null; n.openT = 0; n.out = false; n.vx = n.vz = 0; floodDrain(); }
+/* Bots and the jaws. Held: mash. A tell on me: jump over the bite (45%) or dash out of the ring (25%), late enough
+   that the spot has stopped following. Three times in ten it is caught flat. Otherwise it keeps out of
+   reach of a risen Ness (the fishing spot is outside it). */
+function botNess(h, dt) {
+  const n = W.ness, c = h.ctl, a = h.ai, ch = n.chomp;
+  if (h.held) { if (W.rng() < 2.4 * dt) c.jump = true; return; }
+  if (!n.alive || h.zip) return;
+  if (ch && ch.ph === 'tell') {
+    const d = hyp(h.x - ch.tx, h.z - ch.tz); if (d > NESS.BITE_R + 2.5) return;
+    if (a.tellId !== ch.id) { a.tellId = ch.id; const r = W.rng(); a.dodge = r < 0.45 ? 1 : (r < 0.7 && h.stamina >= 1 ? 2 : 0); }
+    if (a.dodge === 1 && h.onGround && ch.t <= 0.3 && ch.t > 0.12) c.jump = true;
+    else if (a.dodge === 2 && ch.locked && h.dashT <= 0) { const k = d || 1; c.mx = d ? (h.x - ch.tx) / k : Math.sin(h.yaw + 1.6); c.mz = d ? (h.z - ch.tz) / k : Math.cos(h.yaw + 1.6); c.dash = true; a.dodge = 3; }
+    return;
+  }
+  if (n.rise < 0.5) return;
+  const keep = n.out ? 13 : NESS.REACH + 1.5, dx = h.x - n.x, dz = h.z - n.z, d = hyp(dx, dz);
+  if (d < keep && d > 0.01) { const k = 1.6 * (1 - d / keep) + 0.6; c.mx += dx / d * k; c.mz += dz / d * k; const m = hyp(c.mx, c.mz); if (m > 1) { c.mx /= m; c.mz /= m; } }
+}
+/* Bots and the flood, from think(): in the water, take the nearest thread when one can be ridden (toward the stand, or
+   home if already there), and stay on it rather than stepping off into the water. */
+function botFlood(h, standS, myTs) {
+  const c = h.ctl; if (!W.flood || S.waterAt(h.x, h.z) < 0.5) return;
+  if (h.zip) { c.zip = false; return; }
+  if (S.canZip(h) >= 0 && W.rng() < 0.6) { c.zip = true; c.zipDir = myTs < standS - 8 ? 1 : -1; }
 }
 function buildHeroes(o) {
   const r = W.rng, n = LL.HEROES.length;
@@ -307,6 +548,7 @@ function mkHero(defIdx, team, slot, isPlayer) {
       jit: team === 1 ? [1.5, 0.9, 0.4][diff] : 0.9, track: team === 1 ? [5, 8, 12][diff] : 8, buildI: 0, standS: 10 }
   });
   h.liftT = 0; h.liftMax = 0; h.glide = false; h.liftCaught = false; h.liftA = null; // 0.25 rook: Lantern Lift state (liftCast, liftStep)
+  guardReset(h); // 0.26 guard: guards, thread boosts, the hat, the roll
   recompute(h); h.hp = h.maxHp;
   W.heroes.push(h); if (isPlayer) W.player = h;
   return h;
@@ -439,13 +681,14 @@ function damage(t, amt, src, kind, crit) {
   }
   if (t.kind === 'hero') {
     amt *= (1 - t.st.resist);
+    amt = guardHit(t, amt, src, kind); if (amt <= 0) return 0; // 0.26 guard: the aegis blocks, the bubble soaks, the fray and a roll let it through
     if (t.shield > 0) { const a = Math.min(t.shield, amt); t.shield -= a; amt -= a; }
     t.lastHurt = W.t;
     if (hero) { t.hurtBy[hero.id] = W.t; hero.lastDmgHeroT = W.t; }
     if (!t.breath && t.hp - amt > 0 && (t.hp - amt) / t.maxHp <= 0.3) lastBreath(t);
   } else if (t.kind === 'stray') {
     t.lastHurt = W.t; if (src && (src.kind === 'hero' || src.kind === 'knot')) t.aggro = src;
-  } else if (t.kind === 'ness') { t.lastHurt = W.t; if (hero) t.aggro = hero; }
+  } else if (t.kind === 'ness') { t.lastHurt = W.t; if (hero) t.aggro = hero; if (t.openT > 0) amt *= NESS.OPEN_MUL; } // 0.26 ness: a missed chomp leaves it open
   t.hp -= amt; t.flash = 0.12;
   if (hero) {
     hero.dmgDealt += amt;
@@ -493,6 +736,7 @@ function kill(t, src, hero) {
     }
   } else if (t.kind === 'hero') {
     t.deaths++; t.zip = null; t.shield = 0; t.dotT = 0; t.slowT = 0;
+    guardReset(t); // 0.26 guard: no guard, boosts, hat charge or flying hat outlive the life
     t.respT = Math.min(45, 7 + 1.6 * t.level + min * 0.8);
     if (kt === 0 || kt === 1) W.kills[kt]++;
     let assists = 0;
@@ -514,7 +758,7 @@ function kill(t, src, hero) {
     t.respT = 80; t.aggro = null;
     if (hero) { give(hero, 120 + Math.floor(min) * 8); if (hero.isPlayer) fx({ k: 'soul', kind: 'stray', val: 120 + Math.floor(min) * 8 }); }
   } else if (t.kind === 'ness') {
-    t.respT = 240; t.aggro = null;
+    t.respT = 240; t.aggro = null; nessDown(t); // 0.26 ness: lets go, and the flood drains
     if (hero) {
       W.great[hero.team] = C.GREAT_T;
       for (let i = 0; i < W.heroes.length; i++) if (W.heroes[i].team === hero.team) give(W.heroes[i], 350);
@@ -728,6 +972,7 @@ function stepProjs(dt) {
       if (Math.abs(u.x - ax) > reach + u.r || Math.abs(u.z - az) > reach + u.r) continue;
       if (p.hit && p.hit.indexOf(u.id) >= 0) continue;
       const t = segCyl(ax, ay, az, bx, by, bz, u.x, u.z, u.r + p.r, u.y - 0.15, u.y + u.h + 0.25);
+      if (t >= 0 && t < bt && u.kind === 'hero' && guardPass(u, p)) continue; // 0.26 guard: through the fray, past a roll
       if (t >= 0 && t < bt) { bt = t; hu = u; world = false; }
     }
     if (p.gun && p.owner.kind === 'hero') for (let j = 0; j < orbs.length; j++) {
@@ -739,6 +984,7 @@ function stepProjs(dt) {
       p.x = ax + (bx - ax) * bt; p.y = ay + (by - ay) * bt; p.z = az + (bz - az) * bt;
       if (ho) { claimOrb(ho, p.owner); ps.splice(i, 1); continue; }
       if (hu) {
+        if (guardStop(hu, p)) { ps.splice(i, 1); continue; } // 0.26 guard: dies on the shield, unburst
         if (p.kind === 'bullet') {
           const crit = (hu.kind === 'hero' || hu.kind === 'trooper' || hu.kind === 'stray' || hu.kind === 'thief') && p.y > hu.y + hu.h * 0.78;
           damage(hu, p.dmg * (crit ? 1.5 : 1), p.owner, 'gun', crit);
@@ -816,7 +1062,7 @@ function heroJump(h) {
   if (h.onGround) { h.vy = JUMP_VY; h.onGround = false; h.jumps = 1; h.hovered = false; h.holdJ = !!h.ctl.jumpHeld; fx({ k: 'jump', u: h }); return; }
   if (h.hoverT > 0) return;
   const n = Math.max(1, h.jumps || 0), cost = A.cost == null ? 1 : A.cost; // in the air with no jump used (knocked up, off a thread) counts as one used
-  if (n < (A.jumps || 1)) { if (h.stamina >= cost) { h.vy = JUMP2_VY; h.jumps = n + 1; h.stamina -= cost; fx({ k: 'jump', u: h, dbl: true, n: h.jumps }); } return; }
+  if (n < (A.jumps || 1)) { if (h.stamina >= cost) { h.vy = JUMP2_VY; h.jumps = n + 1; h.stamina -= cost; fx({ k: 'jump', u: h, dbl: true, n: h.jumps }); threadBoost(h, 'jump'); guardStart(h); } return; } // 0.26 guard: a thread under it boosts it; it opens the hero's guard
   if (A.hover) hoverStart(h);
 }
 function hoverStart(h) {
@@ -824,9 +1070,11 @@ function hoverStart(h) {
   if (h.hovered || h.stamina < cost) return false;
   h.stamina -= cost; h.hovered = true; h.holdJ = false; h.hoverT = H.t; h.hoverAge = 0;
   h.vy = Math.max(h.vy * 0.3, H.lift == null ? 1.2 : H.lift); // the first beat: a rise kept a little, a fall caught
-  fx({ k: 'hover', u: h }); return true;
+  fx({ k: 'hover', u: h });
+  h.boonHov = threadBoost(h, 'hover'); // 0.26 guard: begun along a thread, the thread holds her up; ended on it, a boon
+  return true;
 }
-function hoverEnd(h, why) { if (!(h.hoverT > 0)) return; h.hoverT = 0; fx({ k: 'hoverend', u: h, why: why }); }
+function hoverEnd(h, why) { if (!(h.hoverT > 0)) return; h.hoverT = 0; fx({ k: 'hoverend', u: h, why: why }); boonCheck(h, why); } // 0.26 guard: boonCheck
 /* Gravity, or the hover's hang. Runs where gravity always ran, before the move. */
 function heroAir(h, dt) {
   const c = h.ctl, A = h.def.air, H = A && A.hover;
@@ -834,18 +1082,178 @@ function heroAir(h, dt) {
   if (h.holdJ && !c.jumpHeld) h.holdJ = false;
   if (H && h.holdJ && !h.onGround && h.vy <= 0) { h.holdJ = false; hoverStart(h); } // held through the top of the jump
   if (h.hoverT > 0) {
-    h.hoverAge += dt; h.vy += (-H.sink - h.vy) * (1 - Math.exp(-(H.grip || 5) * dt));
-    if ((h.hoverT -= dt) <= 0) { h.hoverT = 0; fx({ k: 'hoverend', u: h, why: 'spent' }); }
+    h.hoverAge += dt; h.vy += (-H.sink * (h.boonHov ? C.TBOOST.sinkK : 1) - h.vy) * (1 - Math.exp(-(H.grip || 5) * dt)); // 0.26 guard: a boosted hover sinks slower
+    if ((h.hoverT -= dt) <= 0) { h.hoverT = 0; fx({ k: 'hoverend', u: h, why: 'spent' }); boonCheck(h, 'spent'); } // 0.26 guard: boonCheck
   } else if (!h.onGround) h.vy -= C.GRAV * dt;
 }
 function heroLand(h) {
   if (!h.onGround) h.vyLand = -h.vy;
   h.y = 0; h.vy = 0; h.onGround = true; h.jumps = 0; h.hovered = false; h.holdJ = false; hoverEnd(h, 'land');
+  h.tbT = 0; // 0.26 guard: a thread boost ends on landing
+}
+/* ---------- 0.26 guard ----------
+   The owner, after 0.25: "double jumps should provide some sort of blocking function". A second jump opens a short guard
+   (air.guard on the hero's row in core.js) that costs nothing beyond the second jump's stamina:
+     aegis   Anna: Athena's shield, raised toward her aim. For t seconds a hit whose source lies within `arc` degrees of
+             her aim is blocked (a projectile from the front dies on it); a melee attacker within MELEE m is shoved back
+             `knock` m (half that for a hollow) and slowed. Hits from behind still land.
+     bubble  Dora: an astral bubble that soaks up to hp damage for t seconds, then pops (early, when it is full).
+     fray    Skye: she comes apart into thread for t seconds; hits and projectiles pass through her.
+   Why these are not invulnerability: each is one second or less and needs a second jump, so it costs one stamina, which
+   comes back at one per 2.6 s (three banked, shared with the dash). Spammed for a whole fight the ceilings are about 35%
+   of the time for the aegis (and only from the front), 46% for the bubble but at most 200 damage per bubble (about 77 per
+   second), and 23% for the fray. Bleeding and the enemy fountain ('dot') are never guarded.
+   A barrel roll (Rook Vale, see rollStart) is a guard of its own kind: for its `roll` seconds, shots from farther than
+   `rollNear` m miss him.
+   THREAD BOOSTS (C.TBOOST): a second jump, or a hover begun, within r m of a thread while moving along it gets vy m/s more
+   lift and is thrown along the thread at sp times the run speed (never slower than it was going); for t seconds, or until
+   it lands, the air steers toward sp times the run speed, so held along the thread the speed carries. Counted on the
+   hero for the life (tbN). Dora's straw hat charges with them (air.hat): after `need` boosts it can be thrown, a boomerang that cuts
+   through enemies out and back. Myra Belle's hover, boosted, holds her up (sinkK of the sink), and if it ends while she is
+   still over the thread it is a boon (air.boon): a mending pulse for her and her side near her.
+   Hero state: guardT (seconds left), guardK (kind), guardMax, guardHp (the bubble's room left), shotAtT (the last time a
+   hit was aimed at the hero, landed or not, for bots), tbN, tbT, boonHov, hatN (charges), hat (the flying hat, or null),
+   rollT, rollMax, rollDir.
+   Events: guard (kind), guarded (how: block | absorb | pass | roll, x y z where the hit met it, amt, melee), guardend
+   (why: time | full), tboost (lane, tx tz: the thread under the hero, dx dz: along it, why: jump | hover, n), hatready,
+   hatthrow, hatcut, hatturn, hatback, boon (who: the heroes it mended, amt, r), roll (dir: 1 to his left, -1 right). */
+const GUARD_MELEE = 4.5;
+function guardReset(h) {
+  h.guardT = 0; h.guardK = ''; h.guardMax = 0; h.guardHp = 0; h.shotAtT = -9; h.tbN = 0; h.tbT = 0; h.boonHov = false;
+  h.hatN = 0; h.hat = null; h.rollT = 0; h.rollMax = 0; h.rollDir = h.rollDir || 1; h.shotAtX = h.x; h.shotAtZ = h.z; h.ctl.hat = false;
+}
+function guardStart(h) {
+  const G = h.def.air && h.def.air.guard; if (!G) return;
+  if (h.guardK) guardEnd(h, 'time');
+  h.guardK = G.kind; h.guardT = G.t; h.guardMax = G.t; h.guardHp = G.kind === 'bubble' ? G.hp : 0;
+  fx({ k: 'guard', u: h, kind: G.kind, t: G.t, x: h.x, y: h.y, z: h.z });
+}
+function guardEnd(h, why) {
+  if (!h.guardK) return; const k = h.guardK; h.guardK = ''; h.guardT = 0; h.guardHp = 0;
+  fx({ k: 'guardend', u: h, kind: k, why: why, x: h.x, y: h.y, z: h.z });
+}
+/* The cosmetic tracer a shooter spawned just before calling damage() (trooperStep, structStep, strayStep, knotStep all do):
+   a blocked or soaked shot stops at the guard, a passed or rolled one flies on through. Model state, so it is set here. */
+function guardTracer(t, how, rG) {
+  for (let i = W.projs.length - 1, n = 0; i >= 0 && n < 4; i--, n++) {
+    const p = W.projs[i]; if (!p.cos || p.t > 0) continue;
+    const sp = hyp(p.vx, p.vy, p.vz) || 1, ex = p.x + p.vx * p.life, ez = p.z + p.vz * p.life;
+    if (hyp(ex - t.x, ez - t.z) > t.r + 1.2) continue;
+    if (how === 'pass' || how === 'roll') p.life += 9 / sp; else p.life = Math.max(0, p.life - rG / sp);
+    return;
+  }
+}
+/* the guard's answer to one hit on a hero, after resistance: the damage that gets through */
+function guardHit(t, amt, src, kind) {
+  if (kind === 'dot') return amt;
+  t.shotAtT = W.t; if (src) { t.shotAtX = src.x; t.shotAtZ = src.z; }
+  const k = t.guardT > 0 ? t.guardK : (t.rollT > 0 ? 'roll' : ''); if (!k) return amt;
+  const dx = src ? src.x - t.x : 0, dz = src ? src.z - t.z : 0, d = hyp(dx, dz), ux = d > 0.01 ? dx / d : Math.sin(t.yaw), uz = d > 0.01 ? dz / d : Math.cos(t.yaw);
+  const at = function (r, y) { return { x: t.x + ux * r, y: t.y + y, z: t.z + uz * r }; };
+  if (k === 'fray') { const q = at(0.2, 1.1); guardTracer(t, 'pass', 0); fx({ k: 'guarded', u: t, how: 'pass', x: q.x, y: q.y, z: q.z, amt: amt, kind: kind }); return 0; }
+  if (k === 'roll') {
+    const L = t.liftA || {}; if (!src || d <= (L.rollNear || 4)) return amt;
+    const q = at(0.5, 1.1); guardTracer(t, 'roll', 0); fx({ k: 'guarded', u: t, how: 'roll', x: q.x, y: q.y, z: q.z, amt: amt, kind: kind }); return 0;
+  }
+  if (k === 'aegis') {
+    const G = t.def.air.guard; if (!src || d < 0.01) return amt;
+    if (ux * Math.sin(t.yaw) + uz * Math.cos(t.yaw) < Math.cos(G.arc * Math.PI / 180)) return amt;
+    const melee = d - (src.r || 0) < GUARD_MELEE && !src.struct && src.kind !== 'ness' && src.kind !== 'hero';
+    if (melee) { const kn = G.knock * (src.big ? 0.5 : 1); src.x += ux * kn; src.z += uz * kn; applySlow(src, 0.4, 0.8); }
+    const q = at(0.7, 1.25); guardTracer(t, 'block', 0.75); fx({ k: 'guarded', u: t, how: 'block', x: q.x, y: q.y, z: q.z, amt: amt, kind: kind, melee: melee }); return 0;
+  }
+  if (k === 'bubble') {
+    const a = Math.min(t.guardHp, amt); t.guardHp -= a;
+    const q = at(1.15, 1.05); guardTracer(t, 'absorb', 1.15); fx({ k: 'guarded', u: t, how: 'absorb', x: q.x, y: q.y, z: q.z, amt: a, left: t.guardHp, kind: kind });
+    if (t.guardHp <= 0.01) guardEnd(t, 'full');
+    return amt - a;
+  }
+  return amt;
+}
+/* A projectile that reaches a guarded hero. guardPass: it goes through the fray, and past a roll if it came from afar (said
+   once per projectile). guardStop: it dies on the aegis, unburst, if it comes from the front. The bubble is left to damage(). */
+function guardPass(u, p) {
+  if (u.kind !== 'hero') return false;
+  const pass = (u.guardT > 0 && u.guardK === 'fray') || (u.rollT > 0 && p.owner && hyp(p.owner.x - u.x, p.owner.z - u.z) > ((u.liftA && u.liftA.rollNear) || 4));
+  if (pass && !p.passed) { p.passed = true; u.shotAtT = W.t; fx({ k: 'guarded', u: u, how: u.guardT > 0 ? 'pass' : 'roll', x: u.x, y: u.y + 1.1, z: u.z, amt: p.dmg || 0, kind: 'proj' }); }
+  return pass;
+}
+function guardStop(u, p) {
+  if (u.kind !== 'hero' || !(u.guardT > 0) || u.guardK !== 'aegis') return false;
+  const n = hyp(p.vx, p.vz) || 1, G = u.def.air.guard;
+  if (-(p.vx * Math.sin(u.yaw) + p.vz * Math.cos(u.yaw)) / n < Math.cos(G.arc * Math.PI / 180)) return false;
+  u.shotAtT = W.t; fx({ k: 'guarded', u: u, how: 'block', x: p.x, y: p.y, z: p.z, amt: p.dmg || 0, kind: 'proj', melee: false });
+  return true;
+}
+/* A thread boost: why is 'jump' (a second jump) or 'hover'. True if it took. */
+function threadBoost(h, why) {
+  const B = C.TBOOST, hs = hyp(h.vx, h.vz); if (h.zip || hs < B.minSp) return false;
+  const lane = LL.nearestLane(h.x, h.z); LL.laneNearest(lane, h.x, h.z, Q); if (Q.d > B.r) return false;
+  LL.lanePoint(lane, Q.s, P); const al = (h.vx * P.dx + h.vz * P.dz) / hs; if (Math.abs(al) < B.align) return false;
+  const sg = al > 0 ? 1 : -1, dx = P.dx * sg, dz = P.dz * sg, along = Math.abs(al) * hs, latX = h.vx - dx * along, latZ = h.vz - dz * along;
+  const sp = Math.max(along, h.def.speed * h.st.speed * B.sp); // never slower; off a thread ride (27 m/s) it adds only lift
+  h.vx = dx * sp + latX * 0.4; h.vz = dz * sp + latZ * 0.4; h.vy += B.vy; h.tbT = B.t; h.tbN = (h.tbN || 0) + 1;
+  fx({ k: 'tboost', u: h, lane: lane, why: why, n: h.tbN, x: h.x, y: h.y, z: h.z, tx: P.x, tz: P.z, dx: dx, dz: dz });
+  const Ht = h.def.air.hat;
+  if (Ht && !h.hat && h.hatN < Ht.need) { h.hatN++; if (h.hatN >= Ht.need) fx({ k: 'hatready', u: h }); }
+  return true;
+}
+/* Myra Belle's boon: a boosted hover that ends while she is still over the thread (or onto it) mends her side near her. */
+function boonCheck(h, why) {
+  const Bn = h.def.air && h.def.air.boon; if (!h.boonHov) return; h.boonHov = false; if (!Bn || !h.alive) return;
+  const lane = LL.nearestLane(h.x, h.z); LL.laneNearest(lane, h.x, h.z, Q);
+  if (why !== 'zip' && Q.d > C.TBOOST.r * 1.5) return;
+  const amt = Bn.heal * h.st.ap, who = heroesNear(h.team, h.x, h.z, Bn.r);
+  for (let i = 0; i < who.length; i++) heal(who[i], amt);
+  fx({ k: 'boon', u: h, who: who, amt: amt, r: Bn.r, x: h.x, y: h.y, z: h.z });
+}
+/* Dora's hat. Out along the aim, level at chest height, `out` m (or until it meets a tree or a rock), then home to her
+   head; each enemy it passes is cut once on the way out and once on the way back. Structures are not cut. */
+function hatThrow(h) {
+  const Ht = h.def.air && h.def.air.hat; if (!Ht || h.hat || h.hatN < Ht.need || !h.alive) return false;
+  const c = h.ctl; let dx = c.ax - h.x, dz = c.az - h.z, d = hyp(dx, dz); if (d < 0.5) { dx = Math.sin(h.yaw); dz = Math.cos(h.yaw); d = 1; }
+  dx /= d; dz /= d; h.hatN = 0;
+  h.hat = { x: h.x + dx * 0.5, y: h.y + 2.0, z: h.z + dz * 0.5, dx: dx, dz: dz, vx: dx * Ht.speed, vy: 0, vz: dz * Ht.speed, t: 0, d: 0, back: false, hitO: [], hitB: [], cuts: 0 };
+  fx({ k: 'hatthrow', u: h, x: h.hat.x, y: h.hat.y, z: h.hat.z, dx: dx, dz: dz });
+  return true;
+}
+function hatStep(h, dt) {
+  const H = h.hat, Ht = h.def.air.hat; H.t += dt;
+  if (!H.back) {
+    H.vy = ((h.y > 1 ? h.y + 1.1 : 1.3) - H.y) * 5; H.x += H.vx * dt; H.y += H.vy * dt; H.z += H.vz * dt; H.d += Ht.speed * dt;
+    let hit = Math.abs(H.x) > C.HALF_X - 1 || Math.abs(H.z) > C.HALF_Z - 1;
+    for (let i = 0; i < W.obstacles.length && !hit; i++) { const o = W.obstacles[i]; if (H.y < o.h && hyp(H.x - o.x, H.z - o.z) < o.r + 0.3) hit = true; }
+    if (H.d >= Ht.out || hit || H.t > 1.5) { H.back = true; fx({ k: 'hatturn', u: h, x: H.x, y: H.y, z: H.z, wall: hit }); }
+  } else {
+    const tx = h.x - H.x, ty = h.y + 2.0 - H.y, tz = h.z - H.z, d = hyp(tx, ty, tz);
+    if (d < 0.7 || H.t > 4) { h.hat = null; fx({ k: 'hatback', u: h, cuts: H.cuts }); return; }
+    const k = Math.min(1, dt * 9), sp = Ht.back; H.vx += (tx / d * sp - H.vx) * k; H.vy += (ty / d * sp - H.vy) * k; H.vz += (tz / d * sp - H.vz) * k;
+    H.x += H.vx * dt; H.y += H.vy * dt; H.z += H.vz * dt;
+  }
+  const us = W.units, list = H.back ? H.hitB : H.hitO, ap = h.st.ap * h.botMul * (W.great[h.team] > 0 ? 1.25 : 1) * (h.furyT > 0 ? 1.3 : 1);
+  for (let i = 0; i < us.length; i++) {
+    const u = us[i]; if (!u.alive || u.team === h.team || u.struct || list.indexOf(u.id) >= 0) continue;
+    if (Math.abs(u.x - H.x) > u.r + Ht.r || Math.abs(u.z - H.z) > u.r + Ht.r || hyp(u.x - H.x, u.z - H.z) > u.r + Ht.r || H.y < u.y - 0.3 || H.y > u.y + u.h + 0.4) continue;
+    list.push(u.id); H.cuts++; damage(u, Ht.dmg * ap, h, 'ab'); fx({ k: 'hatcut', u: h, x: H.x, y: H.y, z: H.z, tk: u.kind, back: H.back });
+  }
+}
+/* 0.26 guard: Rook's barrel roll. A dash while the lift or the glide lasts flips him sideways about his own length: the dash
+   goes to his left or right (the stick's side; with the stick ahead or none, the side away from the last roll), keeping the
+   way he was flying, and for a.roll seconds shots from farther than a.rollNear m miss (guardHit, guardProj). */
+function rollStart(h, mx, mz) {
+  const a = h.liftA; if (!a || !a.roll) return;
+  const fx0 = Math.sin(h.yaw), fz0 = Math.cos(h.yaw), lx = fz0, lz = -fx0, lat = mx * lx + mz * lz;
+  const dir = Math.abs(lat) > 0.25 ? (lat > 0 ? 1 : -1) : -(h.rollDir || -1), fwd = Math.max(0, h.vx * fx0 + h.vz * fz0);
+  h.rollDir = dir; h.rollT = a.roll; h.rollMax = a.roll;
+  h.dashX = lx * dir * 20 + fx0 * fwd; h.dashZ = lz * dir * 20 + fz0 * fwd;
+  fx({ k: 'roll', u: h, dir: dir, x: h.x, y: h.y, z: h.z });
 }
 function heroStep(h, dt) {
   const c = h.ctl, st = h.st, d = h.def;
   h.fireT -= dt; for (let i = 0; i < 3; i++) if (h.cds[i] > 0) h.cds[i] -= dt;
   if (h.shieldT > 0) { h.shieldT -= dt; if (h.shieldT <= 0) h.shield = 0; }
+  if (h.guardT > 0) { h.guardT -= dt; if (h.guardT <= 0) guardEnd(h, 'time'); } // 0.26 guard: the window closes
+  if (h.rollT > 0) h.rollT = Math.max(0, h.rollT - dt); if (h.tbT > 0) h.tbT = Math.max(0, h.tbT - dt); // 0.26 guard
   if (h.slowT > 0) h.slowT -= dt;
   if (h.zestT > 0) h.zestT -= dt; if (h.furyT > 0) h.furyT -= dt;
   if (h.hipsT > 0) { h.hipsT -= dt; heal(h, h.maxHp * 0.07 * dt); }
@@ -857,6 +1265,8 @@ function heroStep(h, dt) {
   if (hyp(h.x, h.z + sgn * C.SPAWN_Z) < C.FOUNT_R) damage(h, 160 * dt, null, 'dot');
   if (!h.alive) return;
   const sp = d.speed * st.speed * (h.slowT > 0 ? 1 - h.slowAmt : 1) * (h.zestT > 0 ? 1.3 : 1);
+  if (h.held) { nessHold(h, dt); return; } // 0.26 ness: in the jaws, nothing works but mashing out
+  const fl = W.flood ? floodHero(h, dt) : 1; // 0.26 ness: wading, the current, a dash that skims
   if (h.liftT > 0 || h.glide) liftStep(h, dt, sp); // 0.25 rook: Lantern Lift owns his vertical speed while it lasts
   if (h.zip) {
     if (h.hoverT > 0) hoverEnd(h, 'zip'); // 0.25 air
@@ -871,11 +1281,12 @@ function heroStep(h, dt) {
   } else {
     let mx = c.mx, mz = c.mz; const m = hyp(mx, mz); if (m > 1) { mx /= m; mz /= m; }
     if (h.dashT > 0) { h.dashT -= dt; h.vx = h.dashX; h.vz = h.dashZ; if (h.dashT <= 0) { h.vx *= 0.35; h.vz *= 0.35; } }
-    else { const f = 1 - Math.exp(-(h.onGround ? 14 : 3.5) * dt); h.vx += (mx * sp - h.vx) * f; h.vz += (mz * sp - h.vz) * f; }
+    else { const f = 1 - Math.exp(-(h.onGround ? 14 : 3.5) * dt), tb = h.tbT > 0 && !h.onGround ? C.TBOOST.sp : 1; h.vx += (mx * sp * fl * tb - h.vx) * f; h.vz += (mz * sp * fl * tb - h.vz) * f; } /* 0.26 ness: fl, the flood's factor on the hero's own speed; 0.26 guard: tb, a thread boost's air steering (lead: both kept) */
     if (c.jump) heroJump(h); // 0.25 air: a jump, a second jump or the hover, by the hero's `air`
     if (c.dash && h.dashT <= 0 && h.stamina >= 1) {
       let ddx = mx, ddz = mz; if (m < 0.2) { ddx = Math.sin(h.yaw); ddz = Math.cos(h.yaw); } else { ddx = mx / Math.min(1, m) ; ddz = mz / Math.min(1, m); const n = hyp(ddx, ddz); ddx /= n; ddz /= n; }
       h.dashX = ddx * 24; h.dashZ = ddz * 24; h.dashT = 0.2; h.stamina--; fx({ k: 'dash', u: h });
+      if (h.liftT > 0 || h.glide) rollStart(h, mx, mz); // 0.26 guard: aloft, a dash is a barrel roll
     }
     heroAir(h, dt); // 0.25 air: gravity, or the hover's hang
     h.x += h.vx * dt; h.z += h.vz * dt; h.y += h.vy * dt;
@@ -890,7 +1301,8 @@ function heroStep(h, dt) {
   if (c.fire && h.reloadT <= 0 && h.ammo > 0 && h.fireT <= 0) fireGun(h);
   for (let i = 0; i < 3; i++) if (c.ab[i] && h.cds[i] <= 0 && (i < 2 || h.level >= C.ULT_LEVEL)) cast(h, i);
   if (c.zip) tryZip(h);
-  c.jump = c.dash = c.zip = c.reload = false; c.ab[0] = c.ab[1] = c.ab[2] = false; c.zipDir = 0;
+  if (c.hat) hatThrow(h); if (h.hat) hatStep(h, dt); // 0.26 guard: Dora's hat
+  c.jump = c.dash = c.zip = c.reload = c.hat = false; c.ab[0] = c.ab[1] = c.ab[2] = false; c.zipDir = 0;
 }
 function respawn(h) {
   const sp = spawnPos(h.team, h.slot);
@@ -937,6 +1349,7 @@ function think(h) {
     if (eh && ehD < d.aiRange * 0.7 && losClear(h.x, h.z, eh.x, eh.z)) { a.target = eh; a.wantFire = true; }
     for (let i = 0; i < 2; i++) { const ab = d.ab[i]; if (h.cds[i] <= 0 && (ab.kind === 'dash' || ab.kind === 'blink') && eh && ehD < 18 && !h.zip) c.ab[i] = true; }
     if (eh && ehD < 14 && h.stamina >= 2 && W.rng() < 0.2 && !h.zip) c.dash = true;
+    botGuard(h); // 0.26 guard: a guard on the way out
     botAbilities(h, a.target, eh, ehD, hpF);
     return;
   }
@@ -953,9 +1366,10 @@ function think(h) {
   LL.lanePoint(lane, rel(h.team, lane, standS), P);
   a.gx = P.x - P.dz * a.lat; a.gz = P.z + P.dx * a.lat;
   const ness = W.ness; a.ness = ness.alive && W.rush[h.team] > 0 && (lane !== 0 || W.rushAll[h.team]);
-  if (a.ness) { a.gx = C.LOCH.x + a.lat * 2; a.gz = C.LOCH.z + (h.team === 0 ? -15 : 15); if (h.zip && Math.abs(h.z) < 24) c.zip = true; }
+  if (a.ness) { a.gx = C.LOCH.x + a.lat * 2; a.gz = C.LOCH.z + (h.team === 0 ? -1 : 1) * (NESS.REACH + 3.5); if (h.zip && Math.abs(h.z) < 24) c.zip = true; } // 0.26 ness: fish from beyond the jaws' reach
   else if (h.zip) { if (h.zip.dir < 0 || rel(h.team, h.zip.lane, h.zip.s) >= standS - 5 || h.zip.lane !== lane) c.zip = true; }
   else if (onLane && standS - myTs > 45 && S.canZip(h) === lane && zipEnd(h.team, lane) - myTs > 25) { c.zip = true; c.zipDir = 1; }
+  botFlood(h, standS, myTs); // 0.26 ness: in a flood the threads are the dry way
   // targets
   const range = d.aiRange; let best = null, bs = -1e9;
   const us = W.units;
@@ -971,7 +1385,7 @@ function think(h) {
     else continue;
     if (sc > bs && losClear(h.x, h.z, u.x, u.z)) { bs = sc; best = u; }
   }
-  if (ness.alive && (a.ness || ness.hp < ness.maxHp * 0.985)) {
+  if (ness.alive && (a.ness || ness.out || ness.hp < ness.maxHp * 0.985)) { // 0.26 ness: out of the loch it is fair game
     const dd = hyp(ness.x - h.x, ness.z - h.z) - ness.r, sc = a.ness ? 55 : 26;
     if (dd < range && sc > bs && losClear(h.x, h.z, ness.x, ness.z)) { bs = sc; best = ness; }
   }
@@ -988,6 +1402,7 @@ function think(h) {
   }
   if (!best && h.ammo < h.magSize * 0.4) c.reload = true;
   botJump(h, eh, ehD); // 0.25 air: jumps when hurt as before, now and then in a fight, and uses the hero's air move
+  botGuard(h); botThread(h); botHat(h, best); // 0.26 guard: guard under fire, boost along its own thread, throw the hat
   botAbilities(h, best, eh, ehD, hpF);
 }
 function botAbilities(h, tgt, eh, ehD, hpF) {
@@ -1057,6 +1472,7 @@ function aiHero(h, dt) {
     c.ax = a.ax; c.ay = a.ay; c.az = a.az; c.fire = false;
   }
   botAir(h, dt); // 0.25 air
+  botNess(h, dt); // 0.26 ness: mash out of the jaws, dodge the tell, keep out of reach
 }
 /* 0.25 air: bots. A hurt bot on the ground jumps (or dashes) as before 0.25; a bot whose hero has `air` also jumps now
    and then while an enemy hero (for the Reign, whose foes have no heroes: a hollow) is in range, and plans the rest of
@@ -1077,6 +1493,37 @@ function botAir(h, dt) {
   const a = h.ai, c = h.ctl;
   if (a.holdT > 0) a.holdT -= dt; c.jumpHeld = a.holdT > 0;
   if (a.dblT > 0 && (a.dblT -= dt) <= 0 && !h.onGround && !h.zip) c.jump = true;
+}
+/* 0.26 guard: bots. Under fire (a hit aimed at it in the last 0.45 s, landed or not), a bot with a guard opens it: on the
+   ground it jumps and plans the second jump soon after the take-off (30% a think), in the air it jumps again at once (60%).
+   Anna only bothers when the shooter is in front of her; Rook, lifting or gliding, rolls (40%). Along its own thread,
+   running fast and far from where it wants to stand, a bot with a second jump or a hover jumps and boosts (5% a think;
+   Dora, while her hat is not charged, anywhere along the thread and 15%), and one that has just let go of a thread ride
+   jumps again over it (50%). Dora throws a charged hat at a target within its
+   reach (50% a think). */
+function botGuard(h) {
+  const A = h.def.air, G = A && A.guard, c = h.ctl, a = h.ai; if (h.zip || h.guardT > 0 || W.t - h.shotAtT > 0.45 || h.stamina < 1) return;
+  if ((h.liftT > 0 || h.glide) && h.liftA && h.liftA.roll) { if (!(h.rollT > 0) && W.rng() < 0.4) c.dash = true; return; }
+  if (!G) return;
+  if (G.kind === 'aegis') { const dx = h.shotAtX - h.x, dz = h.shotAtZ - h.z, d = hyp(dx, dz) || 1; if ((dx * Math.sin(h.yaw) + dz * Math.cos(h.yaw)) / d < 0.4) return; }
+  if (h.onGround) { if (!c.jump && W.rng() < 0.3) { c.jump = true; a.dblT = 0.1 + W.rng() * 0.1; a.holdT = 0; } }
+  else if (Math.max(1, h.jumps || 0) < (A.jumps || 1) && !(a.dblT > 0) && W.rng() < 0.6) c.jump = true;
+}
+function botThread(h) {
+  const A = h.def.air, a = h.ai, c = h.ctl; if (!A || !((A.jumps || 1) > 1 || A.hover) || a.mode === 'retreat' || h.stamina < 2 || c.jump) { if (a) a.wasZip = !!h.zip; return; }
+  const wasZip = a.wasZip; a.wasZip = !!h.zip; if (h.zip) return;
+  const hs = hyp(h.vx, h.vz); if (hs < 4.5) return;
+  LL.laneNearest(a.lane, h.x, h.z, Q); if (Q.d > C.TBOOST.r - 0.3) return;
+  LL.lanePoint(a.lane, Q.s, P); if (Math.abs(h.vx * P.dx + h.vz * P.dz) / hs < 0.85) return;
+  const plan = function () { if (A.hover) { a.holdT = 0.45 + A.hover.t * (0.7 + W.rng() * 0.3); a.dblT = 0; } else { a.dblT = 0.22 + W.rng() * 0.1; a.holdT = 0; } };
+  if (!h.onGround) { if (wasZip && Math.max(1, h.jumps || 0) < (A.jumps || 1) + (A.hover ? 1 : 0) && W.rng() < 0.5) { c.jump = true; if (A.hover) a.holdT = 0.45 + A.hover.t * 0.8; } return; }
+  const charging = A.hat && h.hatN < A.hat.need && !h.hat;
+  if (!charging && hyp(a.gx - h.x, a.gz - h.z) < 14) return;
+  if (W.rng() < (charging ? 0.15 : 0.05)) { c.jump = true; plan(); }
+}
+function botHat(h, tgt) {
+  const Ht = h.def.air && h.def.air.hat; if (!Ht || h.hat || h.hatN < Ht.need || !tgt || tgt.struct || h.zip) return;
+  if (hyp(tgt.x - h.x, tgt.z - h.z) < Ht.out - 1 && losClear(h.x, h.z, tgt.x, tgt.z) && W.rng() < 0.5) h.ctl.hat = true;
 }
 function coordinate() {
   // lane fronts
@@ -1238,7 +1685,7 @@ function trooperStep(u, dt) {
   const offLane = hyp(u.x - px, u.z - pz);
   if (u.tgtT <= 0) { u.tgtT = 0.3 + Math.random() * 0.1; u.tgt = pickTarget(u, 13, offLane < 9); }
   let tg = u.tgt; if (tg && !tg.alive) tg = u.tgt = null;
-  const sp = u.speed * (u.slowT > 0 ? 1 - u.slowAmt : 1);
+  const sp = u.speed * (u.slowT > 0 ? 1 - u.slowAmt : 1) * (W.flood ? floodTrooper(u, dt) : 1); // 0.26 ness: troopers float and drift in the flood
   let gx = px, gz = pz, move = true;
   if (tg) {
     const d = hyp(tg.x - u.x, tg.z - u.z) - tg.r;
@@ -1427,6 +1874,7 @@ S.step = function (dt) {
 
 /* Hooks for tools/test.js. Nothing in the game calls these. */
 S._t = { give: give, eat: eat, damage: damage, kill: kill, spawnThief: spawnThief, spawnHollow: spawnHollow, thiefStep: thiefStep };
+S._t.flood = floodStart; S._t.nessTell = nessTell; S._t.nessStep = nessStep; // 0.26 ness
 S._t.heroStep = heroStep; // 0.25 air: tools/shots drive one hero through the real jump and hover
 
 /* Aim ray for the human player: first thing the crosshair is on. */

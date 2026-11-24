@@ -100,6 +100,7 @@ function playerControl(dt) {
   if (I.take('zip')) { if (ci >= 0) S.fold(p, ci); else c.zip = true; }
   runCoach(dt, p);
   for (let i = 0; i < 3; i++) if (I.take('ab' + i)) c.ab[i] = true;
+  if (I.take('hat')) c.hat = true; // 0.26 guard: Dora's hat (G, pad R3, the touch Hat button)
   info.canZip = S.canZip(p) >= 0;
 }
 

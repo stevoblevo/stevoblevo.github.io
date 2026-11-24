@@ -30,6 +30,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Spectral:ital,wght@0,400;0,600;1,400&family=Zen+Maru+Gothic:wght@400;700&family=Newsreader:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap">
 <link rel="stylesheet" href="css/wardrobe.css"><!-- 0.23 wardrobe: its screen and its box on the end screen -->
+<link rel="stylesheet" href="css/guard.css"><!-- 0.26 guard: Dora's hat on the HUD and the touch Hat button -->
 <style>
 /* Layout: a full-bleed WebGL valley. HUD pins to the corners and bottom centre. Menus are dark parchment panels over the live match. */
 :root {
@@ -132,6 +133,13 @@ button { font: inherit; color: inherit; }
 #ammo { min-width: 78px; text-align: right; font-family: var(--f-display); font-size: 28px; font-variant-numeric: tabular-nums; line-height: 1; text-shadow: 0 1px 3px var(--shc); padding-bottom: 4px; }
 #ammo small { display: block; font-family: var(--f-sc); font-size: 12px; letter-spacing: 0.08em; color: var(--paper-dim); }
 #ammo.rel { color: var(--gold); }
+#ammoI { display: flex; justify-content: flex-end; gap: 1px; margin-bottom: 4px; color: var(--hc, var(--gold)); --ic2: #5fe6d0; } /* 0.26 shots */
+#ammoI svg { width: 9px; height: 21px; fill: currentColor; flex: none; filter: drop-shadow(0 1px 1px var(--shc)); }
+#ammoI[data-hero="rook"] .ic2 { fill: var(--ic2); }
+#ammoI[data-hero="skein"] svg { width: 7px; }
+#ammoI[data-hero="anna"] svg, #ammoI[data-hero="myra"] svg { width: 11px; height: 23px; margin: 0 1px; }
+#ammoI[data-hero="dora"] svg { width: 8px; height: 20px; }
+body.touch #ammo { display: flex; flex-direction: column; align-items: flex-end; } body.touch #ammoN { order: 1; } body.touch #ammoI { order: 2; margin: 3px 0 1px; } body.touch #gunN { order: 3; } body.touch #ammoI svg { width: 6px; height: 15px; } body.touch #ammoI[data-hero="anna"] svg, body.touch #ammoI[data-hero="myra"] svg { width: 8px; height: 17px; } body.touch #ammoI[data-hero="skein"] svg { width: 5px; }
 #dead { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(40, 10, 16, 0.25), rgba(10, 4, 8, 0.7)); text-align: center; }
 #dead h2 { margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: clamp(28px, 5vw, 46px); }
 #dead p { margin: 6px 0 14px; font-family: var(--f-sc); letter-spacing: 0.1em; color: var(--paper-dim); }
@@ -352,7 +360,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <button class="ab" id="ab0" data-btn="ab0"><b>Q</b><span></span><i></i><em></em></button>
         <button class="ab" id="ab1" data-btn="ab1"><b>E</b><span></span><i></i><em></em></button>
         <button class="ab" id="ab2" data-btn="ab2"><b>F</b><span></span><i></i><em></em></button>
-        <div id="ammo"><span id="ammoN">0</span><small id="gunN"></small></div>
+        <div id="ammo"><div id="ammoI"></div><span id="ammoN">0</span><small id="gunN"></small></div>
       </div>
     </div>
     <div id="dead" hidden><div><h2 id="deadH">You came apart.</h2><p>Re-threading in <b id="deadT">0</b></p><button class="btn" id="bDeadShop">Spend souls while you wait</button></div></div>
@@ -392,7 +400,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
       <div id="how">
         <p><b>Souls.</b> Troopers drop a soul when they die. Half is yours on the spot; the other half floats up as an orb. Shoot your own orbs to secure them. Shoot theirs to deny them.</p>
         <p><b>Structures.</b> Each thread has a guardian, then a warden. They shrug off most damage unless your troopers are there. Drop one warden and the patron opens.</p>
-        <p><b>The loch.</b> Three minutes in, the Ness surfaces between the Middle and East threads. It spits, it slams, and whoever lands the last hit gives their whole side the Greatness for 90 seconds.</p>
+        <p><b>The loch.</b> Three minutes in, the Ness surfaces between the Middle and East threads. It spits, it slams, and whoever lands the last hit gives their whole side the Greatness for 90 seconds. Come close and it rears, marks a spot, and bites it: jump over the bite, dash off the ring, or ride a thread. Once each rising the loch floods the valley and it swims out; the threads stay dry.</p>
         <p><b>The Hush.</b> It has no heroes. It has hollows that walk the threads, and small ones that take what is lit and run for the gate. Every five minutes the rain comes down red.</p>
         <p><b>Views.</b> You can change how you look at the valley. Some things are only there in one light. Before the red rain the valley has a mood, and one view answers it. Two views cost something to wear.</p>
         <p><b>First rain.</b> The short one. Six minutes: five to get ready, one of red rain, then five stars are counted. Start here.</p>
@@ -408,7 +416,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
       <p id="worlds">Other doors: </p>
-      <footer>Livloch 0.25 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · <a href="https://github.com/stevoblevo/livloch">made in the open on GitHub</a> · part of <a href="https://saelion.co">Saelion</a> · music made with ElevenLabs Music</footer>
+      <footer>Livloch 0.26 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · <a href="https://github.com/stevoblevo/livloch">made in the open on GitHub</a> · part of <a href="https://saelion.co">Saelion</a> · music made with ElevenLabs Music</footer>
     </div>
   </section>
 
@@ -491,6 +499,8 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
 <script src="js/scenery.js"></script>
 <script src="js/heroes3d.js"></script><!-- 0.24 heroes3d: the heroes as 3D figures; before gfx.js, which calls it -->
 <script src="js/wardrobe.js"></script><!-- 0.23 wardrobe: before gfx.js, which calls it -->
+<script src="js/shots.js"></script><!-- 0.26 shots: a look per gun; before gfx.js, which calls it -->
+<script src="js/ness.js"></script><!-- 0.26 ness: the Ness as a creature, and the flood; before gfx.js, which calls it -->
 <script src="js/gfx.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/input.js"></script>

@@ -181,6 +181,51 @@ function airSound(e, pl, near) {
     if (e.why !== 'land') tone(edo(72), 0.22, 'sine', 0.04 * g, edo(62));
   }
 }
+/* 0.26 GUARD. Short sounds for the guards and the thread, in the score's key through edo() (rounded to A major unless
+   Saelion tuning is on):
+   - Anna's aegis: raised, a bronze shing (a ring of inharmonic partials on E, a breath of noise); a block, a clang on A with
+     a click, heavier for a melee block.
+   - Dora's bubble: opening, a soft rising glass chime (E to A, then C sharp); a soak, a small glassy tink; the pop, a quick
+     rising sine and a puff of noise, then a bright A, soft.
+   - Skye's fray: a thread whisper sweeping up and a plucked high E; a pass, a dry whisper.
+   - A thread boost: the thread plucked and pulled, an A that bends up a fourth with an E above it.
+   - Dora's hat: charged, three quiet notes (A, C sharp, E); thrown, a whirr while it flies; a cut, a soft thwick; home, a
+     soft catch and a chime. Myra's boon: a warm A major bell chord. Rook's roll: a whoosh across.
+   Heard for the player's hero, others' quietly by distance (the pass and the soak only for the player). */
+let hatSnd = null;
+function whirr(dur, g) { // noise through a band-pass whose level is beaten fast by a square LFO, like a spinning brim; returns a stop()
+  if (!A.on || g <= 0.002) return null;
+  const t = ctx.currentTime, s = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), a = ctx.createGain(), am = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
+  s.buffer = nbuf; s.loop = true; fl.type = 'bandpass'; fl.frequency.value = 2200; fl.Q.value = 1.6; lfo.type = 'square'; lfo.frequency.value = 16; lg.gain.value = 0.45; am.gain.value = 0.55; lfo.connect(lg); lg.connect(am.gain);
+  a.gain.setValueAtTime(0.0001, t); a.gain.exponentialRampToValueAtTime(g, t + 0.05); a.gain.setValueAtTime(g, t + dur - 0.1); a.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(fl); fl.connect(am); am.connect(a); a.connect(sfxBus); s.start(t, Math.random()); lfo.start(t); s.stop(t + dur + 0.02); lfo.stop(t + dur + 0.02);
+  return function () { const n = ctx.currentTime; try { a.gain.cancelScheduledValues(n); a.gain.setValueAtTime(Math.max(0.0001, a.gain.value), n); a.gain.exponentialRampToValueAtTime(0.0001, n + 0.06); s.stop(n + 0.08); lfo.stop(n + 0.08); } catch (er) {} };
+}
+function guardSound(e, pl, near) {
+  const u = e.u; if (!u || !u.def) return; const mine = u === pl, g = mine ? 1 : 0.45 * near(u.x, u.z, 45);
+  switch (e.k) {
+    case 'guard':
+      if (g < 0.02) return;
+      if (e.kind === 'aegis') { [1, 2.32, 3.9, 5.1].forEach(function (p, i) { tone(edo(49) * p, 0.5 / (1 + i * 0.6), 'sine', 0.07 * g / (1 + i)); }); noise(0.12, 0.05 * g, 5200, 1.5, 'highpass'); }
+      else if (e.kind === 'bubble') { tone(edo(49), 0.3, 'sine', 0.06 * g, edo(62)); tone(edo(72), 0.55, 'sine', 0.045 * g, 0, 0.08); tone(edo(93), 0.4, 'triangle', 0.02 * g, 0, 0.12); }
+      else if (e.kind === 'fray') { noise(0.32, 0.06 * g, 1200, 3, 'bandpass', 0, 6400); tone(edo(80), 0.18, 'triangle', 0.05 * g, 0, 0.06); }
+      break;
+    case 'guarded':
+      if (e.how === 'block') { if (g < 0.02) return; bell(31, (e.melee ? 0.12 : 0.1) * g, e.melee ? 0.9 : 0.6); noise(0.05, (e.melee ? 0.13 : 0.09) * g, 3200, 2); if (e.melee) noise(0.14, 0.09 * g, 400, 1, 'lowpass'); }
+      else if (!mine) return;
+      else if (e.how === 'absorb') { tone(edo(103), 0.12, 'sine', 0.05); tone(edo(111), 0.08, 'sine', 0.025, 0, 0.02); }
+      else noise(0.09, 0.08, 3800, 2.5, 'bandpass', 0, 1600);
+      break;
+    case 'guardend': if (e.kind === 'bubble' && g >= 0.02) { tone(edo(62), 0.07, 'sine', 0.07 * g, edo(93)); noise(0.08, 0.06 * g, 2600, 1.2); tone(edo(93), 0.4, 'sine', 0.04 * g, 0, 0.05); } break;
+    case 'tboost': if (g >= 0.02) { tone(edo(31), 0.3, 'triangle', 0.08 * g, edo(44)); tone(edo(49), 0.4, 'sine', 0.05 * g, 0, 0.05); noise(0.2, 0.03 * g, 2400, 2, 'bandpass', 0, 4800); } break;
+    case 'hatready': if (mine) [31, 41, 49].forEach(function (n, i) { tone(edo(n + 31), 0.3, 'sine', 0.05, 0, i * 0.08); }); break;
+    case 'hatthrow': if (hatSnd && mine) { hatSnd(); hatSnd = null; } { const s = whirr(1.8, 0.05 * g); if (mine) hatSnd = s; } noise(0.1, 0.06 * g, 1800, 1, 'bandpass', 0, 3600); break;
+    case 'hatcut': { const gc = mine ? 0.8 : 0.4 * near(e.x, e.z, 45); noise(0.06, 0.2 * gc, 2600, 2); tone(edo(62), 0.06, 'triangle', 0.05 * gc, edo(49)); break; }
+    case 'hatback': if (mine && hatSnd) { hatSnd(); hatSnd = null; } if (g >= 0.02) { noise(0.06, 0.06 * g, 700, 1, 'lowpass'); tone(edo(80), 0.25, 'sine', 0.04 * g, 0, 0.03); } break;
+    case 'boon': { const gb = mine ? 1 : 0.5 * near(e.x, e.z, 50); if (gb < 0.02) break; bell(31, 0.05 * gb, 1.6); bell(41, 0.035 * gb, 1.5); bell(49, 0.03 * gb, 1.4); break; }
+    case 'roll': if (g >= 0.02) noise(0.4, 0.16 * g, 600, 1.4, 'bandpass', 0, 2600); break;
+  }
+}
 A.fx = function (e, W, cam) {
   if (!A.on) return;
   const pl = W.player;
@@ -232,6 +277,7 @@ A.fx = function (e, W, cam) {
     case 'blink': noise(0.2, 0.15 * near(e.x, e.z, 50), 3000, 3, 'bandpass', 0, 400); break;
     case 'zip': if (e.u === pl) tone(edo(31), 0.5, 'sawtooth', 0.06, edo(62)); break;
     case 'jump': case 'hover': case 'hoverend': airSound(e, pl, near); break; // 0.25 air
+    case 'guard': case 'guarded': case 'guardend': case 'tboost': case 'hatready': case 'hatthrow': case 'hatcut': case 'hatback': case 'boon': case 'roll': guardSound(e, pl, near); break; // 0.26 guard
     case 'dash': if (e.u === pl) noise(0.16, 0.1, 1800, 0.8, 'bandpass', 0, 500); break;
     case 'reload': if (e.u === pl) { tone(edo(80), 0.04, 'square', 0.05); tone(edo(85), 0.04, 'square', 0.05, 0, e.u.def.gun.reload - 0.1); } break;
     case 'towershot': if (e.tp) { tone(edo(93), 0.18, 'sawtooth', 0.09, edo(49)); } else noise(0.1, 0.06 * near(e.u.x, e.u.z, 60), 2600, 4); break;
@@ -261,6 +307,17 @@ A.fx = function (e, W, cam) {
     case 'nessdown': bell(0, 0.24, 3.5); bell(18, 0.2, 3); bell(40, 0.16, 2.6); if (e.team === 0) [31, 41, 49, 59, 72].forEach((n, i) => tone(edo(n), 0.5, 'triangle', 0.12, 0, 0.3 + i * 0.09)); break;
     case 'nesswind': noise(1.1, 0.3 * near(e.x, e.z, 70), 180, 1.2, 'bandpass', 0, 1600); break;
     case 'nessspit': noise(0.25, 0.2 * near(e.x, e.z, 60), 1200, 2, 'bandpass', 0, 300); break;
+    /* 0.26 ness: its voice is low and in the score's key (A: edo 0 is A2). The tell is a rising growl with a tick when the
+       spot locks; the chomp a snap, a thud and water; let go, a wet gasp. The flood: a horn call on A and E (a fifth, edo 18)
+       under a long swell of water for the warning, a rush as the front runs out, a falling wash and a far bell as it drains. */
+    case 'nesstell': { const g = e.p ? 1 : near(e.x, e.z, 70); tone(edo(-31), e.t, 'sawtooth', 0.13 * g, edo(-13)); tone(edo(0), e.t, 'triangle', 0.07 * g, edo(13)); noise(e.t, 0.1 * g, 300, 1.4, 'bandpass', 0, 1500); break; }
+    case 'nesslock': if (e.p) { tone(edo(93), 0.05, 'square', 0.06); tone(edo(93), 0.05, 'square', 0.06, 0, 0.1); } break;
+    case 'nesschomp': { const g = e.p ? 1 : near(e.tx, e.tz, 70); noise(0.09, 0.5 * g, 2600, 1.2, 'bandpass', 0, 500); tone(90, 0.3, 'sine', 0.4 * g, 38); noise(0.6, 0.26 * g, 900, 0.7, 'lowpass', 0.04, 200); if (e.hit && e.u) bell(-13, 0.1 * g, 1.2); else if (!e.hit) tone(edo(31), 0.2, 'triangle', 0.06 * g, edo(18), 0.12); break; }
+    case 'nessrelease': { const g = e.p ? 1 : near(e.x, e.z, 60); noise(0.35, 0.2 * g, 700, 1, 'bandpass', 0, 2600); tone(edo(18), 0.3, 'triangle', 0.07 * g, edo(49)); break; }
+    case 'floodwarn': tone(edo(0), 2.6, 'sawtooth', 0.09, edo(0) * 0.985); tone(edo(18), 2.2, 'sawtooth', 0.06, edo(18) * 0.985, 0.5); tone(edo(-31), 3.2, 'sine', 0.2, edo(-31) * 0.97); noise(e.t, 0.16, 140, 0.8, 'lowpass', 0, 700); bell(0, 0.08, 3); break;
+    case 'flood': noise(3.2, 0.3, 500, 0.6, 'lowpass', 0, 1600); noise(2.4, 0.12, 2400, 0.8, 'bandpass', 0.3, 900); tone(60, 2.4, 'sine', 0.2, 34); break;
+    case 'flooddrain': noise(3.2, 0.2, 1500, 0.7, 'lowpass', 0, 160); tone(edo(18), 1.6, 'sine', 0.06, edo(0)); bell(31, 0.06, 2.5); break;
+    case 'nessdive': case 'nesshome': noise(0.7, 0.24 * near(e.x, e.z, 70), 600, 0.8, 'lowpass', 0, 150); break;
     case 'fishing': if (e.team === 1) { tone(edo(40), 0.3, 'square', 0.07); tone(edo(36), 0.4, 'square', 0.07, 0, 0.25); } break;
     case 'greatend': if (e.team === 0) tone(edo(62), 0.5, 'sine', 0.1, edo(31)); break;
   }

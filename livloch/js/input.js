@@ -6,7 +6,9 @@
    - Touch: left 42% of the screen is a floating stick, the rest is look; holding Fire also drags the view.
    - Mouse look needs pointer lock. If the host frame refuses it, look falls back to raw mouse movement.
    - 0.25 air: jump is a one-shot edge (I.e.jump) as before, and also a level, I.jumpHeld (Space, pad A, or a finger on
-     the touch Jump button), for Myra Belle's hover, which lasts while jump is held. */
+     the touch Jump button), for Myra Belle's hover, which lasts while jump is held.
+   - 0.26 guard: 'hat' (Dora's charged hat throw) is G on the keyboard, the right stick's click (R3, button 11) on a pad,
+     and a touch button (data-btn="hat") that ui.js shows only while the hat is charged. G and R3 were free. */
 (function () {
 'use strict';
 const LL = window.LL;
@@ -27,7 +29,7 @@ I.unlock = function () { try { if (document.pointerLockElement) document.exitPoi
 
 I.init = function (cv, root) {
   canvas = cv; app = root;
-  const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyI: 'ink', KeyV: 'view', KeyC: 'echo', BracketRight: 'view', KeyP: 'pause', Escape: 'esc', Tab: 'shop' };
+  const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyI: 'ink', KeyV: 'view', KeyC: 'echo', BracketRight: 'view', KeyP: 'pause', Escape: 'esc', Tab: 'shop', KeyG: 'hat' }; // 0.26 guard: KeyG
   window.addEventListener('keydown', function (ev) {
     // Menus include native verdict radios and editable debrief notes. Their keys belong to the control.
     if (ev.target && (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) || ev.target.isContentEditable)) return;
@@ -116,7 +118,7 @@ I.poll = function (dt, sens) {
     const dz = v => Math.abs(v) < 0.16 ? 0 : (v - Math.sign(v) * 0.16) / 0.84;
     const ax = dz(gp.axes[0] || 0), ay = dz(gp.axes[1] || 0), rx = dz(gp.axes[2] || 0), ry = dz(gp.axes[3] || 0);
     let any = Math.abs(ax) + Math.abs(ay) + Math.abs(rx) + Math.abs(ry) > 0.2;
-    const MAP = { 0: 'jump', 1: 'dash', 2: 'reload', 3: 'ab2', 4: 'ab0', 5: 'ab1', 8: 'shop', 9: 'pause', 12: 'zip', 14: 'echo', 15: 'view' };
+    const MAP = { 0: 'jump', 1: 'dash', 2: 'reload', 3: 'ab2', 4: 'ab0', 5: 'ab1', 8: 'shop', 9: 'pause', 11: 'hat', 12: 'zip', 14: 'echo', 15: 'view' }; // 0.26 guard: 11 (R3)
     for (let i = 0; i < 16; i++) {
       const d = padBtn(gp, i); if (d) any = true;
       if (d && !padPrev[i]) {
