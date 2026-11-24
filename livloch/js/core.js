@@ -80,6 +80,32 @@ var C = LL.C = {
   ULT_LEVEL: 3, MAX_ITEMS: 15,
   TBOOST: { r: 2.4, align: 0.7, minSp: 3, vy: 2.2, sp: 1.6, t: 0.7, sinkK: 0.4 } // 0.26 guard: the thread boost (see the DESIGN note above)
 };
+/* 0.27 tune: THE DIFFICULTY TABLE. One row per difficulty (0 Gentle, 1 Even, 2 Cruel); every number that differs by
+   difficulty lives here, and tools/tune.js measures them against the agreed target (docs/PLAN.md: Even winnable with two
+   of the five lessons, Cruel only with four, Gentle by someone who knows none).
+     build       the Hush's buildings: health times this; towerH: their damage to heroes times this
+     wave        small Hush troopers per thread per wave (the Reign sends 4)
+     rainWave    more of them per wave while a full red rain falls; thinWave: while a thin one falls (the mood answered)
+     rainHollows extra hollows a full rain brings, one per thread up to three; thinHollows: a thin rain
+     hollowHp, hollowDmg  a hollow's health and blow at 0:00 (both grow each minute); hollowBack: seconds before a
+                 fallen hollow returns to its thread
+     thiefEvery  seconds between small ones (Mercy and Ever Fallen scale it)
+     orbDrift    what share of a soul orb nobody shot drifts to the nearest hero of its side anyway (shot, it is all of it)
+   Until 0.27 these were numbers scattered through sim.js, never tuned; 0.27 moved them here and tuned Even and Cruel with
+   tools/tune.js (before and after tables: docs/evidence/tune-0.27-before.txt, -after.txt). Gentle is as it was. The
+   tuning showed the long match is decided by the red rain, so the rain's two halves are the main knobs: what a full rain
+   brings (rainWave, rainHollows) and what is left of it once the mood is answered (thinWave, thinHollows; until 0.27 a
+   thin rain brought nothing, and answering the mood alone won Cruel 97% of scripted matches). In First Rain the rain is
+   the ending, so there a thin rain still brings nothing (sim.js). */
+C.DIFF = [
+  { build: 1.2, towerH: 1, wave: 4, rainWave: 2, thinWave: 0, rainHollows: 3, thinHollows: 0, hollowHp: 1500, hollowDmg: 55, hollowBack: 30, thiefEvery: 85, orbDrift: 0.7 },
+  { build: 1.5, towerH: 1.25, wave: 4, rainWave: 2, thinWave: 1, rainHollows: 3, thinHollows: 2, hollowHp: 3000, hollowDmg: 82, hollowBack: 18, thiefEvery: 50, orbDrift: 0.4 },
+  { build: 1.8, towerH: 1.5, wave: 5, rainWave: 3, thinWave: 2, rainHollows: 3, thinHollows: 2, hollowHp: 3400, hollowDmg: 100, hollowBack: 18, thiefEvery: 44, orbDrift: 0.4 }
+];
+/* lead, 0.27: First Rain keeps 0.26's hollows and thieves. The gate is the owner finishing three First Rains in a row by
+   choice, so the long-match tuning above (harder hollows, quicker thieves) must not make the short match harsher. */
+C.DIFF_FR = [{}, { hollowHp: 2100, hollowDmg: 72, hollowBack: 24, thiefEvery: 62 }, { hollowHp: 2700, hollowDmg: 90, rainWave: 2, thiefEvery: 44 }];
+C.dif = function (W) { const d = C.DIFF[W.diff]; return W.short ? Object.assign({}, d, C.DIFF_FR[W.diff]) : d; };
 
 LL.lanes = C.LANE_X.map(function (lx) {
   var pts = [[0, -104], [lx * 0.6, -92], [lx, -70], [lx, 70], [lx * 0.6, 92], [0, 104]];
