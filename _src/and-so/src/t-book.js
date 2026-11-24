@@ -1,6 +1,6 @@
 // ===== the book: a jam-along fake book. charts are our own data. melody and words only when the tune is public domain here =====
 var BOOK = { open: false, onPlay: false, id: '', tune: null, bars: [], meter: 4, events: [], bpm: 112, semi: 0, voice: 'piano', loop: true, abs: 0, bar: -1, beatIn: 0, sym: '', kind: 'book', heard: 0, timbre: '', also: null, blank: false,
-  feel: 'swing', parts: { bass: true, comp: true, drums: true, melody: true }, voicing: 'full', reharm: 'off', countIn: true, practice: '', loopA: 1, loopB: 0 };
+  feel: 'swing', parts: { bass: true, comp: true, drums: true, melody: true }, voicing: 'full', reharm: 'off', countIn: true, practice: '', loopA: 1, loopB: 0, tuning: 'here' };
 var bookNext = 0;
 const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const NOTE_SHARPS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -190,6 +190,7 @@ function bookChoose(id) {
   BOOK.timbre = t.timbre || ''; BOOK.also = t.also != null ? t.also : null;
   if (!BOOK.bpm) BOOK.bpm = t.tempo || 112;
   BOOK.bpm = t.tempo && !BOOK.touchedTempo ? t.tempo : BOOK.bpm;
+  if (!BOOK.touchedTuning) BOOK.tuning = nfTune(t) ? 'just' : 'here';   // the pop chapter plays microtonal unless you say otherwise
   if (t.feel && !BOOK.touchedFeel) BOOK.feel = t.feel;   // a chart may say how it moves (the pop chapter is mostly straight)
   else if (BOOK.feel === 'swing' && BOOK.meter === 3 && !BOOK.touchedFeel) BOOK.feel = 'waltz';
   BOOK.loopB = BOOK.loopB && BOOK.loopB <= BOOK.bars.length ? BOOK.loopB : BOOK.bars.length;
@@ -215,6 +216,7 @@ function bookNudgeKey(dir) { bookSetSemi(BOOK.semi + dir); }
 function bookSetTempo(bpm) { BOOK.touchedTempo = true; BOOK.bpm = clamp(+bpm || 112, 40, 240); if (JAM.chart) JAM.bpm = BOOK.bpm; bookPaint(); }
 function bookApplyFromUI() {
   const feel = $('bookFeel'); if (feel) BOOK.feel = feel.value;
+  const tun = $('bookTuning'); if (tun) BOOK.tuning = tun.value;
   const voi = $('bookVoicing'); if (voi) BOOK.voicing = voi.value;
   const reh = $('bookReharm'); if (reh) BOOK.reharm = reh.value;
   const pr = $('bookPractice'); if (pr) BOOK.practice = pr.value;
@@ -266,6 +268,7 @@ function bookMount() {
     + '<span class="bk-key"><button type="button" id="bookKeyDn" aria-label="one key down">−</button><b id="bookKeyN">C</b><button type="button" id="bookKeyUp" aria-label="one key up">+</button></span>'
     + '<label class="bk-line">feel <select id="bookFeel" aria-label="feel"><option value="swing">swing</option><option value="straight">straight</option><option value="bossa">bossa</option><option value="ballad">ballad</option><option value="waltz">waltz</option></select></label>'
     + '<span class="bk-parts">' + part('bass', 'bass') + part('comp', 'comp') + part('drums', 'drums') + part('melody', 'melody') + '</span>'
+    + '<label class="bk-line">tuning <select id="bookTuning" aria-label="tuning"><option value="here">as you are</option><option value="just">just intonation</option><option value="tet31">31-EDO</option><option value="easy">piano (12-TET)</option></select></label>'
     + '<label class="bk-line">voicing <select id="bookVoicing" aria-label="voicing"><option value="shells">shells</option><option value="rootless">rootless</option><option value="full">full</option></select></label>'
     + '<label class="bk-line">reharm <select id="bookReharm" aria-label="reharm"><option value="off">off</option><option value="light">light</option></select></label>'
     + '<label class="bk-line">loop <input id="bookLoop" type="checkbox" checked aria-label="loop"> <input id="bookFrom" type="number" min="1" value="1" aria-label="loop from bar">–<input id="bookTo" type="number" min="1" value="1" aria-label="loop to bar"></label>'
@@ -283,9 +286,9 @@ function bookMount() {
   on('bookDream', () => { if (typeof dreamStart === 'function') dreamStart('book'); });
   on('bookKeep', () => { try { toggleRec(); } catch (e) {} });
   $('bookTempo').addEventListener('input', e => bookSetTempo(e.target.value));
-  ['bookFeel', 'bookVoicing', 'bookReharm', 'bookPractice', 'bookLoop', 'bookCount', 'bookFrom', 'bookTo'].forEach(id => {
+  ['bookFeel', 'bookTuning', 'bookVoicing', 'bookReharm', 'bookPractice', 'bookLoop', 'bookCount', 'bookFrom', 'bookTo'].forEach(id => {
     const el = $(id); if (!el) return;
-    el.addEventListener('change', () => { if (id === 'bookFeel') BOOK.touchedFeel = true; bookApplyFromUI(); bookPaint(); if (BOOK.onPlay) bookPlay(); });
+    el.addEventListener('change', () => { if (id === 'bookFeel') BOOK.touchedFeel = true; if (id === 'bookTuning') BOOK.touchedTuning = true; bookApplyFromUI(); bookPaint(); if (BOOK.onPlay) bookPlay(); });
   });
   ['bass', 'comp', 'drums', 'melody'].forEach(part => {
     const el = $('bookPart-' + part); if (!el) return;
@@ -368,6 +371,7 @@ function bookPaint() {
   const r = $('bookTempo'); if (r && document.activeElement !== r) r.value = String(BOOK.bpm | 0);
   const loop = $('bookLoop'); if (loop) loop.checked = !!BOOK.loop;
   const feel = $('bookFeel'); if (feel && document.activeElement !== feel) feel.value = BOOK.feel || 'swing';
+  const tun = $('bookTuning'); if (tun && document.activeElement !== tun) tun.value = BOOK.tuning || 'here';
   const voi = $('bookVoicing'); if (voi && document.activeElement !== voi) voi.value = BOOK.voicing || 'full';
   const reh = $('bookReharm'); if (reh && document.activeElement !== reh) reh.value = BOOK.reharm || 'off';
   const pr = $('bookPractice'); if (pr && document.activeElement !== pr) pr.value = BOOK.practice || '';

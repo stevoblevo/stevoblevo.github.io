@@ -538,6 +538,9 @@ function jamLoadChart(tune, opt) {
   if (A.ac.state === 'suspended') A.ac.resume();
   if (round) skipRound();
   if (!JAM.prev) JAM.prev = { mode: M.key, rhy: rhy.on, tease: SET.tease };
+  // the book can ask for a tuning (just intonation for the pop chapter); the jam gives the old one back when it stops
+  const want = typeof BOOK !== 'undefined' && BOOK.tuning;
+  if (want && want !== 'here' && MODES[want] && M.key !== want) { JAM.switching = true; setMode(want, true); JAM.switching = false; }
   const bars = typeof normBars === 'function' ? normBars(tune.bars) : (tune.bars || [['·']]);
   const meter = tune.meter || 4;
   JAM.chart = {
