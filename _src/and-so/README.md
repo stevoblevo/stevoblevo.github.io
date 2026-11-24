@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.5 · Fur.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.6 · Fluff.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -137,6 +137,15 @@ no lyric.
   (as you are, just intonation, 31-EDO, piano), which this chapter sets to just intonation, so its changes play
   microtonal. The jam gives the old tuning back when it stops. 5/4 charts play.
 - Finds: `x-named` (name one), `x-named-13` (name thirteen). 148 in all.
+
+## Fluff (10.6)
+
+Bleve on 10.5: "kind of looks like a dirty rabbit now. I thought I was gonna get a beautiful fluffy little bunny", and the octopus should be more octopus, and the antlers more antler. What changed, all in `src/zw-petreal.js`:
+
+- **Why 10.5 looked dirty**: dark skin showed between the hairs, the roots were half black, and the shade was black multiplied over a mauve coat. Now the down under the coat is pale, roots are only a little darker than tips, tips are white, her colour is mixed two thirds toward white, and the shade is lilac (a cool paper grey on paper) laid in `furSprite`. Never black.
+- **Fluff**: a blurred bloom of down under the strands, hairs that stand straight out near the outline (`flow`), longer coat hairs, more and longer white guard hairs. A white ruff at the chest and a scut behind (`petFur` with `skip` 4 and 5, in `drawPet`). The seam down her front fades under the coat.
+- **Octopus arms** (`petArms`): eight, walked out by heading so they bend like muscle; thick at the body, tapering, tips curling into spirals; a web of skin between them; a mottled back; a pale underside with two rows of ringed suckers that become one row toward the tip.
+- **Antlers** (`petAntlers`): four thick tapered beams each side with a plush sheen, swollen round tips, and a nap of about 230 very short hairs per antler in place of 10.5's few long ones, which read as ladder rungs.
 
 ## Fur (10.5)
 

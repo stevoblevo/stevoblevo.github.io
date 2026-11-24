@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="10.5", short="AND SO 10.5", name="AND SO 10.5 · Fur", date="2026-11-24", path="/and-so/v10.5/", latest=True, source="dist",
+    dict(id="10.6", short="AND SO 10.6", name="AND SO 10.6 · Fluff", date="2026-11-24", path="/and-so/v10.6/", latest=True, source="dist",
+         line="A clean, fluffy rabbit: a pale coat with a haze of long white hairs at the outline, a white ruff and a scut, and shade in lilac instead of grey. Eight octopus arms that taper and curl, webbed at the top, mottled on the back with two rows of ringed suckers. Antlers thick with velvet."),
+    dict(id="10.5", short="AND SO 10.5", name="AND SO 10.5 · Fur", date="2026-11-24", path="/and-so/v10.5/", source="7e1b6ce",
          line="The pet's coat, combed hair by hair: a dense undercoat, fine hairs shaded root to tip and long guard hairs at the outline, on her body, head, ears, arms and legs. She is a little larger and is drawn at your screen's full resolution, so the fur is sharp, not soft."),
     dict(id="10.4", short="AND SO 10.4", name="AND SO 10.4 · Velvet", date="2026-11-24", path="/and-so/v10.4/", source="aad000e",
          line="The pet, closer to real: bunny fur you can almost feel, antlers in velvet, butterfly wings with veins, eyespots and scales that catch the light, octopus arms with suckers and glowing tips. And Swizzle, a swift with a swizzle stick, comes to the hills when you name a tune in the Book."),

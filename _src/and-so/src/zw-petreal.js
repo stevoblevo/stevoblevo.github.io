@@ -27,49 +27,54 @@ const PET_SC = () => S * (phone ? 1.12 : 1.42);
 // which read as blur.
 const FURS = new Map();
 function furGrey(rx, ry, sc, kq, dens, res) {
-  const m = 6 * sc, w = Math.ceil((rx + m) * 2 * res), h = Math.ceil((ry + m) * 2 * res), cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const m = 9 * sc, w = Math.ceil((rx + m) * 2 * res), h = Math.ceil((ry + m) * 2 * res), cv = document.createElement('canvas'); cv.width = w; cv.height = h;
   const c = cv.getContext('2d'); c.setTransform(res, 0, 0, res, (rx + m) * res, (ry + m) * res); c.lineCap = 'round';
   let sd = 7919 + Math.round(rx * 13 + ry * 7); const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296;
   const hair = 0.75 / res, area = (rx * ry) / (sc * sc), gy = v => { v = Math.round(clamp(v, 0, 1) * 255); return `rgb(${v},${v},${v})`; };
-  // the skin under the coat: dark, so the gaps between hairs read as depth
-  c.fillStyle = gy(0.3); c.beginPath(); c.ellipse(0, 0, rx * 0.96, ry * 0.96, 0, 0, TAU); c.fill();
-  // which way the coat lies: down and out from the crown, in soft locks
-  const flow = (x, y) => Math.atan2((y / ry) * 0.55 + 0.85, (x / rx) * 0.9) + 0.2 * Math.sin(x * 0.42 / sc + 1.3) * Math.cos(y * 0.36 / sc + 0.4) + 0.1 * Math.sin((x + y) * 1.3 / sc);
-  // 1 the undercoat: short, thick, dim, everywhere
-  for (let i = 0, N = Math.round(area * 26 * dens); i < N; i++) { const u = Math.sqrt(r()) * 0.98, a = TAU * r(), x = Math.cos(a) * u * rx, y = Math.sin(a) * u * ry, d = flow(x, y) + (r() - 0.5) * 0.5, L = (1.1 + 0.8 * r()) * sc;
-    c.strokeStyle = gy(0.42 + 0.2 * r()); c.lineWidth = Math.max(hair, 0.34 * sc); c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(d) * L, y + Math.sin(d) * L); c.stroke(); }
-  // 2 the coat: fine hairs, root to tip
-  const st = []; for (let i = 0, N = Math.round(area * 46 * dens); i < N; i++) { const u = Math.sqrt(r()), a = TAU * r(); st.push([Math.cos(a) * u * rx, Math.sin(a) * u * ry, u, r(), r(), r()]); }
+  // a soft bloom of down first, so the outline is a haze of fluff and never a hard edge
+  try { c.filter = `blur(${(1.6 * sc * res).toFixed(1)}px)`; } catch (e) {}
+  c.fillStyle = 'rgba(255,255,255,0.7)'; c.beginPath(); c.ellipse(0, 0, rx + 1.2 * sc, ry + 1.2 * sc, 0, 0, TAU); c.fill();
+  try { c.filter = 'none'; } catch (e) {}
+  // the down under the coat is pale too: a clean rabbit has no dark between the hairs, only soft shade
+  c.fillStyle = gy(0.84); c.beginPath(); c.ellipse(0, 0, rx * 0.97, ry * 0.97, 0, 0, TAU); c.fill();
+  // which way the coat lies: down from the crown in the middle, standing straight out toward the outline (a puff)
+  const flow = (x, y, u) => { const lie = Math.atan2((y / ry) * 0.55 + 0.85, (x / rx) * 0.9), out = Math.atan2(y / ry, x / rx), k = u * u * 0.75; let d = out - lie; d = Math.atan2(Math.sin(d), Math.cos(d));
+    return lie + d * k + 0.16 * Math.sin(x * 0.42 / sc + 1.3) * Math.cos(y * 0.36 / sc + 0.4); };
+  // 1 the down: short, thick, pale, everywhere
+  for (let i = 0, N = Math.round(area * 22 * dens); i < N; i++) { const u = Math.sqrt(r()) * 0.98, a = TAU * r(), x = Math.cos(a) * u * rx, y = Math.sin(a) * u * ry, d = flow(x, y, u) + (r() - 0.5) * 0.5, L = (1.2 + 0.9 * r()) * sc;
+    c.strokeStyle = gy(0.86 + 0.1 * r()); c.lineWidth = Math.max(hair, 0.36 * sc); c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(d) * L, y + Math.sin(d) * L); c.stroke(); }
+  // 2 the coat: long fine hairs, a soft shade at the root and white at the tip
+  const st = []; for (let i = 0, N = Math.round(area * 50 * dens); i < N; i++) { const u = Math.sqrt(r()), a = TAU * r(); st.push([Math.cos(a) * u * rx, Math.sin(a) * u * ry, u, r(), r(), r()]); }
   st.sort((p, q) => q[1] - p[1]);
   for (const [x, y, u, r1, r2, r3] of st) {
-    const d = flow(x, y) + (r1 - 0.5) * 0.3, L = (1.7 + 1.5 * r2) * sc * (0.65 + 0.4 * kq) * (u > 0.9 ? 1.2 : 1), bend = (r3 - 0.5) * 0.6;
-    const x1 = x + Math.cos(d) * L, y1 = y + Math.sin(d) * L, tone = 0.74 + 0.2 * r3, gr = c.createLinearGradient(x, y, x1, y1);
-    gr.addColorStop(0, gy(tone * 0.5)); gr.addColorStop(0.5, gy(tone)); gr.addColorStop(1, gy(tone + 0.16));
-    c.strokeStyle = gr; c.lineWidth = Math.max(hair, (0.1 + 0.1 * r2) * sc); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(d + bend) * L * 0.55, y + Math.sin(d + bend) * L * 0.55, x1, y1); c.stroke();
+    const d = flow(x, y, u) + (r1 - 0.5) * 0.26, L = (2.2 + 1.8 * r2) * sc * (0.65 + 0.4 * kq) * (1 + 0.5 * u * u), bend = (r3 - 0.5) * 0.7;
+    const x1 = x + Math.cos(d) * L, y1 = y + Math.sin(d) * L, tone = 0.9 + 0.08 * r3, gr = c.createLinearGradient(x, y, x1, y1);
+    gr.addColorStop(0, gy(tone * 0.84)); gr.addColorStop(0.45, gy(tone)); gr.addColorStop(1, 'rgba(255,255,255,0.9)');
+    c.strokeStyle = gr; c.lineWidth = Math.max(hair, (0.09 + 0.09 * r2) * sc); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(d + bend) * L * 0.55, y + Math.sin(d + bend) * L * 0.55, x1, y1); c.stroke();
   }
-  // 3 guard hairs: few, long, thin and pale; they break the outline the way a real coat does
-  c.globalAlpha = 0.75;
-  for (let i = 0, N = Math.round(area * 5 * dens); i < N; i++) { const u = 0.35 + 0.65 * Math.sqrt(r()), a = TAU * r(), x = Math.cos(a) * u * rx, y = Math.sin(a) * u * ry, d = flow(x, y) + (r() - 0.5) * 0.45, L = (2.6 + 2.2 * r()) * sc * (0.7 + 0.35 * kq), bend = (r() - 0.5) * 0.8;
-    c.strokeStyle = gy(0.9 + 0.1 * r()); c.lineWidth = Math.max(hair * 0.8, 0.065 * sc); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(d + bend) * L * 0.5, y + Math.sin(d + bend) * L * 0.5, x + Math.cos(d) * L, y + Math.sin(d) * L); c.stroke(); }
+  // 3 guard hairs: long, thin and white, most of them at the outline; they are the halo of a fluffy coat
+  c.globalAlpha = 0.7;
+  for (let i = 0, N = Math.round(area * 9 * dens); i < N; i++) { const u = 0.55 + 0.45 * Math.sqrt(r()), a = TAU * r(), x = Math.cos(a) * u * rx, y = Math.sin(a) * u * ry, d = flow(x, y, u) + (r() - 0.5) * 0.5, L = (3.2 + 3 * r()) * sc * (0.7 + 0.35 * kq), bend = (r() - 0.5) * 0.9;
+    c.strokeStyle = '#fff'; c.lineWidth = Math.max(hair * 0.8, 0.06 * sc); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(d + bend) * L * 0.5, y + Math.sin(d + bend) * L * 0.5, x + Math.cos(d) * L, y + Math.sin(d) * L); c.stroke(); }
   c.globalAlpha = 1;
-  // form: lit from the upper left, falling into shade low and right, with a soft sheen where the light lands
+  // form, lightly: the shade itself is laid in colour with her tint (furSprite), so it never greys the coat
   c.globalCompositeOperation = 'source-atop';
-  const sh = c.createLinearGradient(-rx, -ry, rx, ry); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(0.5, 'rgba(0,0,0,0.05)'); sh.addColorStop(1, 'rgba(0,0,0,0.4)');
-  c.fillStyle = sh; c.fillRect(-rx - m, -ry - m, (rx + m) * 2, (ry + m) * 2);
-  const hl = c.createRadialGradient(-rx * 0.38, -ry * 0.42, 0, -rx * 0.38, -ry * 0.42, Math.max(rx, ry) * 0.85); hl.addColorStop(0, 'rgba(255,255,255,0.22)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
+  const hl = c.createRadialGradient(-rx * 0.38, -ry * 0.42, 0, -rx * 0.38, -ry * 0.42, Math.max(rx, ry) * 0.9); hl.addColorStop(0, 'rgba(255,255,255,0.35)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
   c.fillStyle = hl; c.fillRect(-rx - m, -ry - m, (rx + m) * 2, (ry + m) * 2);
   return cv;
 }
-function furSprite(rx, ry, sc, lp, ink, base, kq, dens, res) {
+function furSprite(rx, ry, sc, lp, ink, base, kq, dens, res, white) {
   const key = [rx.toFixed(1), ry.toFixed(1), kq, dens, res].join('|'), q = v => Math.round(v / 6) * 6;
   let sp = FURS.get(key);
-  if (!sp) { if (FURS.size > 14) FURS.clear(); const grey = furGrey(rx, ry, sc, kq, dens, res), cv = document.createElement('canvas'); cv.width = grey.width; cv.height = grey.height; sp = { grey, cv, c: cv.getContext('2d'), m: 6 * sc, tint: '' }; FURS.set(key, sp); }
-  const L = (lp ? HIDE.coatL : base).map(q), R = (lp ? HIDE.coatR : base).map(q), tint = L.join('.') + '/' + R.join('.') + (lp ? 'p' : '');
+  if (!sp) { if (FURS.size > 14) FURS.clear(); const grey = furGrey(rx, ry, sc, kq, dens, res), cv = document.createElement('canvas'); cv.width = grey.width; cv.height = grey.height; sp = { grey, cv, c: cv.getContext('2d'), m: 9 * sc, tint: '' }; FURS.set(key, sp); }
+  const wh = c0 => white && lp ? mix(c0, [255, 255, 255], 0.8) : c0, L = wh(lp ? HIDE.coatL : base).map(q), R = wh(lp ? HIDE.coatR : base).map(q), tint = L.join('.') + '/' + R.join('.') + (lp ? 'p' : '');
   if (sp.tint !== tint) {   // her colour over the strands: the tips come out paler than she is, the roots darker
-    const c = sp.c, w = sp.cv.width, h = sp.cv.height, pale = col => rgba(mix(col, [255, 255, 255], lp ? 0.5 : 0.42), 1);
+    const c = sp.c, w = sp.cv.width, h = sp.cv.height, pale = col => rgba(mix(col, [255, 255, 255], lp ? 0.6 : 0.66), 1);
     c.globalCompositeOperation = 'source-over'; c.clearRect(0, 0, w, h); c.drawImage(sp.grey, 0, 0);
     c.globalCompositeOperation = 'multiply'; const gr = c.createLinearGradient(w * 0.46, 0, w * 0.54, 0); gr.addColorStop(0, pale(L)); gr.addColorStop(1, pale(R)); c.fillStyle = gr; c.fillRect(0, 0, w, h);
-    c.fillStyle = lp ? rgba(mix(ink, [255, 255, 255], 0.94), 1) : 'rgb(255,246,250)'; c.fillRect(0, 0, w, h);   // roots lean to the ink on paper, to plum elsewhere
+    // shade low and to the right, in colour: lilac on her, a cool paper grey on paper. Never black: that is what made 10.5 look grubby
+    c.globalCompositeOperation = 'source-atop'; const sh = c.createLinearGradient(w * 0.2, h * 0.15, w * 0.85, h * 0.9), sc0 = lp ? mix(ink, [200, 205, 225], 0.7) : [176, 140, 205];
+    sh.addColorStop(0, rgba(sc0, 0)); sh.addColorStop(0.5, rgba(sc0, 0.05)); sh.addColorStop(1, rgba(sc0, lp ? 0.44 : 0.36)); c.fillStyle = sh; c.fillRect(0, 0, w, h);
     c.globalCompositeOperation = 'destination-in'; c.drawImage(sp.grey, 0, 0); c.globalCompositeOperation = 'source-over';
     sp.tint = tint;
   }
@@ -77,7 +82,7 @@ function furSprite(rx, ry, sc, lp, ink, base, kq, dens, res) {
 }
 function petFur(g, cx, cy, rx, ry, sc, lp, ink, base, wl, skip) {
   const k = clamp(wl * 1.7, 0, 1); if (k < 0.05) return;   // the fur comes with the bunny in her
-  const sp = furSprite(rx, ry, sc, lp, ink, base, Math.round(k * 4) / 4, skip ? 0.85 : 1, PETFX.res || 2);
+  const sp = furSprite(rx, ry, sc, lp, ink, base, Math.round(k * 4) / 4, skip ? 0.85 : 1, PETFX.res || 2, skip >= 4);
   g.save(); g.globalAlpha *= Math.min(1, k * 1.4); g.drawImage(sp.cv, cx - rx - sp.m, cy - ry - sp.m, (rx + sp.m) * 2, (ry + sp.m) * 2); g.restore();
 }
 // a furred limb: the same coat on a thin capsule, laid along the limb
@@ -86,34 +91,38 @@ function petFurLimb(g, x0, y0, x1, y1, wd, sc, lp, ink, base, wl) {
   g.save(); g.translate((x0 + x1) / 2, (y0 + y1) / 2); g.rotate(Math.atan2(y1 - y0, x1 - x0) - Math.PI / 2); petFur(g, 0, 0, wd, half, sc, lp, ink, base, wl, 2); g.restore();
 }
 const petQ = (p0, c, p1, u) => [(1 - u) * (1 - u) * p0[0] + 2 * u * (1 - u) * c[0] + u * u * p1[0], (1 - u) * (1 - u) * p0[1] + 2 * u * (1 - u) * c[1] + u * u * p1[1]];
-// antlers in velvet: a dark core, a lit side, a soft pile standing off the beam, and rounded tips still growing
+// antlers in velvet: thick, soft and still growing. Each beam is a tapered shape with a plush sheen down its lit side,
+// a nap of hundreds of very short pale hairs standing off it, and swollen round tips. 10.5's were thin as twigs and
+// their few long hairs read as the rungs of a ladder.
 function petAntlers(g, sc, wm, lp) {
-  petSeed(); const al = Math.min(1, wm * 1.8), L = (8 + 17 * wm) * sc;
-  const vel = lp ? [[70, 46, 34], [126, 90, 64], [200, 164, 132]] : [[96, 66, 56], [160, 120, 96], [238, 208, 180]];
+  petSeed(); const al = Math.min(1, wm * 1.8), L = (9 + 18 * wm) * sc, hairW = Math.max(0.75 / (PETFX.res || 2), 0.11 * sc);
+  const vel = lp ? [[92, 62, 50], [150, 108, 84], [222, 188, 160], [246, 226, 208]] : [[112, 74, 70], [176, 128, 112], [232, 196, 176], [255, 238, 226]];
   g.save(); g.globalAlpha *= al; g.lineCap = 'round'; g.lineJoin = 'round';
   [-1, 1].forEach(s => {
-    const b = [s * 3.2 * sc, -11.5 * sc], tip = [s * (6 * sc + L * 0.42), -12 * sc - L], c = [s * (1.5 * sc + L * 0.02), -12 * sc - L * 0.55];
-    const j1 = petQ(b, c, tip, 0.2), j2 = petQ(b, c, tip, 0.56);
-    const br = [[b, c, tip, 3.4], [j1, [j1[0] + s * L * 0.2, j1[1] - L * 0.02], [j1[0] + s * L * 0.34, j1[1] - L * 0.2], 2.2], [j2, [j2[0] + s * L * 0.26, j2[1] - L * 0.04], [j2[0] + s * L * 0.4, j2[1] - L * 0.3], 2.5]];
-    for (const [p0, cc, p1, w0] of br) {   // the pile: a soft halo that makes the beam look thick with velvet
-      g.strokeStyle = rgba(vel[2], 0.12); g.lineWidth = w0 * 1.35 * sc; g.beginPath(); g.moveTo(p0[0], p0[1]); g.quadraticCurveTo(cc[0], cc[1], p1[0], p1[1]); g.stroke();
+    const b = [s * 3.4 * sc, -11 * sc], tip = [s * (7 * sc + L * 0.46), -12 * sc - L], c = [s * (1 * sc - L * 0.06), -12 * sc - L * 0.6];
+    const j1 = petQ(b, c, tip, 0.24), j2 = petQ(b, c, tip, 0.55), j3 = petQ(b, c, tip, 0.8);
+    const br = [[b, c, tip, 5.2], [j1, [j1[0] + s * L * 0.22, j1[1] + L * 0.02], [j1[0] + s * L * 0.36, j1[1] - L * 0.2], 3.4], [j2, [j2[0] + s * L * 0.28, j2[1] - L * 0.02], [j2[0] + s * L * 0.42, j2[1] - L * 0.3], 3.7], [j3, [j3[0] - s * L * 0.1, j3[1] - L * 0.1], [j3[0] - s * L * 0.1, j3[1] - L * 0.26], 3]];
+    const wid = (w0, u) => w0 * sc * (0.5 + 0.5 * wm) * (1 - 0.42 * u), beam = (p0, cc, p1, w0, k, off, col, a) => { g.strokeStyle = rgba(col, a);
+      for (let i = 0; i < 10; i++) { const A = petQ(p0, cc, p1, i / 10), B = petQ(p0, cc, p1, (i + 1) / 10), w = wid(w0, (i + 0.5) / 10); g.lineWidth = Math.max(0.6, w * k); g.beginPath(); g.moveTo(A[0] + off * w, A[1] + off * w); g.lineTo(B[0] + off * w, B[1] + off * w); g.stroke(); } };
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 1.28, 0, vel[3], 0.16);          // the pile: a soft haze round the beam
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 1, 0, vel[0], 1);                 // the shaded side
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.72, -0.13, vel[1], 1);
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.4, -0.22, vel[2], 0.9);         // the plush sheen
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.13, -0.3, vel[3], 0.8);
+    for (const [, , p1, w0] of br) {   // the swollen, rounded tips of antlers still growing
+      const rr = wid(w0, 1) * 0.72, tg = g.createRadialGradient(p1[0] - rr * 0.4, p1[1] - rr * 0.45, 0, p1[0], p1[1], rr * 1.25);
+      tg.addColorStop(0, rgba(vel[3], 1)); tg.addColorStop(0.5, rgba(vel[2], 1)); tg.addColorStop(1, rgba(vel[1], 1));
+      g.fillStyle = tg; g.beginPath(); g.arc(p1[0], p1[1], rr * 1.15, 0, TAU); g.fill();
     }
-    [[vel[0], 1, 0, 1], [vel[1], 0.66, -0.45, 1], [vel[2], 0.24, -0.9, 0.75]].forEach(([col, wk, off, a]) => {
-      g.strokeStyle = rgba(col, a);
-      for (const [p0, cc, p1, w0] of br) for (let i = 0; i < 8; i++) { const u0 = i / 8, u1 = (i + 1) / 8, A = petQ(p0, cc, p1, u0), B = petQ(p0, cc, p1, u1);
-        g.lineWidth = Math.max(0.5, w0 * wk * (1 - 0.5 * u1)) * sc; g.beginPath(); g.moveTo(A[0] + off * sc * 0.5, A[1] + off * sc * 0.5); g.lineTo(B[0] + off * sc * 0.5, B[1] + off * sc * 0.5); g.stroke(); }
-    });
-    g.strokeStyle = rgba(vel[2], 0.6); g.lineWidth = 0.45 * sc; g.beginPath();
-    br.forEach(([p0, cc, p1, w0], bi) => { for (let i = bi; i < PETFX.hair.length; i += 3) { const h = PETFX.hair[i], P = petQ(p0, cc, p1, h.u), Q = petQ(p0, cc, p1, Math.min(1, h.u + 0.05));
-      const nx = -(Q[1] - P[1]), ny = Q[0] - P[0], n = Math.hypot(nx, ny) || 1, r0 = w0 * (1 - 0.5 * h.u) * 0.5 * sc, len = (r0 + h.l * sc);
-      g.moveTo(P[0] + (nx / n) * h.side * r0 * 0.7, P[1] + (ny / n) * h.side * r0 * 0.7); g.lineTo(P[0] + (nx / n) * h.side * len + h.j * sc * 0.4, P[1] + (ny / n) * h.side * len - 0.3 * sc); } });
-    g.stroke();
-    for (const [, , p1, w0] of br) {   // the blunt, rounded tips of antlers in velvet
-      const rr = w0 * 0.42 * sc, tg = g.createRadialGradient(p1[0] - rr * 0.4, p1[1] - rr * 0.4, 0, p1[0], p1[1], rr * 1.3);
-      tg.addColorStop(0, rgba(vel[2], 1)); tg.addColorStop(0.6, rgba(vel[1], 1)); tg.addColorStop(1, rgba(vel[0], 1));
-      g.fillStyle = tg; g.beginPath(); g.arc(p1[0], p1[1], rr * 1.25, 0, TAU); g.fill();
-    }
-    g.fillStyle = rgba(lp ? [62, 140, 64] : [140, 210, 120], 0.95); g.beginPath(); g.ellipse(tip[0] + s * 2.2 * sc, tip[1] - 1.2 * sc, 2.4 * sc, 1.3 * sc, s * 0.6, 0, TAU); g.fill();   // she is part tree: one leaf
+    // the nap: very short fine hairs, across the face of the beam and standing off both edges
+    let sd = 4242 + (s > 0 ? 7 : 0); const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296;
+    g.lineWidth = hairW;
+    [[vel[3], 0.6, 1], [vel[0], 0.3, 0]].forEach(([col, a, edge]) => { g.strokeStyle = rgba(col, a); g.beginPath();
+      br.forEach(([p0, cc, p1, w0], bi) => { const n = bi ? 46 : 90; for (let i = 0; i < n; i++) { const u = r(), P = petQ(p0, cc, p1, u), Q = petQ(p0, cc, p1, Math.min(1, u + 0.04)), tx = Q[0] - P[0], ty = Q[1] - P[1], tn = Math.hypot(tx, ty) || 1;
+        const side = r() < 0.5 ? -1 : 1, w = wid(w0, u) * 0.5, at = edge ? (0.55 + 0.5 * r()) : r() * 0.8, hl = (0.7 + 0.9 * r()) * sc * (edge ? 1 : 0.6), nx = -ty / tn * side, ny = tx / tn * side;
+        const x = P[0] + nx * w * at, y = P[1] + ny * w * at; g.moveTo(x, y); g.lineTo(x + nx * hl * 0.8 + tx / tn * hl * 0.5, y + ny * hl * 0.8 + ty / tn * hl * 0.5); } });
+      g.stroke(); });
+    g.fillStyle = rgba(lp ? [62, 140, 64] : [140, 210, 120], 0.95); g.beginPath(); g.ellipse(tip[0] + s * 2.6 * sc, tip[1] - 1.6 * sc, 2.4 * sc, 1.3 * sc, s * 0.6, 0, TAU); g.fill();   // she is part tree: one leaf
   });
   g.restore();
 }
@@ -158,23 +167,42 @@ function petWings(g, sc, sy, wd, lp, acc, ink) {
 }
 // octopus arms: tapered and wet, a paler underside with suckers, tips that curl and glow
 function petArms(g, sc, sy, wc, lp, acc, ink, dark, E) {
-  const al = Math.min(1, wc * 1.7), still = reduceMotion ? 0.25 : 1, N = 12, L = (13 + 30 * wc + 9 * E) * sc;
-  g.save(); g.globalAlpha *= al; g.lineCap = 'round';
-  for (let i = 0; i < 6; i++) {
-    const dirS = i < 3 ? -1 : 1, ox = (i - 2.5) * 4.2 * sc, spread = (i - 2.5) * 6.5 * sc * wc, ph = i * 1.3, curl = (Rs > 0.55 ? 0.8 : 0.35) + 0.25 * Math.sin(t * 1.1 * still + i);
-    const col = lp ? mix(hideCol(i < 3 ? 'warm' : 'cool', 7 + i), ink, 0.28) : mix(mix(acc, [150, 70, 190], 0.5), dark, 0.25), hi = lp ? mix(col, [255, 255, 255], 0.45) : mix(col, [255, 235, 250], 0.55);
-    const pts = []; for (let k = 0; k <= N; k++) { const f = k / N; pts.push([ox + spread * f * f + Math.sin(f * 4.2 - t * 2.4 * still + ph) * 5 * sc * f + dirS * curl * f * f * f * 9 * sc, 12 * sc + sy + f * L * 0.9 - f * f * f * L * 0.34 * curl, (4.8 - 4.1 * f) * sc * (0.6 + 0.5 * wc)]); }
-    for (let k = 0; k < N; k++) { g.strokeStyle = rgba(col, 1); g.lineWidth = pts[k][2]; g.beginPath(); g.moveTo(pts[k][0], pts[k][1]); g.lineTo(pts[k + 1][0], pts[k + 1][1]); g.stroke(); }
-    for (let k = 0; k < N; k++) { g.strokeStyle = rgba(hi, 0.7); g.lineWidth = pts[k][2] * 0.34; g.beginPath(); g.moveTo(pts[k][0] - dirS * pts[k][2] * 0.2, pts[k][1] - pts[k][2] * 0.16); g.lineTo(pts[k + 1][0] - dirS * pts[k + 1][2] * 0.2, pts[k + 1][1] - pts[k + 1][2] * 0.16); g.stroke(); }
-    for (let k = 1; k < N - 1; k++) {   // suckers along the inner side
-      const [x, y, w] = pts[k], dx = pts[k + 1][0] - x, dy = pts[k + 1][1] - y, n = Math.hypot(dx, dy) || 1, r0 = Math.max(0.5, w * 0.27), sxp = x + (-dy / n) * dirS * w * 0.3, syp = y + (dx / n) * dirS * w * 0.3;
-      g.fillStyle = lp ? 'rgba(255,255,255,0.95)' : 'rgba(255,220,232,0.95)'; g.beginPath(); g.arc(sxp, syp, r0, 0, TAU); g.fill();
-      g.fillStyle = rgba(lp ? ink : [120, 50, 110], 0.55); g.beginPath(); g.arc(sxp, syp, r0 * 0.42, 0, TAU); g.fill();
-    }
-    g.fillStyle = 'rgba(255,255,255,0.8)'; g.beginPath(); g.ellipse(pts[2][0] - dirS * pts[2][2] * 0.22, pts[2][1], pts[2][2] * 0.12, pts[2][2] * 0.3, 0, 0, TAU); g.fill();   // a wet glint
-    if (!lp) { const [x, y] = pts[N], R = (3.2 + 3 * beatPulse) * sc, tg = g.createRadialGradient(x, y, 0, x, y, R); g.globalCompositeOperation = 'lighter';
-      tg.addColorStop(0, rgba(mix(acc, [255, 255, 255], 0.5), 0.85)); tg.addColorStop(1, rgba(acc, 0)); g.fillStyle = tg; g.beginPath(); g.arc(x, y, R, 0, TAU); g.fill(); g.globalCompositeOperation = 'source-over'; }
+  // Eight arms, as an octopus has: thick where they leave her, tapering to tips that curl into spirals, joined near the
+  // top by a web of skin. The back of each arm is mottled; the underside is pale, with two rows of ringed suckers that
+  // shrink toward the tip. Each arm is walked out by its heading, so it bends like muscle and not like a string.
+  const al = Math.min(1, wc * 1.7), still = reduceMotion ? 0.25 : 1, N = 20, L = (15 + 32 * wc + 9 * E) * sc, seg = L / N, arms = [];
+  const skin = i => lp ? mix(hideCol(i < 4 ? 'warm' : 'cool', 7 + i), ink, 0.22) : mix(mix(acc, [196, 84, 150], 0.55), dark, 0.12);
+  g.save(); g.globalAlpha *= al; g.lineCap = 'round'; g.lineJoin = 'round';
+  for (let i = 0; i < 8; i++) {
+    const side = i < 4 ? -1 : 1, q = (i - 3.5) / 3.5, curl = (Rs > 0.55 ? 1 : 0.55) + 0.2 * Math.sin(t * 0.9 * still + i * 1.7);
+    let x = q * 9.5 * sc, y = 11 * sc + sy, ang = Math.PI / 2 - q * (0.5 + 0.55 * wc); const pts = [];
+    for (let k = 0; k <= N; k++) { const f = k / N, w = (6.4 * Math.pow(1 - f, 1.05) + 0.6) * sc * (0.6 + 0.5 * wc);
+      pts.push([x, y, w, ang]); ang += -side * curl * f * f * 0.5 + Math.sin(f * 5 - t * 1.9 * still + i * 1.3) * 0.13 * (0.3 + f); x += Math.cos(ang) * seg; y += Math.sin(ang) * seg; }
+    arms.push({ pts, side, col: skin(i), i });
   }
+  // the web between the arms
+  { const col = skin(3), at = a => a.pts[5]; g.fillStyle = rgba(mix(col, [255, 255, 255], 0.12), 0.72); g.beginPath(); g.moveTo(-10 * sc, 9 * sc + sy);
+    arms.forEach((a, n) => { const [px, py] = at(a); if (!n) g.lineTo(px, py); else { const [ox, oy] = at(arms[n - 1]); g.quadraticCurveTo((ox + px) / 2, Math.min(oy, py) - 4.5 * sc, px, py); } });
+    g.lineTo(10 * sc, 9 * sc + sy); g.closePath(); g.fill(); }
+  // the outer arms first, so the middle ones lie over them
+  [0, 7, 1, 6, 2, 5, 3, 4].forEach(n => { const { pts, side, col, i } = arms[n], dk = mix(col, lp ? ink : [70, 20, 80], 0.42), hi = mix(col, [255, 240, 248], 0.5), belly = lp ? [250, 244, 236] : [255, 226, 232];
+    const nrm = k => [-Math.sin(pts[k][3]) * side, Math.cos(pts[k][3]) * side];   // toward the inside of the curl, where the suckers are
+    const pass = (colr, a, wk, off) => { g.strokeStyle = rgba(colr, a); for (let k = 0; k < N; k++) { const [nx, ny] = nrm(k), w = pts[k][2]; g.lineWidth = Math.max(0.5, w * wk); g.beginPath(); g.moveTo(pts[k][0] + nx * w * off, pts[k][1] + ny * w * off); g.lineTo(pts[k + 1][0] + nx * pts[k + 1][2] * off, pts[k + 1][1] + ny * pts[k + 1][2] * off); g.stroke(); } };
+    pass(dk, 1, 1.12, 0); pass(col, 1, 0.92, 0); pass(belly, 0.95, 0.42, 0.27); pass(hi, 0.75, 0.2, -0.3);
+    // mottling on the back of the arm
+    let sd = 911 + i * 37; const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296;
+    for (let m = 0; m < 26; m++) { const k = Math.floor(r() * (N - 3)), [nx, ny] = nrm(k), w = pts[k][2], o = -(0.05 + 0.36 * r()), rr = w * (0.05 + 0.09 * r()); g.fillStyle = r() < 0.7 ? rgba(dk, 0.5) : rgba(hi, 0.7);
+      g.beginPath(); g.arc(pts[k][0] + nx * w * o + (r() - 0.5) * seg, pts[k][1] + ny * w * o + (r() - 0.5) * seg, Math.max(0.35, rr), 0, TAU); g.fill(); }
+    // suckers: two rows near the body, one toward the tip, each a pale cup with a ring and a dark centre
+    for (let k = 1; k < N - 1; k++) { const [nx, ny] = nrm(k), w = pts[k][2], tx = Math.cos(pts[k][3]), ty = Math.sin(pts[k][3]), two = k < N * 0.55, r0 = Math.max(0.45, w * (two ? 0.17 : 0.2));
+      (two ? [[0.14, -0.25], [0.4, 0.25]] : [[0.27, 0]]).forEach(([o, along]) => { const cx = pts[k][0] + nx * w * o + tx * seg * along, cy = pts[k][1] + ny * w * o + ty * seg * along;
+        g.fillStyle = rgba(mix(belly, [255, 255, 255], 0.5), 1); g.beginPath(); g.arc(cx, cy, r0, 0, TAU); g.fill();
+        g.strokeStyle = rgba(mix(col, dk, 0.5), 0.75); g.lineWidth = Math.max(0.3, r0 * 0.3); g.stroke();
+        g.fillStyle = rgba(dk, 0.7); g.beginPath(); g.arc(cx, cy, r0 * 0.36, 0, TAU); g.fill(); }); }
+    g.fillStyle = 'rgba(255,255,255,0.75)'; g.beginPath(); g.ellipse(pts[2][0] - nrm(2)[0] * pts[2][2] * 0.3, pts[2][1] - nrm(2)[1] * pts[2][2] * 0.3, pts[2][2] * 0.1, pts[2][2] * 0.3, pts[2][3] - Math.PI / 2, 0, TAU); g.fill();   // a wet glint
+    if (!lp) { const [x, y] = pts[N], R = (2.6 + 2.6 * beatPulse) * sc, tg = g.createRadialGradient(x, y, 0, x, y, R); g.globalCompositeOperation = 'lighter';
+      tg.addColorStop(0, rgba(mix(acc, [255, 255, 255], 0.5), 0.7)); tg.addColorStop(1, rgba(acc, 0)); g.fillStyle = tg; g.beginPath(); g.arc(x, y, R, 0, TAU); g.fill(); g.globalCompositeOperation = 'source-over'; }
+  });
   g.restore();
 }
 // ---------- Swizzle: AND SO's own pet ----------

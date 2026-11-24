@@ -226,10 +226,12 @@ function drawPet(g) {
     if (!skein) { petFurLimb(g, -5 * sc, 12 * sc + sy, -7 * sc - out, 24 * sc + sy - kk, 2.1 * sc, sc, lp, ink, base, wl); petFurLimb(g, 5 * sc, 12 * sc + sy, 7 * sc + out, 24 * sc + sy + kk, 2.1 * sc, sc, lp, ink, base, wl); } }
   if (skein) drawSkeinBody(g, sc, sy);
   else {
+    petFur(g, 11.5 * sc, 12 * sc + sy, 5 * sc, 5 * sc, sc, lp, ink, mix(base, [255, 255, 255], 0.85), wl, 5);   // a scut, peeping out behind
     if (lp) hideBody(g, sc, sy, ink);
     else { const bg = g.createRadialGradient(-5 * sc, -2 * sc + sy, 2, 0, 2 * sc + sy, 20 * sc); bg.addColorStop(0, rgba(mix(base, [255, 255, 255], 0.35), 1)); bg.addColorStop(1, rgba(base, 1)); g.fillStyle = bg; g.beginPath(); g.ellipse(0, 2 * sc + sy, 13 * sc, 15 * sc, 0, 0, TAU); g.fill(); }
     petFur(g, 0, 2 * sc + sy, 13 * sc, 15 * sc, sc, lp, ink, base, wl);   // real fur when the bunny is in her
-    g.setLineDash([2, 2.5]); g.strokeStyle = rgba(dark, lp ? 0.55 : 0.5); g.lineWidth = 1; g.beginPath(); g.moveTo(0, -11 * sc + sy); g.lineTo(0, 15 * sc + sy); g.stroke(); g.setLineDash([]);
+    petFur(g, 0, -5.5 * sc + sy, 7.5 * sc, 5.5 * sc, sc, lp, ink, mix(base, [255, 255, 255], 0.8), wl, 4);   // a white ruff at her chest
+    g.setLineDash([2, 2.5]); g.strokeStyle = rgba(dark, (lp ? 0.55 : 0.5) * (1 - clamp(wl * 1.7, 0, 1) * 0.85));   // the seam hides under the coat g.lineWidth = 1; g.beginPath(); g.moveTo(0, -11 * sc + sy); g.lineTo(0, 15 * sc + sy); g.stroke(); g.setLineDash([]);
     { const hx = 6 * sc, hy = 4 * sc + sy, hs = 2.4 * sc; g.fillStyle = rgba(mix(acc, [255, 120, 150], 0.5), 0.8); g.beginPath(); g.moveTo(hx, hy + hs); g.bezierCurveTo(hx - hs * 2, hy - hs * 0.5, hx - hs * 0.6, hy - hs * 2, hx, hy - hs * 0.6); g.bezierCurveTo(hx + hs * 0.6, hy - hs * 2, hx + hs * 2, hy - hs * 0.5, hx, hy + hs); g.fill(); }
   }
   if (wg > 0.06) { const up = pose === 1 || pet.jump > 0.3; g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4 : 2.8) * sc; [-1, 1].forEach(s => { g.beginPath(); g.moveTo(s * 11 * sc, -2 * sc + sy); if (pose === 3) g.lineTo(s * 9 * sc, -20 * sc + sy); else g.lineTo(s * (up ? 20 : 18) * sc, (up ? -12 : 6) * sc + sy - pet.jump * 6 * sc); g.stroke();

@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.6",
+   "short": "AND SO 10.6",
+   "name": "AND SO 10.6 · Fluff",
+   "date": "2026-11-24",
+   "line": "A clean, fluffy rabbit: a pale coat with a haze of long white hairs at the outline, a white ruff and a scut, and shade in lilac instead of grey. Eight octopus arms that taper and curl, webbed at the top, mottled on the back with two rows of ringed suckers. Antlers thick with velvet.",
+   "path": "/and-so/v10.6/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "ce58051230fba5ec4b92a24b00f2d4303d481907c102353a2a3293dce7a36bed"
+  },
+  {
    "id": "10.5",
    "short": "AND SO 10.5",
    "name": "AND SO 10.5 · Fur",
    "date": "2026-11-24",
    "line": "The pet's coat, combed hair by hair: a dense undercoat, fine hairs shaded root to tip and long guard hairs at the outline, on her body, head, ears, arms and legs. She is a little larger and is drawn at your screen's full resolution, so the fur is sharp, not soft.",
    "path": "/and-so/v10.5/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "435957eb850e83dcda039c2320ebdcf03e744d1e6e556727ba2f2ebbdf661de9"
+   "commit": "7e1b6ce",
+   "sha256": "d62098b74644bf19968c2db6659f9524054f304840ef038653292a151a4642c9"
   },
   {
    "id": "10.4",
