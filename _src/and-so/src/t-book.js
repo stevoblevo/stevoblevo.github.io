@@ -3,7 +3,51 @@ var BOOK = { open: false, onPlay: false, id: '', tune: null, bars: [], meter: 4,
   feel: 'swing', parts: { bass: true, comp: true, drums: true, melody: true }, voicing: 'full', reharm: 'off', countIn: true, practice: '', loopA: 1, loopB: 0 };
 var bookNext = 0;
 const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const NOTE_SHARPS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+// names spelled as the key spells them: sharps in G, D, A, E, B and F# major and in E, B, F#, C# and G# minor, flats elsewhere
+function noteNames() {
+  const k = BOOK.tune && BOOK.tune.key || 'C', minor = /^[A-G](#|b)?m$/.test(k), pc = typeof tonicPc === 'function' && BOOK.tune ? tonicPc() : 0;
+  return (minor ? [4, 11, 6, 1, 8] : [7, 2, 9, 4, 11, 6]).includes(pc) ? NOTE_SHARPS : NOTE_NAMES;
+}
 const PC_OF = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
+
+// ---------- names filed off (10.3): a pop catalog as changes only, every title hidden ----------
+// The chapter's tunes (src/book-nf.json, made by names_filed_off.py) carry a riddle for a title, a hint (record and
+// track) and the real title only as `h`, a hash of its normalised spelling. Type a name and the Book hashes it the same
+// way; a match keeps your spelling of the name on this device (andso:named). No melody and no words, as for every tune
+// here still in copyright.
+const NF_KEY = 'andso:named';
+const cyrb53 = (str, seed = 13) => {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+const nfNorm = t => {
+  let s = String(t || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ').replace(/[\u2019']/g, '');
+  for (const p of ['taylors version', 'from the vault', '3am edition']) s = s.split(p).join(' ');
+  return s.replace(/[^a-z0-9]+/g, ' ').trim().replace(/^the /, '');
+};
+const NF = { miss: {} };
+function nfNamed() { try { return JSON.parse(localStorage.getItem(NF_KEY) || '{}') || {}; } catch (e) { return {}; } }
+const nfTune = t => !!(t && t.chapter && t.h);
+function nfTitle(t) { return (nfTune(t) && nfNamed()[t.id]) || (t && t.title) || ''; }
+function nfGuess(text) {
+  const t = BOOK.tune; if (!nfTune(t)) return;
+  const say = $('bookGuessSay'), n = nfNorm(text);
+  if (!n) return;
+  if (cyrb53(n).toString(36) === t.h) {
+    const all = nfNamed(); all[t.id] = String(text).trim().slice(0, 80);
+    try { localStorage.setItem(NF_KEY, JSON.stringify(all)); } catch (e) {}
+    if (say) say.textContent = 'named. that is the one.';
+    discover('x-named'); if (Object.keys(all).length >= 13) discover('x-named-13');
+    if (typeof jlog === 'function') jlog('named a tune in the book');
+    bookRender(); bookSpines(); return;
+  }
+  NF.miss[t.id] = (NF.miss[t.id] || 0) + 1;
+  if (say) say.textContent = NF.miss[t.id] >= 3 && t.ini ? `not that one. its initials: ${t.ini}` : 'not that one.';
+}
 
 function pcOf(name) {
   if (!name) return null;
@@ -36,7 +80,7 @@ function parseChord(sym) {
 function labelChord(sym, semi) {
   const c = parseChord(sym);
   if (!c) return '';
-  const n = pc => NOTE_NAMES[(pc + semi + 120) % 12];
+  const names = noteNames(), n = pc => names[(pc + semi + 120) % 12];
   return n(c.root) + (c.qual || '') + (c.bass != null ? '/' + n(c.bass) : '');
 }
 function parseMelody(s) {
@@ -69,14 +113,11 @@ function tonicPc() {
   const home = BOOK.tune ? pcOf(BOOK.tune.key) : 0;
   return ((home == null ? 0 : home) + BOOK.semi + 120) % 12;
 }
-function keyName() { return NOTE_NAMES[tonicPc()] + (BOOK.tune && /m$/.test(BOOK.tune.key) && BOOK.tune.key !== 'C' && BOOK.tune.key.length > 1 && BOOK.tune.key.endsWith('m') ? 'm' : ''); }
+function keyName() { return noteNames()[tonicPc()] + (BOOK.tune && /m$/.test(BOOK.tune.key) && BOOK.tune.key !== 'C' && BOOK.tune.key.length > 1 && BOOK.tune.key.endsWith('m') ? 'm' : ''); }
 function shownKey() {
   const k = BOOK.tune && BOOK.tune.key || 'C';
-  const minor = /m$/.test(k) && k !== 'F' && k !== 'C' ? k.endsWith('m') : false;
-  // Am, Cm, C#m, Em, Gm, Bm stay minor. F and C are major names.
-  const minorKeys = { Am: 1, Cm: 1, 'C#m': 1, Dm: 1, Em: 1, Fm: 1, Gm: 1, Bm: 1 };
-  const base = NOTE_NAMES[tonicPc()];
-  return minorKeys[k] ? base + 'm' : base;
+  const base = noteNames()[tonicPc()];
+  return /^[A-G](#|b)?m$/.test(k) ? base + 'm' : base;   // any minor key (the pop chapter has F#m, G#m, Ebm…)
 }
 
 function ensAudible(part) {
@@ -149,7 +190,8 @@ function bookChoose(id) {
   BOOK.timbre = t.timbre || ''; BOOK.also = t.also != null ? t.also : null;
   if (!BOOK.bpm) BOOK.bpm = t.tempo || 112;
   BOOK.bpm = t.tempo && !BOOK.touchedTempo ? t.tempo : BOOK.bpm;
-  if (BOOK.feel === 'swing' && BOOK.meter === 3 && !BOOK.touchedFeel) BOOK.feel = 'waltz';
+  if (t.feel && !BOOK.touchedFeel) BOOK.feel = t.feel;   // a chart may say how it moves (the pop chapter is mostly straight)
+  else if (BOOK.feel === 'swing' && BOOK.meter === 3 && !BOOK.touchedFeel) BOOK.feel = 'waltz';
   BOOK.loopB = BOOK.loopB && BOOK.loopB <= BOOK.bars.length ? BOOK.loopB : BOOK.bars.length;
   BOOK.bar = 0;
   bookRender();
@@ -216,6 +258,7 @@ function bookMount() {
     + '<label class="bk-line">tune <select id="bookTune" aria-label="tune"></select></label>'
     + '<h2 id="bookTitle"></h2>'
     + '<p class="bk-form" id="bookForm"></p><p class="bk-basis" id="bookBasis"></p>'
+    + '<form class="bk-name" id="bookName" hidden><span id="bookHint"></span><input id="bookGuess" type="text" autocomplete="off" spellcheck="false" placeholder="name it" aria-label="name this tune"><button type="submit" class="pill">name</button><span id="bookGuessSay" role="status" aria-live="polite"></span></form>'
     + '<div class="bk-chart" id="bookChart" role="list" aria-label="lead sheet"></div>'
     + '<div class="bk-controls">'
     + '<button type="button" class="pill" id="bookGo">play</button>'
@@ -249,6 +292,7 @@ function bookMount() {
     el.addEventListener('change', () => { bookApplyFromUI(); });
   });
   $('bookTune').addEventListener('change', () => bookChoose($('bookTune').value));
+  $('bookName').addEventListener('submit', e => { e.preventDefault(); nfGuess($('bookGuess').value); });
   bookSpines();
   if (typeof wingMount === 'function') wingMount();
   if (typeof petSlotsPaint === 'function') petSlotsPaint($('bookPets'));
@@ -256,10 +300,13 @@ function bookMount() {
 function bookSpines() {
   const host = $('bookTune'); if (!host || !BOOK_DATA) return;
   host.innerHTML = '';
+  const named = nfNamed(); let group = null, label = '';
   BOOK_DATA.forEach(t => {
+    const want = t.chapter ? `${t.chapter} · record ${t.record}` : 'standards';
+    if (want !== label) { label = want; group = document.createElement('optgroup'); group.label = want; host.appendChild(group); }
     const o = document.createElement('option');
-    o.value = t.id; o.textContent = t.title + (t.pd ? '' : '');
-    host.appendChild(o);
+    o.value = t.id; o.textContent = nfTune(t) ? (named[t.id] ? `${named[t.id]} ✓` : t.title) : t.title;
+    group.appendChild(o);
   });
   bookSpinesMark();
 }
@@ -275,6 +322,8 @@ function bookRenderChart() {
     const list = Array.isArray(chords) ? chords : [chords];
     name.textContent = list.map(c => labelChord(c, BOOK.semi)).filter(Boolean).join(' ') || '·';
     b.appendChild(n); b.appendChild(name);
+    const mk = BOOK.tune && BOOK.tune.marks && BOOK.tune.marks[i];
+    if (mk) { const s = document.createElement('em'); s.className = 'bar-mark'; s.textContent = mk; b.appendChild(s); b.classList.add('has-mark'); }
     b.addEventListener('click', () => bookJump(i));
     el.appendChild(b);
   });
@@ -283,8 +332,18 @@ function bookRenderChart() {
 function bookRender() {
   bookMount();
   const t = BOOK.tune; if (!t) return;
-  $('bookKicker').textContent = BOOK.kind === 'wing' ? (t.composer || '') : (t.pd ? 'public domain' : 'changes');
-  $('bookTitle').textContent = t.title || '';
+  const nf = nfTune(t), named = nf && nfNamed()[t.id];
+  $('bookKicker').textContent = BOOK.kind === 'wing' ? (t.composer || '') : nf ? 'changes · names filed off' : (t.pd ? 'public domain' : 'changes');
+  $('bookTitle').textContent = nf ? (named || t.title) : (t.title || '');
+  const nb = $('bookName');
+  if (nb) {
+    nb.hidden = !nf;
+    if (nf) {
+      $('bookHint').textContent = named ? `${t.hint} · its riddle: ${t.title}` : t.hint;
+      $('bookGuess').hidden = !!named; nb.querySelector('button').hidden = !!named;
+      if (NF.shown !== t.id) { NF.shown = t.id; $('bookGuess').value = ''; $('bookGuessSay').textContent = ''; }
+    }
+  }
   $('bookForm').textContent = [t.form, shownKey(), (t.meter || 4) + '/4'].filter(Boolean).join(' · ');
   $('bookBasis').textContent = t.basis || (typeof t.pd === 'string' ? t.pd : '') || '';
   bookRenderChart();

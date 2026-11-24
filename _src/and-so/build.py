@@ -37,7 +37,8 @@ def main() -> None:
     # the pens ride in the same script element as Storeybrook, so the mirror carries them into its inner copies
     sb_js = (VENDOR / "storeybrook.js").read_text() + "".join("\n" + (VENDOR / name).read_text().replace("</script", "<\\/script") for name in KIT_ADDONS)   # a kit's comment may show a <script> tag; inline, it would end ours
     vers = [{k: v[k] for k in ("id", "short", "name", "date", "line", "path", "latest", "edition") if k in v} for v in VERSIONS]
-    book = (SRC / "book.json").read_text().strip()
+    # the Book: the standards (book.json) and the chapter with its names filed off (book-nf.json, names_filed_off.py)
+    book = json.dumps(json.loads((SRC / "book.json").read_text()) + (json.loads((SRC / "book-nf.json").read_text()) if (SRC / "book-nf.json").exists() else []), ensure_ascii=False, separators=(",", ":"))
     wing = (SRC / "wing.json").read_text().strip()
     script = f"const ANDSO_VERSIONS = {json.dumps(vers, ensure_ascii=False)};\nconst BOOK_DATA = {book};\nconst WING_DATA = {wing};\n" + "\n".join((SRC / name).read_text() for name in JS)
     for bad in ("</script", "<!--"):

@@ -119,3 +119,11 @@ body.first #hud.on { opacity: 1 }
 @media (prefers-reduced-motion: reduce) {
   .book-open, .stone, .wsun { animation: none; transition: none }
 }
+/* names filed off (10.3): the hint and the name-it box under a hidden title, and section marks on the chart */
+.bk-name { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0 0 .5em; font: 400 13px/1.35 "Andika", sans-serif; color: var(--ink-muted, #6d5b48) }
+.bk-name input { flex: 1 1 10em; min-width: 8em; min-height: 32px; padding: 4px 10px; border: 1.5px solid var(--glass-line, rgba(36,28,22,.3)); border-radius: 999px; background: transparent; color: inherit; font: inherit }
+.bk-name input:focus-visible { outline: 2px solid var(--gold, #c6842a); outline-offset: 1px }
+.bk-name [hidden] { display: none }
+#bookGuessSay { flex-basis: 100%; min-height: 1em; font-style: italic }
+.bk-chart .bar.has-mark { box-shadow: inset 3px 0 0 var(--gold, #c6842a) }
+.bk-chart .bar .bar-mark { font: italic 600 10px/1 "Andika", sans-serif; opacity: .7 }
