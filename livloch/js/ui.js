@@ -84,7 +84,7 @@ UI.init = function (handlers) {
     if (type === 'c') el.checked = !!cfg[key]; else el.value = cfg[key];
     el.addEventListener('input', function () { cfg[key] = type === 'c' ? el.checked : +el.value; H.save(); H.apply(); });
   };
-  bind('oSens', 'sens'); bind('oVol', 'vol'); bind('oMusic', 'music'); bind('oSfx', 'sfx'); bind('oMute', 'mute', 'c'); bind('oMicro', 'micro', 'c'); bind('oInv', 'invert', 'c'); bind('oAssist', 'assist', 'c'); bind('oLow', 'low', 'c'); bind('oPet', 'pet', 'c'); UI.petStatus();
+  bind('oSens', 'sens'); bind('oVol', 'vol'); bind('oMusic', 'music'); bind('oSfx', 'sfx'); bind('oMute', 'mute', 'c'); bind('oMicro', 'micro', 'c'); bind('oInv', 'invert', 'c'); bind('oAssist', 'assist', 'c'); bind('oLow', 'low', 'c'); bind('oPet', 'pet', 'c'); bind('oH3d', 'heroes3d', 'c'); /* 0.24 heroes3d */ UI.petStatus();
   $('oAuto').addEventListener('input', function () { cfg.autoFire = $('oAuto').checked; H.save(); });
 };
 /* The mute buttons (one on the title and menus, one in the match HUD) and the Settings box show the same state. */
