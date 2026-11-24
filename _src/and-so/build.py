@@ -26,7 +26,7 @@ FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
 VERSION = "10.1"
 # the toolkit family, pinned by version: Storeybrook is vendored as before; the night and the dusk draw with the kits' pens
 # each kit's add-ons (the pen; the pets, family plan F9), copied from the kit's v/<version>/ and never edited here
-KIT_ADDONS = ["depthfield-pen-2.4.0.js", "depthfield-pets-2.4.0.js", "hypermetapunk-pen-0.3.0.js"]
+KIT_ADDONS = ["depthfield-pen-2.4.0.js", "depthfield-pets-2.4.0.js", "hypermetapunk-pen-0.4.0.js", "hypermetapunk-pets-0.4.0.js"]
 
 
 def main() -> None:

@@ -52,7 +52,11 @@ function xpCrests(n) {
   const covered = (x, y) => panels.some(r => x + sz * 0.5 > r.left - 6 && x - sz * 0.5 < r.right + 6 && y > r.top - 6 && y - sz * 1.1 < r.bottom + 6);
   xs.sort((a, b) => a[1] - b[1]);
   for (const c of xs) { if (pick.length >= n) break; if (c[0] < PX0 + 18 || c[0] > PX0 + PW - 18) continue; if (busy.some(x => Math.abs(x - c[0]) < 26)) continue; if (covered(c[0], c[1])) continue; if (pick.some(q => Math.abs(q[0] - c[0]) < gap)) continue; pick.push(c); }
-  for (let i = 0; pick.length < n && i < n * 2; i++) { const X = PX0 + PW * ((i + 0.5) / (n * 2)), s = clamp(Math.round((X - PX0) / PW * (NS - 1)), 0, NS - 1); if (!pick.some(q => Math.abs(q[0] - X) < gap * 0.6)) pick.push([X, y(s)]); }
+  // not enough clear hilltops: spaced spots along the hills, still out from under the panels; the last resort ignores them
+  for (const strict of [true, false]) for (let i = 0; pick.length < n && i < n * 4; i++) {
+    const X = PX0 + PW * ((i + 0.5) / (n * 4)), s = clamp(Math.round((X - PX0) / PW * (NS - 1)), 0, NS - 1), Y = y(s);
+    if (strict && covered(X, Y)) continue; if (!pick.some(q => Math.abs(q[0] - X) < gap * (strict ? 0.6 : 0.35))) pick.push([X, Y]);
+  }
   return pick.sort((a, b) => a[0] - b[0]);
 }
 function xpTick(dt) {
