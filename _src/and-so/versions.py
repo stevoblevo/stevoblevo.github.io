@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="10.3", short="AND SO 10.3", name="AND SO 10.3 · Names Filed Off", date="2026-11-24", path="/and-so/v10.3/", latest=True, source="dist",
+    dict(id="10.4", short="AND SO 10.4", name="AND SO 10.4 · Velvet", date="2026-11-24", path="/and-so/v10.4/", latest=True, source="dist",
+         line="The pet, closer to real: bunny fur you can almost feel, antlers in velvet, butterfly wings with veins, eyespots and scales that catch the light, octopus arms with suckers and glowing tips. And Swizzle, a swift with a swizzle stick, comes to the hills when you name a tune in the Book."),
+    dict(id="10.3", short="AND SO 10.3", name="AND SO 10.3 · Names Filed Off", date="2026-11-24", path="/and-so/v10.3/", source="9a79eae",
          line="A new chapter in the Book: 220 pop songs as changes only, chords and form with no melody and no words, playing in just intonation. Their names are filed off: each shows a riddle and a hint, and you name it to get its title back."),
     dict(id="10.2", short="AND SO 10.2", name="AND SO 10.2 · The Band", date="2026-11-24", path="/and-so/v10.2/", source="56710e8",
          line="The three kits' pets come to play: the ones you find on Storeybrook, Hypermetapunk and Depthfield stand on the hills of their own face and dance with a swing, and a touch gets you a lick with a blue note. Your pet is a sticker at dusk and moonlit at night. All seventeen open the lattice."),

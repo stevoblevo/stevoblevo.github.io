@@ -219,27 +219,15 @@ function drawPet(g) {
     let px0 = x0, py0 = y0;
     for (let k = 1; k <= 14; k++) { const f = k / 14, w = Math.sin(f * 7 - t * 3.6) * 5 * sc * f, X = x0 + ux * L * f - uy * w, Y = y0 + uy * L * f + ux * w; g.lineWidth = (4.4 - 3.4 * f) * sc; g.beginPath(); g.moveTo(px0, py0); g.lineTo(X, Y); g.stroke(); if (E > 0.8 && k % 3 === 1) { g.fillStyle = rgba(mix(base, [255, 170, 190], 0.4), 0.9); g.beginPath(); g.arc(X, Y, 1.1 * sc, 0, TAU); g.fill(); } px0 = X; py0 = Y; }
   }
-  if (wd > 0.04 && !skein) {
-    const fl = Math.sin(t * (4 + rhy.bpm / 30)) * 0.35 * (reduceMotion ? 0.3 : 1), s2 = 0.5 + wd;
-    [-1, 1].forEach(s => {
-      g.save(); g.translate(0, -6 * sc + sy); g.rotate(s * (0.5 + fl)); g.globalAlpha = (lp ? 0.95 : 0.7) * wd;
-      if (lp) { g.fillStyle = rgba(mix(s < 0 ? HIDE.coatL : HIDE.coatR, hideCol(s < 0 ? 'warm' : 'cool', 5), 0.32), 0.96); g.strokeStyle = rgba(ink, 0.9); g.lineWidth = Math.max(1, 1.1 * sc); }   // chimera wings: one of each
-      else { const wgr = g.createLinearGradient(0, 0, s * 30 * sc, -20 * sc); wgr.addColorStop(0, rgba(mix(acc, [255, 255, 255], 0.4), 0.9)); wgr.addColorStop(1, 'rgba(184,162,255,0.5)'); g.fillStyle = wgr; }
-      g.beginPath(); g.ellipse(s * 16 * sc * s2, -10 * sc, 15 * sc * s2, 10 * sc * s2, -s * 0.5, 0, TAU); g.fill(); if (lp) g.stroke();
-      g.beginPath(); g.ellipse(s * 12 * sc * s2, 6 * sc, 9 * sc * s2, 7 * sc * s2, s * 0.4, 0, TAU); g.fill(); if (lp) g.stroke(); g.restore();
-    });
-  }
-  if (wc > 0.04 && !skein) {
-    g.strokeStyle = rgba(dark, Math.min(1, wc * 1.6)); g.lineCap = 'round';
-    for (let i = 0; i < 6; i++) { const ox = (i - 2.5) * 4.2 * sc, L = (10 + 22 * wc + 8 * E) * sc, curl = Math.sin(t * 2.4 + i) * 0.6 + (Rs > 0.55 ? 0.8 : 0); g.lineWidth = 3.2 * sc * (0.6 + 0.4 * wc);
-      if (lp) g.strokeStyle = rgba(mix(hideCol(i < 3 ? 'warm' : 'cool', 7 + i), ink, 0.3), Math.min(1, wc * 2.2));   // three warm, three cool
-      g.beginPath(); g.moveTo(ox, 12 * sc + sy); for (let k = 1; k <= 6; k++) { const f = k / 6; g.lineTo(ox + Math.sin(f * 3 + t * 2 + i) * 4 * sc * f + curl * f * f * 6 * sc * (i < 3 ? -1 : 1), 12 * sc + sy + f * L); } g.stroke(); }
-  }
+  // 10.4: wings and arms closer to life (zw-petreal.js)
+  if (wd > 0.04 && !skein) petWings(g, sc, sy, wd, lp, acc, ink);
+  if (wc > 0.04 && !skein) petArms(g, sc, sy, wc, lp, acc, ink, dark, E);
   if (wg > 0.06) { g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4.2 : 3) * sc; g.lineCap = 'round'; const kk = Math.sin(t * 8) * 4 * pet.jump * sc, out = pose === 2 ? 8 * sc : 0; g.beginPath(); g.moveTo(-5 * sc, 12 * sc + sy); g.lineTo(-7 * sc - out, 24 * sc + sy - kk); g.moveTo(5 * sc, 12 * sc + sy); g.lineTo(7 * sc + out, 24 * sc + sy + kk); g.stroke(); }
   if (skein) drawSkeinBody(g, sc, sy);
   else {
     if (lp) hideBody(g, sc, sy, ink);
     else { const bg = g.createRadialGradient(-5 * sc, -2 * sc + sy, 2, 0, 2 * sc + sy, 20 * sc); bg.addColorStop(0, rgba(mix(base, [255, 255, 255], 0.35), 1)); bg.addColorStop(1, rgba(base, 1)); g.fillStyle = bg; g.beginPath(); g.ellipse(0, 2 * sc + sy, 13 * sc, 15 * sc, 0, 0, TAU); g.fill(); }
+    petFur(g, 0, 2 * sc + sy, 13 * sc, 15 * sc, sc, lp, ink, base, wl);   // real fur when the bunny is in her
     g.setLineDash([2, 2.5]); g.strokeStyle = rgba(dark, lp ? 0.55 : 0.5); g.lineWidth = 1; g.beginPath(); g.moveTo(0, -11 * sc + sy); g.lineTo(0, 15 * sc + sy); g.stroke(); g.setLineDash([]);
     { const hx = 6 * sc, hy = 4 * sc + sy, hs = 2.4 * sc; g.fillStyle = rgba(mix(acc, [255, 120, 150], 0.5), 0.8); g.beginPath(); g.moveTo(hx, hy + hs); g.bezierCurveTo(hx - hs * 2, hy - hs * 0.5, hx - hs * 0.6, hy - hs * 2, hx, hy - hs * 0.6); g.bezierCurveTo(hx + hs * 0.6, hy - hs * 2, hx + hs * 2, hy - hs * 0.5, hx, hy + hs); g.fill(); }
   }
@@ -250,8 +238,9 @@ function drawPet(g) {
   if (skein) drawSkeinHair(g, sc);
   else if (wl > 0.04) [-1, 1].forEach(s => { g.save(); g.translate(s * 6 * sc, -10 * sc); g.rotate(s * (0.18 + Math.sin(t * 1.1 + s) * 0.06) + (Rs > 0.55 ? s * 0.5 : 0)); const L = (6 + 18 * wl) * sc; g.globalAlpha = Math.min(1, wl * 1.8); g.fillStyle = rgba(lp ? (s < 0 ? HIDE.coatL : HIDE.coatR) : base, 1); g.beginPath(); g.ellipse(0, -L / 2, 4.2 * sc, L / 2, 0, 0, TAU); g.fill();
     if (lp) { g.strokeStyle = rgba(ink, 0.95); g.lineWidth = Math.max(1.2, 1.3 * sc); g.stroke(); }
+    petFur(g, 0, -L / 2, 4.2 * sc, L / 2, sc, lp, ink, base, wl, 3);
     g.fillStyle = lp ? rgba(hideCol(s < 0 ? 'warm' : 'cool', 4), 0.85) : 'rgba(255,170,190,0.75)'; g.beginPath(); g.ellipse(0, -L / 2, 2 * sc, Math.max(1, L / 2 - 2 * sc), 0, 0, TAU); g.fill(); g.restore(); });
-  if (wm > 0.04 && !skein) [-1, 1].forEach(s => { const L = (5 + 12 * wm) * sc, al = Math.min(1, wm * 1.8); g.strokeStyle = rgba(lp ? [92, 64, 44] : [120, 90, 70], al); g.lineWidth = 1.6 * sc; g.lineCap = 'round'; g.beginPath(); g.moveTo(s * 3 * sc, -12 * sc); g.lineTo(s * (5 * sc + L * 0.4), -12 * sc - L); g.moveTo(s * (4 * sc + L * 0.2), -12 * sc - L * 0.5); g.lineTo(s * (9 * sc + L * 0.5), -12 * sc - L * 0.8); g.stroke(); g.fillStyle = rgba(lp ? [62, 140, 64] : [140, 210, 120], al); [[5 * sc + L * 0.4, -12 * sc - L], [9 * sc + L * 0.5, -12 * sc - L * 0.8]].forEach(([lx, ly]) => { g.beginPath(); g.ellipse(s * lx, ly, 2.4 * sc, 1.4 * sc, s * 0.6, 0, TAU); g.fill(); }); });
+  if (wm > 0.04 && !skein) petAntlers(g, sc, wm, lp);   // in velvet
   // fur, when she has been somewhere deep
   if (E > 0.5 && !skein) { const n = 40, fa = Math.min(1, (E - 0.5) * 2.4); g.strokeStyle = rgba(dark, 0.5 * fa); g.lineWidth = 0.9; g.beginPath(); for (let i = 0; i < n; i++) { const a = (i / n) * TAU + Math.sin(t * 0.5 + i) * 0.03, L = (1.2 + 3 * fa * (0.5 + 0.5 * Math.sin(i * 12.99))) * sc, r0 = 12.4 * sc; g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0); g.quadraticCurveTo(Math.cos(a + 0.08) * (r0 + L * 0.6), Math.sin(a + 0.08) * (r0 + L * 0.6), Math.cos(a + 0.12) * (r0 + L), Math.sin(a + 0.12) * (r0 + L)); } g.stroke(); }
   if (lp && !skein) hideHead(g, sc, ink);
@@ -260,6 +249,7 @@ function drawPet(g) {
     g.fillStyle = hg; g.beginPath(); g.arc(0, 0, 13 * sc, 0, TAU); g.fill();
     if (lp) { g.strokeStyle = rgba(ink, 0.9); g.lineWidth = Math.max(1.4, 1.45 * sc); g.stroke(); }   // the knitted doll gets the ink line too
   }
+  if (!skein) petFur(g, 0, 0, 13 * sc, 13 * sc, sc, lp, ink, base, wl);
   if (skein) { g.setLineDash([2.2 * sc, 2 * sc]); g.strokeStyle = 'rgba(184,120,70,0.75)'; g.lineWidth = 1.1 * sc; g.beginPath(); g.arc(0, 0, 12 * sc, 0, TAU); g.stroke(); g.setLineDash([]);
     g.fillStyle = '#c47a3c'; g.beginPath(); g.ellipse(0, -8.6 * sc, 10.6 * sc, 4.8 * sc, 0, Math.PI, TAU); g.fill(); }
   const sleepy = t - lastUserT > 90 && !rhyActive(), shut = (pet.blink > 0 || sleepy) && !skein, [gx, gy] = petGaze(pet.x, pet.y - 22 * sc, (0.7 + 0.8 * E) * sc), slit = E > 0.72;

@@ -41,6 +41,7 @@ function nfGuess(text) {
     const all = nfNamed(); all[t.id] = String(text).trim().slice(0, 80);
     try { localStorage.setItem(NF_KEY, JSON.stringify(all)); } catch (e) {}
     if (say) say.textContent = 'named. that is the one.';
+    if (!found.has('x-named')) caption('swizzle the swift came to the hills. touch her and she plays.', 4200);
     discover('x-named'); if (Object.keys(all).length >= 13) discover('x-named-13');
     if (typeof jlog === 'function') jlog('named a tune in the book');
     bookRender(); bookSpines(); return;

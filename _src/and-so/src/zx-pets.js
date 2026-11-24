@@ -8,7 +8,7 @@
 // every pet in every face (also `?lattice=1`, the link the kits show when all seventeen are found).
 // Your own pet wears the face too: a die-cut sticker at dusk (Hypermetapunk's pen.sticker), moonlit at night
 // (Depthfield's pen.rim), the watercolour chimera by day as before.
-const KIT_API = { sb: () => window.Storeybrook && window.Storeybrook.pets, df: () => window.Depthfield && window.Depthfield.pets, hmp: () => window.Hypermetapunk && window.Hypermetapunk.pets };
+const KIT_API = { sb: () => window.Storeybrook && window.Storeybrook.pets, df: () => window.Depthfield && window.Depthfield.pets, hmp: () => window.Hypermetapunk && window.Hypermetapunk.pets, so: () => SO_PETS };   // so: AND SO's own (Swizzle, zw-petreal.js)
 const FACE_KIT = { 'sb-daylight': 'sb', 'hm-dusk': 'hmp', 'df-night': 'df' };
 const KIT_SITE = { sb: 'https://stevoblevo.github.io/storeybrook/', hmp: 'https://stevoblevo.github.io/hypermetapunk/', df: 'https://stevoblevo.github.io/depthfield/' };
 const KIT_SET = { sb: ['day pets', 'Storeybrook', 7], hmp: ['dusk pets', 'Hypermetapunk', 5], df: ['night pets', 'Depthfield', 5] };
@@ -39,7 +39,9 @@ function xpArrived(key) {
 // who is on the hills now: the face's own kit, or everyone in the lattice
 function xpWho() {
   const kits = XP.lattice ? ['sb', 'hmp', 'df'] : FACE_KIT[skin] ? [FACE_KIT[skin]] : [];
-  const out = []; for (const k of kits) for (const p of xpList(k)) if (xpHas(k, p.id)) out.push({ k, id: p.id }); return out;
+  const out = []; for (const k of kits) for (const p of xpList(k)) if (xpHas(k, p.id)) out.push({ k, id: p.id });
+  if (found.has('x-named')) out.push({ k: 'so', id: 'swizzle' });   // Swizzle is AND SO's own: she is in every face
+  return out;
 }
 // the hilltops: the crests of the terrain you are playing, away from the voices (they live in the valleys)
 function xpCrests(n) {

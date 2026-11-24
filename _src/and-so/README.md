@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.3 · Names Filed Off.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.4 · Velvet.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -137,6 +137,24 @@ no lyric.
   (as you are, just intonation, 31-EDO, piano), which this chapter sets to just intonation, so its changes play
   microtonal. The jam gives the old tuning back when it stops. 5/4 charts play.
 - Finds: `x-named` (name one), `x-named-13` (name thirteen). 148 in all.
+
+## Velvet (10.4)
+
+Bleve asked for the pet to look like something you want to touch. `src/zw-petreal.js` replaces the plain shapes
+`drawPet` used for four of her parts, in every look (ink and chimera colours on paper, glow in the dark looks); her
+shape, poses and the five weights that grow each part are unchanged.
+
+- `petFur`: a seeded coat over body, head and ears (shadow, mid and highlight hairs lying along the body, fluff past
+  the outline), as strong as the bunny in her (`wl`).
+- `petAntlers`: velvet: a dark core, a lit side, a soft pile, blunt rounded tips, one leaf.
+- `petWings`: bezier fore and hind wings, veins, a dark margin with pale dots, an eyespot, a travelling sheen and
+  glinting scales; the wings foreshorten as they beat.
+- `petArms`: six tapered octopus arms with a lit top, suckers on the inner side, a wet glint and tips that glow
+  with the beat.
+- Swizzle (`SO_PETS`): AND SO's own band pet, a swift who conducts with a swizzle stick. She comes to the hills, in
+  every face, when you name your first tune in the Book's chapter with its names filed off (`x-named`). She was asked
+  for as a caricature of a real singer; she is an original character instead, and should stay one.
+- `__andso.petW([antlers, limbs, ears, wings, arms])` with `?debug` sets and locks the pet's parts.
 
 ## Where AND SO is published
 
