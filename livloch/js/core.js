@@ -11,6 +11,19 @@
        hover   a short hanging flight instead of a second jump: { t: most seconds, sink: m/s while hanging, lift: the
                first wing beat's push up in m/s, grip: how fast the hang takes hold (1/s), cost: stamina }
      A row without `air` keeps the jump of 0.24 and before: a jump, then a double jump for one stamina.
+   - 0.26 guard: what a second jump does in a fight, and what a thread gives it (rules in sim.js, "0.26 guard"):
+       guard   a short defensive window that opens with the second jump and costs nothing more than its stamina:
+               { kind: 'aegis', t, arc, knock }  Anna: a bronze shield toward the aim; hits from within `arc` degrees of
+                                                 her aim are blocked for t seconds, and a melee attacker is shoved `knock` m
+               { kind: 'bubble', t, hp }         Dora: a bubble of light that soaks up to hp damage for t seconds, then pops
+               { kind: 'fray', t }               Skye: she comes apart into thread for t seconds and every hit passes through
+       hat     Dora: { need, dmg, out, speed, back, r }. `need` thread boosts charge her straw hat; thrown (G, pad R3) it
+               flies `out` metres at `speed`, comes back at `back` m/s, and cuts each enemy it passes once each way for dmg
+       boon    Myra Belle: { heal, r }. A hover that a thread boosted and that ends still on the thread mends her and her
+               side within r metres by heal
+     C.TBOOST is the thread boost: a second jump or a hover begun within r metres of a thread while moving along it
+     (|cos| >= align, at least minSp m/s) gets vy m/s more lift and speed along the thread (sp times the run speed), which
+     carries for t seconds; a boosted hover sinks at sinkK of its usual rate.
    - Lore is checked against the Saelion repos: Myra Belle is the round purple thread-keeper, not a bell; the Skein Doll
      has copper braids and a mint cardigan; Dora is not called a lantern keeper. Do not undo those.
    (The file says LL and "livelock" in places because the game was called Livelock until 0.4.) */
@@ -64,7 +77,8 @@ var C = LL.C = {
   ECHO_T: 6, ECHO_MEM: 10, ECHO_CD: 45, ECHO_CD_MEM: 25, ECHO_DMG: 0.7,
   LIT_T: 80, FALLEN_RED_EVERY: 150,
   RED_WARN: 30, MOOD_GUESSES: 3,
-  ULT_LEVEL: 3, MAX_ITEMS: 15
+  ULT_LEVEL: 3, MAX_ITEMS: 15,
+  TBOOST: { r: 2.4, align: 0.7, minSp: 3, vy: 2.2, sp: 1.6, t: 0.7, sinkK: 0.4 } // 0.26 guard: the thread boost (see the DESIGN note above)
 };
 
 LL.lanes = C.LANE_X.map(function (lx) {
@@ -101,7 +115,7 @@ LL.nearestLane = function (x, z) {
 LL.HEROES = [
   { id: 'dora', name: 'Dora', title: 'Carries the little light', col: 0xffc46b, css: '#ffc46b',
     blurb: 'Coffee first. Steady bolts, a thrown light, a thread home.',
-    air: { jumps: 1 }, // 0.25 air: the steady one, one good jump; her way through the air is the thread
+    air: { jumps: 2, guard: { kind: 'bubble', t: 1.2, hp: 200 }, hat: { need: 3, dmg: 100, out: 15, speed: 24, back: 28, r: 1.1 } }, // 0.26 guard: a second jump now, and it wraps her in an astral bubble; three thread boosts charge the hat (0.25: one jump)
     hp: 660, speed: 7.2, aiRange: 36, build: [10, 5, 11, 0, 12, 6, 13, 8, 14, 9, 1, 2, 3, 7, 4],
     gun: { name: 'Lantern bolts', dmg: 10, rate: 7.5, mag: 26, reload: 1.5, speed: 95, spread: 0.012, pellets: 1, range: 46, size: 0.16 },
     ab: [
@@ -111,7 +125,7 @@ LL.HEROES = [
     ] },
   { id: 'anna', name: 'Anna', title: 'Field geologist', col: 0x7fd0e0, css: '#7fd0e0',
     blurb: 'Slow, heavy, accurate. Brings a rock hammer and a fawn with opinions.',
-    air: { jumps: 2 }, // 0.25 air: the second jump is a rock-hop, a kick off thin air
+    air: { jumps: 2, guard: { kind: 'aegis', t: 0.9, arc: 60, knock: 1.6 } }, // 0.25 air: the second jump is a rock-hop, a kick off thin air; 0.26 guard: and it raises Athena's shield
     hp: 720, speed: 6.9, aiRange: 44, build: [0, 5, 2, 1, 6, 3, 8, 4, 7, 9, 10, 11, 12, 13, 14],
     gun: { name: 'Rock hammer', dmg: 37, rate: 2.1, mag: 8, reload: 1.7, speed: 150, spread: 0.003, pellets: 1, range: 60, size: 0.22 },
     ab: [
@@ -121,7 +135,7 @@ LL.HEROES = [
     ] },
   { id: 'myra', name: 'Myra Belle', title: 'Thread-keeper', col: 0xb48cf0, css: '#b48cf0',
     blurb: 'Round, purple, hard to move. Keeps the quest log and mends whoever stands near her.',
-    air: { jumps: 1, hover: { t: 1.2, sink: 1.2, lift: 1.6, grip: 5, cost: 1 } }, // 0.25 air: no second jump; hold jump in the air and her wings hold her up (from the top of a jump she hangs between 1.9 and 0.9 m)
+    air: { jumps: 1, hover: { t: 1.2, sink: 1.2, lift: 1.6, grip: 5, cost: 1 }, boon: { heal: 50, r: 8 } }, // 0.26 guard: boon, a hover the thread boosted that ends on it mends her side. 0.25 air: no second jump; hold jump in the air and her wings hold her up (from the top of a jump she hangs between 1.9 and 0.9 m)
     hp: 800, speed: 6.8, aiRange: 22, build: [5, 10, 6, 0, 8, 7, 12, 1, 9, 14, 11, 13, 2, 3, 4],
     gun: { name: 'Spool shot', dmg: 7.5, rate: 1.5, mag: 6, reload: 1.9, speed: 90, spread: 0.055, pellets: 7, range: 26, size: 0.14 },
     ab: [
@@ -129,9 +143,9 @@ LL.HEROES = [
       { key: 'E', name: 'Mending', kind: 'zone', cd: 16, r: 7, heal: 55, life: 6, fx: 'ward', desc: 'Lay a circle of stitches that mends you and your side while you stand in it.' },
       { key: 'F', name: 'Pull the Thread', kind: 'zone', ult: true, cd: 80, r: 13, burst: 430, delay: 1.3, life: 0.5, fx: 'toll', desc: 'Wind the spool, then pull. Everything nearby comes undone at once.' }
     ] },
-  { id: 'skein', name: 'Skein Doll', title: 'Every thread is hers', col: 0xe0955f, css: '#e0955f',
-    blurb: 'Fast, fragile, everywhere. Needles by the dozen and a knot that shoots.',
-    air: { jumps: 2 }, // 0.25 air: the second jump is a loose spinning tuck
+  { id: 'skein', name: 'Skye', title: 'The Skein Doll', /* 0.26: the owner named her Skye; the id stays 'skein' (saves and hooks) */ col: 0xe0955f, css: '#e0955f',
+    blurb: 'Every thread is hers. Fast, fragile, everywhere. Needles by the dozen and a knot that shoots.',
+    air: { jumps: 2, guard: { kind: 'fray', t: 0.6 } }, // 0.25 air: the second jump is a loose spinning tuck; 0.26 guard: in it she frays into thread and hits pass through
     hp: 580, speed: 7.6, aiRange: 30, build: [1, 0, 5, 3, 6, 2, 8, 4, 9, 7, 11, 10, 12, 13, 14],
     gun: { name: 'Needles', dmg: 5.6, rate: 14, mag: 42, reload: 1.4, speed: 100, spread: 0.028, pellets: 1, range: 36, size: 0.11 },
     ab: [
@@ -147,14 +161,16 @@ LL.HEROES = [
      flight). Appended last on purpose: saves store the hero as an index, so the first four keep theirs.
      Lantern Lift ('lift', sim.js liftCast/liftStep): rise seconds of steerable climb toward cap metres, then a glide at
      glide times gravity, sinking no faster than sink m/s; boost is the air speed multiplier he steers toward. Moving along a
-     thread within threadR metres of it adds thread seconds, once per lift. */
-  { id: 'rook', name: 'Rook Vale', title: 'The Wick Aviator', col: 0x91e5c6, css: '#91e5c6',
+     thread within threadR metres of it adds thread seconds, once per lift.
+     0.26 guard: a dash while lifting or gliding is a barrel roll, a sideways flip that lasts roll seconds; while it lasts,
+     shots from farther than rollNear metres miss him (sim.js rollStart). */
+  { id: 'rook', name: 'Rook Vale', title: 'The Wick Aviator', col: 0xe39a90, css: '#e39a90', /* 0.26: rose gold (his coat is copper and rose gold, teal highlights) */
     blurb: 'A loch courier with a glazed lantern-kite. Take the high line, then land clean.',
     hp: 610, speed: 7.1, aiRange: 34, build: [0, 5, 3, 7, 1, 6, 10, 2, 8, 11, 4, 9, 12, 13, 14], air: { jumps: 1 },
     gun: { name: 'Wick sparks', dmg: 15.5, rate: 5, mag: 18, reload: 1.35, speed: 100, spread: 0.011, pellets: 1, range: 44, size: 0.19 },
     ab: [
       { key: 'Q', name: 'Wick Skip', kind: 'line', cd: 6.5, dmg: 85, speed: 65, r: 0.72, range: 29, desc: 'Send a slow-burning stitch along your sightline.' },
-      { key: 'E', name: 'Lantern Lift', kind: 'lift', cd: 9, rise: 1.0, cap: 4.2, glide: 0.3, sink: 3.4, boost: 1.35, thread: 0.35, threadR: 2.2, desc: 'Rise and steer for a moment, then glide down. Aim and fire while aloft. A thread under you holds you up a little longer.' },
+      { key: 'E', name: 'Lantern Lift', kind: 'lift', cd: 9, rise: 1.0, cap: 4.2, glide: 0.3, sink: 3.4, boost: 1.35, thread: 0.35, threadR: 2.2, roll: 0.45, rollNear: 4, desc: 'Rise and steer for a moment, then glide down. Aim and fire while aloft. A thread under you holds you up a little longer.' },
       { key: 'F', name: 'Landing Bell', kind: 'zone', ult: true, cd: 60, r: 7.5, burst: 300, delay: 0.9, life: 0.5, fx: 'toll', desc: 'Ring the bell. It tolls where you are a moment later, so ring it on the way down.' }
     ] }
 ];

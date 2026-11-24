@@ -16,6 +16,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U;
 const R = LL.gfx = { ok: false, low: false };
+const SH = LL.shots || null; // 0.26 shots: js/shots.js, a look per gun (null: the old white tracer for every shot)
 const SCN = LL.scenery || null; // js/scenery.js: trees, the loch, pools of light, plants, moon, mist, fireflies, petals (null: the old cone trees and flat loch)
 let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
@@ -159,6 +160,7 @@ function construct() {
   applyLook();
 }
 function scx() { let id = 'snow'; for (const k in LOOKS) if (LOOKS[k] === LK) id = k; return { T: T, scene: scene, world: world, sky: sky, renderer: renderer, LK: LK, id: id, R: R, groundH: groundH, ground: groundM }; }
+function nsx() { return { T: T, world: world, dyn: dyn, LK: LK, R: R, renderer: renderer, glowTex: glowTex, emit: emit, ring: ring, puff: puff, near: dist2cam, shake: function (v) { if (v > shake) shake = v; } }; } // 0.26 ness: what js/ness.js is handed
 R.setLook = function (id) {
   if (!LOOKS[id] || !R.ok) return;
   LK = LOOKS[id]; R.look = LK; C.TEAM_CSS = LK.css;
@@ -372,6 +374,7 @@ function buildInstanced() {
   projMesh.userData.rt = true; projMesh.frustumCulled = false; initColor(projMesh, 340); projMesh.count = 0; dyn.add(projMesh);
   orbMesh = new T.InstancedMesh(new T.IcosahedronGeometry(1, 1), new T.MeshBasicMaterial({ color: 0xffffff, blending: T.AdditiveBlending, transparent: true, opacity: 0.9, depthWrite: false, fog: false }), 90);
   orbMesh.userData.rt = true; orbMesh.frustumCulled = false; initColor(orbMesh, 90); orbMesh.count = 0; dyn.add(orbMesh);
+  if (SH) SH.build({ T: T, dyn: dyn, tc: tc, initColor: initColor, glowTex: glowTex, emit: emit, puff: puff, camera: function () { return camera; }, low: function () { return R.low; }, reduced: function () { return R.reduced; }, dist: dist2cam }); // 0.26 shots
 }
 function buildParticles() {
   pPos = new Float32Array(PN_MAX * 3); pCol = new Float32Array(PN_MAX * 3); pBase = new Float32Array(PN_MAX * 3); pVel = new Float32Array(PN_MAX * 4);
@@ -1013,7 +1016,7 @@ function sceneryTrees() {
 R.build = function (w) {
   W = w;
   heroM.concat(structM, strayM).forEach(function (g) { dyn.remove(g); });
-  if (!nessM) nessM = nessModel(); nessY = -11;
+  if (!nessM) nessM = LL.ness ? LL.ness.build(nsx()) : nessModel(); nessY = -11; // 0.26 ness: the creature and the flood (js/ness.js); without it, the painted card
   heroM = W.heroes.map(heroModel); structM = W.structs.map(structModel); strayM = W.strays.map(strayModel);
   const freshDecor = !R.decor;
   buildDecor(); buildCues(); buildFruitArt(); buildPet();
@@ -1034,6 +1037,7 @@ function ring(x, y, z, r0, r1, col, life) {
   }
 }
 R.fx = function (e) {
+  if (LL.ness) LL.ness.fx(e, W); // 0.26 ness: the tell, the bite, the flood
   switch (e.k) {
     case 'echo': case 'echoend': for (let k = 0; k < 14; k++) emit(e.x, 0.4 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 2.2, 0.6, 1.5, 0); break;
     case 'echoshot': emit(e.x, e.y, e.z, 2, 0x9fd0ff, 1.5, 0.25, 0, 0); if (echoM && echoM.u) echoM.u.lastShotT = W.t; /* 0.24 heroes3d: the echo raises its aim */ break;
@@ -1046,9 +1050,10 @@ R.fx = function (e) {
       break;
     }
     case 'shot': {
-      emit(e.x, e.y, e.z, 2, e.u.def.col, 2.5, 0.12, 0, 0);
+      const shd = SH && SH.muzzle(e, e.u === W.player); // 0.26 shots: this gun's own muzzle (true) or the generic flash
+      if (!shd) emit(e.x, e.y, e.z, 2, e.u.def.col, 2.5, 0.12, 0, 0); // 0.26 shots
       const m = heroM[W.heroes.indexOf(e.u)]; if (m) m.recoil = 1;
-      flash(e, e.u === W.player); if (e.u === W.player && !R.reduced) kick = Math.min(1.6, kick + (KICK[e.u.def.id] || 0.8)); // 0.23 feel
+      if (!shd) flash(e, e.u === W.player); else if (e.u === W.player) kickSide = Math.random() < 0.5 ? -1 : 1; // 0.26 shots if (e.u === W.player && !R.reduced) kick = Math.min(1.6, kick + (KICK[e.u.def.id] || 0.8)); // 0.23 feel
       break;
     }
     case 'impact': emit(e.x, e.y, e.z, 2, 0xd0c0b0, 3, 0.25, 1.5); bits(e.x, e.y, e.z, 2, 0, 1.4, BIT_DUST); break;
@@ -1077,6 +1082,7 @@ R.fx = function (e) {
     case 'soul': if (e.kind === 'secured') emit(e.x, e.y, e.z, 16, 0xffe9a8, 5, 0.6, 3, 0); else if (e.kind === 'denied') emit(e.x, e.y, e.z, 16, 0x8a8690, 6, 0.5, 0); break;
     case 'respawn': ring(e.u.x, 0, e.u.z, 3, 0.4, SRC_TEAM[e.u.team], 0.6); emit(e.u.x, 1, e.u.z, 30, 0xf4e8d6, 4, 0.9, 5, 0); break;
     case 'jump': case 'hover': case 'hoverend': airFx(e); break; // 0.25 air: an effect per hero (airFx, after heroDust)
+    case 'guard': case 'guarded': case 'guardend': case 'tboost': case 'hatready': case 'hatthrow': case 'hatcut': case 'hatturn': case 'hatback': case 'boon': case 'roll': guardFx(e); break; // 0.26 guard (guardFx, after airDust)
     case 'dash': emit(e.u.x, e.u.y + 0.8, e.u.z, 10, 0xf4e8d6, 3, 0.35, 0, 0); break;
     /* 0.25 rook: Lantern Lift. Sparks and a ring where he leaves the ground, a brighter knot of them where a thread catches
        him, a breath of them when the glide begins, dust and a small ring where he lands. */
@@ -1261,6 +1267,60 @@ function airDust(m, h, dt) { // while hovering: lilac motes shaken off the wings
   while (m.airAcc >= 1) { m.airAcc -= 1; const s = Math.random() < 0.5 ? 1 : -1, P = airAt(h, s > 0 ? 'wingL' : 'wingR', s * 0.4, 1.0, -0.3);
     const c = Math.cos(h.yaw || 0), sn = Math.sin(h.yaw || 0); emit(P.x + c * s * 0.3 + (Math.random() - 0.5) * 0.2, P.y + (Math.random() - 0.5) * 0.2, P.z - sn * s * 0.3 + (Math.random() - 0.5) * 0.2, 1, Math.random() < 0.5 ? 0x3a2850 : 0x48283e, 0.5, 0.8, -0.4, 0.6); }
 }
+/* 0.26 GUARD. Effects for the guards, thread boosts, Dora's hat, Myra's boon and Rook's roll, from the pools that exist
+   (particles, puffs, rings); the figure's own pieces are in heroes3d.js, which gets each event too (H3.guardEvent). Colours
+   are dim on purpose: the particles are additive and bloom.
+   - guard: the aegis rings bronze at her chest; the bubble opens with a ring at her feet and a few violet motes; the fray
+     sheds mint. guarded: a block throws bronze sparks where the hit met the shield (a melee block shakes the camera a hair
+     for the player); a soak is a soft gold glint on the bubble; a pass is a few thread motes going on through. guardend:
+     the bubble pops in gold and blue.
+   - tboost: a pull of light from the thread up to the hero (a rising column of motes, a ring on the thread, a few motes
+     running on along it); while it lasts, motes at the feet. The hat: gold where it leaves, a light along its path, cuts
+     that spark, a glint where it turns and where it lands. boon: a lilac ring as wide as its reach and rose motes rising off
+     everyone it mended. roll: a puff to the side he rolls from.
+   Reduced motion: the rings and a few motes, nothing that travels. Lighter graphics: fewer motes. */
+function guardFx(e) {
+  const h = e.u, m = h ? heroM[W.heroes.indexOf(h)] : null, red = R.reduced, n = R.low ? 0.5 : 1;
+  if (m && m.fig && LL.heroes3d && LL.heroes3d.guardEvent) LL.heroes3d.guardEvent(m.fig, e);
+  if (!h || !h.def) return;
+  const fx0 = Math.sin(h.yaw || 0), fz0 = Math.cos(h.yaw || 0);
+  switch (e.k) {
+    case 'guard':
+      if (e.kind === 'aegis') { ring(h.x, h.y + 0.9, h.z, 0.3, 1.3, 0xffd27a, 0.3); if (!red) emit(h.x + fx0 * 0.5, h.y + 1.25, h.z + fz0 * 0.5, Math.round(8 * n), 0x8a6a30, 2.4, 0.35, 0.5, 2); }
+      else if (e.kind === 'bubble') { ring(h.x, h.y + 0.05, h.z, 0.4, 1.6, 0xffc46b, 0.4); if (!red) emit(h.x, h.y + 1.2, h.z, Math.round(14 * n), 0x4a3c7a, 2.6, 0.6, 0.6, 0); }
+      else if (e.kind === 'fray' && !red) emit(h.x, h.y + 1.1, h.z, Math.round(12 * n), 0x24584a, 3, 0.5, 0.4, 0);
+      break;
+    case 'guarded':
+      if (e.how === 'block') { emit(e.x, e.y, e.z, Math.round((red ? 4 : 14) * n), 0x9a6a28, red ? 1.5 : 6.5, 0.3, 1, 9); if (!red) emit(e.x, e.y, e.z, 3, 0xd8b070, 2, 0.15, 0, 0); if (e.melee && h === W.player && !red) shake = Math.max(shake, 0.25); }
+      else if (e.how === 'absorb') emit(e.x, e.y, e.z, Math.round((red ? 3 : 8) * n), 0x8a7040, red ? 0.6 : 1.8, 0.45, 0.2, 0);
+      else if (!red) { for (let k = 0; k < 5 * n; k++) emit(h.x + (Math.random() - 0.5) * 0.6, h.y + 0.6 + Math.random() * 1.2, h.z + (Math.random() - 0.5) * 0.6, 1, e.how === 'roll' ? 0x3a4a4a : (k % 2 ? 0x2a5a48 : 0x5a3a24), 1.6, 0.4, 0.2, 0); }
+      break;
+    case 'guardend':
+      if (e.kind === 'bubble') { ring(h.x, h.y + 1.0, h.z, 0.8, 2.2, 0xffe0a0, 0.3); if (!red) { emit(h.x, h.y + 1.2, h.z, Math.round(24 * n), 0x8a7040, 4.5, 0.5, 0.3, 0); emit(h.x, h.y + 1.2, h.z, Math.round(12 * n), 0x303c7a, 3.5, 0.6, 0.3, 0); } }
+      break;
+    case 'tboost': {
+      ring(e.tx, 0.02, e.tz, 0.3, 2.1, 0xffe2a0, 0.45); if (red) break;
+      for (let k = 0; k <= 16 * n; k++) { const q = k / (16 * n), bx = e.tx - e.dx * 3.2 * (1 - q), bz = e.tz - e.dz * 3.2 * (1 - q); // an arc of light from the thread behind, up into the hero
+        emit(U.lerp(bx, e.x, q * q), 0.12 + (e.y + 0.9) * Math.pow(q, 1.6), U.lerp(bz, e.z, q * q), 2, 0xa8803c, 0.35, 0.45 + q * 0.3, 1.2, 0); }
+      for (let k = 1; k <= 8 * n; k++) emit(e.tx + e.dx * k * 0.7, 0.2, e.tz + e.dz * k * 0.7, 1, 0x5a4420, 0.5, 0.45 + k * 0.03, 0.9, 0);
+      break; }
+    case 'hatready': ring(h.x, h.y + 0.05, h.z, 0.3, 1.4, 0xffd27a, 0.45); if (!red) emit(h.x, h.y + 2.3, h.z, Math.round(10 * n), 0x8a6a30, 1.6, 0.6, 1.2, 0); break;
+    case 'hatthrow': if (!red) emit(e.x, e.y, e.z, Math.round(10 * n), 0x8a6a30, 2.4, 0.35, 0, 0); if (m && m.rig) LL.paperMotion.cast(m.rig, 'orb'); break;
+    case 'hatcut': emit(e.x, e.y, e.z, Math.round((red ? 3 : 12) * n), 0x9a7030, red ? 1 : 5, 0.3, 0.5, 6); break;
+    case 'hatturn': if (!red) emit(e.x, e.y, e.z, Math.round(6 * n), 0x6a5028, 1.4, 0.3, 0, 0); break;
+    case 'hatback': ring(h.x, h.y + 2.1, h.z, 0.2, 0.9, 0xffd27a, 0.3); if (!red) emit(h.x, h.y + 2.2, h.z, Math.round(6 * n), 0x8a6a30, 1.2, 0.4, 0.5, 0); break;
+    case 'boon':
+      ring(e.x, 0.05, e.z, 0.5, e.r, 0xb48cf0, 0.75); ring(e.x, e.y + 0.6, e.z, 0.3, 2.6, 0xf0a0c8, 0.55); if (!red) emit(e.x, e.y + 1, e.z, Math.round(18 * n), 0x6a3a7a, 3.2, 0.6, 0.6, 0);
+      for (let i = 0; i < (e.who || []).length; i++) { const u = e.who[i]; ring(u.x, 0.05, u.z, 0.3, 1.2, 0xf0a0c8, 0.5); if (!red) emit(u.x, u.y + 0.5, u.z, Math.round(12 * n), 0x6a3456, 1.1, 0.9, 2.3, 0); }
+      break;
+    case 'roll': if (!red) { const lx = fz0 * (e.dir || 1), lz = -fx0 * (e.dir || 1); for (let k = 0; k < 6; k++) puff(h.x - lx * 0.5, h.y + 0.9, h.z - lz * 0.5, -lx * (1.5 + Math.random() * 1.5), (Math.random() - 0.5) * 0.6, -lz * (1.5 + Math.random() * 1.5), 0.25, 0.9, 0.45, 0.35); emit(h.x, h.y + 1, h.z, Math.round(8 * n), 0x2a6a66, 2.6, 0.35, 0, 0); } break;
+  }
+}
+function guardTrail(m, h, dt) { // the hat's light along its path; a boost's motes at the feet while it carries
+  if (R.reduced) return;
+  if (h.hat && Math.random() < dt * (R.low ? 25 : 55)) emit(h.hat.x, h.hat.y, h.hat.z, 1, 0x7a5a24, 0.35, 0.35, 0.1, 0);
+  if (h.tbT > 0 && !h.onGround && Math.random() < dt * (R.low ? 12 : 28)) emit(h.x + (Math.random() - 0.5) * 0.4, h.y + 0.1, h.z + (Math.random() - 0.5) * 0.4, 1, 0x5a4420, 0.5, 0.45, -0.6, 0);
+}
 function ghost(m, h, P, pt) {
   let gh = ghosts[ghostK];
   if (!gh) { const g = new T.PlaneGeometry(1, 1); g.translate(0, 0.5, 0);
@@ -1351,6 +1411,7 @@ function killBits(e) {
   else { bits(e.x, 1, e.z, mine ? 16 : 11, PAPER_REIGN, 3, BIT_PAPER); puff(e.x, 0.2, e.z, 0, 0.3, 0, 0.3, 1, 0.5, 0.3); }
 }
 function stepFeel(dt) {
+  if (SH) SH.step(dt); // 0.26 shots
   for (let i = 0; i < flashes.length; i++) { const s = flashes[i]; if (!s.visible) continue; s.life -= dt; if (s.life <= 0) { s.visible = false; continue; } const f = s.life / s.max; s.material.opacity = f; s.scale.setScalar(s.base * (0.7 + 0.5 * f)); }
   if (!bitM) return; let n = 0;
   for (let i = 0; i < BIT_N; i++) {
@@ -1397,6 +1458,7 @@ R.frame = function (dt, view) {
     const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr), G = st.g;
     if (m.fig) LL.heroes3d.pose(m.fig, st, h, { dt: dt, t: time, reduced: R.reduced }); // 0.24 heroes3d: legs, arms, aim, cloth, braid from the rig
     if (!R.reduced) heroDust(m, h, st, dt);
+    if (h.hat || h.tbT > 0) guardTrail(m, h, dt); // 0.26 guard: the flying hat's light, the thread boost's motes
     m.phase = st.phase;
     const sw = h.zip ? 0.55 : (h.onGround ? st.sway * 0.8 : 0.5);
     m.legL.rotation.x = sw; m.legR.rotation.x = h.zip ? -0.35 : -sw;
@@ -1522,7 +1584,7 @@ R.frame = function (dt, view) {
             bendBraid(bc, P_.body, bq, red * a, red * tip, red * (sideLegs ? 0 : st.braidLift)); } }
       }
     }
-    m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;
+    m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0 || (!m.fig && h.guardT > 0 && h.guardK === 'bubble'); /* 0.26 guard: painted paper shows the bubble as the shield's sphere */
     const sc = h.flash > 0 ? 1.06 : 1; m.scale.set(sc, sc, sc);
     if (h.slowT > 0 && Math.random() < dt * 8) emit(h.x, h.y + 0.3, h.z, 1, 0x8fb0ff, 1, 0.5, 1, 0);
     if (h.dotT > 0 && Math.random() < dt * 10) emit(h.x, h.y + 1.2, h.z, 1, 0xc9a0ff, 1.5, 0.5, 1, 0);
@@ -1565,6 +1627,7 @@ R.frame = function (dt, view) {
     else if (t.big) { roll = (moving ? Math.sin(ph) * 0.09 : Math.sin(time * 1.3 + t.id) * 0.03) * red; tilt = moving ? 0.12 : 0.03; }
     else roll = (moving ? Math.sin(ph) * 0.07 : 0) * red;
     if (t.flash > 0) tilt -= 0.25 * red; // a hit rocks it back
+    if (W.flood && LL.ness) hop += LL.ness.bob(t, time); // 0.26 ness: troopers float in the flood
     const sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
     shadowPut(t.x, t.z, (t.big ? 2.3 : 1.15) * (1 - hop * 0.6), 1);
     const sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1);
@@ -1620,8 +1683,9 @@ R.frame = function (dt, view) {
   {
     const n = W.ness, tgt = n.alive ? (n.rise - 1) * 8 : -11;
     nessY += (tgt - nessY) * Math.min(1, dt * (n.alive ? 6 : 1.4));
-    nessM.visible = nessY > -10.6;
-    if (nessM.visible) {
+    if (nessM.isNess3d) LL.ness.frame(W, dt, time, camPos, camera); // 0.26 ness: the creature poses itself; below is the card of 0.25
+    else { nessM.visible = nessY > -10.6; }
+    if (!nessM.isNess3d && nessM.visible) {
       const sc = n.flash > 0 ? 1.04 : 1; nessM.scale.set(sc, sc, sc);
       nessM.position.set(n.x, nessY, n.z); nessM.rotation.y = n.yaw;
       if (nessM.flat) { const f = nessM.flat, tc = Math.atan2(camPos.x - n.x, camPos.z - n.z); let d = tc - n.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); f.rotation.y = tc - n.yaw; f.scale.x = f.userData.w * (d * PAPER_FLIP > 0 ? -1 : 1); }
@@ -1652,6 +1716,7 @@ R.frame = function (dt, view) {
   // projectiles
   let np = 0, no = 0, nf = 0;
   const ps = W.projs;
+  if (SH) SH.begin(dt, time, camera); // 0.26 shots
   for (i = 0; i < ps.length; i++) {
     const p = ps[i];
     if (p.vis === 'fawn') {
@@ -1667,6 +1732,7 @@ R.frame = function (dt, view) {
       if (Math.random() < dt * 50) emit(p.x, p.y, p.z, 1, p.col || 0xffffff, 1, 0.35, 0, 0);
       continue;
     }
+    if (SH && SH.put(p)) continue; // 0.26 shots: gun and trooper shots are drawn there
     if (np >= 340) continue;
     const sp = Math.hypot(p.vx, p.vy, p.vz) || 1, len = p.kind === 'line' ? 5 : Math.min(3.2, sp * 0.028), w = p.kind === 'line' ? p.size : p.size * 0.8;
     dummy.position.set(p.x - p.vx / sp * len * 0.5, p.y - p.vy / sp * len * 0.5, p.z - p.vz / sp * len * 0.5);
@@ -1682,6 +1748,7 @@ R.frame = function (dt, view) {
     dummy.position.set(o.x, o.y, o.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(s, s, s); dummy.updateMatrix();
     orbMesh.setMatrixAt(no, dummy.matrix); orbMesh.setColorAt(no++, tc(o.team === 0 ? 0xffb86a : 0x7dffd8));
   }
+  if (SH) SH.end(); // 0.26 shots
   projMesh.count = np; orbMesh.count = no;
   projMesh.instanceMatrix.needsUpdate = orbMesh.instanceMatrix.needsUpdate = true;
   if (projMesh.instanceColor) projMesh.instanceColor.needsUpdate = true;

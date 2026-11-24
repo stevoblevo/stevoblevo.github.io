@@ -1,7 +1,13 @@
 {
-  "current": "0.25",
+  "current": "0.26",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.26",
+      "path": "v0.26/",
+      "source": "release/0.26",
+      "note": "Guards on the second jump (Anna's shield, Dora's bubble, Skye's fray), thread boosts, Dora's hat throw, Myra's heal boon, Rook's barrel roll; the Ness chomps and floods the field; every gun its own shot and ammo"
+    },
     {
       "v": "0.25",
       "path": "v0.25/",

@@ -23,6 +23,8 @@
     snuff: ['A stolen light', 'Catch a light-carrying thief before its gate to restore the light. If it escapes, the house loses 25% of its maximum health and stays dark for two minutes in Match; in Ever Fallen it needs a recovered light.'],
     lastbreath: ['Last breath', 'Once per life, a hit that leaves a hero alive at 30% health or less triggers a brief shield and pushes nearby enemy troopers away. It does not prevent a lethal hit.'],
     nessup: ['The Ness', 'The Ness first surfaces in the loch three minutes into the run.'],
+    nesschomp: ['The chomp', 'The Ness bites what comes within reach. It rears first and marks the spot; a jump over the bite, a dash out of the ring or a ride on a thread avoids it. A caught hero is held for about a second, then thrown clear.'],
+    flood: ['The flood', 'Once each rising the loch floods the valley for about eighteen seconds and the Ness swims out among the threads. Heroes wade slowly, move faster through the air, and the threads stay dry.'],
     nessdown: ['The Greatness', 'A hero\'s final hit on the Ness gives their whole side 90 seconds of stronger attacks and 350 base souls per hero.'],
     redwarn: ['A mood', 'Thirty seconds before red rain, the valley gives a line that matches one View. Choose the right View before the rain; there are three tries.'],
     moodmiss: ['Wrong view', 'A mismatched View uses one try. Dreamwalk deliberately tries one wrong View before showing the answer.'],
@@ -138,6 +140,27 @@
             step('waves', 'The loch stirs', '', 'mint'),
             step('fish', 'The Ness surfaces', '', 'mint')
           ]));
+        break;
+      case 'nesschomp':
+        var NC = (LL.sim && LL.sim.NESS) || {}, tellT = positive(NC.TELL, 0.9), holdT = positive(NC.HOLD, 1.1), biteD = positive(NC.BITE, 120), openT = positive(NC.OPEN, 1.6), reachD = positive(NC.REACH, 14);
+        o = card('loch', 'The Ness rears, marks a spot, then bites it.', 'warning-circle', tellT + ' s warning',
+          diagram('branches', 'The Ness bites anything within ' + reachD + ' metres of the middle of the loch, or close to its body in a flood. It rears for ' + tellT + ' seconds and marks the spot on the ground. Be off the spot, in the air above it or riding a thread when the jaws close.', [
+            step('warning-circle', 'It rears', tellT + ' s · a ring marks the spot', 'mint'),
+            step('fish', 'The jaws close', 'On the marked spot', 'hush')
+          ], null, [
+            { label: 'Caught on the spot', steps: [step('heartbeat', '−' + biteD + ' health', 'Plus 8 for each minute played', 'hush'), step('timer', 'Held ' + holdT + ' s', 'Mash jump or dash to slip out', 'hush'), step('person-simple-run', 'Thrown clear', '', 'dim')] },
+            { label: 'Jumped, dashed or riding', steps: [step('check', 'The bite misses', '', 'mint'), step('crosshair', 'Its head lies open', openT + ' s · takes 1.5× damage', 'mint')] }
+          ]), 'The Ness bites anything within ' + reachD + ' metres of the middle of the loch, or close to its body while it swims a flood. It rears for ' + tellT + ' seconds first; the marked spot follows its prey until just before the bite. A hero on the spot and near the ground takes ' + biteD + ' damage plus 8 for each minute played, is held for ' + holdT + ' seconds (each press of jump or dash shortens it, and so does a friend hurting the Ness), then is thrown clear. Small troopers on the spot are eaten. A miss leaves its head on the ground for ' + openT + ' seconds, taking 1.5 times normal damage.');
+        break;
+      case 'flood':
+        var NF = (LL.sim && LL.sim.NESS) || {}, swellT = positive(NF.SWELL, 3.5), highT = positive(NF.HIGH, 12), firstT = positive(NF.FLOOD_FIRST, 70), everyT = positive(NF.FLOOD_EVERY, 240), hpF = Math.round(positive(NF.FLOOD_HP, 0.6) * 100), wadeP = Math.round(positive(NF.WADE, 0.65) * 100), airP = Math.round(positive(NF.AIR, 1.25) * 100);
+        o = card('loch', 'The loch floods the valley and the Ness swims out.', 'waves', 'About ' + Math.round(highT + 6) + ' s of water',
+          diagram('chain', 'Once each rising, when the Ness falls under ' + hpF + '% health or ' + duration(firstT) + ' after it surfaces, the loch floods the whole valley. The water stands for ' + highT + ' seconds, then runs back. While it is up the Ness leaves the loch and hunts in the water.', [
+            step('warning-circle', 'The loch stands up', swellT + ' s of warning', 'mint'),
+            step('waves', 'Water over the valley', 'Wade at ' + wadeP + '% · air at ' + airP + '%', 'hush'),
+            step('path', 'Threads stay dry', 'Ride one: full speed, out of the jaws', 'mint'),
+            step('fish', 'The Ness returns', 'When the water runs back', 'dim')
+          ], 'Under ' + hpF + '% health, or ' + duration(firstT) + ' after it surfaces'), 'Once each rising the loch floods the valley: when the Ness falls under ' + hpF + '% of its health, or ' + duration(firstT) + ' after it surfaces if left alone, and again ' + duration(everyT) + ' after the last flood while it lives. A flood by the clock does not start during red rain or within 25 seconds of it. After ' + swellT + ' seconds of warning the water runs out from the loch, stands for ' + highT + ' seconds and runs back. In the water heroes on the ground move at ' + wadeP + '% speed and are carried along the nearest thread; in the air they move at ' + airP + '%; a dash carries farther; small troopers float slowly and drift. Riding a thread is unaffected and out of reach of the bite. The Ness swims out to hunt and returns to the loch as the water leaves. Defeating it drains the flood at once.');
         break;
       case 'nessdown':
         o = card('loch', 'The hero who lands the last hit strengthens their whole side.', 'timer', duration(greatT),
