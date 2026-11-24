@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="10.6", short="AND SO 10.6", name="AND SO 10.6 · Fluff", date="2026-11-24", path="/and-so/v10.6/", latest=True, source="dist",
+    dict(id="10.7", short="AND SO 10.7", name="AND SO 10.7 · Plush", date="2026-11-24", path="/and-so/v10.7/", latest=True, source="dist",
+         line="Antlers as smooth, thick, plush shapes with a fine nap. On paper the pet's coat has more colour and a soft ink shadow, so she stands off the page."),
+    dict(id="10.6", short="AND SO 10.6", name="AND SO 10.6 · Fluff", date="2026-11-24", path="/and-so/v10.6/", source="91ec7da",
          line="A clean, fluffy rabbit: a pale coat with a haze of long white hairs at the outline, a white ruff and a scut, and shade in lilac instead of grey. Eight octopus arms that taper and curl, webbed at the top, mottled on the back with two rows of ringed suckers. Antlers thick with velvet."),
     dict(id="10.5", short="AND SO 10.5", name="AND SO 10.5 · Fur", date="2026-11-24", path="/and-so/v10.5/", source="7e1b6ce",
          line="The pet's coat, combed hair by hair: a dense undercoat, fine hairs shaded root to tip and long guard hairs at the outline, on her body, head, ears, arms and legs. She is a little larger and is drawn at your screen's full resolution, so the fur is sharp, not soft."),

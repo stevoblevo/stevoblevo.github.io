@@ -69,13 +69,14 @@ function furSprite(rx, ry, sc, lp, ink, base, kq, dens, res, white) {
   if (!sp) { if (FURS.size > 14) FURS.clear(); const grey = furGrey(rx, ry, sc, kq, dens, res), cv = document.createElement('canvas'); cv.width = grey.width; cv.height = grey.height; sp = { grey, cv, c: cv.getContext('2d'), m: 9 * sc, tint: '' }; FURS.set(key, sp); }
   const wh = c0 => white && lp ? mix(c0, [255, 255, 255], 0.8) : c0, L = wh(lp ? HIDE.coatL : base).map(q), R = wh(lp ? HIDE.coatR : base).map(q), tint = L.join('.') + '/' + R.join('.') + (lp ? 'p' : '');
   if (sp.tint !== tint) {   // her colour over the strands: the tips come out paler than she is, the roots darker
-    const c = sp.c, w = sp.cv.width, h = sp.cv.height, pale = col => rgba(mix(col, [255, 255, 255], lp ? 0.6 : 0.66), 1);
+    const c = sp.c, w = sp.cv.width, h = sp.cv.height, pale = col => rgba(mix(col, [255, 255, 255], lp ? 0.42 : 0.66), 1);
     c.globalCompositeOperation = 'source-over'; c.clearRect(0, 0, w, h); c.drawImage(sp.grey, 0, 0);
     c.globalCompositeOperation = 'multiply'; const gr = c.createLinearGradient(w * 0.46, 0, w * 0.54, 0); gr.addColorStop(0, pale(L)); gr.addColorStop(1, pale(R)); c.fillStyle = gr; c.fillRect(0, 0, w, h);
     // shade low and to the right, in colour: lilac on her, a cool paper grey on paper. Never black: that is what made 10.5 look grubby
     c.globalCompositeOperation = 'source-atop'; const sh = c.createLinearGradient(w * 0.2, h * 0.15, w * 0.85, h * 0.9), sc0 = lp ? mix(ink, [200, 205, 225], 0.7) : [176, 140, 205];
     sh.addColorStop(0, rgba(sc0, 0)); sh.addColorStop(0.5, rgba(sc0, 0.05)); sh.addColorStop(1, rgba(sc0, lp ? 0.44 : 0.36)); c.fillStyle = sh; c.fillRect(0, 0, w, h);
     c.globalCompositeOperation = 'destination-in'; c.drawImage(sp.grey, 0, 0); c.globalCompositeOperation = 'source-over';
+    if (lp) { c.globalCompositeOperation = 'destination-over'; c.shadowColor = rgba(ink, 0.5); c.shadowBlur = 2.2 * sc * res; c.shadowOffsetY = 0.8 * sc * res; c.drawImage(sp.grey, 0, 0); c.shadowColor = 'transparent'; c.shadowBlur = 0; c.shadowOffsetY = 0; c.globalCompositeOperation = 'source-over'; }   // on paper: a soft ink shadow behind the coat, so she stands off the page
     sp.tint = tint;
   }
   return sp;
@@ -94,32 +95,47 @@ const petQ = (p0, c, p1, u) => [(1 - u) * (1 - u) * p0[0] + 2 * u * (1 - u) * c[
 // antlers in velvet: thick, soft and still growing. Each beam is a tapered shape with a plush sheen down its lit side,
 // a nap of hundreds of very short pale hairs standing off it, and swollen round tips. 10.5's were thin as twigs and
 // their few long hairs read as the rungs of a ladder.
+// The antlers do not move on her head, so they are painted once per size into a sprite (10.7): the nap is ~700 hairs.
+const ANTL = new Map();
 function petAntlers(g, sc, wm, lp) {
+  const res = PETFX.res || 2, q = Math.round(wm * 20) / 20; if (q < 0.05) return; const key = [q, sc.toFixed(2), lp ? 1 : 0, res].join('|'); let cv = ANTL.get(key);
+  if (!cv) { if (ANTL.size > 8) ANTL.clear(); cv = document.createElement('canvas'); cv.width = Math.ceil(76 * sc * res); cv.height = Math.ceil(46 * sc * res);
+    const c = cv.getContext('2d'); c.setTransform(res, 0, 0, res, 38 * sc * res, 42 * sc * res); petAntlersDraw(c, sc, q, lp); ANTL.set(key, cv); }
+  g.drawImage(cv, -38 * sc, -42 * sc, 76 * sc, 46 * sc);
+}
+function petAntlersDraw(g, sc, wm, lp) {
   petSeed(); const al = Math.min(1, wm * 1.8), L = (9 + 18 * wm) * sc, hairW = Math.max(0.75 / (PETFX.res || 2), 0.11 * sc);
   const vel = lp ? [[92, 62, 50], [150, 108, 84], [222, 188, 160], [246, 226, 208]] : [[112, 74, 70], [176, 128, 112], [232, 196, 176], [255, 238, 226]];
   g.save(); g.globalAlpha *= al; g.lineCap = 'round'; g.lineJoin = 'round';
   [-1, 1].forEach(s => {
-    const b = [s * 3.4 * sc, -11 * sc], tip = [s * (7 * sc + L * 0.46), -12 * sc - L], c = [s * (1 * sc - L * 0.06), -12 * sc - L * 0.6];
+    const b = [s * 3.6 * sc, -11 * sc], tip = [s * (7 * sc + L * 0.46), -12 * sc - L], c = [s * (1 * sc - L * 0.06), -12 * sc - L * 0.6];
     const j1 = petQ(b, c, tip, 0.24), j2 = petQ(b, c, tip, 0.55), j3 = petQ(b, c, tip, 0.8);
-    const br = [[b, c, tip, 5.2], [j1, [j1[0] + s * L * 0.22, j1[1] + L * 0.02], [j1[0] + s * L * 0.36, j1[1] - L * 0.2], 3.4], [j2, [j2[0] + s * L * 0.28, j2[1] - L * 0.02], [j2[0] + s * L * 0.42, j2[1] - L * 0.3], 3.7], [j3, [j3[0] - s * L * 0.1, j3[1] - L * 0.1], [j3[0] - s * L * 0.1, j3[1] - L * 0.26], 3]];
-    const wid = (w0, u) => w0 * sc * (0.5 + 0.5 * wm) * (1 - 0.42 * u), beam = (p0, cc, p1, w0, k, off, col, a) => { g.strokeStyle = rgba(col, a);
-      for (let i = 0; i < 10; i++) { const A = petQ(p0, cc, p1, i / 10), B = petQ(p0, cc, p1, (i + 1) / 10), w = wid(w0, (i + 0.5) / 10); g.lineWidth = Math.max(0.6, w * k); g.beginPath(); g.moveTo(A[0] + off * w, A[1] + off * w); g.lineTo(B[0] + off * w, B[1] + off * w); g.stroke(); } };
-    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 1.28, 0, vel[3], 0.16);          // the pile: a soft haze round the beam
+    const br = [[b, c, tip, 6.2], [j1, [j1[0] + s * L * 0.22, j1[1] + L * 0.02], [j1[0] + s * L * 0.36, j1[1] - L * 0.2], 4.2], [j2, [j2[0] + s * L * 0.28, j2[1] - L * 0.02], [j2[0] + s * L * 0.42, j2[1] - L * 0.3], 4.4], [j3, [j3[0] - s * L * 0.1, j3[1] - L * 0.1], [j3[0] - s * L * 0.1, j3[1] - L * 0.26], 3.7]];
+    const wid = (w0, u) => w0 * sc * (0.55 + 0.5 * wm) * (1 - 0.4 * u);
+    // one beam as a smooth tapered shape: k is its share of the beam's width, off slides it toward the lit side
+    const beam = (p0, cc, p1, w0, k, off, col, a) => { const Lf = [], Rt = [], M = 14;
+      for (let i = 0; i <= M; i++) { const u = i / M, P = petQ(p0, cc, p1, u), Q = petQ(p0, cc, p1, Math.min(1, u + 0.02)), O = petQ(p0, cc, p1, Math.max(0, u - 0.02)), tx = Q[0] - O[0], ty = Q[1] - O[1], tn = Math.hypot(tx, ty) || 1, nx = -ty / tn, ny = tx / tn, w = wid(w0, u), c0 = off * w;
+        Lf.push([P[0] + nx * w * k / 2 - c0, P[1] + ny * w * k / 2 - c0]); Rt.push([P[0] - nx * w * k / 2 - c0, P[1] - ny * w * k / 2 - c0]); }
+      g.fillStyle = rgba(col, a); g.beginPath(); g.moveTo(Lf[0][0], Lf[0][1]); for (let i = 1; i <= M; i++) g.lineTo(Lf[i][0], Lf[i][1]);
+      const e = petQ(p0, cc, p1, 1), rr = wid(w0, 1) * k / 2; g.arc(e[0] - off * wid(w0, 1), e[1] - off * wid(w0, 1), rr, Math.atan2(Lf[M][1] - Rt[M][1], Lf[M][0] - Rt[M][0]), Math.atan2(Rt[M][1] - Lf[M][1], Rt[M][0] - Lf[M][0]), s < 0);
+      for (let i = M; i >= 0; i--) g.lineTo(Rt[i][0], Rt[i][1]); g.closePath(); g.fill(); };
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 1.5, 0, vel[3], 0.13);            // the pile: a soft haze round the beam
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 1.22, 0, vel[2], 0.2);
     for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 1, 0, vel[0], 1);                 // the shaded side
-    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.72, -0.13, vel[1], 1);
-    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.4, -0.22, vel[2], 0.9);         // the plush sheen
-    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.13, -0.3, vel[3], 0.8);
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.74, 0.1, vel[1], 1);
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.44, 0.19, vel[2], 0.85);        // the plush sheen
+    for (const [p0, cc, p1, w0] of br) beam(p0, cc, p1, w0, 0.14, 0.27, vel[3], 0.7);
     for (const [, , p1, w0] of br) {   // the swollen, rounded tips of antlers still growing
-      const rr = wid(w0, 1) * 0.72, tg = g.createRadialGradient(p1[0] - rr * 0.4, p1[1] - rr * 0.45, 0, p1[0], p1[1], rr * 1.25);
+      const rr = wid(w0, 1) * 0.66, tg = g.createRadialGradient(p1[0] - rr * 0.4, p1[1] - rr * 0.45, 0, p1[0], p1[1], rr * 1.25);
       tg.addColorStop(0, rgba(vel[3], 1)); tg.addColorStop(0.5, rgba(vel[2], 1)); tg.addColorStop(1, rgba(vel[1], 1));
       g.fillStyle = tg; g.beginPath(); g.arc(p1[0], p1[1], rr * 1.15, 0, TAU); g.fill();
     }
     // the nap: very short fine hairs, across the face of the beam and standing off both edges
     let sd = 4242 + (s > 0 ? 7 : 0); const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296;
     g.lineWidth = hairW;
-    [[vel[3], 0.6, 1], [vel[0], 0.3, 0]].forEach(([col, a, edge]) => { g.strokeStyle = rgba(col, a); g.beginPath();
-      br.forEach(([p0, cc, p1, w0], bi) => { const n = bi ? 46 : 90; for (let i = 0; i < n; i++) { const u = r(), P = petQ(p0, cc, p1, u), Q = petQ(p0, cc, p1, Math.min(1, u + 0.04)), tx = Q[0] - P[0], ty = Q[1] - P[1], tn = Math.hypot(tx, ty) || 1;
-        const side = r() < 0.5 ? -1 : 1, w = wid(w0, u) * 0.5, at = edge ? (0.55 + 0.5 * r()) : r() * 0.8, hl = (0.7 + 0.9 * r()) * sc * (edge ? 1 : 0.6), nx = -ty / tn * side, ny = tx / tn * side;
+    [[vel[3], 0.5, 1], [vel[3], 0.3, 0], [vel[0], 0.22, 0]].forEach(([col, a, edge]) => { g.strokeStyle = rgba(col, a); g.beginPath();
+      br.forEach(([p0, cc, p1, w0], bi) => { const n = bi ? 110 : 220; for (let i = 0; i < n; i++) { const u = r(), P = petQ(p0, cc, p1, u), Q = petQ(p0, cc, p1, Math.min(1, u + 0.04)), tx = Q[0] - P[0], ty = Q[1] - P[1], tn = Math.hypot(tx, ty) || 1;
+        const side = r() < 0.5 ? -1 : 1, w = wid(w0, u) * 0.5, at = edge ? (0.55 + 0.5 * r()) : r() * 0.8, hl = (0.45 + 0.6 * r()) * sc * (edge ? 1 : 0.6), nx = -ty / tn * side, ny = tx / tn * side;
         const x = P[0] + nx * w * at, y = P[1] + ny * w * at; g.moveTo(x, y); g.lineTo(x + nx * hl * 0.8 + tx / tn * hl * 0.5, y + ny * hl * 0.8 + ty / tn * hl * 0.5); } });
       g.stroke(); });
     g.fillStyle = rgba(lp ? [62, 140, 64] : [140, 210, 120], 0.95); g.beginPath(); g.ellipse(tip[0] + s * 2.6 * sc, tip[1] - 1.6 * sc, 2.4 * sc, 1.3 * sc, s * 0.6, 0, TAU); g.fill();   // she is part tree: one leaf

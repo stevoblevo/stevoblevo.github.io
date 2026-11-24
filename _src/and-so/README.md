@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.6 · Fluff.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.7 · Plush.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -137,6 +137,14 @@ no lyric.
   (as you are, just intonation, 31-EDO, piano), which this chapter sets to just intonation, so its changes play
   microtonal. The jam gives the old tuning back when it stops. 5/4 charts play.
 - Finds: `x-named` (name one), `x-named-13` (name thirteen). 148 in all.
+
+## Plush (10.7)
+
+The three weak spots left in 10.6, in `src/zw-petreal.js`:
+
+- **Antlers**: each beam is one smooth tapered filled shape (`beam` in `petAntlersDraw`), not round-capped segments, which read as beads. Thicker, with about 700 shorter hairs of nap per antler. They do not move on her head, so they are painted once per size into a sprite (`petAntlers`, `ANTL`).
+- **Paper look**: her colour is mixed less far toward white (0.42, was 0.6) and a soft ink shadow is laid behind the coat (`furSprite`), so she stands off the page.
+- **Frame rate**, headless Chromium, software rendering, 1280 × 800, all parts grown, frames a second (10.4 in brackets): paper knight 25 (31), dusk 16 (29), night 21 (27), paper daylight 24 (28). The antler sprite did not move these; the eight arms and the dusk sticker are the cost. Still not measured on a real GPU.
 
 ## Fluff (10.6)
 

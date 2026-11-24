@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.7",
+   "short": "AND SO 10.7",
+   "name": "AND SO 10.7 · Plush",
+   "date": "2026-11-24",
+   "line": "Antlers as smooth, thick, plush shapes with a fine nap. On paper the pet's coat has more colour and a soft ink shadow, so she stands off the page.",
+   "path": "/and-so/v10.7/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "a1c45ba5dc09ab5196834355d1d880f591eece60075569bfc6f119e546835c25"
+  },
+  {
    "id": "10.6",
    "short": "AND SO 10.6",
    "name": "AND SO 10.6 · Fluff",
    "date": "2026-11-24",
    "line": "A clean, fluffy rabbit: a pale coat with a haze of long white hairs at the outline, a white ruff and a scut, and shade in lilac instead of grey. Eight octopus arms that taper and curl, webbed at the top, mottled on the back with two rows of ringed suckers. Antlers thick with velvet.",
    "path": "/and-so/v10.6/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "ce58051230fba5ec4b92a24b00f2d4303d481907c102353a2a3293dce7a36bed"
+   "commit": "91ec7da",
+   "sha256": "bc12428e68d77bbaa67def2cde0f72ba2636b82abf9ebff2108a1c6c14c39843"
   },
   {
    "id": "10.5",
