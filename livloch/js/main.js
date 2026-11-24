@@ -12,7 +12,7 @@
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
 const KEY = 'livelock.v1';
-const cfg = LL.cfg = { sens: 1, vol: 0.6, music: 0.7, sfx: 0.9, mute: false, micro: false, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0 };
+const cfg = LL.cfg = { sens: 1, vol: 0.6, music: 0.7, sfx: 0.9, mute: false, micro: false, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0, heroes3d: true }; // 0.24 heroes3d: 3D figures (off: painted paper)
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
 if (LL.wardrobe) LL.wardrobe.adopt(cfg, KEY, save); // 0.23 wardrobe: its saved fields (stars all told, goals ever done, what is worn), with defaults for old saves
 if (!cfg.v6) { cfg.v6 = true; cfg.look = 'snow'; }
@@ -192,7 +192,7 @@ function firstGesture(ev) { if (ev && ev.target && ev.target.closest && ev.targe
 function boot() {
   UI.init({
     play: play, pause: pause, resume: resume, quit: quit, save: save,
-    apply: function () { soundApply(); R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet); },
+    apply: function () { soundApply(); R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet); if (R.setHeroes3d) R.setHeroes3d(cfg.heroes3d !== false); /* 0.24 heroes3d */ },
     buy: function (i) { UI.afterBuy(S.buy(W.player, i)); },
     look: setLook, ink: toggleInk, view: nextView,
     call: function (l) { if (state === 'play') S.call(l); }, echo: function () { if (state === 'play') S.echo(); }, fast: function () { speed = speed >= 4 ? 1 : speed * 2; return speed; }, leanFold: function () { if (state === 'play') S.leanFold(); },
@@ -210,7 +210,7 @@ function boot() {
   I.onUnlock = function () { if (state === 'play' && UI.screen === null && !W.over && !W.auto) pause(); };
   if (cfg.mode !== 'fallen' && cfg.mode !== 'short') cfg.mode = cfg.v17 ? 'match' : 'short'; cfg.v17 = true; // First Rain is where a new or returning player starts
   if (!window.THREE || !R.init(canvas)) { UI.error('This browser would not hand over WebGL, so the valley cannot be drawn here. Try another browser or device.'); return; }
-  R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet);
+  R.setQuality(cfg.low); R.setPet(cfg.petUnlocked && cfg.pet); if (R.setHeroes3d) R.setHeroes3d(cfg.heroes3d !== false); // 0.24 heroes3d
   if (!R.LOOKS[cfg.look]) cfg.look = 'snow';
   document.body.setAttribute('data-look', cfg.look); if (cfg.look !== 'snow') R.setLook(cfg.look); else LL.C.TEAM_CSS = R.look.css; UI.lookChips();
   window.addEventListener('resize', R.resize);

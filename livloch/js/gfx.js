@@ -710,6 +710,9 @@ function buildPet() {
   const lm = new T.LineBasicMaterial({ color: 0xffcf85, transparent: true, opacity: 0.6, depthWrite: false, fog: false }); lm.userData.lk = true;
   petThread = new T.Line(line, lm); petThread.visible = false; petThread.frustumCulled = false; dyn.add(petThread);
 }
+/* 0.24 heroes3d: 3D figures (default) or painted paper. Rebuilds only the heroes. */
+R.heroes3d = true;
+R.setHeroes3d = function (on) { on = !!on; if (on === R.heroes3d) return; R.heroes3d = on; if (!R.ok || !W || !dyn) return; heroM.forEach(function (g) { dyn.remove(g); }); heroM = W.heroes.map(heroModel); if (echoM) { dyn.remove(echoM); echoM = null; } applyLook(); };
 R.setPet = function (on) { R.petEnabled = !!on; if (petM) petM.visible = R.petEnabled; if (petThread) petThread.visible = false; };
 function petStep(dt) {
   if (!petM) return;
@@ -785,7 +788,10 @@ function heroModel(h) {
   shield.position.y = 1; shield.visible = false; g.add(shield);
   g.body = body; g.legL = legL; g.legR = legR; g.arm = arm; g.ring = ring; g.shield = shield; g.phase = 0; g.recoil = 0; g.unit = h;
   g.rig = LL.paperMotion.create(); g.lean = 0; g.shadow = shadowBlob(0.62); g.add(g.shadow);
-  dyn.add(g); paperFor(g, d.id); return g;
+  dyn.add(g);
+  if (R.heroes3d && LL.heroes3d) { const fig = LL.heroes3d.build(T, h, { LK: LK, glow: glowSprite }); // 0.24 heroes3d: a figure with a skeleton in place of the paper (js/heroes3d.js)
+    if (fig) { g.fig = fig; g.add(fig.root); g.body.visible = g.legL.visible = g.legR.visible = false; return g; } }
+  paperFor(g, d.id); return g;
 }
 let deerT = null;
 function deerTex() {
@@ -1022,7 +1028,7 @@ function ring(x, y, z, r0, r1, col, life) {
 R.fx = function (e) {
   switch (e.k) {
     case 'echo': case 'echoend': for (let k = 0; k < 14; k++) emit(e.x, 0.4 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 2.2, 0.6, 1.5, 0); break;
-    case 'echoshot': emit(e.x, e.y, e.z, 2, 0x9fd0ff, 1.5, 0.25, 0, 0); break;
+    case 'echoshot': emit(e.x, e.y, e.z, 2, 0x9fd0ff, 1.5, 0.25, 0, 0); if (echoM && echoM.u) echoM.u.lastShotT = W.t; /* 0.24 heroes3d: the echo raises its aim */ break;
     case 'hit': {
       const col = e.tk === 'hero' ? 0xfff0d0 : (e.tk === 'trooper' ? 0xffc890 : 0xbfd0ff);
       if (e.kind === 'gun') emit(e.x, e.y, e.z, e.crit ? 5 : 2, e.crit ? 0xffe070 : col, 4, 0.3, 1);
@@ -1188,7 +1194,7 @@ function stepPuffs(dt) {
 function heroDust(m, h, st, dt) {
   const fx = Math.sin(h.yaw), fz = Math.cos(h.yaw);
   /* 0.21: a heavy foot (st.plant) throws more dust, wider and lower, and flicks a few chips of grit up and back. */
-  if (st.contact && h.onGround && !h.zip) { const sd = st.contact === 1 ? 1 : -1, sp = Math.hypot(h.vx, h.vz), pl = st.plant || 0, fx0 = h.x - fx * 0.15 + fz * 0.18 * sd, fz0 = h.z - fz * 0.15 - fx * 0.18 * sd;
+  if (st.contact && h.onGround && !h.zip) { const sd = st.contact === 1 ? 1 : -1, sp = Math.hypot(h.vx, h.vz), pl = st.plant || 0, ff = m.fig ? m.fig.feet[sd > 0 ? 0 : 1] : null, fx0 = ff ? ff.x : h.x - fx * 0.15 + fz * 0.18 * sd, fz0 = ff ? ff.z : h.z - fz * 0.15 - fx * 0.18 * sd; // 0.24 heroes3d: under the foot that landed
     for (let k = 0; k < 2 + Math.round(pl * 2); k++) puff(fx0 + (Math.random() - 0.5) * (0.2 + pl * 0.25), 0.12, fz0 + (Math.random() - 0.5) * (0.2 + pl * 0.25), -h.vx * 0.12 + (Math.random() - 0.5) * (0.5 + pl * 0.9), 0.35 + Math.random() * 0.3 - pl * 0.12, -h.vz * 0.12 + (Math.random() - 0.5) * (0.5 + pl * 0.9), 0.22 + pl * 0.06, 0.6 + sp * 0.03 + pl * 0.3, 0.5 + pl * 0.15, 0.34 + pl * 0.06);
     for (let k = 0; k < Math.round(pl * 3); k++) { const a = Math.random() * 6.283; puff(fx0, 0.1, fz0, -h.vx * 0.25 + Math.cos(a) * 1.3, 2.2 + Math.random() * 1.6, -h.vz * 0.25 + Math.sin(a) * 1.3, 0.07, 0.06, 0.55, 0.85, true); } }
   if (st.landed) for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283 + Math.random() * 0.3, v = 2.4 + st.landed * 2.2; puff(h.x + Math.cos(a) * 0.35, 0.12, h.z + Math.sin(a) * 0.35, Math.cos(a) * v, 0.3 + Math.random() * 0.3, Math.sin(a) * v, 0.3, 1.0, 0.62, 0.42); }
@@ -1196,6 +1202,7 @@ function heroDust(m, h, st, dt) {
   m.dashing = h.dashT > 0;
   // afterimages: a copy of the full painted figure every 35 ms while dashing or riding
   const P = PAPER[h.def.id], pt = paperTex[h.def.id];
+  if ((h.dashT > 0 || h.zip) && m.fig) { m.ghostT = (m.ghostT || 0) - dt; if (m.ghostT <= 0) { m.ghostT = 0.035; const gh = LL.heroes3d.ghost(m.fig, dyn, LK.team[h.team], LK.add); if (LL.wardrobe) LL.wardrobe.ghost(gh, h, LK.add); } } // 0.24 heroes3d: the figure's afterimage
   if ((h.dashT > 0 || h.zip) && P && pt && m.paper) { m.ghostT = (m.ghostT || 0) - dt; if (m.ghostT <= 0) { m.ghostT = 0.035; ghost(m, h, P, pt); } }
 }
 function ghost(m, h, P, pt) {
@@ -1316,12 +1323,13 @@ R.frame = function (dt, view) {
     /* A FALL (0.20): a hero who goes down tips over backward like a card knocked flat, with a puff of dust, instead of
        vanishing. Presentation only: the model has already removed them. */
     if (!h.alive) {
-      if (m.wasAlive && m.paper && !R.reduced) { m.dieT = 0; for (let k = 0; k < 10; k++) { const a = k / 10 * 6.283; puff(h.x + Math.cos(a) * 0.5, 0.2, h.z + Math.sin(a) * 0.5, Math.cos(a) * 2.5, 0.5, Math.sin(a) * 2.5, 0.4, 1.3, 0.7, 0.45); } }
+      if (m.wasAlive && (m.paper || m.fig) && !R.reduced) { m.dieT = 0; for (let k = 0; k < 10; k++) { const a = k / 10 * 6.283; puff(h.x + Math.cos(a) * 0.5, 0.2, h.z + Math.sin(a) * 0.5, Math.cos(a) * 2.5, 0.5, Math.sin(a) * 2.5, 0.4, 1.3, 0.7, 0.45); } }
       m.wasAlive = false;
+      if (m.dieT != null && m.dieT < 1.1 && m.fig) { m.dieT += dt; LL.heroes3d.fall(m.fig, m.dieT); m.visible = true; m.ring.visible = m.shield.visible = false; m.shadow.visible = m.dieT < 0.6; m.fig.root.visible = m.dieT < 0.95 || Math.floor(m.dieT * 30) % 2 === 0; continue; } // 0.24 heroes3d: the figure falls on its face
       if (m.dieT != null && m.dieT < 0.9 && m.paper) { m.dieT += dt; const f = Math.min(1, m.dieT / 0.45), e = f * f; m.visible = true; m.paper.rotation.x = -e * 1.5; m.paper.position.y = -0.02 * e; m.ring.visible = m.shield.visible = false; m.shadow.visible = f < 1; m.paper.visible = m.dieT < 0.8 || Math.floor(m.dieT * 30) % 2 === 0; continue; }
       m.visible = false; continue;
     }
-    if (!m.wasAlive) { m.wasAlive = true; m.dieT = null; if (m.paper) { m.paper.rotation.x = 0; m.paper.position.y = 0; m.paper.visible = true; } m.shadow.visible = true; }
+    if (!m.wasAlive) { m.wasAlive = true; m.dieT = null; if (m.fig) m.fig.root.visible = true; /* 0.24 heroes3d */ if (m.paper) { m.paper.rotation.x = 0; m.paper.position.y = 0; m.paper.visible = true; } m.shadow.visible = true; }
     // a hit knocks the springs: the body gives and the head snaps
     if (h.flash > (m.lastFlash || 0) + 0.01 && m.rig.s && !R.reduced) { m.rig.s.qv -= 2.5; m.rig.s.hv += (Math.random() < 0.5 ? -1 : 1) * 0.9; m.rig.s.cv += (Math.random() - 0.5) * 2; }
     m.lastFlash = h.flash;
@@ -1329,7 +1337,9 @@ R.frame = function (dt, view) {
     const ce = camera.matrixWorld.elements; scr.r = h.vx * ce[0] + h.vz * ce[2]; scr.f = -(h.vx * ce[8] + h.vz * ce[10]);
     { const pv = m.paper ? m.paper.v : 2; scr.k = pv === 1 ? 1 : (pv === 3 ? 0.45 : 0.12); } // side view drags cloth fully; facing away or toward, barely
     { const q0 = m.paper; scr.m = q0 && q0.sign ? q0.sign : 1; scr.h = q0 ? q0.h : 2.3; scr.fb = !!(q0 && q0.v != null && !(q0.cell === 1 || q0.cell === 6 || (!q0.useM && q0.v === 1))); } // what the braid needs to know of last frame's picture
+    scr.cyc = m.fig ? LL.heroes3d.cyc(m.fig, h) : 1; // 0.24 heroes3d: the figure's stride length at this speed
     const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr), G = st.g;
+    if (m.fig) LL.heroes3d.pose(m.fig, st, h, { dt: dt, t: time, reduced: R.reduced }); // 0.24 heroes3d: legs, arms, aim, cloth, braid from the rig
     if (!R.reduced) heroDust(m, h, st, dt);
     m.phase = st.phase;
     const sw = h.zip ? 0.55 : (h.onGround ? st.sway * 0.8 : 0.5);
@@ -1466,11 +1476,18 @@ R.frame = function (dt, view) {
   }
   { // the echo: a pale second self where the model says it is
     const e = W.echo;
+    if (e && !echoM && R.heroes3d && LL.heroes3d) { const fig = LL.heroes3d.build(T, W.player, { LK: LK }); // 0.24 heroes3d: the echo is the figure too, pale, running its own rig
+      if (fig) { LL.heroes3d.ghostly(fig); const m = new T.Group(); m.add(fig.root); m.fig = fig; m.rig = LL.paperMotion.create(); m.u = { def: W.player.def, id: -1, team: W.player.team, x: e.x, z: e.z, y: 0, vx: 0, vz: 0, vy: 0, yaw: e.yaw, pitch: 0, onGround: true, alive: true, lastShotT: -9 }; echoM = m; dyn.add(m); } }
     if (e && !echoM) { const id = W.player.def.id, pt = paperTex[id]; let m;
       if (pt) { const t = pt.clone(); t.needsUpdate = true; t.repeat.set(0.25, 1); t.offset.x = 0.5; const P = PAPER[id]; m = new T.Mesh(new T.PlaneGeometry(P.h * (pt.image.width / 4) / pt.image.height, P.h), new T.MeshBasicMaterial({ map: t, transparent: true, opacity: 0.55, color: 0x9fd0ff, side: T.DoubleSide, depthWrite: false })); m.userData.hy = P.h / 2; }
       else { m = new T.Mesh(new T.ConeGeometry(0.5, 2, 6), new T.MeshBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: 0.45, depthWrite: false })); m.userData.hy = 1; }
       m.material.userData.lk = true; m.material.userData.bl = true; m.material.userData.solid = true; echoM = m; dyn.add(m); }
-    if (echoM) { echoM.visible = !!e; if (e) { echoM.position.set(e.x, echoM.userData.hy + Math.sin(time * 6) * 0.05, e.z); echoM.rotation.y = Math.atan2(camPos.x - e.x, camPos.z - e.z); if (Math.random() < dt * 14) emit(e.x, 0.3 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 0.6, 0.5, 1.4, 0); } }
+    if (echoM && echoM.fig) { echoM.visible = !!e; if (e) { const u = echoM.u, k = 1 - Math.exp(-dt * 14), nx = u.x + (e.x - u.x) * k, nz = u.z + (e.z - u.z) * k; // 0.24 heroes3d
+        if (Math.hypot(e.x - u.x, e.z - u.z) > 6) { u.x = e.x; u.z = e.z; u.vx = u.vz = 0; } else if (dt > 0) { u.vx = (nx - u.x) / dt; u.vz = (nz - u.z) / dt; u.x = nx; u.z = nz; }
+        let dy = e.yaw - u.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); u.yaw += dy * k; echoM.position.set(u.x, 0, u.z); echoM.rotation.y = u.yaw;
+        scr.cyc = LL.heroes3d.cyc(echoM.fig, u); LL.heroes3d.pose(echoM.fig, LL.paperMotion.pose(echoM.rig, u, dt, W.t, R.reduced, scr), u, { dt: dt, t: time, reduced: R.reduced });
+        if (Math.random() < dt * 14) emit(u.x, 0.3 + Math.random() * 1.6, u.z, 1, 0x9fd0ff, 0.6, 0.5, 1.4, 0); } }
+    else if (echoM) { echoM.visible = !!e; if (e) { echoM.position.set(e.x, echoM.userData.hy + Math.sin(time * 6) * 0.05, e.z); echoM.rotation.y = Math.atan2(camPos.x - e.x, camPos.z - e.z); if (Math.random() < dt * 14) emit(e.x, 0.3 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 0.6, 0.5, 1.4, 0); } }
   }
   petStep(dt);
   // troopers
@@ -1633,7 +1650,7 @@ R.frame = function (dt, view) {
     const e = 1 - (1 - f) * (1 - f), rad = U.lerp(r.r0, r.r1, e);
     r.m.ring.scale.set(rad, rad, 1); r.m.disc.scale.set(rad, rad, 1); r.m.ring.material.opacity = 0.5 * (1 - f); r.m.disc.material.opacity = 0.08 * (1 - f);
   }
-  stepParticles(dt); stepPuffs(dt); stepGhosts(dt); stepFeel(dt);
+  stepParticles(dt); stepPuffs(dt); stepGhosts(dt); if (LL.heroes3d) LL.heroes3d.step(dt, LK.add); /* 0.24 heroes3d */ stepFeel(dt);
   // camera
   const pl = view.target;
   if (view.mode === 'attract' || !pl) {

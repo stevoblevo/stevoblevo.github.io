@@ -90,7 +90,10 @@ function pose(m, u, dt, t, still, sc) {
   // how much of a walk this is, 0 standing to 1 striding
   const moving = !teleport && dt > 0 ? clamp(step / (dt * 5.4), 0, 1) : 0;
   m.mix += (moving * (u.onGround !== false ? 1 : 0.24) - m.mix) * ease(moving > m.mix ? 17 : 21, dt);
-  if (!teleport && u.onGround !== false) m.phase = (m.phase + step / r.cycle * 2 * Math.PI) % (2 * Math.PI);
+  /* 0.24 heroes3d: a 3D figure shortens its stride when it moves slowly (sc.cyc, a multiplier on the cycle) so a planted foot
+     does not skate; the phase is still distance walked, so feet, dust and footsteps stay in step. */
+  const cyc = r.cycle * (sc && sc.cyc > 0 ? sc.cyc : 1);
+  if (!teleport && u.onGround !== false) m.phase = (m.phase + step / cyc * 2 * Math.PI) % (2 * Math.PI);
   /* A foot comes down twice a stride, at the widest point of the step (phase π/2 and 3π/2). */
   const ci = Math.floor((m.phase - Math.PI / 2 + 2 * Math.PI) / Math.PI) % 2;
   let contact = 0; if (m.ci != null && ci !== m.ci && m.mix > 0.45 && u.onGround !== false && !still) contact = ci ? 2 : 1; m.ci = ci;

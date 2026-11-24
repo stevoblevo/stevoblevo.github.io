@@ -1,7 +1,13 @@
 {
-  "current": "0.23",
+  "current": "0.24",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.24",
+      "path": "v0.24/",
+      "source": "release/0.24",
+      "note": "The heroes in 3D: skinned figures with planted feet, knees that bend, hips that turn into a strafe while the chest holds the aim; painted paper stays a setting"
+    },
     {
       "v": "0.23",
       "path": "v0.23/",
