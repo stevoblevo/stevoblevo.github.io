@@ -25,7 +25,8 @@ FONTS = ("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500"
          "&family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Zen+Maru+Gothic:wght@400;500;700&display=swap")
 VERSION = "10.1"
 # the toolkit family, pinned by version: Storeybrook is vendored as before; the night and the dusk draw with the kits' pens
-KIT_PENS = ["depthfield-pen-2.3.0.js", "hypermetapunk-pen-0.3.0.js"]
+# each kit's add-ons (the pen; the pets, family plan F9), copied from the kit's v/<version>/ and never edited here
+KIT_ADDONS = ["depthfield-pen-2.4.0.js", "depthfield-pets-2.4.0.js", "hypermetapunk-pen-0.3.0.js"]
 
 
 def main() -> None:
@@ -34,7 +35,7 @@ def main() -> None:
     css_sb = (SRC / "style-sb.css").read_text() + (SRC / "style-book.css").read_text()
     body = (SRC / "body.html").read_text()
     # the pens ride in the same script element as Storeybrook, so the mirror carries them into its inner copies
-    sb_js = (VENDOR / "storeybrook.js").read_text() + "".join("\n" + (VENDOR / name).read_text() for name in KIT_PENS)
+    sb_js = (VENDOR / "storeybrook.js").read_text() + "".join("\n" + (VENDOR / name).read_text() for name in KIT_ADDONS)
     vers = [{k: v[k] for k in ("id", "short", "name", "date", "line", "path", "latest", "edition") if k in v} for v in VERSIONS]
     book = (SRC / "book.json").read_text().strip()
     wing = (SRC / "wing.json").read_text().strip()

@@ -20,7 +20,7 @@ function xpRead(force) {
   if (!force && t - XP.readT < 1.5) return false;
   XP.readT = t;
   let f = {}; try { const s = JSON.parse(localStorage.getItem('crossing:pets') || '{}'); if (s && s.found && typeof s.found === 'object') f = s.found; } catch (e) {}
-  const sig = Object.keys(f).sort().join('|'); if (sig === XP.sig) return false;
+  const sig = Object.keys(f).sort().join('|'); if (sig === XP.sig) { if (force) petRowsPaint(); return false; }
   const was = XP.found; XP.found = f; XP.sig = sig;
   if (XP.booted) for (const key in f) if (!was[key]) xpArrived(key);   // found on a kit's page while AND SO was open
   XP.booted = true; xpLatticeCheck(); petRowsPaint(); return true;
@@ -154,7 +154,7 @@ function drawPetFace(g) {
   const x = pet.x, y = pet.y - (cy - bh / 2);
   try {
     if (skin === 'hm-dusk') P.sticker(g, C, x, y, { w: bw, h: bh, keyline: Math.max(2.5, 3.2 * sc), slap: Math.max(4, 6 * sc), slip: reduceMotion ? 0 : 1.2 + 1.6 * beatPulse, angle: reduceMotion ? 0 : Math.sin(t * 0.9) * 0.025 });
-    else { const o = FACE.orb || { x: W * 0.72, y: TOPH }; P.rim(g, C, x, y, { w: bw, h: bh, lx: o.x, ly: o.y, weather: WX.w, ground: pet.y + 28 * sc, amount: 0.85 }); }
+    else { const o = FACE.orb || { x: W * 0.72, y: TOPH }; P.rim(g, C, x, y, { w: bw, h: bh, lx: o.x, ly: o.y, weather: WX.w, ground: pet.y + 19 * sc, amount: 0.85 }); }
   } catch (e) { g.drawImage(C, x - bw / 2, y - bh / 2, bw, bh); }
 }
 // ---------- the pets in the gamut ----------
