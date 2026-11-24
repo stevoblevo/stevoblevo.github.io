@@ -44,7 +44,7 @@ function update(dt) {
       if (Math.abs(T.w - w) < 0.05 && Math.abs(T.x0 - x0) < 0.05) { setView(T.x0, T.w); VIEW.tgt = null; } else setView(x0, w);
     }
   }
-  viewTick(dt); wxTick(dt); reelTick(dt);
+  viewTick(dt); wxTick(dt); reelTick(dt); xpTick(dt);
   if (zoomLevel() > 1.01) for (const p of PTR.values()) {
     if (p.role !== 'voice') continue;
     const e = 34, w = VIEW.x1 - VIEW.x0, sp = w * 0.9 * dt;
@@ -210,7 +210,7 @@ function boot(hotData) {
   resize();
   if (MIR.depth === 0) initCaps(); else capsUI();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => snapshot()); } catch (e) {}
-  jarPaint(false); landing(); landingNote(); mirBoot();
+  jarPaint(false); landing(); landingNote(); mirBoot(); xpRead(true);
   if ((wantDream || wantPlay) && MIR.depth === 0) setTimeout(() => { if (!entered) $('enter').click(); }, 350);
   requestAnimationFrame(frame);
 }
@@ -255,6 +255,8 @@ try {
     nougat: n => nougat(n, W / 2, H / 2, 'a test'), played: s => { GAME.played = s; }, deep: d => { MIR.deep = d; }, folds: d => { depth = d; }, petForm: f => { SET.petForm = f; }, pet: () => ({ x: pet.x, y: pet.y, say: pet.say }),
     mo: () => ({ twistA: +MO.twistA.toFixed(1), sinceShake: +(performance.now() / 1000 - MO.shakeT).toFixed(2), sinceTwist: +(performance.now() / 1000 - MO.twistT).toFixed(2), on: MO.on, live: MO.live, sign: MO.sign, gx: +MO.gx.toFixed(3), gy: +MO.gy.toFixed(3), tx: +MO.tx.toFixed(3), ty: +MO.ty.toFixed(3), lean: +MO.lean.toFixed(2), rolling: MO.rolling, hops: MO.hops, busy: +MO.busy.toFixed(2), gesture: MO.gesture, hz: Math.round(MO.hz) }),
     face: () => ({ skin, orb: FACE.orb, seen: [...FACE.seen] }),
+    pets: () => ({ lattice: XP.lattice, found: Object.keys(XP.found), band: XP.band.map(m => ({ k: m.k, id: m.id, x: Math.round(m.x), y: Math.round(m.y) })), hits: XP.hits.map(h => ({ id: h.ghost ? 'ghost:' + h.ghost.id : h.m.k + ':' + h.m.id, x: Math.round(h.x), y: Math.round(h.y), r: Math.round(h.r) })), ghost: XP.ghost && { ...XP.ghost } }),
+    petsRead: () => xpRead(true), ghostNow: () => { XP.ghostT = 0; },
     wx: () => ({ w: WX.w.map(x => +x.toFixed(2)), name: wxName(), heat: +WX.heat.toFixed(3), tens: +WX.tens.toFixed(3), crack: +WX.crack.grow.toFixed(2), eye: { a: +WX.eye.a.toFixed(2), x: Math.round(WX.eye.x), y: Math.round(WX.eye.y) }, spores: WX.spores.map(s => ({ x: Math.round(s.x || -1), y: Math.round(s.y || -1), f: s.f })), parts: WX.parts.length }),
     hill: i => { const v = voices.filter(o => o.wT > 0)[i]; if (!v) return null; let bx = v.x, be = -1; for (let x = Math.max(160, v.x - 320); x <= Math.min(XMAX - 160, v.x + 320); x += 4) { const d = Dv(v, x), e = (d - wxFloor(v, x, d)) / D0; if (e > be) { be = e; bx = x; } } return { x: bx, X: xToS(bx), e: +be.toFixed(3) }; },
     pair: (x1, x2) => +(dTones(fOf(x1), fOf(x2)) / D0).toFixed(3), wxForce: f => { WX.force = f || null; }, crack: g => { WX.crack.grow = g; WX.crack.hotT = t; },

@@ -1,8 +1,9 @@
 // ===== every version: the older AND SOs stay a press away =====
-// ANDSO_VERSIONS is written into the build from versions.py. On stevoblevo.github.io each one opens in place; anywhere
+// ANDSO_VERSIONS is written into the build from versions.py. On stevoblevo.github.io and saelion.co each one opens in place; anywhere
 // else (the claude.ai artifact) they open on github.io in a new tab, and 6.1 can also open inside the mirror.
 const VER_HOST = 'https://stevoblevo.github.io';
-const VER_ON_PAGES = (() => { try { return /(^|\.)github\.io$/.test(location.hostname) && /^\/and-so\//.test(location.pathname); } catch (e) { return false; } })();
+// saelion.co carries every version too (publish_saelion_co.py), so there they open in place as well
+const VER_ON_PAGES = (() => { try { return /(^|\.)github\.io$|(^|\.)saelion\.co$|^saelion-relay-canary-[\w-]+\.vercel\.app$/.test(location.hostname) && /^\/and-so(\/|$)/.test(location.pathname); } catch (e) { return false; } })();
 function versionsBuild() {
   const list = $('vsList'); if (!list || list.dataset.built) return; list.dataset.built = '1';
   const cur = String(ANDSO_VERSION).replace(/\.0$/, '');

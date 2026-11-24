@@ -76,7 +76,7 @@ def main():
     print("versions:", ", ".join(f'{r["id"]} → {r["path"]}' for r in out))
 
 
-def write_index(rows):
+def write_index(rows, dest=None):
     items = "".join(
         f'<li><a class="sb-sheet ver" href="{html.escape(r["path"])}"><span class="ver__name">{html.escape(r["name"])}'
         + (' <span class="sb-chip sb-chip--sea">latest</span>' if r.get("latest") else "") + (' <span class="sb-chip sb-chip--lilac">edition</span>' if r.get("edition") else "")
@@ -90,8 +90,8 @@ def write_index(rows):
 <meta name="description" content="Every version of AND SO, the microtonal music toy. Each one stays playable.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&family=Alegreya:ital,wght@0,400..800;1,400..800&family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="/storeybrook/dist/tokens.css">
-<link rel="stylesheet" href="/storeybrook/dist/components/bundle.css">
+<link rel="stylesheet" href="https://stevoblevo.github.io/storeybrook/dist/tokens.css">
+<link rel="stylesheet" href="https://stevoblevo.github.io/storeybrook/dist/components/bundle.css">
 <style>
 main {{ position: relative; z-index: 1; max-width: 46rem; margin: 0 auto; padding: var(--space-7) var(--space-5) var(--space-9); }}
 h1 {{ margin: 0 0 var(--space-3); }}
@@ -112,15 +112,15 @@ a.ver:hover, a.ver:focus-visible {{ transform: translateY(-2px); }}
 <h1 class="display-l">Every AND SO</h1>
 <p class="sb-lede">A short changelog, newest first. Each line opens that version, and the one before stays where it was. They keep separate saves.</p>
 <ol>{items}</ol>
-<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to AND SO 8.1</a>
+<a class="sb-btn sb-btn--secondary back" href="/and-so/">Back to the latest AND SO</a>
 </main>
-<script src="/storeybrook/dist/components/bundle.js"></script>
+<script src="https://stevoblevo.github.io/storeybrook/dist/components/bundle.js"></script>
 <script>if (window.Storeybrook) Storeybrook.init();</script>
 </body>
 </html>
 """
-    d = SITE / "versions"; d.mkdir(exist_ok=True)
-    (d / "index.html").write_text(page, encoding="utf-8")
+    if dest is None: d = SITE / "versions"; d.mkdir(exist_ok=True); dest = d / "index.html"
+    Path(dest).write_text(page, encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -34,6 +34,14 @@ function kitCanvas(c) {
     const d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, name); if (!d || !d.set) return;
     Object.defineProperty(c, name, { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, KIT_INKS[skin] ? kitInk(v) : v); } });
   });
+  // the glows: a gradient made on a kit face takes the kit's inks at each colour stop (10.1 inked only solid colours)
+  ['createLinearGradient', 'createRadialGradient', 'createConicGradient'].forEach(name => {
+    const make = CanvasRenderingContext2D.prototype[name]; if (!make) return;
+    c[name] = function () {
+      const gr = make.apply(this, arguments); if (!KIT_INKS[skin]) return gr;
+      const add = gr.addColorStop; gr.addColorStop = function (o, col) { add.call(gr, o, kitInk(col)); }; return gr;
+    };
+  });
 }
 // the chord's name in the kit's own lettering. false leaves it to the instrument's serif.
 function faceChord(str, x, y) {

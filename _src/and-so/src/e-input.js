@@ -146,6 +146,7 @@ hitEl.addEventListener('pointerdown', e => {
   for (let i = 0; i < 5; i++) { const q = latPos(i); if (Math.hypot(px - q[0], py - q[1]) < (phone ? 26 : 18) * Math.max(S, 0.9)) { p.role = 'node'; p.i = i; return; } }
   let hit = null, bd = phone ? 42 : 30;
   for (const v of voices) { if (v.wT === 0 || v.dragging) continue; const b = ballPos(v), d = Math.hypot(b.X - px, b.Y - py); if (d < bd) { bd = d; hit = v; } }
+  if (!hit && petBandTap(px, py)) { p.role = 'none'; return; }   // a crossing pet plays you a lick
   if (!hit && faceTap(px, py)) { p.role = 'none'; return; }   // the dusk sun, the night's moon
   if (!hit && reg === 'terrain' && !(skin === 'hmp' && tab !== 'resonance' && !phone)) {
     const x = xFromS(px); hit = addVoice(x, { temp: 0 }); if (hit) firstEvent('tap');

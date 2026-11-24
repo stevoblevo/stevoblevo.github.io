@@ -423,3 +423,14 @@ body[data-skin="df-night"] :is(.pill.on, .mode.on, .dk.hot, .ctl.hot) { border-c
 body[data-skin="df-night"] :is(.sec, .tk, .qh) { color: rgba(94, 242, 184, .85) }
 body[data-skin="df-night"] .sw:checked { background: rgba(94, 242, 184, .8) }
 body:is([data-skin="hm-dusk"], [data-skin="df-night"]) :is(#toast, #round, #result, #viewChip, #reelHud) { border-color: color-mix(in srgb, var(--gold) 45%, transparent) }
+
+/* crossing pets in the gamut (AND SO 10.2) */
+.petrow { margin: 6px 0 10px }
+.petrow-h { display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; color: var(--ink-soft, inherit) }
+.petrow-h span { flex: 1 }
+.petrow-h b { font-weight: 700; color: var(--ink, inherit) }
+.petrow-h a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px }
+.petchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px }
+.petchip { width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed color-mix(in srgb, currentColor 28%, transparent) }
+.petchip.on { border-style: solid; border-color: color-mix(in srgb, var(--gold) 60%, transparent) }
+.petnone { font-size: 12px; opacity: .7 }

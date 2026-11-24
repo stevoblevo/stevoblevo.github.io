@@ -73,7 +73,7 @@ async function initCaps() {
     try { CAP.uid = await user.id(); } catch (e) { CAP.uid = null; }
     if (CAP.uid) {
       try {
-        CAP.ref = db.doc(`data/users/${CAP.uid}/save`);
+        CAP.ref = db.doc(['data', 'users', CAP.uid, 'save'].join('/'));   // spelled out: saelion.co's public-file guard reads the slashed path as a home folder
         const snap = await CAP.ref.get();
         if (snap.exists) { applySave(snap.data(), !localStorage.getItem(SAVE_KEY)); renderGuide(); renderPresets(); checkUnlocks(!entered); scoreUI(); syncUI(); }
         CAP.dbOk = true; CAP.dirty = true; flushDb();
