@@ -117,6 +117,8 @@ Body.prototype.build = function () {
 
 /* ---------- shapes ---------- */
 function M(x, y, z, rx, ry, rz, sx, sy, sz) { _e.set(rx || 0, ry || 0, rz || 0); _q.setFromEuler(_e); _v3.set(x || 0, y || 0, z || 0); _v2.set(sx == null ? 1 : sx, sy == null ? (sx == null ? 1 : sx) : sy, sz == null ? (sx == null ? 1 : sx) : sz); return new T.Matrix4().compose(_v3, _q, _v2); }
+let _eY = null;
+function MY(x, y, z, tilt, a, roll, sx, sy, sz) { _eY = _eY || new T.Euler(); _eY.set(tilt || 0, a || 0, roll || 0, 'YXZ'); _q.setFromEuler(_eY); _v3.set(x, y, z); _v2.set(sx, sy, sz); return new T.Matrix4().compose(_v3, _q, _v2); } // 0.24.1: for hair locks
 function sph(ws, hs) { return new T.SphereGeometry(1, Math.min(ws || 10, 10), Math.min(hs || 7, 7)); }
 /* a tapered capsule from p to q (radii r0 at p, r1 at q), baked */
 function capG(p, q, r0, r1, seg, rings) {
@@ -497,11 +499,17 @@ HERO.myra = {
     arms(B, P, { puff: 0.1, upper: 0xefdcbf, elbowR: 0.062, wristR: 0.056, fore: skin, cuff: sm, cuffH: 0.04, hand: skin, handR: 0.058, cuffRing: gold });
     headBall(B, P, { skin: skin, face: 3, neckR: 0.07, shape: [1.02, 0.95, 0.96], fd: 0.15 });
     [1, -1].forEach(function (k) { B.add(new T.ConeGeometry(0.055, 0.24, 6), M(k * 0.33, P.headC + 0.04, 0.03, 0, 0, -k * 1.0, 1, 1, 0.45), skin, 'head'); });
-    // curly hair: a big round cap and curls round its edge; a curl on top on its own bone
-    B.add(new T.SphereGeometry(1, 14, 9, Math.PI / 2 + 0.95, TAU - 1.9, 0, 1.95), M(0, P.headC + 0.05, -0.02, 0, 0, 0, P.headR * 1.16, P.headR * 1.12, P.headR * 1.14), function (lx, ly, lz) { return frac(Math.atan2(lx, lz) * 2.6 + ly * 3) < 0.2 ? hairD : hair; }, 'head');
-    B.add(new T.SphereGeometry(1, 12, 4, 0, TAU, 0, 1.05), M(0, P.headC + 0.06, 0.02, 0.22, 0, 0, P.headR * 1.16, P.headR * 1.1, P.headR * 1.16), hair, 'head');
-    for (let i = 0; i < 9; i++) { const a = Math.PI * 0.62 + i / 8 * Math.PI * 0.76, r = P.headR * 1.0, lo = i % 2; B.add(sph(8, 6), M(Math.sin(a) * r, P.headC - 0.07 - lo * 0.04, Math.cos(a) * r - 0.03, 0.3, a, 0, 0.16, 0.13 + lo * 0.02, 0.1), i % 3 ? hair : hairD, 'head'); } // clumps round the back and sides
-    [[0.15, 0.2, -0.17], [-0.16, 0.19, -0.16]].forEach(function (c, i) { B.add(sph(8, 6), M(c[0], P.headC + c[1] - 0.04, c[2], 0, i, 0, 0.15, 0.12, 0.13), i % 2 ? hair : hairD, 'head'); }); // and toward the crown
+    /* 0.24.1 hair, after the turnaround: a tousled wavy bob wider than the head, a fringe swept to one side, locks that flip
+       out at the jaw, a few lifted over the crown; shaded light on top and dark underneath instead of stripes (which read as a
+       raspberry from behind). The curl on top stays on its own bone. */
+    const hairL = 0xa04a82, R = P.headR, C = P.headC;
+    const hcol = function (lx, ly) { return ly < -0.35 ? hairD : (ly > 0.6 ? hairL : hair); }, lcol = function (lx, ly) { return ly < -0.35 ? hairD : hair; };
+    B.add(new T.SphereGeometry(1, 16, 10, Math.PI / 2 + 0.85, TAU - 1.7, 0, 2.05), M(0, C + 0.03, -0.03, 0, 0, 0, R * 1.18, R * 1.13, R * 1.17), hcol, 'head'); // the volume, open at the face
+    B.add(new T.SphereGeometry(1, 14, 5, 0, TAU, 0, 1.1), M(0, C + 0.05, -0.005, 0.2, 0, 0, R * 1.17, R * 1.11, R * 1.15), hcol, 'head'); // over the crown and the forehead
+    const lock = function (a, y, rr, tilt, roll, w, h, d, col) { B.add(sph(7, 5), MY(Math.sin(a) * rr, y, Math.cos(a) * rr - 0.03, tilt, a, roll, w, h, d), col, 'head'); };
+    for (let i = 0; i < 7; i++) { const a = Math.PI * 0.6 + i / 6 * Math.PI * 0.8, k = i % 2; lock(a, C - 0.12 - k * 0.04, R * 1.0, -0.5 - k * 0.15, k ? 0.3 : -0.25, 0.115, 0.15 + k * 0.025, 0.07, lcol); } // the hem, flipping out
+    [[-0.55, 0.1], [-0.2, 0.14], [0.15, 0.15], [0.48, 0.11]].forEach(function (f) { lock(f[0], C + f[1], R * 1.05, 0.45, 0.55, 0.08, 0.115, 0.045, 0x8e3c72); }); // the fringe, swept (a shade lighter: it faces down into shadow)
+    [[0.8, 0.2], [1.05, 0.25], [1.3, 0.21]].forEach(function (c) { lock(Math.PI * c[0], C + c[1], R * 0.98, -1.15, 0.3 * (c[0] - 1.05) * 4, 0.1, 0.13, 0.05, hair); }); // lifted over the crown
     B.add(new T.TorusGeometry(0.07, 0.022, 5, 12, Math.PI * 1.4), M(0, P.headC + 0.36, -0.02, 0, Math.PI / 2, 0.4), hair, 'curl');
     // the spool she shoots with, in the right hand
     const hx = -P.shX, hy = P.shY - P.upper - P.fore - 0.06;
