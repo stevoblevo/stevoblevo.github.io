@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.8",
+   "short": "AND SO 10.8",
+   "name": "AND SO 10.8 · Back",
+   "date": "2026-11-24",
+   "line": "On a phone, the back button closes whatever is open instead of leaving the site, and a button at the top right goes full screen. The pet's octopus arms and her dusk sticker draw faster.",
+   "path": "/and-so/v10.8/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "5e967c095e79bf3ec6d6c36a354a81c084afa775a9a0a32cfe2d69d95e231b4a"
+  },
+  {
    "id": "10.7",
    "short": "AND SO 10.7",
    "name": "AND SO 10.7 · Plush",
    "date": "2026-11-24",
    "line": "Antlers as smooth, thick, plush shapes with a fine nap. On paper the pet's coat has more colour and a soft ink shadow, so she stands off the page.",
    "path": "/and-so/v10.7/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "a1c45ba5dc09ab5196834355d1d880f591eece60075569bfc6f119e546835c25"
+   "commit": "5a7145c",
+   "sha256": "6956dab25d6724fe5cf173f7b9c68152550d4733d85083124719c3ef33edfeee"
   },
   {
    "id": "10.6",

@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.7 · Plush.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.8 · Back.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -137,6 +137,16 @@ no lyric.
   (as you are, just intonation, 31-EDO, piano), which this chapter sets to just intonation, so its changes play
   microtonal. The jam gives the old tuning back when it stops. 5/4 charts play.
 - Finds: `x-named` (name one), `x-named-13` (name thirteen). 148 in all.
+
+## Back (10.8)
+
+Bleve: "need to be able to go full screen on mobile and capture back button for closing menus instead of closing entire site".
+
+- **Back closes what is open** (`src/zv-back.js`). `BACK_LAYERS` lists every overlay topmost first, each with a test for "is it open" and its own close function: the version diff, the versions sheet, the board, the liner notes, a story, the brook map, the Book, mirror windows, the mirror table, the jam, the reels, and the phone's bottom sheet when it is raised. One spare history entry is kept while you play (`backArm`, made on a touch or a key because browsers ignore entries made without one). On `popstate` the topmost open layer closes and the entry is put back. With nothing open, the first back says "back again leaves AND SO" and the second leaves, so the site is never a trap. A new overlay needs one line in `BACK_LAYERS`.
+- **Full screen** (`fullToggle`, the `#tFull` chip in the phone's top bar). Uses the Fullscreen API. iPhone Safari has none for pages, so there the chip says how to add AND SO to the home screen, where it opens full screen (the manifest is `display: standalone`). The chip is hidden when already installed.
+- **Faster pet**: each layer of an octopus arm is one filled shape (was twenty strokes) and its dots share paths; the dusk die-cut is cut at half her resolution on its own canvas and she is laid over it at full resolution (`petDressed`). Headless, software rendering, 1280 × 800, all parts grown, frames a second (10.7, then 10.4, in brackets): paper knight 29 (25, 31), dusk 19 (16, 29), night 24 (21, 27), paper daylight 23 (24, 28).
+
+Tested in headless Chromium with a Pixel 7 profile and at desktop size: board and jam close on back and the page stays; back twice with nothing open leaves; the chip enters full screen. Not tested on a real phone, and not on iOS.
 
 ## Plush (10.7)
 

@@ -203,18 +203,23 @@ function petArms(g, sc, sy, wc, lp, acc, ink, dark, E) {
   // the outer arms first, so the middle ones lie over them
   [0, 7, 1, 6, 2, 5, 3, 4].forEach(n => { const { pts, side, col, i } = arms[n], dk = mix(col, lp ? ink : [70, 20, 80], 0.42), hi = mix(col, [255, 240, 248], 0.5), belly = lp ? [250, 244, 236] : [255, 226, 232];
     const nrm = k => [-Math.sin(pts[k][3]) * side, Math.cos(pts[k][3]) * side];   // toward the inside of the curl, where the suckers are
-    const pass = (colr, a, wk, off) => { g.strokeStyle = rgba(colr, a); for (let k = 0; k < N; k++) { const [nx, ny] = nrm(k), w = pts[k][2]; g.lineWidth = Math.max(0.5, w * wk); g.beginPath(); g.moveTo(pts[k][0] + nx * w * off, pts[k][1] + ny * w * off); g.lineTo(pts[k + 1][0] + nx * pts[k + 1][2] * off, pts[k + 1][1] + ny * pts[k + 1][2] * off); g.stroke(); } };
+    // each layer of the arm is one filled shape (10.8; it was twenty strokes), and dots of a kind share one path
+    const pass = (colr, a, wk, off) => { g.fillStyle = rgba(colr, a); g.beginPath();
+      for (let k = 0; k <= N; k++) { const [nx, ny] = nrm(k), w = pts[k][2], px = pts[k][0] + nx * w * (off + wk / 2), py = pts[k][1] + ny * w * (off + wk / 2); if (k) g.lineTo(px, py); else g.moveTo(px, py); }
+      for (let k = N; k >= 0; k--) { const [nx, ny] = nrm(k), w = pts[k][2]; g.lineTo(pts[k][0] + nx * w * (off - wk / 2), pts[k][1] + ny * w * (off - wk / 2)); }
+      g.closePath(); g.fill(); };
+    const dot = (x, y, r0) => { g.moveTo(x + r0, y); g.arc(x, y, r0, 0, TAU); };
     pass(dk, 1, 1.12, 0); pass(col, 1, 0.92, 0); pass(belly, 0.95, 0.42, 0.27); pass(hi, 0.75, 0.2, -0.3);
     // mottling on the back of the arm
-    let sd = 911 + i * 37; const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296;
-    for (let m = 0; m < 26; m++) { const k = Math.floor(r() * (N - 3)), [nx, ny] = nrm(k), w = pts[k][2], o = -(0.05 + 0.36 * r()), rr = w * (0.05 + 0.09 * r()); g.fillStyle = r() < 0.7 ? rgba(dk, 0.5) : rgba(hi, 0.7);
-      g.beginPath(); g.arc(pts[k][0] + nx * w * o + (r() - 0.5) * seg, pts[k][1] + ny * w * o + (r() - 0.5) * seg, Math.max(0.35, rr), 0, TAU); g.fill(); }
+    let sd = 911 + i * 37; const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296, spots = [[], []];
+    for (let m = 0; m < 26; m++) { const k = Math.floor(r() * (N - 3)), [nx, ny] = nrm(k), w = pts[k][2], o = -(0.05 + 0.36 * r()), rr = w * (0.05 + 0.09 * r()), kind = r() < 0.7 ? 0 : 1;
+      spots[kind].push([pts[k][0] + nx * w * o + (r() - 0.5) * seg, pts[k][1] + ny * w * o + (r() - 0.5) * seg, Math.max(0.35, rr)]); }
+    spots.forEach((list, kind) => { g.fillStyle = kind ? rgba(hi, 0.7) : rgba(dk, 0.5); g.beginPath(); list.forEach(d => dot(d[0], d[1], d[2])); g.fill(); });
     // suckers: two rows near the body, one toward the tip, each a pale cup with a ring and a dark centre
-    for (let k = 1; k < N - 1; k++) { const [nx, ny] = nrm(k), w = pts[k][2], tx = Math.cos(pts[k][3]), ty = Math.sin(pts[k][3]), two = k < N * 0.55, r0 = Math.max(0.45, w * (two ? 0.17 : 0.2));
-      (two ? [[0.14, -0.25], [0.4, 0.25]] : [[0.27, 0]]).forEach(([o, along]) => { const cx = pts[k][0] + nx * w * o + tx * seg * along, cy = pts[k][1] + ny * w * o + ty * seg * along;
-        g.fillStyle = rgba(mix(belly, [255, 255, 255], 0.5), 1); g.beginPath(); g.arc(cx, cy, r0, 0, TAU); g.fill();
-        g.strokeStyle = rgba(mix(col, dk, 0.5), 0.75); g.lineWidth = Math.max(0.3, r0 * 0.3); g.stroke();
-        g.fillStyle = rgba(dk, 0.7); g.beginPath(); g.arc(cx, cy, r0 * 0.36, 0, TAU); g.fill(); }); }
+    const cups = []; for (let k = 1; k < N - 1; k++) { const [nx, ny] = nrm(k), w = pts[k][2], tx = Math.cos(pts[k][3]), ty = Math.sin(pts[k][3]), two = k < N * 0.55, r0 = Math.max(0.45, w * (two ? 0.17 : 0.2));
+      (two ? [[0.14, -0.25], [0.4, 0.25]] : [[0.27, 0]]).forEach(([o, along]) => cups.push([pts[k][0] + nx * w * o + tx * seg * along, pts[k][1] + ny * w * o + ty * seg * along, r0])); }
+    g.fillStyle = rgba(mix(belly, [255, 255, 255], 0.5), 1); g.strokeStyle = rgba(mix(col, dk, 0.5), 0.75); g.lineWidth = Math.max(0.3, 0.07 * sc); g.beginPath(); cups.forEach(d => dot(d[0], d[1], d[2])); g.fill(); g.stroke();
+    g.fillStyle = rgba(dk, 0.7); g.beginPath(); cups.forEach(d => dot(d[0], d[1], d[2] * 0.36)); g.fill();
     g.fillStyle = 'rgba(255,255,255,0.75)'; g.beginPath(); g.ellipse(pts[2][0] - nrm(2)[0] * pts[2][2] * 0.3, pts[2][1] - nrm(2)[1] * pts[2][2] * 0.3, pts[2][2] * 0.1, pts[2][2] * 0.3, pts[2][3] - Math.PI / 2, 0, TAU); g.fill();   // a wet glint
     if (!lp) { const [x, y] = pts[N], R = (2.6 + 2.6 * beatPulse) * sc, tg = g.createRadialGradient(x, y, 0, x, y, R); g.globalCompositeOperation = 'lighter';
       tg.addColorStop(0, rgba(mix(acc, [255, 255, 255], 0.5), 0.7)); tg.addColorStop(1, rgba(acc, 0)); g.fillStyle = tg; g.beginPath(); g.arc(x, y, R, 0, TAU); g.fill(); g.globalCompositeOperation = 'source-over'; }

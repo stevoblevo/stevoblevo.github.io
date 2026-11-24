@@ -175,7 +175,16 @@ function petDressed(g, res) {
   G.save(); G.translate(cx - pet.x, cy - pet.y); drawPet(G); G.restore();
   const x = pet.x, y = pet.y - (cy - bh / 2);
   try {
-    if (skin === 'hm-dusk') P.sticker(g, C, x, y, { w: bw, h: bh, keyline: Math.max(2.5, 2.6 * sc), slap: Math.max(4, 5 * sc), slip: reduceMotion ? 0 : 1.2 + 1.6 * beatPulse, angle: reduceMotion ? 0 : Math.sin(t * 0.9) * 0.025 });
+    if (skin === 'hm-dusk') {
+      // The die-cut is about fifty whole-box draws a frame. It is cut at half her resolution on a canvas of its own
+      // (its edge is a flat white line, so nothing is lost), and she is laid over it at full resolution. 10.8.
+      const M = Math.ceil(14 * sc), uw = bw + 2 * M, uh = bh + 2 * M, hr = Math.max(1, res / 2), ang = reduceMotion ? 0 : Math.sin(t * 0.9) * 0.025;
+      if (!PETDRESS.u) { PETDRESS.u = document.createElement('canvas'); PETDRESS.ug = PETDRESS.u.getContext('2d'); }
+      const U = PETDRESS.u, UG = PETDRESS.ug, pw = Math.ceil(uw * hr), ph = Math.ceil(uh * hr); if (U.width !== pw || U.height !== ph) { U.width = pw; U.height = ph; }
+      UG.setTransform(hr, 0, 0, hr, 0, 0); UG.clearRect(0, 0, uw, uh);
+      P.sticker(UG, C, uw / 2, uh / 2, { w: bw, h: bh, keyline: Math.max(2.5, 2.6 * sc), slap: Math.max(4, 5 * sc), slip: reduceMotion ? 0 : 1.2 + 1.6 * beatPulse, angle: 0 });
+      g.save(); g.translate(x, y); g.rotate(ang); g.drawImage(U, -uw / 2, -uh / 2, uw, uh); g.drawImage(C, -bw / 2, -bh / 2, bw, bh); g.restore();
+    }
     else { const o = FACE.orb || { x: W * 0.72, y: TOPH }; P.rim(g, C, x, y, { w: bw, h: bh, lx: o.x, ly: o.y, weather: WX.w, ground: pet.y + 19 * sc, amount: 0.12 }); }
   } catch (e) { g.drawImage(C, x - bw / 2, y - bh / 2, bw, bh); }
 }
