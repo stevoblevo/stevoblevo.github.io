@@ -4,7 +4,9 @@
    - Three devices write the same small state (move stick, look delta, fire, zoom, one-shot edges). main.js reads only that.
    - The last device touched wins and sets a body class, so the HUD and help text follow the device in hand.
    - Touch: left 42% of the screen is a floating stick, the rest is look; holding Fire also drags the view.
-   - Mouse look needs pointer lock. If the host frame refuses it, look falls back to raw mouse movement. */
+   - Mouse look needs pointer lock. If the host frame refuses it, look falls back to raw mouse movement.
+   - 0.25 air: jump is a one-shot edge (I.e.jump) as before, and also a level, I.jumpHeld (Space, pad A, or a finger on
+     the touch Jump button), for Myra Belle's hover, which lasts while jump is held. */
 (function () {
 'use strict';
 const LL = window.LL;
@@ -12,6 +14,7 @@ const I = LL.input = { mx: 0, my: 0, lookX: 0, lookY: 0, fire: false, zoom: fals
 const keys = {}; let canvas = null, app = null;
 let stickId = -1, stickOX = 0, stickOY = 0, sx = 0, sy = 0, lookId = -1, lx = 0, ly = 0, fireId = -1, mFire = false, mZoom = false, tFire = false;
 let padPrev = [], padFire = false, padZoom = false, padX = 0, padY = 0, navT = 0;
+let jumpId = -1, padJump = false; // 0.25 air: the finger on the touch Jump button, and pad A held
 const stickEl = () => document.getElementById('stick');
 
 I.take = function (n) { if (I.e[n]) { I.e[n] = false; return true; } return false; };
@@ -26,7 +29,8 @@ I.init = function (cv, root) {
   canvas = cv; app = root;
   const KEYMAP = { Space: 'jump', ShiftLeft: 'dash', ShiftRight: 'dash', KeyQ: 'ab0', KeyE: 'ab1', KeyF: 'ab2', Digit1: 'ab0', Digit2: 'ab1', Digit3: 'ab2', KeyR: 'reload', KeyT: 'zip', KeyB: 'shop', KeyI: 'ink', KeyV: 'view', KeyC: 'echo', BracketRight: 'view', KeyP: 'pause', Escape: 'esc', Tab: 'shop' };
   window.addEventListener('keydown', function (ev) {
-    if (ev.target && (ev.target.tagName === 'INPUT')) return;
+    // Menus include native verdict radios and editable debrief notes. Their keys belong to the control.
+    if (ev.target && (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) || ev.target.isContentEditable)) return;
     setDevice('kbm');
     if (I.play) { if (ev.code === 'Tab' || ev.code === 'Space' || ev.code.indexOf('Arrow') === 0) ev.preventDefault(); }
     if (ev.repeat) return;
@@ -62,7 +66,7 @@ I.init = function (cv, root) {
       try { b.setPointerCapture(ev.pointerId); } catch (e) {}
       const n = b.getAttribute('data-btn');
       if (n === 'fire') { tFire = true; fireId = ev.pointerId; lookId = ev.pointerId; lx = ev.clientX; ly = ev.clientY; }
-      else I.e[n] = true;
+      else { I.e[n] = true; if (n === 'jump') jumpId = ev.pointerId; } // 0.25 air: held for the hover
       return;
     }
     if (!I.play || ev.target.closest('.screen') || ev.target.closest('button')) return;
@@ -87,6 +91,7 @@ I.init = function (cv, root) {
     if (ev.pointerId === stickId) { stickId = -1; sx = sy = 0; const k = stickEl(); if (k) { k.firstElementChild.style.transform = ''; k.style.left = ''; k.style.top = ''; } }
     if (ev.pointerId === fireId) { fireId = -1; tFire = false; }
     if (ev.pointerId === lookId) lookId = -1;
+    if (ev.pointerId === jumpId) jumpId = -1; // 0.25 air
   };
   app.addEventListener('pointerup', up); app.addEventListener('pointercancel', up);
   // ability buttons by mouse
@@ -106,6 +111,7 @@ I.poll = function (dt, sens) {
   let gp = null;
   try { const gps = navigator.getGamepads ? navigator.getGamepads() : []; for (let i = 0; i < gps.length; i++) if (gps[i] && gps[i].connected && gps[i].buttons.length >= 10) { gp = gps[i]; break; } } catch (e) {}
   padFire = padZoom = false;
+  padJump = false; // 0.25 air
   if (gp) {
     const dz = v => Math.abs(v) < 0.16 ? 0 : (v - Math.sign(v) * 0.16) / 0.84;
     const ax = dz(gp.axes[0] || 0), ay = dz(gp.axes[1] || 0), rx = dz(gp.axes[2] || 0), ry = dz(gp.axes[3] || 0);
@@ -129,11 +135,13 @@ I.poll = function (dt, sens) {
       I.lookX += cur(rx) * 3.1 * dt * (padZoom ? 0.6 : 1); I.lookY += cur(ry) * 2.1 * dt;
       if (Math.abs(rx) + Math.abs(ry) > 0.1) I.looking = 0.4;
       padFire = padBtn(gp, 7); padZoom = padBtn(gp, 6);
+      padJump = padBtn(gp, 0); // 0.25 air
     }
   }
   const m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; }
   I.mx = x; I.my = y;
   I.fire = mFire || tFire || padFire; I.zoom = mZoom || padZoom;
+  I.jumpHeld = !!keys.Space || padJump || jumpId >= 0; // 0.25 air
   I.lookX *= sens; I.lookY *= sens;
 };
 I.rumble = function (a, ms) {

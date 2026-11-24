@@ -10,6 +10,10 @@
      Hush. One instanced draw; a pool dims when its structure goes dark and goes out when it falls.
    - Ground: the floor away from the threads goes darker and cooler (a hook in buildGround), and one baked mesh carries the
      grass tufts, glowing flowers and mushrooms; another the petal drifts under the blossom trees.
+   - The verge (0.25): the ground within about 4.4 m of each thread, which is most of the play camera's frame. One painted
+     ribbon per thread (a worn path the thread's light falls on, its edge, drifts against the thread, meadow dabs and small
+     flowers), flat on the ground so it never hides feet or soul orbs, blended over each look's own ground; and a line of low
+     plants stepping in to just outside where troopers march.
    - Sky: a ringed moon with a halo in front of the painted ridge, two bands of mist at the foot of the ridge, twinkling stars.
    - Air: fireflies by the trees and the water, and blossom petals tumbling down around the camera. Both animate on the GPU.
 
@@ -18,8 +22,8 @@
    - Every look gets its own palette below (PAL), so nothing here goes through the look's colour map: materials are
      flagged lk/bl/solid and geometry lk, instanced meshes ilk.
    - Instanced or baked; no per-frame allocation; nothing per frame on the CPU except the pools' dimming.
-   - Lighter graphics (R.low): fewer wall trees, plants, fireflies and petals. Reduced motion: no sway, flicker or petals;
-     fireflies and water move slowly. */
+   - Lighter graphics (R.low): fewer wall trees, plants, fireflies and petals, no verge and no verge plants. Reduced motion:
+     no sway, flicker or petals; fireflies and water move slowly. */
 (function () {
 'use strict';
 const LL = window.LL, C = LL.C, U = LL.U;
@@ -71,6 +75,17 @@ const PAL = {
     moon: [0xfff0d8, 0xb09a78, 0xd9c8a8, [1, 0.2]], mist: [0x5a4f40, 0xb09a78, 0.4], fly: [0xf0e0c0, 0.6], petal: [0xe8d8c0, 0xfff0e0, 0.4],
     grass: [0x3a3228, 0x7a6a54], flowers: [0xe8b060, 0xf0e0c0, 0xb09a78, 0x8aa8c0], shroom: 0xf0e0c0, litter: [0xe8d8c0, 0.45], ground: [0x2a2520, 0.15, 0.96, 0.82], plantGlow: 0.5 }
 };
+/* 0.25 world (#29): the verge beside the threads, per look; what each field means is with vergeMesh below. Night looks get a
+   warm path where the thread's light falls and flowers that glow a little; Origami stays daylight paper (no light, paper
+   flowers, a pale crease for the rim); Hypermetapunk gets a dashed lit line on the path edge instead of drifts. */
+PAL.snow.verge = { worn: [0.8, 0.45, 0.13, 1.45], light: 0xffb070, drift: [0xc8ccf4, 0.5], flowers: [0xb084ff, 0xff5fae, 0x8ff0ff], fk: [0.95, 0.85], stroke: [0x8a90d8, 0.6] };
+PAL.lantern.verge = { worn: [0.8, 0.45, 0.13, 1.45], light: 0xffa850, drift: [0xff9ab0, 0.35], flowers: [0xff8a5c, 0xffd27a, 0xff6fa0], fk: [0.9, 0.7], stroke: [0x5a8a70, 0.6] };
+PAL.knight.verge = { worn: [0.82, 0.45, 0.09, 1.4], light: 0xf0c75e, drift: [0xe8d8f0, 0.35], flowers: [0x8fb4e8, 0xf0c75e, 0xf4efe6], fk: [0.85, 0.65], stroke: [0x5e84a8, 0.22] }; // a pale path: dark dabs would read as puddles
+PAL.origami.verge = { worn: [0.7, 0.04, 0, 1.4], light: 0, drift: [0xf4a8b8, 0.6], flowers: [0xe0503a, 0xf0cf78, 0x4a6cb0], fk: [1, 0.4, 1.6], stroke: null, grain: 0.06 };
+PAL.glow.verge = { worn: [1, 0.3, 0, 1.4], light: 0, drift: null, flowers: [0xff4faa, 0x62e6ff, 0xffd64a], fk: [0.9, 0.5], stroke: null, edge: [0x62e6ff, 0.55], grain: 0.05 };
+PAL.ink.verge = { worn: [0.72, 0.4, 0.07, 1.45], light: 0xffb347, drift: [0xd8d0c0, 0.3], flowers: [0xffb347, 0xebe6da, 0xd9824a], fk: [0.8, 0.55], stroke: [0x4a4660, 0.6] };
+PAL.rain.verge = { worn: [0.78, 0.45, 0.1, 1.45], light: 0xffc070, drift: [0x8a3a48, 0.3], flowers: [0xffc070, 0x6fe0d0, 0xff6a6a], fk: [0.85, 0.6], stroke: [0x7a3a44, 0.55] };
+PAL.memory.verge = { worn: [0.84, 0.45, 0.08, 1.4], light: 0xe8b060, drift: [0xe8d8c0, 0.4], flowers: [0xf0e0c0, 0xe8b060, 0x8aa8c0], fk: [0.8, 0.6], stroke: [0x8a7a64, 0.3] };
 SC.PAL = PAL;
 
 /* ---------- small helpers ---------- */
@@ -295,9 +310,12 @@ function treeMeshes(trees, groundH) {
 
 /* ---------- ground: plants and petal drifts ---------- */
 function laneD(x, z, q) { let d = 1e9; for (let l = 0; l < 3; l++) { LL.laneNearest(l, x, z, q); if (q.d < d) d = q.d; } return d; }
-function clearSpot(x, z, q) { // somewhere off the threads, the bases, the camps and the loch
+/* clearSpot keeps plants 4.2 m from the lane lines: troopers march up to 3.1 m either side of the line (sim.js, lat), so
+   anything with height inside that band would stand in front of their feet. The verge (below) paints right up to the thread
+   instead, flat on the ground, so it never hides a foot or a soul orb. min: a closer limit, for the verge's own plants. */
+function clearSpot(x, z, q, min) { // somewhere off the threads, the bases, the camps and the loch
   if (Math.abs(x) > C.HALF_X - 2 || Math.abs(z) > C.HALF_Z - 2) return false;
-  if (laneD(x, z, q) < 4.2) return false;
+  if (laneD(x, z, q) < (min || 4.2)) return false;
   if (Math.hypot(x, z + C.SPAWN_Z) < 34 || Math.hypot(x, z - C.SPAWN_Z) < 34) return false;
   if (Math.hypot(x - C.LOCH.x, z - C.LOCH.z) < C.LOCH.r + 1.2 || Math.hypot(-x - C.LOCH.x, -z - C.LOCH.z) < C.LOCH.r + 1.2) return false;
   for (let i = 0; i < C.CAMPS.length; i++) if (Math.hypot(x - C.CAMPS[i][0], z - C.CAMPS[i][1]) < 6) return false;
@@ -367,6 +385,16 @@ function plantMesh(W) {
           const off = 4.4 + r() * 2.8, px = LP.x - LP.dz * off * side + (r() - 0.5), pz = LP.z + LP.dx * off * side + (r() - 0.5);
           if (!clearSpot(px, pz, q)) continue;
           const t = r(); if (t < 0.4) flower(px, pz, 1 + r() * 0.4, fl[Math.floor(r() * 3)]); else if (t < 0.5) shroom(px, pz, 1.1); else tuft(px, pz, 0.9 + r() * 0.5); } } } }
+  // 0.25 world (#29): a second, closer line along the threads, just outside where troopers march (3.1 m from the lane line,
+  // plus a body): small flowers and short tufts stepping in toward the path, so the low camera sees growth right beside it.
+  // Kept low (under 0.4 m) and left out under Lighter graphics.
+  if (!low) { const LP = { x: 0, z: 0, dx: 0, dz: 0 };
+    for (let l = 0; l < 3; l++) { const L = LL.lanes[l];
+      for (let s2 = 3; s2 < L.len - 3; s2 += 1.25) { LL.lanePoint(l, s2, LP);
+        for (let side = -1; side <= 1; side += 2) { if (r() < 0.22) continue;
+          const off = 3.75 + r() * 0.8, px = LP.x - LP.dz * off * side + (r() - 0.5) * 0.6, pz = LP.z + LP.dx * off * side + (r() - 0.5) * 0.6;
+          if (!clearSpot(px, pz, q, 3.65)) continue;
+          const t = r(); if (t < 0.45) flower(px, pz, 0.62 + r() * 0.25, fl[Math.floor(r() * 3)]); else tuft(px, pz, 0.55 + r() * 0.3); } } } }
   // a ring of flowers and mushrooms round the loch, as in the key art
   for (let k = 0; k < 90 * K; k++) {
     const a = r() * 6.283, d = C.LOCH.r + 1.3 + r() * 3.4, px = C.LOCH.x + Math.cos(a) * d, pz = C.LOCH.z + Math.sin(a) * d;
@@ -374,6 +402,7 @@ function plantMesh(W) {
     const t = r(); if (t < 0.45) flower(px, pz, 1.15, fl[Math.floor(r() * 3)]); else if (t < 0.72) shroom(px, pz, 1.5); else tuft(px, pz, 1.1);
   }
   const m = litMat({ rim: [P.grass[1], 0.25, 2.0], glow: 1, pivot: 0.05, sway: 0.5, side: T.DoubleSide, back: 0.8 });
+  plantTris = B.p.length / 9;
   const o = mine(new T.Mesh(B.geo(), m)); o.frustumCulled = false; X.world.add(o); return o;
 }
 let litterTex = null;
@@ -403,6 +432,86 @@ function litterMesh(groundH) {
   });
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
   const m = new T.MeshBasicMaterial({ map: makeLitterTex(), color: P.litter[0], transparent: true, opacity: P.litter[1], depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  const o = mine(new T.Mesh(g, m)); o.renderOrder = 1; o.frustumCulled = false; X.world.add(o); return o;
+}
+
+/* ---------- the verge: the ground right beside the threads (0.25 world, issue #29) ----------
+   From the play camera most of the frame is the ground within a few metres of the thread you stand on. One ribbon per thread,
+   about 4.4 m either side of it, painted in the fragment shader: a worn path that the thread's light falls on, a scuffed rim
+   where it meets the grass, snow or petals drifted against the thread, grass strokes, and small flowers that look round on
+   screen (the trick from groundGlints). It is flat on the ground, so it never hides a trooper's feet or a soul orb, and it
+   stays darker than the thread, so the thread is still the clearest thing on the ground.
+   Blending is "ground x m + add" (premultiplied over: One, OneMinusSrcAlpha, the shader writes add and 1 - m), so it follows
+   each look's own ground colour and light and needs no ground colours of its own; PAL.verge sets how much of each.
+   It fades out near the bases, in fog and with distance. One draw call; left out under Lighter graphics.
+   PAL.verge: worn [multiply on the path's edge, width of that edge m, path light k, path half-width m], light (colour of the
+   light on the path), drift [colour, k], flowers [main colour, second, third] (half, three tenths, a fifth), fk [k, how many
+   cells in a patch flower, size], stroke [colour, k], edge [colour, k] (a dashed lit line on the path edge, Hypermetapunk),
+   grain (how much the path edge frays: soft at night, a cleaner drawn line in Origami and Hypermetapunk). */
+const VERGE_V = ['attribute vec3 aV; varying vec2 vW; varying vec3 vV;', '#include <fog_pars_vertex>',
+  'void main(){ vW = position.xz; vV = aV; vec4 mvPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mvPosition;', '#include <fog_vertex>', '}'].join('\n');
+const VERGE_F = ['uniform vec3 uCam; uniform vec4 uWorn; uniform vec3 uLight; uniform vec4 uDrift; uniform vec3 uF0; uniform vec3 uF1; uniform vec3 uF2; uniform vec3 uFK; uniform vec4 uStroke; uniform vec4 uEdge; uniform float uGrain;',
+  'varying vec2 vW; varying vec3 vV;', GLSL_NOISE, '#include <fog_pars_fragment>',
+  'void main(){',
+  '  float d = abs(vV.x), sd = vV.x < 0.0 ? -1.0 : 1.0, s = vV.y;',
+  '  float n1 = noise(vec2(s * 0.3, sd * 5.0 + 1.0)), n2 = noise(vW * 0.9), n3 = noise(vW * 5.5), n4 = noise(vec2(s * 0.16 + 4.0, sd * 3.0)), n5 = noise(vW * 2.2 + 3.0);',
+  '  vec3 vd = uCam - vec3(vW.x, 0.03, vW.y); float dist = length(vd); vd /= dist;',
+  // the path: its edge wanders along the thread and frays in the grain; the thread's light lies on it in patches
+  '  float e = uWorn.w * (0.7 + 0.6 * n4) + (mix(n5, n3, 0.5) - 0.5) * uGrain;',
+  '  float path = 1.0 - smoothstep(e - 0.25, e + 0.05, d);',
+  '  float m = 1.0; vec3 add = uLight * uWorn.z * path * (1.0 - 0.6 * smoothstep(0.15, e, d)) * (0.7 + 0.45 * n2) * (0.85 + 0.3 * n3);',
+  // its edge: a soft shade where the grass starts (night), or a crisp crease (Origami: uWorn.y small)
+  '  float eb = (1.0 - smoothstep(0.0, uWorn.y, abs(d - e - uWorn.y * 0.5)));',
+  '  m *= mix(1.0, uWorn.x, eb * (uGrain < 0.1 ? smoothstep(0.22, 0.34, noise(vec2(s * 0.45, sd * 7.0))) : 1.0));',
+  // the meadow beyond it: dabs of shadowed and lit grass, scattered (lines along the thread read as speed lines from behind)
+  '  float mead = smoothstep(e, e + 0.35, d);',
+  '  float g1 = smoothstep(0.6, 0.78, noise(vW * 3.1 + 11.0)), g2 = smoothstep(0.64, 0.8, noise(vW * 3.7 - 5.0)) * (1.0 - g1);',
+  '  m *= mix(1.0, 1.0 - uStroke.w * 0.3, g1 * mead); add += uStroke.rgb * uStroke.w * 0.16 * g2 * mead;',
+  // drifts against the thread: thin clumps that come and go along it
+  '  float dw = 0.06 + 0.32 * smoothstep(0.35, 0.8, n1);',
+  '  float dr = (1.0 - smoothstep(0.17 + dw * 0.5, 0.17 + dw, d)) * smoothstep(0.13, 0.19, d) * smoothstep(0.3, 0.7, n3 * 0.7 + n1 * 0.5) * uDrift.w;',
+  '  m *= 1.0 - dr; add = add * (1.0 - dr) + uDrift.rgb * dr * (0.75 + 0.25 * n3);',
+  // flowers in patches in the meadow: five petals and a pale heart, round on screen (squashed along the view on the ground)
+  '  vec2 cell = floor(vW * 2.4), f = fract(vW * 2.4) - 0.5; float h = hash(cell), h2 = hash(cell + 17.0);',
+  '  vec2 o = f - (vec2(h2, hash(cell + 5.0)) - 0.5) * 0.68, ax = normalize(vd.xz + 1e-4); o = vec2(dot(o, vec2(-ax.y, ax.x)), dot(o, ax) * max(vd.y, 0.14));',
+  '  float dens = smoothstep(e - 0.1, e + 0.45, d) * (1.0 - smoothstep(3.4, 4.3, d)) * smoothstep(0.42, 0.7, n2 * 0.75 + n1 * 0.35) * (1.0 - smoothstep(16.0, 34.0, dist));',
+  '  float rr = length(o), pet = 0.1 * uFK.z * (0.72 + 0.28 * cos(5.0 * atan(o.y, o.x) + h * 6.28)) * (0.75 + 0.5 * h2);',
+  '  float fl = (1.0 - smoothstep(pet * 0.8, pet, rr)) * step(1.0 - uFK.y * dens, h) * uFK.x;',
+  '  vec3 fc = h2 < 0.5 ? uF0 : (h2 < 0.8 ? uF1 : uF2); fc = mix(fc, vec3(1.0), (1.0 - smoothstep(0.0, pet * 0.35, rr)) * 0.45);',
+  '  m *= 1.0 - fl; add = add * (1.0 - fl) + fc * fl;',
+  // a lit line along the path edge, dashed (Hypermetapunk)
+  '  float ln = (1.0 - smoothstep(0.02, 0.06, abs(d - e - 0.05))) * step(0.42, fract(s * 0.31 + sd * 0.25)) * uEdge.w;',
+  '  add += uEdge.rgb * ln;',
+  // fade out at the outer edge, near the bases (vV.z), in fog
+  '  float k = (1.0 - smoothstep(3.2, 4.35, d)) * vV.z;',
+  '  #ifdef USE_FOG', '  k *= 1.0 - smoothstep(fogNear, fogFar, fogDepth);', '  #endif',
+  '  m = mix(1.0, m, k); add *= k;',
+  '  gl_FragColor = vec4(add, 1.0 - m);',
+  '}'].join('\n');
+let vergeTris = 0, plantTris = 0;
+function vergeMesh() {
+  const V = P.verge; if (!V || low) return null;
+  const pos = [], av = [], idx = [], offs = [-4.4, -2.9, -1.6, -0.55, 0.55, 1.6, 2.9, 4.4], nc = offs.length, P0 = { x: 0, z: 0, dx: 0, dz: 0 }, P1 = { x: 0, z: 0, dx: 0, dz: 0 };
+  const ctr = function (l, s, out) { LL.lanePoint(l, s, out); out.x += Math.sin(s * 0.11 + l * 2) * 1.1; return out; }; // the thread's own wander, as buildThreads draws it
+  for (let l = 0; l < 3; l++) {
+    const L = LL.lanes[l], step = 1.5, n = Math.floor(L.len / step);
+    for (let i = 0; i <= n; i++) {
+      const s = Math.min(L.len, i * step), cx = ctr(l, s, P0).x, cz = P0.z;
+      ctr(l, s - 4, P0); ctr(l, s + 4, P1); let tx = P1.x - P0.x, tz = P1.z - P0.z; const tl = Math.hypot(tx, tz) || 1; tx /= tl; tz /= tl; // a wide tangent, so corners fan out instead of folding
+      const base = Math.min(Math.hypot(cx, cz + C.SPAWN_Z), Math.hypot(cx, cz - C.SPAWN_Z)), k = U.clamp((base - 32) / 14, 0, 1);
+      for (let j = 0; j < nc; j++) { const o = offs[j]; pos.push(cx - tz * o, 0.035, cz + tx * o); av.push(o, s, k); }
+      if (i > 0) { const b = pos.length / 3 - nc * 2; for (let j = 0; j < nc - 1; j++) { const a0 = b + j, a1 = a0 + 1, c0 = a0 + nc, c1 = c0 + 1; idx.push(a0, a1, c0, a1, c1, c0); } } // wound to face up
+    }
+  }
+  const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('aV', new T.Float32BufferAttribute(av, 3)); g.setIndex(idx);
+  vergeTris = idx.length / 3;
+  const W_ = V.worn, v4 = function (a) { if (!a) return new T.Vector4(0, 0, 0, 0); const c = col(a[0]); return new T.Vector4(c.r, c.g, c.b, a[1]); };
+  const m = new T.ShaderMaterial({
+    uniforms: fogU({ uCam: { value: null }, uWorn: { value: new T.Vector4(W_[0], W_[1], W_[2], W_[3]) }, uLight: { value: col(V.light || 0) }, uDrift: { value: v4(V.drift) },
+      uF0: { value: col(V.flowers[0]) }, uF1: { value: col(V.flowers[1]) }, uF2: { value: col(V.flowers[2]) }, uFK: { value: new T.Vector3(V.fk[0], V.fk[1], V.fk[2] || 1) }, uGrain: { value: V.grain == null ? 0.3 : V.grain }, uStroke: { value: v4(V.stroke) }, uEdge: { value: v4(V.edge) } }),
+    vertexShader: VERGE_V, fragmentShader: VERGE_F, transparent: true, depthWrite: false, fog: true,
+    blending: T.CustomBlending, blendEquation: T.AddEquation, blendSrc: T.OneFactor, blendDst: T.OneMinusSrcAlphaFactor, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  shared(m);
   const o = mine(new T.Mesh(g, m)); o.renderOrder = 1; o.frustumCulled = false; X.world.add(o); return o;
 }
 
@@ -626,7 +735,7 @@ SC.groundTint = function (c, x, z, d, lt, out, n) {
 SC.build = function (ctx) {
   X = ctx; built = true;
   if (ctx.ground) groundGlints(ctx.ground.material);
-  loch = lochMesh();
+  loch = lochMesh(); vergeMesh(); // 0.25 world: the ground beside the threads
   moon = moonMesh(); mistMesh(); starPoints();
 };
 /* trees: from buildDecor, once per valley. Returns the tree meshes so gfx can hide them when painted pines are in use. */
@@ -679,5 +788,5 @@ SC.frame = function (dt, time, camera) {
   }
 };
 SC.moonDir = MOON_DIR;
-SC._dbg = function () { return { built: built, pools: pools ? pools.count : -1, trees: treesFor ? treesFor.blossom.length + treesFor.pine.length : 0 }; }; // for tools
+SC._dbg = function () { return { built: built, pools: pools ? pools.count : -1, trees: treesFor ? treesFor.blossom.length + treesFor.pine.length : 0, plantTris: plantTris, vergeTris: vergeTris }; }; // for tools
 })();

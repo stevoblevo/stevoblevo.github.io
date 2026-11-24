@@ -11,7 +11,9 @@
    - Stride is distance, not time: feet should not slide, and a hero slowed by a hollow should step slower.
    - Everything eases with exp(-dt * k) or a spring stepped at a fixed 1/120 s, so a dropped frame changes nothing but
      smoothness.
-   - Runs in the browser (LL.paperMotion) and under Node (module.exports) so tools/test.js can check it. */
+   - Runs in the browser (LL.paperMotion) and under Node (module.exports) so tools/test.js can check it.
+   - 0.25 air: clocks and envelopes for the air poses (pose().airs, from airStep): take-off, rise, top, fall, a second
+     jump and the hover, read from the unit (vy, onGround, jumps, hoverT). The 3D figures pose from them. */
 (function (root) {
 'use strict';
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -20,7 +22,8 @@ const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t
 /* cycle: metres walked per full stride (two steps). hem: where the legs start, as a fraction of height. */
 const RIGS = {
   dora: { cycle: 3.75, hem: 0.20 }, anna: { cycle: 3.4, hem: 0.30 }, myra: { cycle: 2.95, hem: 0.22 }, skein: { cycle: 3.6, hem: 0.27 },
-  fox: { cycle: 1.6, hem: 0.3 }
+  fox: { cycle: 1.6, hem: 0.3 },
+  rook: { cycle: 3.55, hem: 0.28 } // 0.25 rook
 };
 /* GAITS (0.21): how each hero carries themself, as multipliers on the 0.20 rig. 1 (or 0 for the additions) is the 0.20
    motion, so a hero without a line here moves as before apart from the idle.
@@ -41,10 +44,34 @@ const GAITS = {
      lean into the run, a heavy coat that is slow to settle, a long braid, and a rock hammer that is thrown. */
   anna: { bob: 0.62, shift: 1.45, roll: 1.35, swing: 1.12, arm: 1.35, knee: 1.15, lean: 0.03, stiff: 0.72, cloak: 0.5, plant: 1, idle: 1, flap: 1, braid: { len: 0.46, drag: 0.05 }, throw: 1, far: 1 }
 };
+/* 0.25 rook: a courier's run, light and level under the pack: less bounce, a little forward lean, arms that work. */
+GAITS.rook = { bob: 0.85, roll: 0.85, arm: 1.15, lean: 0.02, stiff: 0.9 };
 const gaitCache = {};
 function gaitOf(id) { return gaitCache[id] || (gaitCache[id] = Object.assign({}, GAIT0, GAITS[id] || {})); }
 function create() { return { x: null, z: null, yaw: null, phase: 0, mix: 0, aim: 0, ground: true, land: 0, turn: 0, air: 0, ci: null, cue: null, hold: 0, gl: null, wind: 0, kick: 0,
   s: { cx: 0, cv: 0, fx: 0, fv: 0, hx: 0, hv: 0, q: 0, qv: 0, lr: 0 } }; }
+/* AIR (0.25). Where a body is in its airtime, for the air poses, read from the unit: a take-off is leaving the ground
+   upward fast (vy > 6, a jump or a jump off a thread; a knock is slower); a second jump is u.jumps rising to 2 or more
+   in the air; the hover is u.hoverT > 0. Envelopes are 0 to 1: tko (the take-off, in and out within a third of a
+   second), rise, apex and fall (from the smoothed vertical speed; they sum to about 1 in the air, 0 on the ground),
+   dbl (a sine over the second jump's AIR_DBL seconds; dblP is how far through it, 1 when there is none), hov (the hover
+   blended in fast and out slower). Clocks tk and db are seconds since the take-off and the second jump; n counts
+   second jumps, so a renderer can tell a new one. */
+const AIR_DBL = 0.55;
+function airStep(m, u, dt) {
+  const A = m.A || (m.A = { g: true, j: 0, tk: 9, db: 9, n: 0, vy: 0, tko: 0, rise: 0, apex: 0, fall: 0, dbl: 0, dblP: 1, hov: 0 });
+  const g = u.onGround !== false && !u.zip, vy = u.vy || 0, j = u.jumps || 0;
+  if (!g && A.g && vy > 6) A.tk = 0;
+  if (!g && j > A.j && j >= 2) { A.db = 0; A.n++; }
+  if (g) A.db = 9;
+  A.g = g; A.j = j; A.tk += dt; A.db += dt; A.vy += (vy - A.vy) * ease(30, dt);
+  const air = g ? 0 : 1, w = clamp(A.vy / 9.6, -1, 1);
+  A.tko = air * ss(0, 0.05, A.tk) * (1 - ss(0.1, 0.32, A.tk));
+  A.apex = air * (1 - clamp(Math.abs(w) * 2.2, 0, 1)); A.rise = air * clamp(w, 0, 1) * (1 - A.apex * 0.5); A.fall = air * clamp(-w * 1.3, 0, 1) * (1 - A.apex * 0.5);
+  A.dblP = clamp(A.db / AIR_DBL, 0, 1); A.dbl = A.db < AIR_DBL ? Math.sin(Math.PI * A.dblP) : 0;
+  const hv = u.hoverT > 0 && !g ? 1 : 0; A.hov += (hv - A.hov) * ease(hv ? 14 : 7, dt); if (g && A.hov < 0.01) A.hov = 0;
+  return A;
+}
 /* One damped spring, stepped semi-implicitly at a fixed 1/120 s so it behaves the same at any frame rate. */
 function spring(S, x, v, target, k, c, dt) {
   for (let h = Math.min(dt, 1 / 120), left = dt; left > 1e-6; left -= h, h = Math.min(h, left)) { S[v] += (-k * (S[x] - target) - c * S[v]) * h; S[x] += S[v] * h; }
@@ -188,9 +215,10 @@ function pose(m, u, dt, t, still, sc) {
     idle: still ? 0 : idleX, lean: still ? 0 : G.lean * m.mix * (m.ground ? 1 : 0.5),
     flapL: G.flap && !still ? S.pl : 0, flapR: G.flap && !still ? S.pr : 0,
     throw: tw, stomp: still ? 0 : S.st, brace: still ? 0 : S.bk,
-    braid: G.braid && !still ? S.ba : 0, braidTip: G.braid && !still ? S.bt - S.ba : 0, braidLift: G.braid && !still ? Math.max(0, S.bl) : 0
+    braid: G.braid && !still ? S.ba : 0, braidTip: G.braid && !still ? S.bt - S.ba : 0, braidLift: G.braid && !still ? Math.max(0, S.bl) : 0,
+    airs: airStep(m, u, dt) // 0.25 air
   };
 }
-const api = { create, pose, spring, cast, RIGS, GAITS, gaitOf };
+const api = { create, pose, spring, cast, RIGS, GAITS, gaitOf, airStep, AIR_DBL };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.LL.paperMotion = api;
 })(typeof window === 'undefined' ? globalThis : window);

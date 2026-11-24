@@ -6,6 +6,11 @@
    - Everything a designer would tune lives here as data: hero kits, items, fruit, timings. Rules live in sim.js.
    - Hero abilities are described by `kind` (orb, line, nova, dash, blink, zone, turret) plus numbers, so a new hero is
      a new table row, not new code.
+   - 0.25 air: each hero's move in the air is data too, `air` on the hero's row (rules in sim.js, heroJump):
+       jumps   how many jumps one airtime allows: 1 a single jump, 2 a double jump (the second costs `cost` stamina, 1)
+       hover   a short hanging flight instead of a second jump: { t: most seconds, sink: m/s while hanging, lift: the
+               first wing beat's push up in m/s, grip: how fast the hang takes hold (1/s), cost: stamina }
+     A row without `air` keeps the jump of 0.24 and before: a jump, then a double jump for one stamina.
    - Lore is checked against the Saelion repos: Myra Belle is the round purple thread-keeper, not a bell; the Skein Doll
      has copper braids and a mint cardigan; Dora is not called a lantern keeper. Do not undo those.
    (The file says LL and "livelock" in places because the game was called Livelock until 0.4.) */
@@ -92,10 +97,11 @@ LL.nearestLane = function (x, z) {
   return bi;
 };
 
-/* Heroes. kind: orb | line | nova | dash | blink | zone | turret */
+/* Heroes. kind: orb | line | nova | dash | blink | zone | turret | lift (0.25 rook) */
 LL.HEROES = [
   { id: 'dora', name: 'Dora', title: 'Carries the little light', col: 0xffc46b, css: '#ffc46b',
     blurb: 'Coffee first. Steady bolts, a thrown light, a thread home.',
+    air: { jumps: 1 }, // 0.25 air: the steady one, one good jump; her way through the air is the thread
     hp: 660, speed: 7.2, aiRange: 36, build: [10, 5, 11, 0, 12, 6, 13, 8, 14, 9, 1, 2, 3, 7, 4],
     gun: { name: 'Lantern bolts', dmg: 10, rate: 7.5, mag: 26, reload: 1.5, speed: 95, spread: 0.012, pellets: 1, range: 46, size: 0.16 },
     ab: [
@@ -105,6 +111,7 @@ LL.HEROES = [
     ] },
   { id: 'anna', name: 'Anna', title: 'Field geologist', col: 0x7fd0e0, css: '#7fd0e0',
     blurb: 'Slow, heavy, accurate. Brings a rock hammer and a fawn with opinions.',
+    air: { jumps: 2 }, // 0.25 air: the second jump is a rock-hop, a kick off thin air
     hp: 720, speed: 6.9, aiRange: 44, build: [0, 5, 2, 1, 6, 3, 8, 4, 7, 9, 10, 11, 12, 13, 14],
     gun: { name: 'Rock hammer', dmg: 37, rate: 2.1, mag: 8, reload: 1.7, speed: 150, spread: 0.003, pellets: 1, range: 60, size: 0.22 },
     ab: [
@@ -114,6 +121,7 @@ LL.HEROES = [
     ] },
   { id: 'myra', name: 'Myra Belle', title: 'Thread-keeper', col: 0xb48cf0, css: '#b48cf0',
     blurb: 'Round, purple, hard to move. Keeps the quest log and mends whoever stands near her.',
+    air: { jumps: 1, hover: { t: 1.2, sink: 1.2, lift: 1.6, grip: 5, cost: 1 } }, // 0.25 air: no second jump; hold jump in the air and her wings hold her up (from the top of a jump she hangs between 1.9 and 0.9 m)
     hp: 800, speed: 6.8, aiRange: 22, build: [5, 10, 6, 0, 8, 7, 12, 1, 9, 14, 11, 13, 2, 3, 4],
     gun: { name: 'Spool shot', dmg: 7.5, rate: 1.5, mag: 6, reload: 1.9, speed: 90, spread: 0.055, pellets: 7, range: 26, size: 0.14 },
     ab: [
@@ -123,12 +131,31 @@ LL.HEROES = [
     ] },
   { id: 'skein', name: 'Skein Doll', title: 'Every thread is hers', col: 0xe0955f, css: '#e0955f',
     blurb: 'Fast, fragile, everywhere. Needles by the dozen and a knot that shoots.',
+    air: { jumps: 2 }, // 0.25 air: the second jump is a loose spinning tuck
     hp: 580, speed: 7.6, aiRange: 30, build: [1, 0, 5, 3, 6, 2, 8, 4, 9, 7, 11, 10, 12, 13, 14],
     gun: { name: 'Needles', dmg: 5.6, rate: 14, mag: 42, reload: 1.4, speed: 100, spread: 0.028, pellets: 1, range: 36, size: 0.11 },
     ab: [
       { key: 'Q', name: 'Stitch', kind: 'orb', cd: 7, dmg: 45, dot: 32, dotT: 4, slow: 0.3, slowT: 3, speed: 62, range: 34, desc: 'Sew one enemy to the spot. They bleed thread and slow down.' },
       { key: 'E', name: 'Unravel', kind: 'blink', cd: 10, dist: 14, desc: 'Come apart here, come together over there.' },
       { key: 'F', name: 'Knot', kind: 'turret', ult: true, cd: 65, dmg: 21, life: 14, desc: 'Tie a knot that shoots at whoever is closest for a while.' }
+    ] },
+  /* 0.25 rook: Rook Vale, the Wick Aviator, the fifth hero. He was designed on the Lantern Ford study branch
+     (work/lantern-ford-wick-aviator, WICK-AVIATOR.md) as a bonus pilot for a separate chase; 0.25 brings him into normal
+     matches. Kept from the study: name, colour, blurb, the three ability names, the lift's shape (a short steerable rise,
+     then down; a thread catches him once). Not ported: the Ford chase, its pickups and shop, and the pack-integrity
+     meter (a second resource with nothing left to refill it; the cooldown and the altitude cap already stop continuous
+     flight). Appended last on purpose: saves store the hero as an index, so the first four keep theirs.
+     Lantern Lift ('lift', sim.js liftCast/liftStep): rise seconds of steerable climb toward cap metres, then a glide at
+     glide times gravity, sinking no faster than sink m/s; boost is the air speed multiplier he steers toward. Moving along a
+     thread within threadR metres of it adds thread seconds, once per lift. */
+  { id: 'rook', name: 'Rook Vale', title: 'The Wick Aviator', col: 0x91e5c6, css: '#91e5c6',
+    blurb: 'A loch courier with a glazed lantern-kite. Take the high line, then land clean.',
+    hp: 610, speed: 7.1, aiRange: 34, build: [0, 5, 3, 7, 1, 6, 10, 2, 8, 11, 4, 9, 12, 13, 14], air: { jumps: 1 },
+    gun: { name: 'Wick sparks', dmg: 15.5, rate: 5, mag: 18, reload: 1.35, speed: 100, spread: 0.011, pellets: 1, range: 44, size: 0.19 },
+    ab: [
+      { key: 'Q', name: 'Wick Skip', kind: 'line', cd: 6.5, dmg: 85, speed: 65, r: 0.72, range: 29, desc: 'Send a slow-burning stitch along your sightline.' },
+      { key: 'E', name: 'Lantern Lift', kind: 'lift', cd: 9, rise: 1.0, cap: 4.2, glide: 0.3, sink: 3.4, boost: 1.35, thread: 0.35, threadR: 2.2, desc: 'Rise and steer for a moment, then glide down. Aim and fire while aloft. A thread under you holds you up a little longer.' },
+      { key: 'F', name: 'Landing Bell', kind: 'zone', ult: true, cd: 60, r: 7.5, burst: 300, delay: 0.9, life: 0.5, fx: 'toll', desc: 'Ring the bell. It tolls where you are a moment later, so ring it on the way down.' }
     ] }
 ];
 

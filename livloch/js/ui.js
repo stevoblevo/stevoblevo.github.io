@@ -71,7 +71,6 @@ UI.init = function (handlers) {
   { const t = $('perfT'); document.querySelector('#pause .panel').appendChild(t.content.cloneNode(true));
     on('bPerf', function () { const r = LL.perfReport(); if (!r) return; const done = function (ok) { $('perfNote').textContent = ok ? 'Copied. Paste it into issue #25 on github.com/stevoblevo/livloch.' : 'Could not copy; read it off above.'; }; try { navigator.clipboard.writeText(r.text).then(function () { done(true); }, function () { done(false); }); } catch (err) { done(false); } }); }
   on('bEcho', H.echo); on('lEcho', H.echo); on('lFast', function () { $('lFast').textContent = H.fast() + '×'; });
-  on('bCopyCalls', function () { const t = UI.callsText(); const done = function (ok) { $('copyNote').textContent = ok ? 'Copied. Paste it into an issue or a Discussion on github.com/stevoblevo/livloch.' : t; }; try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (err) { done(false); } });
   $('cDream').addEventListener('click', function () { cfg.dream = !cfg.dream; H.save(); modeLine(); LL.audio.init(); LL.audio.ui(); });
   on('bAuto', H.auto); on('bInk', H.view); on('bCab', UI.showCab); on('bCabClose', function () { snuffRun = null; show('title'); });
   { let taps = 0; const all = $('oAll'); all.checked = !!cfg.all; $('lAll').hidden = !cfg.all; $('bCab').hidden = false;
@@ -154,7 +153,8 @@ UI.error = function (msg) { const e = $('err'); e.hidden = false; e.textContent 
 function show(name) {
   UI.screen = name;
   ['title', 'shop', 'pause', 'over', 'cab'].forEach(function (s) { $(s).hidden = s !== name; });
-  if (name && LL.input.device !== 'touch') { const b = $(name).querySelector('.btn.primary, .btn'); if (b) try { b.focus({ preventScroll: true }); } catch (e) {} }
+  if (name === 'over') $('over').scrollTop = 0;
+  if (name && LL.input.device !== 'touch') { const b = name === 'over' && !$('calls').hidden ? $('calls').querySelector('.d-filter') : $(name).querySelector('.btn.primary, .btn'); if (b) try { b.focus({ preventScroll: true }); } catch (e) {} }
   else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
 UI.show = function (name) { show(name); }; // 0.23 wardrobe: js/wardrobe.js opens its own screen (#ward) through this
@@ -189,32 +189,7 @@ function num(x, y, z, text, cls) {
 const hname = h => '<b class="t' + h.team + '">' + esc(h.name) + '</b>';
 /* DREAMWALK captions. Each hidden system has a name and one plain line. In a Dreamwalk the first time a system happens its
    card is shown and it joins the list the player judges at the end. */
-const SYS = {
-  wave: ['The livelock', 'Both sides send the same troopers every 24 seconds. They meet and cancel. Shooting them changes nothing for long.'],
-  soul: ['Souls and orbs', 'A dead trooper gives half a soul at once. The other half floats up. Shoot yours to keep it, theirs to deny it.'],
-  zip: ['Threads', 'Stand on your own thread and ride it to the front. It reaches further as you push.'],
-  thief: ['The small ones', 'The Hush has no heroes. It sends thieves for your souls and for the light in your houses.'],
-  snuff: ['A stolen light', 'A small one took a house\'s light. Catch it before the gate and the light comes back. Miss, and the house stays dark two minutes.'],
-  lastbreath: ['Last breath', 'Once per life, a killing blow leaves a hero standing with a sliver.'],
-  nessup: ['The Ness', 'Three minutes in, something surfaces in the loch.'],
-  nessdown: ['The Greatness', 'Whoever lands the last hit on the Ness gives their whole side 90 seconds of harder hits.'],
-  redwarn: ['A mood', 'Thirty seconds before the rain the valley says one line. One view answers it. Three tries.'],
-  moodmiss: ['Wrong view', 'That was not the view the mood wanted. The walk misses once on purpose so you can see it.'],
-  moodsolved: ['The answer', 'The right view. This rain comes thin: no extra hollows, fewer thieves.'],
-  red: ['Red rain', 'Every five minutes the Hush is thick for a minute.'],
-  rainwake: ['Rainwake', 'A view worn in the rain: souls are worth half again while it is red.'],
-  memory: ['Memory', 'A view for dark houses: the dark passes twice as fast and light holds twice as long. Souls are worth half while you wear it.'],
-  fruit: ['Fruit', 'Lemons quicken, rose hips mend, Verde Limón sharpens. They grow back.'],
-  bigfruit: ['Big fruit', 'The rare tier feeds the whole side, and each one exists only through one view.'],
-  fold: ['The fold', 'With a crease\'s guard dead, the valley folds and one thread\'s troopers walk onto the next for 45 seconds.'],
-  echo: ['Echo', 'Your last seconds, replayed beside you: the same shots from the same places.'],
-  mercy: ['Mercy', 'Two structures behind, the Hush eases off. Nobody tells you.'],
-  fishing: ['Fishing', 'Sometimes a whole side goes to the loch and leaves its threads empty.'],
-  fray: ['The fray', 'At fifteen minutes structures start taking more damage.'],
-  gutter: ['The gutter', 'At twenty minutes both patrons burn down. Someone has to win.'],
-  relit: ['A light recovered', 'Ever Fallen: each small one put down relights the nearest dark house for 80 seconds.'],
-  structdown: ['A house falls', 'Structures only take real damage while the attacker\'s troopers stand at them.']
-};
+const SYS = LL.debriefData.systems;
 let dreamSeen = [], dreamQ = [], dreamT = 0, wasMercy = false;
 function sysOf(e) {
   switch (e.k) {
@@ -233,19 +208,12 @@ function dreamShow(id) {
 function dreamNext() {
   const id = dreamQ.shift(), c = $('dreamCard'); if (!id) { c.hidden = true; return; }
   c.hidden = false; dreamT = dreamQ.length ? 4.5 : 8;
-  c.querySelector('small').textContent = 'HIDDEN THING ' + (dreamSeen.indexOf(id) + 1); c.querySelector('b').textContent = SYS[id][0]; c.querySelector('p').textContent = SYS[id][1];
+  c.querySelector('small').textContent = 'HIDDEN THING ' + (dreamSeen.indexOf(id) + 1); c.querySelector('b').textContent = SYS[id][0]; c.querySelector('p').textContent = LL.debriefData.get(id, W).summary;
 }
 function callsDraw() {
-  const L = $('callList'), cf = LL.cfg; if (!cf.calls) cf.calls = {}; L.innerHTML = '';
-  dreamSeen.forEach(function (id) {
-    const r = document.createElement('div'); r.className = 'cr'; r.innerHTML = '<span><b>' + SYS[id][0] + '</b><small>' + SYS[id][1] + '</small></span>';
-    const g = document.createElement('div'); g.className = 'row';
-    ['keep', 'change', 'cut'].forEach(function (v) { const b = document.createElement('button'); b.className = 'chip'; b.textContent = v[0].toUpperCase() + v.slice(1); b.setAttribute('aria-pressed', String(cf.calls[id] === v));
-      b.addEventListener('click', function () { cf.calls[id] = v; H.save(); callsDraw(); }); g.appendChild(b); });
-    r.appendChild(g); L.appendChild(r);
-  });
+  LL.debrief.mount($('calls'), { seen: dreamSeen, cfg: LL.cfg, world: W, save: H.save, version: (document.querySelector('#title footer').textContent.match(/[0-9.]+/) || [''])[0] });
 }
-UI.callsText = function () { const cf = LL.cfg; return 'Livloch ' + (document.querySelector('#title footer').textContent.match(/[0-9.]+/) || [''])[0] + ' Dreamwalk calls\n' + dreamSeen.map(function (id) { return (cf.calls[id] || 'no call').toUpperCase() + '  ' + SYS[id][0]; }).join('\n'); };
+UI.callsText = function () { return LL.debrief.text(dreamSeen, LL.cfg, (document.querySelector('#title footer').textContent.match(/[0-9.]+/) || [''])[0], W); };
 UI.fx = function (e) {
   if (!W || !W.player) return;
   const pl = W.player;
@@ -354,7 +322,7 @@ UI.showPause = function (onOff) {
 };
 UI.showOver = function () {
   const win = W.winner === 0, t = U.fmtTime(W.t);
-  document.body.classList.remove('lean'); $('calls').hidden = !(W.dream || dreamSeen.length) || !dreamSeen.length; if (dreamSeen.length) { callsDraw(); $('copyNote').textContent = ''; }
+  document.body.classList.remove('lean'); $('calls').hidden = !dreamSeen.length; document.querySelector('#over .panel').classList.toggle('with-debrief', !!dreamSeen.length); if (dreamSeen.length) callsDraw();
   $('stars').hidden = !W.short;
   if (W.short && W.stars) { const n = LL.STARS.filter(function (x) { return W.stars[x.id]; }).length, cf = LL.cfg;
     $('overH').innerHTML = n === 5 ? 'Five stars. <em>The rain found nothing.</em>' : (n >= 3 ? 'The rain has passed. <em>' + n + ' of 5.</em>' : 'The rain has passed. ' + n + ' of 5.');
@@ -371,7 +339,7 @@ UI.showOver = function () {
 };
 UI.nav = function (I) {
   if (!UI.screen) return;
-  const root = $(UI.screen), list = Array.prototype.filter.call(root.querySelectorAll('button, input'), el => !el.disabled && el.offsetParent !== null);
+  const root = $(UI.screen), list = Array.prototype.filter.call(root.querySelectorAll('button, input, summary, textarea'), el => !el.disabled && el.offsetParent !== null);
   if (!list.length) return;
   let i = list.indexOf(document.activeElement);
   if (I.take('navNext')) { i = (i + 1) % list.length; list[i].focus(); }
