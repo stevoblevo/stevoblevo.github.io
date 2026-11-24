@@ -41,7 +41,12 @@
    - The sim talks to the outside only through W.fx, a list of plain event objects drained every frame by gfx, audio
      and ui. Nothing outside may write to W except the player's hero controls (hero.ctl).
    - Bots and the human drive heroes through the same hero.ctl, so "Watch it run" is the same code path as play.
-   - Not deterministic: Math.random is used for small timing jitter. Do not build replay on it without fixing that. */
+   - SEEDED (0.27, #27): every random draw the model makes goes through W.rng (LL.rng, mulberry32, keyed by o.seed; the
+     valley's rocks and trees by their own fixed LL.rng(9917)). One seed and one set of inputs give one match, event for
+     event, so replays and exact regression checks can be built on it. The rule for new code here and in core.js: draw
+     from W.rng(), never Math.random, and keep time as W.t, never a clock. tools/test.js fails if either appears. Order
+     matters too: a new draw shifts every draw after it, so bot results move when the code changes, and that is expected.
+     The view (gfx, props, scenery, shots, heroes3d, ness, wardrobe, ui, audio) keeps Math.random for sparks and dust. */
 (function (G) {
 'use strict';
 const LL = G.LL, C = LL.C, U = LL.U, lanes = LL.lanes;
@@ -122,7 +127,7 @@ function losClear(ax, az, bx, bz) {
 function mk(kind, team, x, z, r, h, hp) {
   const u = { id: W.nextId++, kind: kind, team: team, x: x, y: 0, z: z, vx: 0, vy: 0, vz: 0, yaw: team === 1 ? Math.PI : 0,
     r: r, h: h, hp: hp, maxHp: hp, alive: true, struct: false, flash: 0, slowT: 0, slowAmt: 0,
-    dotT: 0, dotDps: 0, dotSrc: null, dotAcc: 0, atkT: 0, tgt: null, tgtT: Math.random() * 0.3, lastHurt: -99, owner: null };
+    dotT: 0, dotDps: 0, dotSrc: null, dotAcc: 0, atkT: 0, tgt: null, tgtT: W.rng() * 0.3, lastHurt: -99, owner: null };
   W.units.push(u); return u;
 }
 function spawnPos(team, slot) { return { x: (slot - 1) * 4.5, z: (team === 0 ? -1 : 1) * C.SPAWN_Z }; }
@@ -171,7 +176,7 @@ function buildStructs() {
         const s = team === 0 ? L.len * f : L.len * (1 - f);
         LL.lanePoint(lane, s, P);
         const u = mk(kind, team, P.x, P.z, r, h, hp);
-        u.struct = true; u.lane = lane; u.s = s; u.pressed = false; u.scanT = Math.random() * 0.25; u.ramp = 0; u.lastTgt = null; u.immuneFx = 0;
+        u.struct = true; u.lane = lane; u.s = s; u.pressed = false; u.scanT = W.rng() * 0.25; u.ramp = 0; u.lastTgt = null; u.immuneFx = 0;
         W.structs.push(u); return u;
       };
       const outer = mkS('guardian', 0.37, 2.4, 9, 2600); outer.range = 20; outer.rate = 0.9; outer.dmgT = 70; outer.dmgH = 46;
@@ -184,7 +189,7 @@ function buildStructs() {
     W.structs.push(p); W.patron[team] = p;
   }
   // the Hush has no heroes to defend with, so what it builds is heavier
-  const k = [1.2, 1.5, 1.8][W.diff], kd = [1, 1.25, 1.5][W.diff];
+  const k = C.dif(W).build, kd = C.dif(W).towerH; // 0.27 tune: the difficulty table in core.js
   W.structs.forEach(function (s) { if (s.team === 1) { s.hp = s.maxHp = s.maxHp * k; s.dmgH *= kd; } });
 }
 function buildStrays() {
@@ -543,8 +548,8 @@ function mkHero(defIdx, team, slot, isPlayer) {
     lastShotT: -9, lastDmgHeroT: -9, incomeAcc: 0, breath: false, zestT: 0, furyT: 0, hipsT: 0, fruit: 0,
     botMul: isPlayer ? 1 : 0.78,
     ctl: { mx: 0, mz: 0, ax: sp.x, ay: 1.5, az: sp.z + (team === 0 ? 20 : -20), fire: false, jump: false, dash: false, ab: [false, false, false], reload: false, zip: false, zipDir: 0 },
-    ai: { thinkT: Math.random() * 0.2, lane: slot, mode: 'lane', gx: sp.x, gz: sp.z, target: null, wantFire: false, orb: null, orbT: 0,
-      ax: sp.x, ay: 1.5, az: sp.z, strafeT: Math.random() * 9, phase: Math.random() * 6, lat: (Math.random() * 2 - 1) * 3,
+    ai: { thinkT: W.rng() * 0.2, lane: slot, mode: 'lane', gx: sp.x, gz: sp.z, target: null, wantFire: false, orb: null, orbT: 0,
+      ax: sp.x, ay: 1.5, az: sp.z, strafeT: W.rng() * 9, phase: W.rng() * 6, lat: (W.rng() * 2 - 1) * 3,
       jit: team === 1 ? [1.5, 0.9, 0.4][diff] : 0.9, track: team === 1 ? [5, 8, 12][diff] : 8, buildI: 0, standS: 10 }
   });
   h.liftT = 0; h.liftMax = 0; h.glide = false; h.liftCaught = false; h.liftA = null; // 0.25 rook: Lantern Lift state (liftCast, liftStep)
@@ -722,7 +727,7 @@ function kill(t, src, hero) {
   const min = W.t / 60;
   fx({ k: 'death', u: t, x: t.x, y: t.y, z: t.z, team: t.team, kind: t.kind, by: hero }); // by: who to credit on screen (0.23); no rule reads it
   if (t.kind === 'trooper') {
-    if (t.big && !t.extra) W.hollowT[t.lane0] = [30, 24, 18][W.diff];
+    if (t.big && !t.extra) W.hollowT[t.lane0] = C.dif(W).hollowBack;
     if (kt === 0 || kt === 1) {
       const val = (t.big ? 170 : 36) + Math.floor(min) * 2.5;
       const near = heroesNear(kt, t.x, t.z, 28);
@@ -1580,7 +1585,7 @@ function spawnWave() {
   const min = W.t / 60;
   for (let team = 0; team < 2; team++) for (let lane = 0; lane < 3; lane++) {
     const L = lanes[lane];
-    const cnt = team === 0 ? 4 : [4, 4, 5][W.diff] + (W.red > 0 && !W.thin ? 2 : 0) - (W.mercy ? 1 : 0);
+    const D = C.dif(W), cnt = team === 0 ? 4 : D.wave + (W.red > 0 ? (W.thin ? (W.short ? 0 : D.thinWave) : D.rainWave) : 0) - (W.mercy ? 1 : 0);
     for (let k = 0; k < cnt; k++) {
       const s = team === 0 ? 2 + k * 2.4 : L.len - 2 - k * 2.4;
       LL.lanePoint(lane, s, P);
@@ -1588,7 +1593,7 @@ function spawnWave() {
       const lat = ranged ? 0 : ((k % 3) - 1) * 2.2 + (k > 3 ? 0.9 : 0);
       const u = mk('trooper', team, P.x - P.dz * lat, P.z + P.dx * lat, 0.7, 1.7, (ranged ? 210 : 300) + 14 * min);
       u.lane = lane; u.s = s; u.lat = lat; u.ranged = ranged; u.range = ranged ? 15 : 8.5; u.dmg = (ranged ? 17 : 9.5) + 0.5 * min; u.rate = ranged ? 1.0 : 0.7; u.speed = 5.2;
-      u.atkT = Math.random() * 0.5;
+      u.atkT = W.rng() * 0.5;
       W.troopers.push(u);
     }
   }
@@ -1598,9 +1603,9 @@ function spawnWave() {
 function spawnHollow(lane, extra) {
   const L = lanes[lane], min = W.t / 60, s = L.len - 3;
   LL.lanePoint(lane, s, P);
-  const u = mk('trooper', 1, P.x, P.z, 1.15, 3.2, [1500, 2100, 2700][W.diff] + 110 * min);
+  const u = mk('trooper', 1, P.x, P.z, 1.15, 3.2, C.dif(W).hollowHp + 110 * min);
   u.big = true; u.extra = !!extra; u.lane = lane; u.lane0 = lane; u.s = s; u.lat = 0; u.ranged = false; u.range = 3.2;
-  u.dmg = [55, 72, 90][W.diff] + 2.5 * min; u.rate = 1.1; u.speed = 4.4; u.atkT = 0.6;
+  u.dmg = C.dif(W).hollowDmg + 2.5 * min; u.rate = 1.1; u.speed = 4.4; u.atkT = 0.6;
   W.troopers.push(u); fx({ k: 'hollow', lane: lane, extra: !!u.extra });
 }
 function pickMark() {
@@ -1656,7 +1661,7 @@ function hushStep(dt) {
   }
   else if (W.t >= W.redNext) {
     W.redNext += W.redEvery; W.red = C.RED_T; W.fallN++; if (W.mood && !W.mood.done) { W.mood.done = true; fx({ k: 'moodlost' }); }
-    fx({ k: 'red', thin: W.thin, n: W.fallN }); if (!W.thin) { for (let l = 0; l < 3; l++) spawnHollow(l, true); if (W.fallen) for (let k = 1; k < W.fallN; k++) spawnHollow(Math.floor(W.rng() * 3), true); }
+    fx({ k: 'red', thin: W.thin, n: W.fallN }); { const D = C.dif(W), nh = W.fallen ? (W.thin ? 0 : 3) : (W.thin ? (W.short ? 0 : D.thinHollows) : D.rainHollows); for (let l = 0; l < Math.min(3, nh); l++) spawnHollow(nh >= 3 ? l : [1, 0, 2][l], true); if (W.fallen && !W.thin) for (let k = 1; k < W.fallN; k++) spawnHollow(Math.floor(W.rng() * 3), true); } // 0.27 tune: how many hollows a rain brings is in C.DIFF; in First Rain the rain is the ending, so answering the mood still keeps them all away
   }
   // mercy: when the Reign is two structures behind, the Hush eases off
   let rd = 0, hd = 0; for (let i = 0; i < W.structs.length; i++) { const s = W.structs[i]; if (!s.alive) { if (s.team === 0) rd++; else hd++; } }
@@ -1664,7 +1669,7 @@ function hushStep(dt) {
   if (W.calm > 0) W.calm -= dt;
   for (let l = 0; l < 3; l++) { if (W.hollowT[l] > 0 && W.calm <= 0) { W.hollowT[l] -= dt; if (W.hollowT[l] <= 0) { W.hollowT[l] = 0; spawnHollow(l, false); } } }
   if (W.calm <= 0) W.thiefT -= dt * (W.red > 0 ? (W.tune.stagger || W.thin ? 2 : 3.5) : 1);
-  if (W.thiefT <= 0) { W.thiefT = [85, 62, 44][W.diff] * (W.mercy ? 1.6 : 1) * (W.fallen ? 0.55 : 1); if (W.thieves.filter(u => u.alive).length < (W.tune.stagger ? 2 : 3)) spawnThief(); }
+  if (W.thiefT <= 0) { W.thiefT = C.dif(W).thiefEvery * (W.mercy ? 1.6 : 1) * (W.fallen ? 0.55 : 1); if (W.thieves.filter(u => u.alive).length < (W.tune.stagger ? 2 : 3)) spawnThief(); }
   for (let i = 0; i < W.thieves.length; i++) { const u = W.thieves[i]; if (u.alive) { if (u.flash > 0) u.flash -= dt; thiefStep(u, dt); } }
 }
 function pickTarget(u, R, heroesOk) {
@@ -1683,7 +1688,7 @@ function trooperStep(u, dt) {
   LL.lanePoint(u.lane, u.s, P);
   const px = P.x - P.dz * u.lat, pz = P.z + P.dx * u.lat;
   const offLane = hyp(u.x - px, u.z - pz);
-  if (u.tgtT <= 0) { u.tgtT = 0.3 + Math.random() * 0.1; u.tgt = pickTarget(u, 13, offLane < 9); }
+  if (u.tgtT <= 0) { u.tgtT = 0.3 + W.rng() * 0.1; u.tgt = pickTarget(u, 13, offLane < 9); }
   let tg = u.tgt; if (tg && !tg.alive) tg = u.tgt = null;
   const sp = u.speed * (u.slowT > 0 ? 1 - u.slowAmt : 1) * (W.flood ? floodTrooper(u, dt) : 1); // 0.26 ness: troopers float and drift in the flood
   let gx = px, gz = pz, move = true;
@@ -1800,7 +1805,7 @@ function stepOrbs(dt) {
     if (o.t > 3.2) {
       let g = null, bd = 30;
       for (let j = 0; j < W.heroes.length; j++) { const h = W.heroes[j]; if (h.alive && h.team === o.team) { const d = hyp(h.x - o.x, h.z - o.z); if (d < bd) { bd = d; g = h; } } }
-      if (g) { give(g, o.val * 0.7); fx({ k: 'soul', kind: 'drift', val: o.val * 0.7, x: o.x, y: o.y, z: o.z, p: g.isPlayer, team: o.team }); }
+      if (g) { const k = C.dif(W).orbDrift; give(g, o.val * k); fx({ k: 'soul', kind: 'drift', val: o.val * k, x: o.x, y: o.y, z: o.z, p: g.isPlayer, team: o.team }); }
       os.splice(i, 1);
     }
   }

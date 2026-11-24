@@ -1,7 +1,13 @@
 {
-  "current": "0.26",
+  "current": "0.27",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.27",
+      "path": "v0.27/",
+      "source": "release/0.27",
+      "note": "Tuned against Phase 1's target; one seed plays one match; First Rain kept gentle"
+    },
     {
       "v": "0.26",
       "path": "v0.26/",
