@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="704" height="288" viewBox="0 0 704 288">
+  <title>Rook Vale, the Wick Aviator — original Livloch turnaround</title>
+  <defs>
+    <linearGradient id="wool" x2=".74" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#526c9c"/><stop offset=".45" stop-color="#274368"/><stop offset="1" stop-color="#152439"/></linearGradient>
+    <linearGradient id="gear" x2=".65" y2="1"><stop stop-color="#f8dd9e"/><stop offset=".43" stop-color="#b87949"/><stop offset="1" stop-color="#533b37"/></linearGradient>
+    <linearGradient id="mint" x2="1" y2=".7"><stop stop-color="#ffe1a1"/><stop offset=".45" stop-color="#95eed4"/><stop offset="1" stop-color="#297d77"/></linearGradient>
+    <pattern id="cloth" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 2h6M1 0v6" stroke="#b6cae9" stroke-opacity=".16" stroke-width=".5"/></pattern>
+    <g id="legs" stroke="#161926" stroke-width="2.6" stroke-linejoin="round">
+      <path d="M58 179l27 2-3 54-8 28-21-2 1-32zm35 2 27-2 4 50 1 32-21 2-10-28z" fill="url(#wool)"/>
+      <path d="M54 246l24 2 2 14q-7 10-29 5l-8-5 5-8zm49 2 24-2 6 8 1 8q-15 12-33 1z" fill="#39313b"/>
+      <path d="m58 251 16 3m33 1 17-4M63 228l11 2m29 0 12-2" stroke="#a79581" stroke-width="1.7"/>
+    </g>
+    <path id="coat" d="M64 94l48-1 21 32 6 56-19 21-21-4-11-15-11 15-23 4-15-20 6-57z"/>
+    <g id="body" stroke="#172336" stroke-width="2.7" stroke-linejoin="round">
+      <use href="#legs"/><use href="#coat" fill="url(#wool)"/><use href="#coat" fill="url(#cloth)" stroke="none"/>
+      <path d="M58 105l-15 12-11 34 4 29 17-3-4-26 10-22m60-24 15 12 11 34-4 29-17-3 4-26-10-22" fill="url(#wool)"/>
+      <path d="M36 171l14-3 5 11-6 12-12-4-3-11zm88-3 15 4 1 8-5 8-13 2-3-12z" fill="#6d5148"/>
+      <path d="M55 174q32 9 65 0l-1 9q-32 7-63 0z" fill="#b18b68"/>
+      <path d="M55 131l-8 25m74-25 8 25m-68 29 8 7m43-8-8 7" fill="none" stroke="#bbc6cf" stroke-opacity=".7" stroke-width="1.3" stroke-dasharray="2 2"/>
+    </g>
+    <path id="hood" d="M59 84l1-37q4-22 27-23 23 1 28 23l3 37-9 15-44 1z"/>
+    <g id="helmet" stroke="#172333" stroke-width="2.6" stroke-linejoin="round">
+      <use href="#hood" fill="#d2d7c2"/><path d="M64 45q8-14 23-15 19 2 24 18l3 28-13 12-27-3-12-16z" fill="url(#wool)"/>
+      <path d="M61 87q25 11 55-2l4 15q-35 13-65 0z" fill="#469989"/>
+      <path d="M110 96q31 1 47-13l-4 15 5 4q-22 16-45 8z" fill="url(#mint)"/>
+      <path d="M69 39l5 12m5-16 4 11m16-8-4 10" stroke="#f7e4ac" stroke-width="1.8"/>
+    </g>
+    <g id="pack" stroke="#1b2938" stroke-width="2.6" stroke-linejoin="round">
+      <path d="M64 113l-14-23-5 58 13 17 5-16zm47 0 14-23 7 58-13 17-5-16z" fill="#d4b780"/>
+      <path d="M67 108q19-8 42 0l10 16-5 33-26 15-27-15-5-31z" fill="url(#gear)"/>
+      <path d="M72 111l30 0 10 15-2 22-22 13-21-13-4-22z" fill="#26344d"/>
+      <path d="M88 113l12 10-1 21-11 9-11-8-1-22z" fill="url(#mint)"/>
+      <path d="M63 152l15 7-5 13-13-4zm50 0-15 7 6 13 13-4z" fill="#c3d6bb"/>
+      <path d="M87 119v28m-18-27 4 8m32-8-4 8" fill="none" stroke="#e6ffe1" stroke-width="1.4"/>
+      <path d="m57 118-8 22m71-22 9 22" fill="none" stroke="#ead39d" stroke-width="1.4" stroke-dasharray="2 3"/>
+    </g>
+  </defs>
+  <g>
+    <use href="#body"/><use href="#helmet"/>
+    <path d="M68 58l17-3 19 4 4 12-18 6-20-5z" fill="#99e2cd" stroke="#253b50" stroke-width="3"/><path d="m74 61 26 4m-20-7 9 15" fill="none" stroke="#f8fff0" stroke-opacity=".65"/>
+    <path d="m64 114 9 38m37-38-10 38m-30-10 35 0" fill="none" stroke="#cda77b" stroke-width="4"/>
+  </g>
+  <g transform="translate(176)">
+    <use href="#legs" transform="translate(25) scale(.7 1)"/>
+    <path d="M68 100l32-8 14 38 2 51-12 17-44-4-11-23 8-45z" fill="url(#wool)" stroke="#172336" stroke-width="2.6"/>
+    <path d="M99 102l28 11 9 32-17 22-13 1-4-18 8-23-9-11z" fill="url(#gear)" stroke="#172336" stroke-width="2.6"/>
+    <path d="M119 112l7-19 3 31-9 29-6-14z" fill="#e3c18c" stroke="#172336" stroke-width="2"/>
+    <use href="#helmet" transform="translate(13) scale(.86 1)"/>
+    <path d="M65 55l19 5 5 11-23 2-5-7z" fill="#c4f3d8" stroke="#23394d" stroke-width="2.7"/>
+    <path d="M75 113l-8 27 5 37 12 4 6-12-6-30 8-20z" fill="url(#wool)" stroke="#172336" stroke-width="2.6"/>
+    <path d="M70 169l15-3 5 13-5 8-10 0z" fill="#6d5148" stroke="#172336" stroke-width="2"/>
+  </g>
+  <g transform="translate(352)">
+    <use href="#body"/><use href="#helmet"/><use href="#pack"/>
+    <path d="M69 49l8 25 11 4 10-4 7-25M88 30v48" fill="none" stroke="#e3d5a4" stroke-width="1.7"/>
+  </g>
+  <g transform="translate(528)">
+    <use href="#body"/><use href="#helmet"/>
+    <use href="#pack" transform="translate(31) scale(.75 1)" opacity=".87"/>
+    <path d="M66 56l17-3 14 7 5 10-15 7-19-4z" fill="#a4e8cf" stroke="#253b50" stroke-width="3"/>
+  </g>
+</svg>

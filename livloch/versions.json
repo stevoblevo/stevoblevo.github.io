@@ -1,7 +1,13 @@
 {
-  "current": "0.24",
+  "current": "0.25",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.25",
+      "path": "v0.25/",
+      "source": "release/0.25",
+      "note": "Rook Vale, the Wick Aviator, as the fifth hero; each hero's own air move (Myra's hanging flight); warm Reign capes, hollow backs and a worn, flowered path along the threads"
+    },
     {
       "v": "0.24",
       "path": "v0.24/",

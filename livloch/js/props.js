@@ -4,11 +4,15 @@
    - Read-only, like gfx.js: shapes and materials only. gfx.js calls in here from a few marked hook lines; nothing in here
      reads the sim except the unit passed to it.
    - Lore drives the shapes. Reign = warm lantern light: a trooper is a small cloaked lantern bearer in a straw hat like the
-     heroine's. The Hush = torn tissue paper, the coldest thing on screen, pale lilac eyes, and they steal light: a small one
-     is a tissue wraith with a ragged hem, a hollow is a big hunched one, a thief carries the light it took, and a Hush tower
-     is a crooked spire of layered torn tissue clutching a cold hoard of light at its top.
+     heroine's, and (0.25) a cape in the team's colour down the back like hers, because the player spends most of a match
+     behind their own troopers. The Hush = torn tissue paper, the coldest thing on screen, pale lilac eyes, and they steal
+     light: a small one is a tissue wraith with a ragged hem, a hollow is a big hunched one (0.25: with a rift of the cold
+     light it hoards torn down its back, a crest of shards, and tears on its flanks, so it reads from behind and the side),
+     a thief carries the light it took, and a Hush tower is a crooked spire of layered torn tissue clutching a cold hoard of
+     light at its top.
    - Cheap: each tower is two meshes (tissue, light) plus its glow sprite and ward; troopers stay instanced; every lantern,
-     stolen light and hollow's eyes share one Points draw. Sway is done on the GPU from one time uniform.
+     stolen light and hollow's eyes and rift share one Points draw; a hollow's rift and tears are in its eyes mesh. Sway is
+     done on the GPU from one time uniform.
    - One shader trick, used everywhere here: geometry carries `glw` (how much this vertex glows: torn edges, scarves) and
      `sway` (how much it moves in the wind: strips, hems). Emissive = material emissive x glw (x vertex colour for Reign).
    - Looks: Reign troopers are authored in Lantern colours and pass through each look's map like the rest of the valley
@@ -239,19 +243,47 @@ const REIGN = { cloak: 0x2f2b35, team: 0xff6a4d, straw: 0xe8b850, strawD: 0xb882
 /* The lantern hangs from the crook of a staff, just past the hat's brim on the right, so it shows from behind as well as in
    front and a column of troopers reads as a procession of lights. Shared by the geometry and the glow. */
 const LANT = { x: 0.58, y: 1.56, z: 0.16 };
+/* 0.25 world (#31): the back of a Reign trooper, which is what the player looks at most of a match. A cape in the exact team
+   colour (REIGN.team, so every look swaps it) hangs from under the capelet to below the knee across the back, like the
+   heroine's red cape in the key art, with a gold band on its torn hem and a gold lantern mark high on it. From 20 to 40 m
+   behind, a column then reads as warm and as ours rather than as dark shapes with hats. It stands just outside the cloak's
+   bell (cloakR follows the skirt in reignGeo), sways more toward the hem, and is self-lit through glw, because a trooper
+   walking toward the Hush turns its back away from the moon. About 70 triangles; still one instanced draw. */
+function reignCape(S, r, team, trim) {
+  const cloakR = function (y) { return y > 0.6 ? 0.19 + 0.17 * (1.16 - y) / 0.56 : 0.36 + 0.08 * (0.6 - y) / 0.4; };
+  const nc = 7, th = 1.2, ys = [1.2, 0.98, 0.76, 0.56], rows = [];
+  // pl: pleats, every other fold a little in, deeper toward the hem, so the cloth has light and shade across it
+  const at = function (a, y, f, g, sw, pl) { const rr = (cloakR(y) * 1.12 + 0.035 + 0.06 * f) * (1 + (pl || 0) * f); return [Math.sin(a) * rr, y, -Math.cos(a) * rr, g, sw]; };
+  for (let i = 0; i < ys.length; i++) { const f = i / (ys.length - 1), row = [];
+    for (let j = 0; j < nc; j++) row.push(at(-th + 2 * th * j / (nc - 1), ys[i], f, 0.26 + 0.14 * f, 0.06 + 0.5 * f * f, j % 2 ? -0.07 : 0.03));
+    rows.push(row); }
+  // the hem: a gold band, then a torn edge whose tongues hang lower than its notches
+  const band = [], hem = [];
+  for (let j = 0; j < nc; j++) { const a = -th + 2 * th * j / (nc - 1), drop = j % 2 === 0 ? 0.06 + r() * 0.07 : -0.01;
+    band.push(at(a, 0.47, 1.12, 0.55, 0.62, j % 2 ? -0.07 : 0.03)); hem.push(at(a, 0.4 - drop, 1.25, 0.65, 0.75, j % 2 ? -0.07 : 0.03)); }
+  const quad = function (A, B, Cc, D, ct, cb) { S.tri(A, B, Cc, ct, ct, cb); S.tri(B, D, Cc, ct, cb, cb); }; // A B on top, Cc D below; faces out (-z)
+  for (let i = 0; i < rows.length - 1; i++) for (let j = 0; j < nc - 1; j++) quad(rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j + 1], team, team);
+  for (let j = 0; j < nc - 1; j++) { quad(rows[3][j], rows[3][j + 1], band[j], band[j + 1], team, team); quad(band[j], band[j + 1], hem[j], hem[j + 1], trim, trim); }
+  // the lantern mark: a raised gold diamond on the upper back, lying on the cape (which leans out toward the hem)
+  const y = 0.9, rr = cloakR(y) * 1.12 + 0.035 + 0.06 * ((1.2 - y) / 0.64) + 0.012, sl = 0.085 / 0.22, ul = Math.hypot(1, sl), ux = 0, uy = 1 / ul, uz = sl / ul;
+  const c = [0, y, -rr], w = 0.075, h = 0.12, F = [c[0], c[1] + 0.36 * 0.012, c[2] - 0.93 * 0.012, 0.9, 0.1];
+  const L = [c[0] - w, c[1], c[2], 0.9, 0.1], Rt = [c[0] + w, c[1], c[2], 0.9, 0.1], Tp = [c[0] + ux * h, c[1] + uy * h, c[2] + uz * h, 0.9, 0.1], B = [c[0] - ux * h, c[1] - uy * h, c[2] - uz * h, 0.9, 0.1];
+  S.tri(L, Tp, F, trim); S.tri(Tp, Rt, F, trim); S.tri(Rt, B, F, trim); S.tri(B, L, F, trim);
+}
 function reignGeo() {
   const S = new Soup(), r = rng(11), C = function (h) { return new T.Color(h); };
   const cloak = C(REIGN.cloak), team = C(REIGN.team), straw = C(REIGN.straw), strawD = C(REIGN.strawD), ink = C(REIGN.ink), frame = C(REIGN.frame), trim = C(REIGN.trim);
   // boots
   S.geo(new T.BoxGeometry(0.13, 0.24, 0.2), mtx(-0.11, 0.12, 0.02), ink, 0, 0); S.geo(new T.BoxGeometry(0.13, 0.24, 0.2), mtx(0.11, 0.12, 0.02), ink, 0, 0);
-  // the cloak: a dark bell with a scalloped paper hem, a gold trim just above it
-  S.skirt(r, { seg: 9, rot: 0.2, cx: 0, cz: 0, yTop: 1.16, rTop: 0.19, yMid: 0.6, rMid: 0.36, yBot: 0.2, rBot: 0.44, tear: 0.07, notch: 0.04, colTop: cloak, colHem: cloak.clone().lerp(trim, 0.35), glwTop: 0.05, glwMid: 0.05, glwHem: 0.25, swayHem: 0.35 });
+  // the cloak: a dark bell with a scalloped paper hem in gold (0.25: brighter, so it shows below the cape from behind)
+  S.skirt(r, { seg: 9, rot: 0.2, cx: 0, cz: 0, yTop: 1.16, rTop: 0.19, yMid: 0.6, rMid: 0.36, yBot: 0.2, rBot: 0.44, tear: 0.07, notch: 0.04, colTop: cloak, colHem: trim.clone().lerp(cloak, 0.3), glwTop: 0.05, glwMid: 0.05, glwHem: 0.4, swayHem: 0.35 });
   S.geo(new T.CylinderGeometry(0.205, 0.19, 0.5, 9, 1, false), mtx(0, 0.92, 0), cloak, 0.05, 0); // fills the cloak's top
   // the mantle and scarf: the team's colour, so a crowd reads warm from far off
   S.skirt(r, { seg: 7, rot: 0.25, cx: 0, cz: 0, yTop: 1.37, rTop: 0.12, yMid: 1.25, rMid: 0.25, yBot: 1.1, rBot: 0.33, tear: 0.12, notch: 0.03, colTop: team, colMid: team, colHem: team, glwTop: 0.7, glwMid: 0.6, glwHem: 0.5, swayHem: 0.4 }); // a torn capelet
+  reignCape(S, r, team, trim);
   // scarf tails streaming behind, in the exact team colour so every look swaps it; they show from behind, where the player stands
-  S.strip(r, [-0.1, 1.3, -0.15], [-0.25, -0.62, -0.74], [0.94, 0, -0.3], [0, 0.35, -1], 0.82, 0.2, 4, team, team, 1.2, 0.5, 0.25);
-  S.strip(r, [0.07, 1.28, -0.16], [0.08, -0.8, -0.6], [1, 0, 0.1], [0, 0.3, -1], 0.62, 0.15, 3, team, team, 1, 0.4, 0.15);
+  S.strip(r, [-0.1, 1.3, -0.15], [-0.25, -0.62, -0.74], [0.94, 0, -0.3], [0, 0.35, -1], 0.82, 0.24, 4, team, team, 1.2, 0.5, 0.25);
+  S.strip(r, [0.07, 1.28, -0.16], [0.08, -0.8, -0.6], [1, 0, 0.1], [0, 0.3, -1], 0.62, 0.19, 3, team, team, 1, 0.4, 0.15);
   // head, then the wide straw hat with a dark band
   S.geo(new T.IcosahedronGeometry(0.14, 0), mtx(0, 1.43, 0.02), ink, 0, 0);
   S.geo(new T.ConeGeometry(0.52, 0.3, 12, 1, false), mtx(0, 1.66, 0, 0, 0.13, 0), function (x, y) { return y > -0.1 ? straw : strawD; }, 0.12, 0);
@@ -299,11 +331,46 @@ function hushGeo(LK, hollow) {
     S.strip(r, [sd * 0.46, 0.98, 0.12], [sd * 0.18, -0.9, 0.4], [0, 0, 1], [sd, 0, 0], 0.6, 0.24, 3, body, body, 0.4, 0.3, 0.05);
     for (let j = -1; j <= 1; j++) S.strip(r, [sd * (0.56 + j * 0.02), 0.44, 0.38 + j * 0.06], [sd * 0.1 + j * 0.15, -0.95, 0.3], [0, 0, 1], [sd, 0, 0], 0.4, 0.09, 3, body, edge, 0.9, 1.0, 0.1);
   });
-  for (let j = -2; j <= 2; j++) S.strip(r, [j * 0.13, 1.08 - Math.abs(j) * 0.06, -0.3], [j * 0.1, -0.92, -0.38], [1, 0, 0], [0, 0, -1], 0.8 + r() * 0.25, 0.26, 4, body, edge, 1.0, 0.8, 0.05);
+  // 0.25 world (#32): the back. The tatters part at the spine (the middle one is gone) so the rift of cold light in
+  // hollowLightGeo shows down it, and their torn edges glow brighter; a crest of shards flanks the rift, leaning back and up,
+  // so the silhouette breaks from behind and from the side. Before, a hollow from behind was a dark lump.
+  const tip = hc.edge.clone().lerp(new T.Color(LK.wire ? LK.team[1] : 0xb4a4ff), 0.35);
+  [-0.38, -0.2, 0.2, 0.38].forEach(function (x) { const j = x / 0.19; S.strip(r, [x, 1.06 - Math.abs(j) * 0.04, -0.31], [j * 0.08, -0.92, -0.38], [1, 0, 0], [0, 0, -1], 0.82 + r() * 0.25, 0.25, 4, body, tip, 1.0, 1.0, 0.05); });
+  HOLLOW_BACK.forEach(function (b, k) { if (k > 2) return; [-1, 1].forEach(function (sd) {
+    const x = sd * (0.1 + k * 0.015), y = b[0], z = b[1] + 0.03, L = 0.42 - k * 0.08;
+    S.rod([x, y, z], [x + sd * (0.07 + r() * 0.04), y + L * 0.78, z - L * 0.62], 0.075 - k * 0.01, 0.006, 4, body, 0.08, 1.0, 0, 0.12); }); });
+  return S.build();
+}
+/* Where a hollow's back is, as [height, z] down the spine (unit size, before the frame loop's 2.1 x 2.3): the hump, then the
+   upper skirt's hem. The rift lies just outside it and the crest roots just inside it. */
+const HOLLOW_BACK = [[1.2, -0.3], [1.06, -0.37], [0.92, -0.415], [0.78, -0.46], [0.64, -0.51]];
+function backZ(y) { const B = HOLLOW_BACK; if (y >= B[0][0]) return B[0][1]; for (let i = 1; i < B.length; i++) if (y >= B[i][0]) { const t = (y - B[i][0]) / (B[i - 1][0] - B[i][0]); return B[i][1] + (B[i - 1][1] - B[i][1]) * t; } return B[B.length - 1][1]; }
+/* A hollow's lights, unlit and unfogged like the eyes, in the same mesh as its eyes (so no new draw call): the eyes, and a
+   torn rift of cold light down its spine where the hoard it carries shows through. Pale at the core, lilac at the torn edge,
+   zigzagging and widest in the middle. Seen from behind at 10 to 30 m it is the first thing that says "hollow". */
+function hollowLightGeo() {
+  const S = eyesSoup(1.02, 0.47, 0.075, 0.14, 0.05, 0.5), r = rng(37), core = new T.Color(0xf4ecff), rim = new T.Color(0xa08cff), fringe = new T.Color(0x3a2c8a), N = 9, rows = [];
+  // the rift: rows of five across it (fringe, rim, core, rim, fringe), so the light fades into the tissue at its torn edges
+  for (let k = 0; k <= N; k++) {
+    const f = k / N, y = 1.19 - f * 0.55, z = backZ(y) - 0.03, cx = (k % 2 ? 0.02 : -0.02) + (r() - 0.5) * 0.012, w = 0.016 + 0.05 * Math.pow(Math.sin(Math.PI * f), 0.7) * (0.75 + r() * 0.5);
+    rows.push([[cx - w * 2.3, y, z + 0.012], [cx - w, y, z + 0.004], [cx, y, z - 0.006], [cx + w, y, z + 0.004], [cx + w * 2.3, y, z + 0.012]]);
+  }
+  const cs = [fringe, rim, core, rim, fringe];
+  for (let k = 0; k < N; k++) { const A = rows[k], B = rows[k + 1];
+    for (let j = 0; j < 4; j++) { S.tri(A[j], A[j + 1], B[j], cs[j], cs[j + 1], cs[j]); S.tri(A[j + 1], B[j + 1], B[j], cs[j + 1], cs[j + 1], cs[j]); } }
+  // light leaking from two small tears on each flank, so a hollow seen side on shows cold light too
+  [-1, 1].forEach(function (sd) {
+    [[0.86, 0.02, 0.14, 0.28], [0.69, -0.15, 0.1, 0.21]].forEach(function (t) {
+      const y = t[0], z = t[1], x = sd * (Math.sqrt(Math.max(0.01, 0.53 * 0.53 - z * z)) + 0.03), h = t[3], w = t[2] * 0.5, F = [x + sd * 0.02, y, z];
+      const Tp = [x, y + h / 2, z + 0.02], B = [x, y - h / 2, z - 0.02], Lf = [x, y, z - w], Rb = [x, y, z + w];
+      S.tri(Lf, F, Tp, rim, core, rim); S.tri(Tp, F, Rb, rim, core, rim); S.tri(Rb, F, B, rim, core, rim); S.tri(B, F, Lf, rim, core, rim);
+    });
+  });
   return S.build();
 }
 /* Eyes: two slanted almond slits. They are their own mesh, unlit and unfogged, so pale lilac eyes read in any night. */
-function eyesGeo(y, z, sep, w, h, slant) {
+function eyesGeo(y, z, sep, w, h, slant) { return eyesSoup(y, z, sep, w, h, slant).build(); }
+function eyesSoup(y, z, sep, w, h, slant) {
   const S = new Soup(), col = new T.Color(0xf2e2ff);
   [-1, 1].forEach(function (sd) {
     const cx = sd * sep, ca = Math.cos(sd * slant), sa = Math.sin(sd * slant), d = 0.04;
@@ -311,7 +378,7 @@ function eyesGeo(y, z, sep, w, h, slant) {
     const L = pt(-w / 2, 0), R_ = pt(w / 2, 0), Tp = pt(0, h / 2), B = pt(0, -h / 2), F = [cx, y, z + d];
     S.tri(L, F, Tp, col); S.tri(Tp, F, R_, col); S.tri(R_, F, B, col); S.tri(B, F, L, col);
   });
-  return S.build();
+  return S;
 }
 /* Glow points: every lantern, stolen light and hollow's eyes, one draw. */
 function GlowLayer(tex, cap, LK) {
@@ -344,11 +411,11 @@ P.troopers = function (t, LK, parent, glowTex, tc, ownFn) {
   const hush = ownFn(new T.InstancedMesh(hushGeo(LK, false), propMat({ em: hc.em, emI: hc.emI * 1.3, gp: 3, sw: 0.16, side: T.DoubleSide }), 110));
   const eyes = ownFn(new T.InstancedMesh(eyesGeo(1.37, 0.27, 0.085, 0.19, 0.075, 0.42), new T.MeshBasicMaterial({ color: 0xffffff, vertexColors: true, fog: false, side: T.DoubleSide }), 110));
   const hollow = ownFn(new T.InstancedMesh(hushGeo(LK, true), propMat({ em: hc.em, emI: hc.emI, gp: 3, sw: 0.1, side: T.DoubleSide }), 40));
-  const hEyes = ownFn(new T.InstancedMesh(eyesGeo(1.02, 0.47, 0.075, 0.14, 0.05, 0.5), new T.MeshBasicMaterial({ color: 0xffffff, vertexColors: true, fog: false, side: T.DoubleSide }), 40));
+  const hEyes = ownFn(new T.InstancedMesh(hollowLightGeo(), new T.MeshBasicMaterial({ color: 0xffffff, vertexColors: true, fog: false, side: T.DoubleSide }), 40)); // 0.25: the eyes and the rift down the back
   [reign, lantern, hush, eyes, hollow, hEyes].forEach(function (m) { m.frustumCulled = false; m.count = 0; });
   parent.add(hollow); parent.add(hEyes);
   const glow = new GlowLayer(glowTex, 240, LK); parent.add(glow.mesh);
-  crowd = { hollow: hollow, hEyes: hEyes, nh: 0, glow: glow, cLant: tc(0xffb050).clone(), cCarry: tc(0xffd28a).clone(), cSoul: tc(0xffe9a8).clone(), cEye: new T.Color(0x9c84ff), time: 0, reduced: false };
+  crowd = { hollow: hollow, hEyes: hEyes, nh: 0, glow: glow, cLant: tc(0xffb050).clone(), cCarry: tc(0xffd28a).clone(), cSoul: tc(0xffe9a8).clone(), cEye: new T.Color(0x9c84ff), cRift: new T.Color(0xa496ff), time: 0, reduced: false };
   return { reign: reign, lantern: lantern, hush: hush, eyes: eyes };
 };
 P.begin = function (time, reduced, h) { U_T.value = time; U_AMP.value = reduced ? 0 : 1; if (h) U_H.value = h; if (!crowd) return; crowd.nh = 0; crowd.glow.n = 0; crowd.time = time; crowd.reduced = reduced; };
@@ -361,6 +428,7 @@ P.hollow = function (m) {
   if (!crowd || crowd.nh >= 40) return false;
   crowd.hollow.setMatrixAt(crowd.nh, m); crowd.hEyes.setMatrixAt(crowd.nh, m); crowd.nh++;
   _v.set(0, 1.02, 0.5).applyMatrix4(m); crowd.glow.put(_v.x, _v.y, _v.z, 1.6, crowd.cEye);
+  _v.set(0, 0.92, -0.5).applyMatrix4(m); crowd.glow.put(_v.x, _v.y, _v.z, 2.3, crowd.cRift); // 0.25 (#32): the rift's halo, seen from behind
   return true;
 };
 P.stolen = function (m, carry) {

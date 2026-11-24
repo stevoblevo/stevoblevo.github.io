@@ -448,7 +448,7 @@ WD._dbg = function () { return { pools: [PG, PP, PD].map(function (p) { return p
 
 /* ---------- on paper (2D): the wardrobe screen and the end screen ---------- */
 const heroImg = {};
-function heroPic(id) { let im = heroImg[id]; if (!im) { im = heroImg[id] = new Image(); im.src = 'art/heroes/' + id + '.png'; } return im.complete && im.naturalWidth ? im : null; }
+function heroPic(id) { let im = heroImg[id]; if (!im) { im = heroImg[id] = new Image(); const PP = LL.gfx && LL.gfx.PAPER && LL.gfx.PAPER[id]; im.src = (PP && PP.src) || 'art/heroes/' + id + '.png'; /* 0.25 rook: his sheet is an SVG, so take the paper's own path */ } return im.complete && im.naturalWidth ? im : null; }
 const tints = {};
 /* a shape (or a ring, or the hero) tinted to a colour, cached */
 function tinted(kind, key, hex, src) {
