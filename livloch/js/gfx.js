@@ -1255,6 +1255,7 @@ R.frame = function (dt, view) {
     m.lastFlash = h.flash;
     m.position.set(h.x, h.y, h.z); m.rotation.y = h.yaw;
     const ce = camera.matrixWorld.elements; scr.r = h.vx * ce[0] + h.vz * ce[2]; scr.f = -(h.vx * ce[8] + h.vz * ce[10]);
+    { const pv = m.paper ? m.paper.v : 2; scr.k = pv === 1 ? 1 : (pv === 3 ? 0.45 : 0.12); } // side view drags cloth fully; facing away or toward, barely
     { const q0 = m.paper; scr.m = q0 && q0.sign ? q0.sign : 1; scr.h = q0 ? q0.h : 2.3; scr.fb = !!(q0 && q0.v != null && !(q0.cell === 1 || q0.cell === 6 || (!q0.useM && q0.v === 1))); } // what the braid needs to know of last frame's picture
     const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr), G = st.g;
     if (!R.reduced) heroDust(m, h, st, dt);
@@ -1291,7 +1292,7 @@ R.frame = function (dt, view) {
          0.15 s for a change of view, 0.09 s for raising or lowering the aim. Reduced motion: an instant change. 0.21: a
          thrown gun cuts between its wind-up and its release like two drawn frames, with no turn. */
       const aimOnly = pp.key != null && pp.key.slice(0, 2) !== key.slice(0, 2) && pp.key.slice(2) === key.slice(2) && (pp.cell >= 5 || cell >= 5);
-      if (pp.key == null || R.reduced || (aimOnly && G.throw && pp.ft == null)) apply();
+      if (pp.key == null || R.reduced || (aimOnly && pp.ft == null)) apply(); // 0.22.2: raising or lowering the aim is a cut, never a turn (the edge-on blink looked like a glitch)
       else if (key !== pp.key && pp.ft == null) { pp.ft = 0; pp.fdur = (pp.key.slice(0, 2) !== key.slice(0, 2) && (pp.cell >= 5 || cell >= 5)) ? 0.09 : 0.15; pp.swapped = false; }
       let squeeze = 1;
       if (pp.ft != null) { pp.ft += dt; const f = pp.ft / pp.fdur; if (f >= 0.5 && !pp.swapped) { apply(); pp.swapped = true; } squeeze = Math.max(0.05, Math.abs(Math.cos(Math.PI * Math.min(1, f)))); if (f >= 1) pp.ft = null; }
@@ -1304,7 +1305,7 @@ R.frame = function (dt, view) {
       /* LEAN. Paper cannot lean toward the camera, so it leans across the screen: into the direction the hero is moving
          as seen from here, more when dashing. Eased, so starting and stopping read as weight. */
       const e = camera.matrixWorld.elements, vRight = h.vx * e[0] + h.vz * e[2];
-      const leanT = R.reduced ? 0 : Math.max(-0.12, Math.min(0.12, -vRight * (h.dashT > 0 ? 0.02 : 0.01)));
+      const leanT = R.reduced ? 0 : Math.max(-0.12, Math.min(0.12, -vRight * (h.dashT > 0 ? 0.02 : 0.01) * (0.4 + 0.6 * scr.k)));
       m.lean += (leanT - m.lean) * (1 - Math.exp(-dt * 9)); pp.rotation.z = m.lean;
       // which way the figure faces: on screen (fS, +1 = right), and in its own x through the mirror (fwd)
       const fR = Math.sin(h.yaw) * e[0] + Math.cos(h.yaw) * e[2], fS = fR >= 0 ? 1 : -1, fwd = fS * pp.sign, red = R.reduced ? 0 : 1;
@@ -1357,7 +1358,7 @@ R.frame = function (dt, view) {
          braced shot; the coat halves (front and back); the braid. */
       if (pp.sign) {
         const inv = 1 / (pp.sign * (pp.wide || 1));
-        bq.bend = red * Math.max(-0.14, Math.min(0.14, vRight * (h.dashT > 0 ? 0.016 : 0.01) + fS * sideK * (st.lean + tw * 0.09 - st.brace * 0.45))); bq.head = red * st.head; bq.cloak = red * st.cloak;
+        bq.bend = red * Math.max(-0.14, Math.min(0.14, vRight * (h.dashT > 0 ? 0.016 : 0.01) * scr.k + fS * sideK * (st.lean + tw * 0.09 - st.brace * 0.45))); bq.head = red * st.head; bq.cloak = red * st.cloak;
         bq.flare = red * st.flare; bq.bulge = red * Math.max(0, sq) * 0.5; bq.breath = red * Math.sin(time * 2.1 + h.id) * 0.012 * (1 - st.mix);
         bq.wave = red * st.wave; bq.wph = st.phase * 2 + time * 3.1;
         const flaps = pp.slitF > 0 && pp.useM && (pp.cell === 0 || pp.cell === 2 || pp.cell === 5) && h.onGround;
