@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.2 · The Band.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.3 · Names Filed Off.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -112,6 +112,31 @@ five night pets, each found on that kit's own page by doing what the kit is for,
 - Gradients on the kit faces take the kits' inks too (`kitCanvas` wraps the gradient makers).
 - Finds: `x-band`, `x-crossing`, `x-visitor`, `x-lattice` (146 in all). None of them is ever a day's find.
 - `__andso.pets()`, `petsRead()` and `ghostNow()` with `?debug`.
+
+## Names Filed Off (10.3)
+
+Bleve asked for a full fake book of a pop catalog's changes, microtonal, with the names obscured. The Book now has a
+second chapter beside the standards: 220 songs (twelve records, with their vault, 3am and anthology tracks), each as
+changes only. Chord progressions are not protected the way melodies and words are, so the chapter holds exactly what
+the Book already allowed for tunes still in copyright: form, key, tempo, meter and the chords of each bar. No melody,
+no lyric.
+
+- Data: `src/book-nf.json`, made by `names_filed_off.py` from research files (one object per song: album, track,
+  key, tempo, meter, feel, sections of bars, form, riddle, sources, confidence). The public file has no titles and no
+  sources (their addresses name the songs); each tune has `title` (the riddle), `hint` (record and track), `ini`
+  (initials, shown after three wrong names) and `h`, the hash of its normalised title (`cyrb53`, the same in the script
+  and in `t-book.js`). One title is withheld (`h` empty): it plays and keeps its riddle but cannot be named.
+- The private key (id, real title, album, track, sources, confidence, notes) is kept outside this repository, in the
+  claude.ai project, for upkeep.
+- Research: chords from Hooktheory and chord sites, keys and tempos cross-checked where reachable; no source gave
+  chord lengths, so bar layouts are inferred and most charts are "medium" confidence (`conf`: 25 high, 172 medium,
+  23 low). Charts were read through a fetcher told to return chords only; no lyric text was kept.
+- In the Book: the tune list is grouped by record; the kicker says "changes · names filed off"; under the title, the
+  hint and a name-it box (a match keeps your spelling on this device, `andso:named`); section marks on the chart; the
+  tune's own feel; chord names spelled as the key spells them (sharps in sharp keys); and a tuning choice for the Book
+  (as you are, just intonation, 31-EDO, piano), which this chapter sets to just intonation, so its changes play
+  microtonal. The jam gives the old tuning back when it stops. 5/4 charts play.
+- Finds: `x-named` (name one), `x-named-13` (name thirteen). 148 in all.
 
 ## Where AND SO is published
 

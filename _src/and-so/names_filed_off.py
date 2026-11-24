@@ -40,7 +40,7 @@ def norm(title):
     s = unicodedata.normalize("NFKD", title.lower())
     s = "".join(c for c in s if not unicodedata.combining(c))
     s = s.replace("&", " and ").replace("’", "").replace("'", "")
-    for p in ("taylors version", "from the vault", "3am edition"): s = s.replace(p, " ")
+    s = re.sub(r"\b[a-z]+s version\b", " ", s); s = re.sub(r"\bfrom the vault\b", " ", s); s = re.sub(r"\b3am edition\b", " ", s)   # a re-recording's or an edition's suffix
     s = re.sub(r"[^a-z0-9]+", " ", s).strip()
     s = re.sub(r"^the ", "", s)
     return s
@@ -70,8 +70,13 @@ def main(src, private=None):
                     bad = [c for c in b if not CHORD.match(c)]
                     if bad: problems.append(f"{album} {s.get('track')}: chord {bad}"); b = [c for c in b if CHORD.match(c)]
                     bars.append(b[:2] or ["·"])
-            meter = int(s.get("meter") or 4)
+            meter = int(s.get("meter") or 4); tempo = int(round(float(s.get("tempo") or 100))); notes = (s.get("notes") or "").lower()
+            feel = s.get("feel") if s.get("feel") in ("straight", "ballad", "waltz", "swing") else ("waltz" if meter == 3 else "straight")
             if meter == 6: meter, bars = 3, [x for b in bars for x in (b[:1], b[1:] or b[:1])]
+            # a compound song written at the dotted-quarter pulse: play it in eighths, two 3/4 bars to each 6/8 bar
+            if meter == 3 and tempo < 70 and "compound" in notes: tempo, bars = tempo * 3, [x for b in bars for x in (b, b)]
+            # charted at half time but grooving at double time (the notes say so): it moves straight, not as a ballad
+            if feel == "ballad" and ("double-time" in notes or "double time" in notes) and any(w in notes for w in ("groove", "feel", "drums", "drop")): feel = "straight"
             bars = bars[:MAX_BARS]
             if len(bars) < 4: problems.append(f"{album} {s.get('track')}: no usable chart ({s.get('confidence')})"); continue
             n = norm(title) if title else ""; h = cyrb53(n) if n else 0
@@ -87,8 +92,7 @@ def main(src, private=None):
                 "hint": f"record {rec} · " + (f"from the drawer, track {s.get('track')}" if vault else f"track {s.get('track')}"),
                 "ini": " ".join(w[0].upper() for w in words),
                 "h": b36(h) if h else "", "form": " · ".join(dict.fromkeys(re.sub(r"\s*\d+$", "", x).lower() for x in form)),
-                "key": s["key"], "tempo": int(round(float(s.get("tempo") or 100))), "meter": meter,
-                "feel": s.get("feel") if s.get("feel") in ("straight", "ballad", "waltz", "swing") else ("waltz" if meter == 3 else "straight"),
+                "key": s["key"], "tempo": tempo, "meter": meter, "feel": feel,
                 "pd": False, "marks": marks, "conf": s.get("confidence") or "low",
                 "basis": "Changes only: form, key and the chords of each bar, read from published analyses. No melody and no lyric. Its name is filed off: name it.",
                 "bars": bars})

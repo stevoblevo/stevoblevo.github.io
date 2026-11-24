@@ -26,7 +26,7 @@ const cyrb53 = (str, seed = 13) => {
 };
 const nfNorm = t => {
   let s = String(t || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ').replace(/[\u2019']/g, '');
-  for (const p of ['taylors version', 'from the vault', '3am edition']) s = s.split(p).join(' ');
+  s = s.replace(/\b[a-z]+s version\b/g, ' ').replace(/\bfrom the vault\b/g, ' ').replace(/\b3am edition\b/g, ' ');   // a re-recording's or an edition's suffix
   return s.replace(/[^a-z0-9]+/g, ' ').trim().replace(/^the /, '');
 };
 const NF = { miss: {} };

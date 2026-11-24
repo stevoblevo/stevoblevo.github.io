@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.3",
+   "short": "AND SO 10.3",
+   "name": "AND SO 10.3 · Names Filed Off",
+   "date": "2026-11-24",
+   "line": "A new chapter in the Book: 220 pop songs as changes only, chords and form with no melody and no words, playing in just intonation. Their names are filed off: each shows a riddle and a hint, and you name it to get its title back.",
+   "path": "/and-so/v10.3/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "09e3e06ff92e87418148efd715004c2bad52b56f6988941983da90d00d5dbafd"
+  },
+  {
    "id": "10.2",
    "short": "AND SO 10.2",
    "name": "AND SO 10.2 · The Band",
    "date": "2026-11-24",
    "line": "The three kits' pets come to play: the ones you find on Storeybrook, Hypermetapunk and Depthfield stand on the hills of their own face and dance with a swing, and a touch gets you a lick with a blue note. Your pet is a sticker at dusk and moonlit at night. All seventeen open the lattice.",
    "path": "/and-so/v10.2/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "70fc3d3d470e9a7bbd407737985f5b0fb8d8c265e6fbca61690c2ff8ce64dd26"
+   "commit": "56710e8",
+   "sha256": "e728facc038b667c0cc7fc450de32e0d4f19e71d65b67b4ddf2436bd25cafb33"
   },
   {
    "id": "10.1",
