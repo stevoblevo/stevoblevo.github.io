@@ -5,7 +5,7 @@
 // seeded once (PETFX) so the coat does not crawl from frame to frame. Also here: Swizzle, AND SO's own little pet, a
 // swift who conducts with a swizzle stick. She comes to the hills when you name your first tune in the Book's chapter
 // with its names filed off. She is an original character, not a likeness of anyone.
-const PETFX = { fur: null, rim: null, hair: null, spark: null };
+const PETFX = { fur: null, rim: null, hair: null, spark: null, res: 2 };
 function petSeed() {
   if (PETFX.fur) return;
   let s = 20261124; const r = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
@@ -17,26 +17,73 @@ function petSeed() {
   PETFX.hair = []; for (let i = 0; i < 40; i++) PETFX.hair.push({ u: r(), side: r() < 0.5 ? -1 : 1, l: 0.8 + 0.9 * r(), j: (r() - 0.5) * 0.8 });
   PETFX.spark = []; for (let i = 0; i < 14; i++) PETFX.spark.push({ x: 6 + 30 * r(), y: -28 + 50 * r(), p: r() * TAU, v: 2 + 3 * r() });
 }
-// a coat of fur over an ellipse already filled: soft hairs lying along the body, then the fluff past its outline
-function petFur(g, cx, cy, rx, ry, sc, lp, ink, base, wl, skip) {
-  petSeed(); const k = clamp(wl * 1.7, 0, 1); if (k < 0.05) return;   // the fur comes with the bunny in her
-  const sway = reduceMotion ? 0 : Math.sin(t * 1.3) * 0.12, step = skip || 1;
-  const tones = lp ? [rgba(ink, 0.22 * k), null, `rgba(255,255,255,${0.55 * k})`]
-    : [rgba(mix(base, [70, 40, 80], 0.55), 0.36 * k), rgba(mix(base, [255, 255, 255], 0.3), 0.5 * k), `rgba(255,255,255,${0.66 * k})`];
-  g.save(); g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, 0, TAU); g.clip(); g.lineCap = 'round';
-  for (let tone = 0; tone < 3; tone++) {
-    if (!tones[tone]) continue; g.strokeStyle = tones[tone]; g.lineWidth = (tone === 2 ? 0.55 : 0.8) * sc; g.beginPath();
-    for (let i = 0; i < PETFX.fur.length; i += step) { const f = PETFX.fur[i]; if (f.tone !== tone) continue;
-      const x = cx + Math.cos(f.a) * f.u * rx, y = cy + Math.sin(f.a) * f.u * ry;
-      const dir = Math.atan2(Math.sin(f.a) * 0.6 + 0.8, Math.cos(f.a) * 0.9) + f.j + sway * f.u, L = f.l * sc;
-      g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(dir - 0.3) * L * 0.5, y + Math.sin(dir - 0.3) * L * 0.5, x + Math.cos(dir) * L, y + Math.sin(dir) * L); }
-    g.stroke();
+// She is drawn a little larger since 10.5, and on her own canvas at the device's full resolution (drawPetFace).
+const PET_SC = () => S * (phone ? 1.12 : 1.42);
+// A coat of fur over an ellipse, close to a real rabbit's: a dense short undercoat, a coat of fine hairs each shaded
+// from a dark root to a pale tip and laid from the bottom row up so the upper hairs lie over the lower, and a few long
+// thin guard hairs that make the outline wispy. The strands are painted once per shape, without colour, into a sprite
+// at device resolution (furGrey); her colour is laid over that sprite (furSprite), which is cheap, so a coat whose
+// colour drifts does not have to be combed again. One drawImage a frame. 10.4 drew faint strokes over a flat fill,
+// which read as blur.
+const FURS = new Map();
+function furGrey(rx, ry, sc, kq, dens, res) {
+  const m = 6 * sc, w = Math.ceil((rx + m) * 2 * res), h = Math.ceil((ry + m) * 2 * res), cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const c = cv.getContext('2d'); c.setTransform(res, 0, 0, res, (rx + m) * res, (ry + m) * res); c.lineCap = 'round';
+  let sd = 7919 + Math.round(rx * 13 + ry * 7); const r = () => (sd = (Math.imul(sd, 1664525) + 1013904223) >>> 0) / 4294967296;
+  const hair = 0.75 / res, area = (rx * ry) / (sc * sc), gy = v => { v = Math.round(clamp(v, 0, 1) * 255); return `rgb(${v},${v},${v})`; };
+  // the skin under the coat: dark, so the gaps between hairs read as depth
+  c.fillStyle = gy(0.3); c.beginPath(); c.ellipse(0, 0, rx * 0.96, ry * 0.96, 0, 0, TAU); c.fill();
+  // which way the coat lies: down and out from the crown, in soft locks
+  const flow = (x, y) => Math.atan2((y / ry) * 0.55 + 0.85, (x / rx) * 0.9) + 0.2 * Math.sin(x * 0.42 / sc + 1.3) * Math.cos(y * 0.36 / sc + 0.4) + 0.1 * Math.sin((x + y) * 1.3 / sc);
+  // 1 the undercoat: short, thick, dim, everywhere
+  for (let i = 0, N = Math.round(area * 26 * dens); i < N; i++) { const u = Math.sqrt(r()) * 0.98, a = TAU * r(), x = Math.cos(a) * u * rx, y = Math.sin(a) * u * ry, d = flow(x, y) + (r() - 0.5) * 0.5, L = (1.1 + 0.8 * r()) * sc;
+    c.strokeStyle = gy(0.42 + 0.2 * r()); c.lineWidth = Math.max(hair, 0.34 * sc); c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(d) * L, y + Math.sin(d) * L); c.stroke(); }
+  // 2 the coat: fine hairs, root to tip
+  const st = []; for (let i = 0, N = Math.round(area * 46 * dens); i < N; i++) { const u = Math.sqrt(r()), a = TAU * r(); st.push([Math.cos(a) * u * rx, Math.sin(a) * u * ry, u, r(), r(), r()]); }
+  st.sort((p, q) => q[1] - p[1]);
+  for (const [x, y, u, r1, r2, r3] of st) {
+    const d = flow(x, y) + (r1 - 0.5) * 0.3, L = (1.7 + 1.5 * r2) * sc * (0.65 + 0.4 * kq) * (u > 0.9 ? 1.2 : 1), bend = (r3 - 0.5) * 0.6;
+    const x1 = x + Math.cos(d) * L, y1 = y + Math.sin(d) * L, tone = 0.74 + 0.2 * r3, gr = c.createLinearGradient(x, y, x1, y1);
+    gr.addColorStop(0, gy(tone * 0.5)); gr.addColorStop(0.5, gy(tone)); gr.addColorStop(1, gy(tone + 0.16));
+    c.strokeStyle = gr; c.lineWidth = Math.max(hair, (0.1 + 0.1 * r2) * sc); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(d + bend) * L * 0.55, y + Math.sin(d + bend) * L * 0.55, x1, y1); c.stroke();
   }
-  g.restore();
-  g.strokeStyle = lp ? rgba(ink, 0.5 * k) : rgba(mix(base, [255, 255, 255], 0.5), 0.72 * k); g.lineWidth = 0.65 * sc; g.lineCap = 'round'; g.beginPath();
-  for (let i = 0; i < PETFX.rim.length; i += step) { const f = PETFX.rim[i], x = cx + Math.cos(f.a) * rx * 0.95, y = cy + Math.sin(f.a) * ry * 0.95, dir = f.a + f.j + sway, L = f.l * sc * (0.45 + 0.75 * k);
-    g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(dir) * L * 0.6, y + Math.sin(dir) * L * 0.6, x + Math.cos(dir) * L, y + Math.sin(dir) * L + L * 0.3); }
-  g.stroke();
+  // 3 guard hairs: few, long, thin and pale; they break the outline the way a real coat does
+  c.globalAlpha = 0.75;
+  for (let i = 0, N = Math.round(area * 5 * dens); i < N; i++) { const u = 0.35 + 0.65 * Math.sqrt(r()), a = TAU * r(), x = Math.cos(a) * u * rx, y = Math.sin(a) * u * ry, d = flow(x, y) + (r() - 0.5) * 0.45, L = (2.6 + 2.2 * r()) * sc * (0.7 + 0.35 * kq), bend = (r() - 0.5) * 0.8;
+    c.strokeStyle = gy(0.9 + 0.1 * r()); c.lineWidth = Math.max(hair * 0.8, 0.065 * sc); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(d + bend) * L * 0.5, y + Math.sin(d + bend) * L * 0.5, x + Math.cos(d) * L, y + Math.sin(d) * L); c.stroke(); }
+  c.globalAlpha = 1;
+  // form: lit from the upper left, falling into shade low and right, with a soft sheen where the light lands
+  c.globalCompositeOperation = 'source-atop';
+  const sh = c.createLinearGradient(-rx, -ry, rx, ry); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(0.5, 'rgba(0,0,0,0.05)'); sh.addColorStop(1, 'rgba(0,0,0,0.4)');
+  c.fillStyle = sh; c.fillRect(-rx - m, -ry - m, (rx + m) * 2, (ry + m) * 2);
+  const hl = c.createRadialGradient(-rx * 0.38, -ry * 0.42, 0, -rx * 0.38, -ry * 0.42, Math.max(rx, ry) * 0.85); hl.addColorStop(0, 'rgba(255,255,255,0.22)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
+  c.fillStyle = hl; c.fillRect(-rx - m, -ry - m, (rx + m) * 2, (ry + m) * 2);
+  return cv;
+}
+function furSprite(rx, ry, sc, lp, ink, base, kq, dens, res) {
+  const key = [rx.toFixed(1), ry.toFixed(1), kq, dens, res].join('|'), q = v => Math.round(v / 6) * 6;
+  let sp = FURS.get(key);
+  if (!sp) { if (FURS.size > 14) FURS.clear(); const grey = furGrey(rx, ry, sc, kq, dens, res), cv = document.createElement('canvas'); cv.width = grey.width; cv.height = grey.height; sp = { grey, cv, c: cv.getContext('2d'), m: 6 * sc, tint: '' }; FURS.set(key, sp); }
+  const L = (lp ? HIDE.coatL : base).map(q), R = (lp ? HIDE.coatR : base).map(q), tint = L.join('.') + '/' + R.join('.') + (lp ? 'p' : '');
+  if (sp.tint !== tint) {   // her colour over the strands: the tips come out paler than she is, the roots darker
+    const c = sp.c, w = sp.cv.width, h = sp.cv.height, pale = col => rgba(mix(col, [255, 255, 255], lp ? 0.5 : 0.42), 1);
+    c.globalCompositeOperation = 'source-over'; c.clearRect(0, 0, w, h); c.drawImage(sp.grey, 0, 0);
+    c.globalCompositeOperation = 'multiply'; const gr = c.createLinearGradient(w * 0.46, 0, w * 0.54, 0); gr.addColorStop(0, pale(L)); gr.addColorStop(1, pale(R)); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+    c.fillStyle = lp ? rgba(mix(ink, [255, 255, 255], 0.94), 1) : 'rgb(255,246,250)'; c.fillRect(0, 0, w, h);   // roots lean to the ink on paper, to plum elsewhere
+    c.globalCompositeOperation = 'destination-in'; c.drawImage(sp.grey, 0, 0); c.globalCompositeOperation = 'source-over';
+    sp.tint = tint;
+  }
+  return sp;
+}
+function petFur(g, cx, cy, rx, ry, sc, lp, ink, base, wl, skip) {
+  const k = clamp(wl * 1.7, 0, 1); if (k < 0.05) return;   // the fur comes with the bunny in her
+  const sp = furSprite(rx, ry, sc, lp, ink, base, Math.round(k * 4) / 4, skip ? 0.85 : 1, PETFX.res || 2);
+  g.save(); g.globalAlpha *= Math.min(1, k * 1.4); g.drawImage(sp.cv, cx - rx - sp.m, cy - ry - sp.m, (rx + sp.m) * 2, (ry + sp.m) * 2); g.restore();
+}
+// a furred limb: the same coat on a thin capsule, laid along the limb
+function petFurLimb(g, x0, y0, x1, y1, wd, sc, lp, ink, base, wl) {
+  const len = Math.hypot(x1 - x0, y1 - y0), half = Math.max(2, Math.round(len / sc)) * sc / 2;
+  g.save(); g.translate((x0 + x1) / 2, (y0 + y1) / 2); g.rotate(Math.atan2(y1 - y0, x1 - x0) - Math.PI / 2); petFur(g, 0, 0, wd, half, sc, lp, ink, base, wl, 2); g.restore();
 }
 const petQ = (p0, c, p1, u) => [(1 - u) * (1 - u) * p0[0] + 2 * u * (1 - u) * c[0] + u * u * p1[0], (1 - u) * (1 - u) * p0[1] + 2 * u * (1 - u) * c[1] + u * u * p1[1]];
 // antlers in velvet: a dark core, a lit side, a soft pile standing off the beam, and rounded tips still growing
@@ -49,7 +96,7 @@ function petAntlers(g, sc, wm, lp) {
     const j1 = petQ(b, c, tip, 0.2), j2 = petQ(b, c, tip, 0.56);
     const br = [[b, c, tip, 3.4], [j1, [j1[0] + s * L * 0.2, j1[1] - L * 0.02], [j1[0] + s * L * 0.34, j1[1] - L * 0.2], 2.2], [j2, [j2[0] + s * L * 0.26, j2[1] - L * 0.04], [j2[0] + s * L * 0.4, j2[1] - L * 0.3], 2.5]];
     for (const [p0, cc, p1, w0] of br) {   // the pile: a soft halo that makes the beam look thick with velvet
-      g.strokeStyle = rgba(vel[2], 0.2); g.lineWidth = w0 * 1.55 * sc; g.beginPath(); g.moveTo(p0[0], p0[1]); g.quadraticCurveTo(cc[0], cc[1], p1[0], p1[1]); g.stroke();
+      g.strokeStyle = rgba(vel[2], 0.12); g.lineWidth = w0 * 1.35 * sc; g.beginPath(); g.moveTo(p0[0], p0[1]); g.quadraticCurveTo(cc[0], cc[1], p1[0], p1[1]); g.stroke();
     }
     [[vel[0], 1, 0, 1], [vel[1], 0.66, -0.45, 1], [vel[2], 0.24, -0.9, 0.75]].forEach(([col, wk, off, a]) => {
       g.strokeStyle = rgba(col, a);

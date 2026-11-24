@@ -434,3 +434,9 @@ body:is([data-skin="hm-dusk"], [data-skin="df-night"]) :is(#toast, #round, #resu
 .petchip { width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed color-mix(in srgb, currentColor 28%, transparent) }
 .petchip.on { border-style: solid; border-color: color-mix(in srgb, var(--gold) 60%, transparent) }
 .petnone { font-size: 12px; opacity: .7 }
+
+/* her own canvas (10.5): above the world's pet layer, moved with a transform, at full device resolution */
+#cpet { position: fixed; left: 0; top: 0; z-index: 2; pointer-events: none; display: none; will-change: transform; transition: opacity 1.2s ease }
+body.landing #cpet { opacity: 0 }
+html[data-sb="inkblot"] #cpet { filter: grayscale(1) contrast(1.25) }
+body[data-skin="eink"] #cpet { filter: grayscale(1) contrast(1.2) }

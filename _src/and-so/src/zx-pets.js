@@ -146,21 +146,37 @@ function petLick(m) {
   });
 }
 // ---------- your own pet wears the face ----------
-const PETDRESS = { cv: null, g: null, w: 0, h: 0 };
+const PETDRESS = { cv: null, g: null, w: 0, h: 0, res: 0 }, PETHI = { g: null, w: 0, h: 0, res: 0 };
+// Since 10.5 she has her own canvas (#cpet), sized to her and drawn at the device's full pixel ratio (up to 3), so her
+// fur, velvet and wings are crisp even when the world canvas runs at a lower one. Mirror copies and the reel draw her
+// on the world canvas as before.
 function drawPetFace(g) {
+  const el = $('cpet'), hi = el && entered && pet.placed && !REEL.on && !(MIR.depth > 0) && skin !== 'bw2';
+  if (!hi) { if (el && el.style.display !== 'none') el.style.display = 'none'; PETFX.res = Math.min(2, DPR || 1); petDressed(g, PETFX.res); return; }
+  const sc = PET_SC(), bw = Math.ceil(300 * sc), bh = Math.ceil(270 * sc), res = Math.min(kitLook() ? 2 : 3, Math.max(1, window.devicePixelRatio || 1));   // the sticker and the rim light cost more per pixel
+  if (!PETHI.g) PETHI.g = el.getContext('2d');
+  if (PETHI.w !== bw || PETHI.h !== bh || PETHI.res !== res) { el.width = Math.ceil(bw * res); el.height = Math.ceil(bh * res); el.style.width = bw + 'px'; el.style.height = bh + 'px'; PETHI.w = bw; PETHI.h = bh; PETHI.res = res; }
+  if (el.style.display !== 'block') el.style.display = 'block';
+  const cx = bw / 2, cy = bh * 0.56, G = PETHI.g;
+  el.style.transform = `translate(${(pet.x - cx).toFixed(2)}px,${(pet.y - cy).toFixed(2)}px)`;
+  PETFX.res = res; G.setTransform(res, 0, 0, res, 0, 0); G.clearRect(0, 0, bw, bh);
+  G.save(); G.translate(cx - pet.x, cy - pet.y); petDressed(G, res); G.restore();
+}
+// your own pet wears the face: a die-cut sticker at dusk, moonlit at night, herself everywhere else
+function petDressed(g, res) {
   const P = kitLook() ? facePen() : null, fn = P && (skin === 'hm-dusk' ? P.sticker : P.rim);
   if (!fn || !entered || !pet.placed || typeof lightPet === 'function' && lightPet()) { drawPet(g); return; }
-  const sc = S * (phone ? 1 : 1.15), bw = Math.ceil(230 * sc), bh = Math.ceil(210 * sc), dpr = Math.min(2, DPR || 1);
+  const sc = PET_SC(), wide = pet.w && (pet.w[3] > 0.04 || pet.w[4] > 0.04), bw = Math.ceil((wide ? 290 : 170) * sc), bh = Math.ceil(250 * sc);   // only wings and long arms need the wide box
   if (!PETDRESS.cv) { PETDRESS.cv = document.createElement('canvas'); PETDRESS.g = PETDRESS.cv.getContext('2d'); }
   const C = PETDRESS.cv, G = PETDRESS.g;
-  if (PETDRESS.w !== bw || PETDRESS.h !== bh) { C.width = Math.ceil(bw * dpr); C.height = Math.ceil(bh * dpr); PETDRESS.w = bw; PETDRESS.h = bh; }
-  G.setTransform(dpr, 0, 0, dpr, 0, 0); G.clearRect(0, 0, bw, bh);
+  if (PETDRESS.w !== bw || PETDRESS.h !== bh || PETDRESS.res !== res) { C.width = Math.ceil(bw * res); C.height = Math.ceil(bh * res); PETDRESS.w = bw; PETDRESS.h = bh; PETDRESS.res = res; }
+  G.setTransform(res, 0, 0, res, 0, 0); G.clearRect(0, 0, bw, bh);
   const cx = bw / 2, cy = bh * 0.56;
   G.save(); G.translate(cx - pet.x, cy - pet.y); drawPet(G); G.restore();
   const x = pet.x, y = pet.y - (cy - bh / 2);
   try {
-    if (skin === 'hm-dusk') P.sticker(g, C, x, y, { w: bw, h: bh, keyline: Math.max(2.5, 3.2 * sc), slap: Math.max(4, 6 * sc), slip: reduceMotion ? 0 : 1.2 + 1.6 * beatPulse, angle: reduceMotion ? 0 : Math.sin(t * 0.9) * 0.025 });
-    else { const o = FACE.orb || { x: W * 0.72, y: TOPH }; P.rim(g, C, x, y, { w: bw, h: bh, lx: o.x, ly: o.y, weather: WX.w, ground: pet.y + 19 * sc, amount: 0.85 }); }
+    if (skin === 'hm-dusk') P.sticker(g, C, x, y, { w: bw, h: bh, keyline: Math.max(2.5, 2.6 * sc), slap: Math.max(4, 5 * sc), slip: reduceMotion ? 0 : 1.2 + 1.6 * beatPulse, angle: reduceMotion ? 0 : Math.sin(t * 0.9) * 0.025 });
+    else { const o = FACE.orb || { x: W * 0.72, y: TOPH }; P.rim(g, C, x, y, { w: bw, h: bh, lx: o.x, ly: o.y, weather: WX.w, ground: pet.y + 19 * sc, amount: 0.12 }); }
   } catch (e) { g.drawImage(C, x - bw / 2, y - bh / 2, bw, bh); }
 }
 // ---------- the pets in the gamut ----------

@@ -187,7 +187,7 @@ function petEye(g, X, Y, r, col, gx, gy, shut, slit, dark) {
 }
 function drawPet(g) {
   if (!entered || !pet.placed) return;
-  const sc = S * (phone ? 1 : 1.15), E = eerie();
+  const sc = PET_SC(), E = eerie();
   g.save(); g.translate(pet.x, pet.y);
   if (MO.on) g.rotate(-MO.px * 0.35);
   if (hole.on) { const dx = hole.x - pet.x, dy = hole.y - pet.y, d = Math.hypot(dx, dy), lim = 170 * S; if (d < lim) { const a = Math.atan2(dy, dx), k = (1 - d / lim) * 0.55; g.rotate(a); g.scale(1 + k, 1 - k * 0.45); g.rotate(-a); } }
@@ -222,7 +222,8 @@ function drawPet(g) {
   // 10.4: wings and arms closer to life (zw-petreal.js)
   if (wd > 0.04 && !skein) petWings(g, sc, sy, wd, lp, acc, ink);
   if (wc > 0.04 && !skein) petArms(g, sc, sy, wc, lp, acc, ink, dark, E);
-  if (wg > 0.06) { g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4.2 : 3) * sc; g.lineCap = 'round'; const kk = Math.sin(t * 8) * 4 * pet.jump * sc, out = pose === 2 ? 8 * sc : 0; g.beginPath(); g.moveTo(-5 * sc, 12 * sc + sy); g.lineTo(-7 * sc - out, 24 * sc + sy - kk); g.moveTo(5 * sc, 12 * sc + sy); g.lineTo(7 * sc + out, 24 * sc + sy + kk); g.stroke(); }
+  if (wg > 0.06) { g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4.2 : 3) * sc; g.lineCap = 'round'; const kk = Math.sin(t * 8) * 4 * pet.jump * sc, out = pose === 2 ? 8 * sc : 0; g.beginPath(); g.moveTo(-5 * sc, 12 * sc + sy); g.lineTo(-7 * sc - out, 24 * sc + sy - kk); g.moveTo(5 * sc, 12 * sc + sy); g.lineTo(7 * sc + out, 24 * sc + sy + kk); g.stroke();
+    if (!skein) { petFurLimb(g, -5 * sc, 12 * sc + sy, -7 * sc - out, 24 * sc + sy - kk, 2.1 * sc, sc, lp, ink, base, wl); petFurLimb(g, 5 * sc, 12 * sc + sy, 7 * sc + out, 24 * sc + sy + kk, 2.1 * sc, sc, lp, ink, base, wl); } }
   if (skein) drawSkeinBody(g, sc, sy);
   else {
     if (lp) hideBody(g, sc, sy, ink);
@@ -231,7 +232,8 @@ function drawPet(g) {
     g.setLineDash([2, 2.5]); g.strokeStyle = rgba(dark, lp ? 0.55 : 0.5); g.lineWidth = 1; g.beginPath(); g.moveTo(0, -11 * sc + sy); g.lineTo(0, 15 * sc + sy); g.stroke(); g.setLineDash([]);
     { const hx = 6 * sc, hy = 4 * sc + sy, hs = 2.4 * sc; g.fillStyle = rgba(mix(acc, [255, 120, 150], 0.5), 0.8); g.beginPath(); g.moveTo(hx, hy + hs); g.bezierCurveTo(hx - hs * 2, hy - hs * 0.5, hx - hs * 0.6, hy - hs * 2, hx, hy - hs * 0.6); g.bezierCurveTo(hx + hs * 0.6, hy - hs * 2, hx + hs * 2, hy - hs * 0.5, hx, hy + hs); g.fill(); }
   }
-  if (wg > 0.06) { const up = pose === 1 || pet.jump > 0.3; g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4 : 2.8) * sc; [-1, 1].forEach(s => { g.beginPath(); g.moveTo(s * 11 * sc, -2 * sc + sy); if (pose === 3) g.lineTo(s * 9 * sc, -20 * sc + sy); else g.lineTo(s * (up ? 20 : 18) * sc, (up ? -12 : 6) * sc + sy - pet.jump * 6 * sc); g.stroke(); }); }
+  if (wg > 0.06) { const up = pose === 1 || pet.jump > 0.3; g.strokeStyle = rgba(skein ? [94, 168, 140] : dark, limbA(wg)); g.lineWidth = (skein ? 4 : 2.8) * sc; [-1, 1].forEach(s => { g.beginPath(); g.moveTo(s * 11 * sc, -2 * sc + sy); if (pose === 3) g.lineTo(s * 9 * sc, -20 * sc + sy); else g.lineTo(s * (up ? 20 : 18) * sc, (up ? -12 : 6) * sc + sy - pet.jump * 6 * sc); g.stroke();
+    if (!skein) { if (pose === 3) petFurLimb(g, s * 11 * sc, -2 * sc + sy, s * 9 * sc, -20 * sc + sy, 2 * sc, sc, lp, ink, base, wl); else petFurLimb(g, s * 11 * sc, -2 * sc + sy, s * (up ? 20 : 18) * sc, (up ? -12 : 6) * sc + sy - Math.round(pet.jump * 6) * sc, 2 * sc, sc, lp, ink, base, wl); } }); }
   let magA = 0;
   if (typeof MAG !== 'undefined' && MAG.look) { const hx = hole.placed ? hole.x : W * 0.72, hy = hole.placed ? hole.y : H * 0.42; magA = clamp(Math.atan2(hy - (pet.y - 22 * sc), hx - pet.x) * 0.45, -0.7, 0.7); }
   g.save(); g.translate(0, -22 * sc + sy); g.rotate((pose === 3 ? 0.18 : Math.sin(t * 0.7) * 0.06 * (magA ? 0.15 : 1)) + magA);
@@ -321,7 +323,7 @@ function drawBubble(g) {
   const paper = paperLook(), P = paper ? paperPal() : null, fs = clamp(12.5 * Math.max(1, S * 0.9), 12.5, 22), lh = fs * 1.3;
   g.save(); g.font = fnt(fs, 'u');
   const w = Math.min(250 * fs / 12.5, W - 24), lines = wrapText(g, pet.say, w - 18).slice(0, 7), h = 14 + lines.length * lh, x = clamp(pet.x - w / 2, 12, W - w - 12);
-  let y = pet.y - 58 * S - h; if (y < TOPH + 8) y = pet.y + 44 * S;
+  let y = pet.y - 64 * PET_SC() - h; if (y < TOPH + 8) y = pet.y + 40 * PET_SC();   // clear of her ears and antlers at her size since 10.5
   g.globalAlpha = Math.min(1, (pet.sayUntil - t) / 0.4);
   if (paper) { g.fillStyle = rgba(mix(P.paper, [255, 255, 255], 0.5), 0.97); g.strokeStyle = rgba(P.ink, 0.9); g.lineWidth = 2; }
   else { g.fillStyle = 'rgba(28,20,32,0.94)'; g.strokeStyle = rgba(ACC[M.key] || ACC.just, 0.6); g.lineWidth = 1; }

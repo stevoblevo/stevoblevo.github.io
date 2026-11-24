@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.4 · Velvet.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.5 · Fur.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -137,6 +137,18 @@ no lyric.
   (as you are, just intonation, 31-EDO, piano), which this chapter sets to just intonation, so its changes play
   microtonal. The jam gives the old tuning back when it stops. 5/4 charts play.
 - Finds: `x-named` (name one), `x-named-13` (name thirteen). 148 in all.
+
+## Fur (10.5)
+
+Bleve said 10.4 "just looks blurry": he wanted fur that is photo-real on a character that is not. What changed:
+
+- **The coat is combed, not smudged** (`furGrey` in `src/zw-petreal.js`). Three layers of single strands over dark skin: a short thick undercoat, about 46 fine hairs per unit of area each shaded from a dark root to a pale tip and laid bottom row first, and a few long thin guard hairs that break the outline. The strands are painted once per shape, without colour, at device resolution. Her colour is multiplied over that sprite (`furSprite`), so a coat whose colour drifts (the paper look) is re-tinted, not re-combed. One `drawImage` per part per frame.
+- **Arms and legs are furred too** (`petFurLimb`): the same coat on a thin capsule laid along the limb.
+- **Her own canvas** (`#cpet`, `drawPetFace` in `src/zx-pets.js`). The main canvases are capped at 2 device pixels per CSS pixel; she is drawn on a small canvas of her own at up to 3 (2 at dusk and at night, where the sticker and the rim light cost more per pixel), moved by a CSS transform. The reel, the mirror and the plain black-and-white look draw her on the main canvas as before.
+- **A little larger**: `PET_SC()` is 1.42 × S (1.12 on a phone), was 1.15 × S. Her speech bubble moved up to clear the ears.
+- At night the rim light's smear toward the moon is turned down (`amount: 0.12`): it read as blur.
+
+Measured in headless Chromium (software rendering, 1280 × 800, all five parts grown): about the same frame rate as 10.4 on paper and at night, lower at dusk when she has wings (the die-cut sticker covers a larger box). Not measured on a real GPU.
 
 ## Velvet (10.4)
 

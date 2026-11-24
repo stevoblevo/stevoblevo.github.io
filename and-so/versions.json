@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.5",
+   "short": "AND SO 10.5",
+   "name": "AND SO 10.5 · Fur",
+   "date": "2026-11-24",
+   "line": "The pet's coat, combed hair by hair: a dense undercoat, fine hairs shaded root to tip and long guard hairs at the outline, on her body, head, ears, arms and legs. She is a little larger and is drawn at your screen's full resolution, so the fur is sharp, not soft.",
+   "path": "/and-so/v10.5/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "435957eb850e83dcda039c2320ebdcf03e744d1e6e556727ba2f2ebbdf661de9"
+  },
+  {
    "id": "10.4",
    "short": "AND SO 10.4",
    "name": "AND SO 10.4 · Velvet",
    "date": "2026-11-24",
    "line": "The pet, closer to real: bunny fur you can almost feel, antlers in velvet, butterfly wings with veins, eyespots and scales that catch the light, octopus arms with suckers and glowing tips. And Swizzle, a swift with a swizzle stick, comes to the hills when you name a tune in the Book.",
    "path": "/and-so/v10.4/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "e7070f13c013646006b0f38d0614040315d517c163d7c3e571ca2363438474c8"
+   "commit": "aad000e",
+   "sha256": "f9833ef74843020a1c64b7abecf56a23b37a8c66986ed36cd239f2b1799f0a9f"
   },
   {
    "id": "10.3",
