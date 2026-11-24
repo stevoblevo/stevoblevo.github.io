@@ -154,7 +154,7 @@ function construct() {
   const moon = new T.DirectionalLight(LK.dir[0], LK.dir[1]); moon.position.set(-40, 80, 60); scene.add(moon);
   world = new T.Group(); scene.add(world); dyn = new T.Group(); scene.add(dyn);
   if (SCN) SCN.begin(scx()); // scenery: this look's palette, before the ground is tinted
-  buildSky(); buildGround(); buildThreads(); buildInstanced(); buildParticles(); buildPuffs(); buildPools(); buildCreaseArt();
+  buildSky(); buildGround(); buildThreads(); buildInstanced(); buildParticles(); buildPuffs(); buildFeel(); buildPools(); buildCreaseArt();
   if (SCN) SCN.build(scx()); // scenery: the loch, moon, mist and stars (the trees wait for the world, in R.build)
   applyLook();
 }
@@ -1007,6 +1007,7 @@ R.build = function (w) {
   if (SCN) SCN.world(W); // scenery: pools of light for this match's structures
   for (let i = 0; i < PN_MAX; i++) { pLife[i] = 0; pPos[i * 3 + 1] = -999; }
   rings.forEach(r => { r.life = 0; r.m.visible = false; });
+  if (LL.wardrobe) LL.wardrobe.build(scx()); // 0.23 wardrobe: the player's trail, footfall, ring and light, drawn for this look
   applyLook();
 };
 
@@ -1027,14 +1028,17 @@ R.fx = function (e) {
       if (e.kind === 'gun') emit(e.x, e.y, e.z, e.crit ? 5 : 2, e.crit ? 0xffe070 : col, 4, 0.3, 1);
       else if (e.kind === 'ab') emit(e.x, e.y, e.z, 6, 0xffffff, 5, 0.4, 2);
       if (e.p === 2) shake = Math.min(0.5, shake + Math.min(0.3, e.amt / 250));
+      if (e.p === 1 || dist2cam(e.x, e.z) < 40) hitBits(e); // 0.23 feel
       break;
     }
     case 'shot': {
       emit(e.x, e.y, e.z, 2, e.u.def.col, 2.5, 0.12, 0, 0);
       const m = heroM[W.heroes.indexOf(e.u)]; if (m) m.recoil = 1;
+      flash(e, e.u === W.player); if (e.u === W.player && !R.reduced) kick = Math.min(1.6, kick + (KICK[e.u.def.id] || 0.8)); // 0.23 feel
       break;
     }
-    case 'impact': emit(e.x, e.y, e.z, 2, 0xd0c0b0, 3, 0.25, 1.5); break;
+    case 'impact': emit(e.x, e.y, e.z, 2, 0xd0c0b0, 3, 0.25, 1.5); bits(e.x, e.y, e.z, 2, 0, 1.4, BIT_DUST); break;
+    case 'immune': if (e.u) { const h = e.u.h || 6; ring(e.u.x, h * 0.45, e.u.z, (e.u.r || 2) * 0.9, (e.u.r || 2) * 1.6, 0xbfd8ff, 0.35); emit(e.u.x, h * 0.55, e.u.z, 6, 0xbfd8ff, 2, 0.35, 0, 0); } break;
     case 'cast': { /* 0.21: an ability has a pose (LL.paperMotion.cast); a stomp also shakes dust and grit off the ground around the feet */
       const m = heroM[W.heroes.indexOf(e.u)], a = e.u.def.ab[e.i]; if (!m || !m.rig || R.reduced) break;
       const what = LL.paperMotion.cast(m.rig, e.kind, a && a.ult);
@@ -1046,7 +1050,7 @@ R.fx = function (e) {
     }
     case 'death': {
       const col = e.team === 2 ? 0xc9a0ff : SRC_TEAM[e.team];
-      if (e.kind === 'trooper') emit(e.x, 1, e.z, 14, col, 6, 0.7, 3);
+      if (e.kind === 'trooper') { emit(e.x, 1, e.z, e.u && e.u.team === 1 ? 6 : 10, col, 6, 0.7, 3); killBits(e); }
       else if (e.kind === 'hero') { emit(e.x, e.y + 1, e.z, 60, col, 9, 1.2, 4); emit(e.x, e.y + 1, e.z, 30, 0xf4e8d6, 5, 1.6, 5, 4); ring(e.x, 0, e.z, 0.5, 6, col, 0.6); }
       else if (e.kind === 'stray' || e.kind === 'knot') emit(e.x, 1.4, e.z, 30, 0xc9a0ff, 7, 0.9, 3);
       else { emit(e.x, 4, e.z, 160, col, 16, 1.8, 6); emit(e.x, 2, e.z, 80, 0xf4e8d6, 9, 2.2, 8, 5); ring(e.x, 0, e.z, 1, 22, col, 1.1); if (dist2cam(e.x, e.z) < 70) shake = 0.8; }
@@ -1204,8 +1208,9 @@ function ghost(m, h, P, pt) {
   const v = m.paper.v == null ? 2 : m.paper.v, uv = gh.geometry.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setX(k, (k % 2 ? 1 : 0) * 0.25 + v * 0.25); uv.needsUpdate = true;
   const wd = P.h * (pt.image.width / 4) / pt.image.height; gh.position.set(h.x, h.y, h.z); gh.rotation.set(0, Math.atan2(camPos.x - h.x, camPos.z - h.z), 0);
   gh.scale.set(wd * (m.paper.sign || 1), P.h, 1); gh.material.color.setHex(LK.team[h.team]).multiplyScalar(LK.add ? 0.55 : 1); gh.life = 0.24; gh.t = 0; gh.visible = true;
+  if (LL.wardrobe) LL.wardrobe.ghost(gh, h, LK.add); // 0.23 wardrobe: the player's dash colour (and puts the pooled copy back for others)
 }
-function stepGhosts(dt) { for (let i = 0; i < ghosts.length; i++) { const g = ghosts[i]; if (!g || !g.visible) continue; g.t += dt; const f = g.t / g.life; if (f >= 1) { g.visible = false; continue; } g.material.opacity = (LK.add ? 0.7 : 0.35) * (1 - f) * (1 - f); g.scale.y *= 1 + dt * 0.3; } }
+function stepGhosts(dt) { for (let i = 0; i < ghosts.length; i++) { const g = ghosts[i]; if (!g || !g.visible) continue; g.t += dt; const f = g.t / g.life; if (f >= 1) { g.visible = false; continue; } g.material.opacity = (g.userData.op || (LK.add ? 0.7 : 0.35)) * (1 - f) * (1 - f); /* 0.23 wardrobe: userData.op, a dense dash colour */ g.scale.y *= 1 + dt * 0.3; } }
 /* TITLE CAMERA (0.20). The title screen used to circle the valley from high up. Now it is a slow trailer: a run of
    shots, each a gentle move with eased ends — gliding low along the middle thread, craning up over the loch, circling a
    lantern house, drifting past the Hush side, then the wide view — cut together, about twelve seconds each. Reduced
@@ -1234,6 +1239,72 @@ function attractCam(dt) {
   const dd = Math.hypot(clook.x - cpos.x, clook.z - cpos.z) || 1; camDir.x = (clook.x - cpos.x) / dd; camDir.z = (clook.z - cpos.z) / dd;
   camera.fov = (R.portrait ? 1.35 : 1) * S.fov;
 }
+/* FEEL (0.23): what a shot, a hit and a kill look like. Presentation only; nothing here changes a rule or a number.
+   - Shot: a muzzle flash where the shot leaves (bigger for your own), and a camera kick on your own shots (above).
+   - Hit: paper bits come off what you hit and flutter down; Hush tissue drifts up like ash instead; stone chips off a
+     structure; a ward shimmers when the thing can't be hurt yet ('immune').
+   - Kill: a Reign trooper crumples into a burst of paper that lands and lies a moment; a Hush small one tears into
+     tissue that rises; a hollow comes apart in a big tissue cloud with a ring. Your kills tick the crosshair.
+   Bits are one instanced mesh (fade by shrinking); flashes are a small sprite pool. Reduced motion: fewer bits, no kick. */
+const KICK = { anna: 1.25, dora: 0.7, myra: 1.0, skein: 0.45 }, BIT_N = 240, BIT_PAPER = 0, BIT_TISSUE = 1, BIT_DUST = 2;
+let kick = 0, kickSide = 1, bitM = null, bitL = [], bitK = 0, flashes = [], flashK = 0;
+function buildFeel() {
+  bitL = []; bitK = 0; flashes = []; flashK = 0;
+  bitM = new T.InstancedMesh(new T.PlaneGeometry(1, 0.66), new T.MeshBasicMaterial({ side: T.DoubleSide, fog: true }), BIT_N);
+  bitM.material.userData.lk = bitM.material.userData.bl = bitM.material.userData.solid = true; bitM.userData.rt = bitM.userData.ilk = true;
+  initColor(bitM, BIT_N); bitM.count = 0; bitM.frustumCulled = false; dyn.add(bitM);
+  for (let i = 0; i < BIT_N; i++) bitL.push({ life: 0 });
+  for (let i = 0; i < 6; i++) { const s = new T.Sprite(new T.SpriteMaterial({ map: glowTex, blending: T.AdditiveBlending, transparent: true, depthWrite: false, fog: false })); s.material.userData.lk = s.material.userData.bl = true; s.visible = false; s.life = 0; dyn.add(s); flashes.push(s); }
+}
+function flash(e, mine) {
+  if (!flashes.length || (!mine && dist2cam(e.x, e.z) > 45)) return;
+  const s = flashes[flashK]; flashK = (flashK + 1) % flashes.length;
+  s.position.set(e.x, e.y, e.z); s.material.color.copy(tc(e.u.def.col)).lerp(new T.Color(0xffffff), 0.45); s.base = mine ? 1.5 : 0.9; s.scale.setScalar(s.base); s.life = s.max = mine ? 0.07 : 0.05; s.visible = true;
+  if (mine) kickSide = Math.random() < 0.5 ? -1 : 1;
+}
+/* n bits of a kind from (x, y, z); sp: spread speed. Colours go through tc() so every view tints them its own way. */
+function bits(x, y, z, n, col, sp, kind) {
+  if (!bitM) return; if (R.reduced) n = Math.ceil(n / 3);
+  for (let k = 0; k < n; k++) {
+    const b = bitL[bitK], i = bitK; bitK = (bitK + 1) % BIT_N;
+    const a = Math.random() * 6.283, v = sp * (0.4 + Math.random() * 0.8);
+    b.x = x; b.y = y; b.z = z; b.vx = Math.cos(a) * v; b.vz = Math.sin(a) * v; b.vy = kind === BIT_TISSUE ? 0.6 + Math.random() * 1.2 : 1.5 + Math.random() * 2.6;
+    b.rx = Math.random() * 6.3; b.ry = Math.random() * 6.3; b.rz = Math.random() * 6.3; b.wx = (Math.random() - 0.5) * 16; b.wy = (Math.random() - 0.5) * 12; b.wz = (Math.random() - 0.5) * 16;
+    b.s = (kind === BIT_DUST ? 0.08 : 0.15) + Math.random() * (kind === BIT_TISSUE ? 0.22 : 0.13); b.kind = kind; b.t = 0; b.life = kind === BIT_TISSUE ? 1.1 + Math.random() * 0.8 : 1.6 + Math.random() * 0.9; b.ground = false; b.ph = Math.random() * 6.3;
+    const c = Array.isArray(col) ? col[(Math.random() * col.length) | 0] : col; tmpC.copy(tc(c)); b.r = tmpC.r; b.g = tmpC.g; b.b = tmpC.b;
+  }
+}
+const PAPER_REIGN = [0xf4e8d6, 0xf4e8d6, 0xff6a4d, 0xe9b44c], TISSUE = [0x2a1f4a, 0x3a2d6a, 0x5b4790, 0xc9a0ff], STONE = [0x8a8094, 0xb8aec4, 0x5d5468];
+function hitBits(e) {
+  if (e.kind === 'dot') return;
+  if (e.struct) { bits(e.x, e.y, e.z, e.crit ? 5 : 3, e.team === 1 ? TISSUE : STONE, 2.4, e.team === 1 ? BIT_TISSUE : BIT_DUST); return; }
+  if (e.tk === 'trooper' || e.tk === 'thief') { const hush = e.team === 1; bits(e.x, e.y, e.z, (e.crit ? 4 : 2) + (e.kind === 'ab' ? 2 : 0), hush ? TISSUE : PAPER_REIGN, hush ? 1.4 : 2.2, hush ? BIT_TISSUE : BIT_PAPER); }
+  else if (e.tk === 'hero') bits(e.x, e.y, e.z, e.crit ? 4 : 2, PAPER_REIGN, 2, BIT_PAPER);
+}
+function killBits(e) {
+  const u = e.u || {}, hush = e.team === 1, mine = e.by && e.by === W.player;
+  if (u.big) { bits(e.x, 2.2, e.z, 44, TISSUE, 4.5, BIT_TISSUE); ring(e.x, 0.05, e.z, 0.6, 6, 0xc9a0ff, 0.6); puff(e.x, 0.3, e.z, 0, 0.4, 0, 1.2, 3.2, 0.9, 0.35); if (dist2cam(e.x, e.z) < 30 && !R.reduced) shake = Math.max(shake, 0.25); }
+  else if (hush) { bits(e.x, 1.1, e.z, mine ? 16 : 10, TISSUE, 2.2, BIT_TISSUE); emit(e.x, 1.4, e.z, 4, 0xe6d2ff, 1.2, 0.8, 1.5, 0); }
+  else { bits(e.x, 1, e.z, mine ? 16 : 11, PAPER_REIGN, 3, BIT_PAPER); puff(e.x, 0.2, e.z, 0, 0.3, 0, 0.3, 1, 0.5, 0.3); }
+}
+function stepFeel(dt) {
+  for (let i = 0; i < flashes.length; i++) { const s = flashes[i]; if (!s.visible) continue; s.life -= dt; if (s.life <= 0) { s.visible = false; continue; } const f = s.life / s.max; s.material.opacity = f; s.scale.setScalar(s.base * (0.7 + 0.5 * f)); }
+  if (!bitM) return; let n = 0;
+  for (let i = 0; i < BIT_N; i++) {
+    const b = bitL[i]; if (b.life <= 0) continue; b.t += dt; if (b.t >= b.life) { b.life = 0; continue; }
+    if (!b.ground) {
+      const tis = b.kind === BIT_TISSUE, drag = Math.exp(-dt * (tis ? 1.6 : 2.4));
+      b.vx = b.vx * drag + Math.sin(b.t * 9 + b.ph) * dt * (tis ? 2.2 : 1.4); b.vz = b.vz * drag + Math.cos(b.t * 7 + b.ph) * dt * (tis ? 2.2 : 1.4);
+      b.vy = tis ? b.vy * Math.exp(-dt * 0.8) + dt * 0.15 : Math.max(b.vy - dt * (b.kind === BIT_DUST ? 9 : 6.5), -2.2);
+      b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt; b.rx += b.wx * dt; b.ry += b.wy * dt; b.rz += b.wz * dt;
+      if (b.y <= 0.03 && !tis) { b.y = 0.03; b.ground = true; b.rx = -Math.PI / 2; b.rz = 0; }
+    }
+    const f = b.t / b.life, sc = b.s * (b.kind === BIT_TISSUE ? (1 - f) * (1 - f) : (f > 0.75 ? (1 - f) / 0.25 : 1));
+    dummy.position.set(b.x, b.y, b.z); dummy.rotation.set(b.rx, b.ry, b.rz); dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); bitM.setMatrixAt(n, dummy.matrix);
+    bitM.setColorAt(n, tmpC.setRGB(b.r, b.g, b.b)); n++;
+  }
+  bitM.count = n; bitM.instanceMatrix.needsUpdate = true; if (n) bitM.instanceColor.needsUpdate = true;
+}
 R.frame = function (dt, view) {
   if (!R.ok || !W) return;
   time += dt;
@@ -1241,6 +1312,7 @@ R.frame = function (dt, view) {
   // heroes
   for (i = 0; i < heroM.length; i++) {
     const m = heroM[i], h = m.unit;
+    if (h.isPlayer && LL.wardrobe) LL.wardrobe.hero(m, h, dt, time, camPos); // 0.23 wardrobe: what the player wears (reads the last frame's pose)
     /* A FALL (0.20): a hero who goes down tips over backward like a card knocked flat, with a puff of dust, instead of
        vanishing. Presentation only: the model has already removed them. */
     if (!h.alive) {
@@ -1561,7 +1633,7 @@ R.frame = function (dt, view) {
     const e = 1 - (1 - f) * (1 - f), rad = U.lerp(r.r0, r.r1, e);
     r.m.ring.scale.set(rad, rad, 1); r.m.disc.scale.set(rad, rad, 1); r.m.ring.material.opacity = 0.5 * (1 - f); r.m.disc.material.opacity = 0.08 * (1 - f);
   }
-  stepParticles(dt); stepPuffs(dt); stepGhosts(dt);
+  stepParticles(dt); stepPuffs(dt); stepGhosts(dt); stepFeel(dt);
   // camera
   const pl = view.target;
   if (view.mode === 'attract' || !pl) {
@@ -1576,9 +1648,13 @@ R.frame = function (dt, view) {
     camPos.x = cp.x; camPos.y = cp.y; camPos.z = cp.z; camDir.x = cp.dx; camDir.y = cp.dy; camDir.z = cp.dz; camDist = cp.dist;
     if (R.reduced) shake = 0;
     let sx = 0, sy = 0; if (shake > 0) { sx = (Math.random() - 0.5) * shake * 0.5; sy = (Math.random() - 0.5) * shake * 0.5; shake = Math.max(0, shake - dt * 2.2); }
-    camera.position.set(cp.x + sx, cp.y + sy, cp.z);
+    /* 0.23 shot kick: the camera is pushed back along its own line of sight and rolls a hair, then springs home. Both keep
+       the centre of the screen on the same ray, so the crosshair stays exactly where the shot goes. */
+    kick *= Math.exp(-dt * 16); const kb = kick * 0.11;
+    camera.position.set(cp.x + sx - cp.dx * kb, cp.y + sy - cp.dy * kb, cp.z - cp.dz * kb);
     camera.lookAt(cp.x + sx + cp.dx * 50, cp.y + sy + cp.dy * 50, cp.z + cp.dz * 50);
-    camera.fov = (R.portrait ? 82 : 64) * (1 - view.zoom * 0.3) * (1 + fovKick * 0.07);
+    if (kick > 0.01) camera.rotateZ(kick * 0.006 * kickSide);
+    camera.fov = (R.portrait ? 82 : 64) * (1 - view.zoom * 0.3) * (1 + fovKick * 0.07) * (1 + kick * 0.006);
     heroM.forEach(m => { if (m.unit === pl && cp.dist < 1.4) m.visible = false; });
   }
   camera.updateProjectionMatrix(); camera.updateMatrixWorld();

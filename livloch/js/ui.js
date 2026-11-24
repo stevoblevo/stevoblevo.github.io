@@ -157,6 +157,7 @@ function show(name) {
   if (name && LL.input.device !== 'touch') { const b = $(name).querySelector('.btn.primary, .btn'); if (b) try { b.focus({ preventScroll: true }); } catch (e) {} }
   else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
+UI.show = function (name) { show(name); }; // 0.23 wardrobe: js/wardrobe.js opens its own screen (#ward) through this
 UI.showTitle = function () { $('hud').hidden = true; document.body.classList.remove('lean'); show('title'); UI.record(); if (UI.modeLine) UI.modeLine(); };
 UI.startHUD = function (w) {
   W = w; const p = W.player, d = p.def;
@@ -179,6 +180,7 @@ UI.coach = function (text) { const c = $('coach'); c.hidden = !text; if (text) c
 UI.banner = function (text, small, secs) {
   const b = $('banner'); b.innerHTML = esc(text) + (small ? '<small>' + esc(small) + '</small>' : ''); b.classList.add('on'); bannerT = secs || 3.5;
 };
+UI.feed = function (html) { feed(html); }; // 0.23 wardrobe: js/wardrobe.js says "New in the wardrobe" here
 function feed(html) { const f = $('feed'), p = document.createElement('p'); p.innerHTML = html; f.appendChild(p); while (f.children.length > 4) f.removeChild(f.firstChild); setTimeout(function () { if (p.parentNode) p.parentNode.removeChild(p); }, 6000); }
 function num(x, y, z, text, cls) {
   const n = nums[numI]; numI = (numI + 1) % nums.length;
@@ -252,7 +254,7 @@ UI.fx = function (e) {
     case 'hit':
       if (e.p === 1) {
         if (e.amt >= 1) num(e.x, e.y + 0.3, e.z, String(Math.round(e.amt)), e.crit ? 'crit' : '');
-        const hm = $('hitm'); hm.className = ''; void hm.offsetWidth; hm.className = 'on';
+        const hm = $('hitm'); if (hm.className !== 'kill' || !hm.getAnimations || !hm.getAnimations().length) { hm.className = ''; void hm.offsetWidth; hm.className = 'on'; }
       } else if (e.p === 2) { hurt = Math.min(1, hurt + 0.25 + e.amt / 300); if (e.amt > 30) LL.input.rumble(0.5, 120); }
       break;
     case 'soul':
@@ -305,7 +307,8 @@ UI.fx = function (e) {
       feed('<b class="t' + e.team + '">' + C.TEAM_NAME[e.team] + '</b> folded the valley');
       break;
     case 'foldend': if (e.p) feed('The crease lets go'); break;
-    case 'death': if (e.kind === 'stray' && Math.hypot(e.x - C.CREASE_X[0], e.z) < 14 && !W.creaseHint) { W.creaseHint = true; feed('The ground under it is creased'); } break;
+    case 'death': if (e.kind === 'trooper' && e.by && e.by === W.player) { const hm = $('hitm'); hm.className = ''; void hm.offsetWidth; hm.className = 'pop'; } // 0.23: your trooper kills tick the crosshair
+      if (e.kind === 'stray' && Math.hypot(e.x - C.CREASE_X[0], e.z) < 14 && !W.creaseHint) { W.creaseHint = true; feed('The ground under it is creased'); } break;
     case 'nessup': UI.banner('Something large is in the loch.', 'Kill the Ness for the Greatness: ' + C.GREAT_T + ' seconds of harder hits for your whole side', 6); feed('The <b>Ness</b> has surfaced'); break;
     case 'nessdown':
       if (e.team === pl.team) UI.banner('Your side has the Greatness.', '+350 souls each · guns, abilities and troopers hit harder for ' + C.GREAT_T + ' seconds', 5);
