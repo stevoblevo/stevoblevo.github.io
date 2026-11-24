@@ -69,8 +69,10 @@ def main(canary):
     put("versions.json", json.dumps(dict(data, versions=rows), indent=1, ensure_ascii=False) + "\n")
     (C / "versions").mkdir(exist_ok=True); V.write_index(rows, dest=C / "versions" / "index.html"); written.append("and-so/versions/index.html")
     put("versions/versions.js", src=REPO / "versions" / "versions.js")
-    # 3. the files the current build loads by address
-    for rel in ("sw.js", "manifest.webmanifest", "assets/art/manifest.json", "assets/pet/slots.json"):
+    # 3. the files the current build loads by address. saelion.co keeps its own sw.js and manifest.webmanifest: they are
+    #    made for its address (/and-so, no trailing slash) and its icons, and the worker only handles the root page and its
+    #    own files, so the version pages pass through it untouched
+    for rel in ("assets/art/manifest.json", "assets/pet/slots.json"):
         if (SITE / rel).exists(): put(rel, src=SITE / rel)
     # 4. the public list and the routes
     pf = canary / "scripts" / "public-files.json"; names = json.loads(pf.read_text(encoding="utf-8"))
