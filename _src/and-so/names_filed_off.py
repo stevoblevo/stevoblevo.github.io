@@ -56,7 +56,7 @@ def main(src, private=None):
     rows, priv, problems = [], [], []
     for f in sorted(Path(src).glob("b*.json")):
         for s in json.loads(f.read_text(encoding="utf-8")):
-            title, album = s["title"].strip(), s["album"].strip()
+            title, album = (s.get("title") or "").strip(), s["album"].strip()   # a withheld title stays empty: that tune cannot be named
             rec = RECORDS.get(album)
             if rec is None: problems.append(f"unknown album {album!r}"); continue
             secs, form = s.get("sections") or {}, s.get("form") or []
@@ -74,10 +74,10 @@ def main(src, private=None):
             if meter == 6: meter, bars = 3, [x for b in bars for x in (b[:1], b[1:] or b[:1])]
             bars = bars[:MAX_BARS]
             if len(bars) < 4: problems.append(f"{album} {s.get('track')}: no usable chart ({s.get('confidence')})"); continue
-            n = norm(title); h = cyrb53(n)
+            n = norm(title) if title else ""; h = cyrb53(n) if n else 0
             words = [w for w in re.sub(r"[^A-Za-z0-9' ]+", " ", re.sub(r"\(.*?\)", "", title)).split() if w]
             vault = bool(s.get("vault"))
-            tid = "nf-" + b36(cyrb53(n + "|" + album, 7))[:9]
+            tid = "nf-" + b36(cyrb53((n or f"track {s.get('track')}") + "|" + album, 7))[:9]
             riddle = str(s.get("riddle") or "").strip().lower()
             leak = [w for w in re.findall(r"[a-z0-9']+", riddle) if len(w) > 3 and w in set(n.split())]
             if leak: problems.append(f"{album} {s.get('track')}: riddle uses a title word {leak}")
@@ -86,7 +86,7 @@ def main(src, private=None):
                 "title": riddle or "a tune with its name filed off",
                 "hint": f"record {rec} · " + (f"from the drawer, track {s.get('track')}" if vault else f"track {s.get('track')}"),
                 "ini": " ".join(w[0].upper() for w in words),
-                "h": b36(h), "form": " · ".join(dict.fromkeys(re.sub(r"\s*\d+$", "", x).lower() for x in form)),
+                "h": b36(h) if h else "", "form": " · ".join(dict.fromkeys(re.sub(r"\s*\d+$", "", x).lower() for x in form)),
                 "key": s["key"], "tempo": int(round(float(s.get("tempo") or 100))), "meter": meter,
                 "feel": s.get("feel") if s.get("feel") in ("straight", "ballad", "waltz", "swing") else ("waltz" if meter == 3 else "straight"),
                 "pd": False, "marks": marks, "conf": s.get("confidence") or "low",

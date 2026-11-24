@@ -31,10 +31,10 @@ const nfNorm = t => {
 };
 const NF = { miss: {} };
 function nfNamed() { try { return JSON.parse(localStorage.getItem(NF_KEY) || '{}') || {}; } catch (e) { return {}; } }
-const nfTune = t => !!(t && t.chapter && t.h);
+const nfTune = t => !!(t && t.chapter);   // a tune of the chapter (h empty: its name stays filed off for good)
 function nfTitle(t) { return (nfTune(t) && nfNamed()[t.id]) || (t && t.title) || ''; }
 function nfGuess(text) {
-  const t = BOOK.tune; if (!nfTune(t)) return;
+  const t = BOOK.tune; if (!nfTune(t) || !t.h) return;
   const say = $('bookGuessSay'), n = nfNorm(text);
   if (!n) return;
   if (cyrb53(n).toString(36) === t.h) {
@@ -342,8 +342,8 @@ function bookRender() {
   if (nb) {
     nb.hidden = !nf;
     if (nf) {
-      $('bookHint').textContent = named ? `${t.hint} · its riddle: ${t.title}` : t.hint;
-      $('bookGuess').hidden = !!named; nb.querySelector('button').hidden = !!named;
+      $('bookHint').textContent = named ? `${t.hint} · its riddle: ${t.title}` : t.h ? t.hint : `${t.hint} · this one's name stays filed off`;
+      $('bookGuess').hidden = !!named || !t.h; nb.querySelector('button').hidden = !!named || !t.h;
       if (NF.shown !== t.id) { NF.shown = t.id; $('bookGuess').value = ''; $('bookGuessSay').textContent = ''; }
     }
   }
