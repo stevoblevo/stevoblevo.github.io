@@ -1,3 +1,8 @@
+> **Superseded (23 Nov 2026).** This folder is an early stand-in Claude made on 16 Nov, before it found the real kit.
+> The real Hypermetapunk lives in its own repository, <https://github.com/stevoblevo/hypermetapunk>, served at
+> <https://stevoblevo.github.io/hypermetapunk/> (the project site takes that address, so this folder is never served).
+> Its Claude design-system artifact now holds the real kit's `project/` too. Kept here as history; do not build on it.
+
 Hypermetapunk is the neon kit: a dark aubergine room where five glowing axes hold a sound in place. It is the third face of the same lattice, after Storeybrook (paper, daylight, a book on a table) and Depthfield (planes and depth of field). Where Storeybrook reads like a storybook, Hypermetapunk reads like an instrument panel at night: named things in tracked serif capitals, live things in glow, numbers with their units.
 
 It starts small. Version 0.1 holds the colours, type, spacing, radii and one glow, taken from the hypermetapunk look in AND SO 8.3, where it was first drawn. It has no components yet; the plan for them is in `hypermetapunk/ROADMAP.md` in the stevoblevo.github.io repository.
