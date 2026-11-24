@@ -503,9 +503,19 @@ Boards.prototype.end = function () { if (!this.m) return; for (let i = 0; i < th
    camera and shows the view that matches where the camera stands, mirrored for the other side. A hero with no sheet,
    or whose sheet fails to load, keeps the built shapes below. Add a hero by adding a line here. */
 const PAPER = R.PAPER = { // h: height in metres. hem: where the legs start (0 to 1). motion: the seven-figure sheet. arms: shoulder height, half shoulder width, arm length, all as fractions of h
-  dora: { src: 'art/heroes/dora.png', h: 2.45, hem: 0.2, motion: 'art/heroes/dora-motion.png' }, // her cloak hides her arms; they appear only when she aims
-  anna: { src: 'art/heroes/anna.png', h: 2.4, hem: 0.3, motion: 'art/heroes/anna-motion.png', arms: { y: 0.685, x: 0.105, len: 0.367 } },
-  myra: { src: 'art/heroes/myra.png', h: 1.95, hem: 0.22, motion: 'art/heroes/myra-motion.png', arms: { y: 0.6, x: 0.19, len: 0.356 } },
+  dora: { src: 'art/heroes/dora.png', h: 2.45, hem: 0.2, legs: 0.165, motion: 'art/heroes/dora-motion.png' }, // her cloak hides her arms; they appear only when she aims
+  anna: { src: 'art/heroes/anna.png', h: 2.4, hem: 0.3, motion: 'art/heroes/anna-motion.png', arms: { y: 0.685, x: 0.105, len: 0.367 },
+    /* 0.21: a finer body grid (columns, rows) for the coat halves; the coat's centre slit runs from the hem up to v 0.4 in
+       the front and back cells; and the braid, cut out of the motion sheet so it can swing (see braidSheets). In each
+       motion cell that shows it: p, where it hangs from (cell u, v), and poly, its outline (u, v pairs), measured from the
+       sheet's hair colours by a script (docs/prompts/anna-motion-sheet-v2.md asks for a painted braid layer instead). */
+    grid: [8, 18], slit: 0.4, legs: 0.262, // legs: where the leg strips are cut, below the hem, so they carry no coat
+    braid: { cells: {
+      1: { p: [0.652, 0.753], poly: [0.574,0.753,0.598,0.728,0.621,0.703,0.637,0.678,0.648,0.653,0.656,0.628,0.668,0.603,0.637,0.578,0.645,0.553,0.664,0.528,0.66,0.503,0.645,0.478,0.668,0.453,0.676,0.441,0.695,0.425,0.715,0.441,0.73,0.453,0.746,0.478,0.723,0.503,0.723,0.528,0.734,0.553,0.746,0.578,0.75,0.603,0.742,0.628,0.75,0.653,0.738,0.678,0.746,0.703,0.734,0.728,0.73,0.753] },
+      2: { p: [0.5, 0.753], poly: [0.398,0.753,0.418,0.728,0.422,0.703,0.418,0.678,0.43,0.653,0.422,0.628,0.43,0.603,0.441,0.578,0.441,0.553,0.465,0.528,0.457,0.503,0.434,0.478,0.453,0.453,0.469,0.441,0.5,0.422,0.531,0.441,0.547,0.453,0.566,0.478,0.539,0.503,0.539,0.528,0.547,0.553,0.562,0.578,0.574,0.603,0.562,0.628,0.582,0.653,0.566,0.678,0.586,0.703,0.59,0.728,0.602,0.753] },
+      5: { p: [0.508, 0.769], poly: [0.363,0.769,0.402,0.744,0.422,0.719,0.43,0.694,0.422,0.669,0.426,0.644,0.438,0.619,0.434,0.594,0.453,0.569,0.449,0.544,0.484,0.519,0.453,0.494,0.438,0.469,0.473,0.444,0.48,0.431,0.5,0.414,0.52,0.431,0.539,0.444,0.574,0.469,0.555,0.494,0.543,0.519,0.551,0.544,0.562,0.569,0.559,0.594,0.578,0.619,0.574,0.644,0.578,0.669,0.582,0.694,0.578,0.719,0.602,0.744,0.652,0.769] },
+      6: { p: [0.83, 0.775], poly: [0.723,0.775,0.754,0.75,0.781,0.725,0.812,0.7,0.82,0.675,0.832,0.65,0.836,0.625,0.848,0.6,0.82,0.575,0.828,0.55,0.852,0.525,0.832,0.5,0.844,0.475,0.871,0.45,0.895,0.434,0.918,0.45,0.941,0.475,0.918,0.5,0.906,0.525,0.918,0.55,0.934,0.575,0.93,0.6,0.93,0.625,0.934,0.65,0.922,0.675,0.934,0.7,0.914,0.725,0.918,0.75,0.938,0.775] } } } },
+  myra: { src: 'art/heroes/myra.png', h: 1.95, hem: 0.22, legs: 0.168, motion: 'art/heroes/myra-motion.png', arms: { y: 0.6, x: 0.19, len: 0.356 } },
   skein: { src: 'art/heroes/skein.png', h: 2.2, hem: 0.27, motion: 'art/heroes/skein-motion.png', arms: { y: 0.66, x: 0.13, len: 0.352 } }
 };
 const paperTex = {}, PAPER_FLIP = -1;
@@ -533,18 +543,78 @@ function heroize(m, img, cells) {
   return m;
 }
 const ss01 = function (a, b, x) { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-/* Bend the body: q = { bend, head, cloak (screen-right fractions of height), flare, bulge, breath, wave, wph }, inv turns
-   screen-right into the piece's own x (it is mirrored and widened by its parent's scale). */
+/* Bend the body: q = { bend, head, cloak (screen-right fractions of height), flare, bulge, breath, wave, wph, inv, and
+   0.21: slit, panL, panR }, inv turns screen-right into the piece's own x (it is mirrored and widened by its parent's
+   scale). bodyAt is the bend at one rest point of the body, so a piece laid on the body (the braid) can follow it. */
+function bodyAt(x0, y0, q, H, hw, o) {
+  const f = 1 + y0 / H, lo = 1 - f, lo2 = lo * lo, u = x0 / hw;
+  const sx = (q.bend * f * f + q.head * ss01(0.68, 1, f) + q.cloak * lo2 * lo) * H * q.inv;
+  const wide = q.flare * lo2 * 1.7 + q.bulge * 4 * f * lo * (0.5 + 0.5 * lo) + q.breath * Math.max(0, 1 - Math.abs(f - 0.6) / 0.22);
+  let dy = (q.flare * 0.1 * lo2 + q.wave * Math.sin(q.wph + u * 2.7) * lo2 * lo) * H, dx = 0; // the hem lifts only a little: the legs hang from just under it
+  /* 0.21: the two halves of a slit coat, each lifted at the hem by its own knee; most at the slit, where the cloth is free,
+     blended across the centre column (the halves share it, so the slit itself cannot open). */
+  if (q.slit > 0 && f < q.slit && (q.panL > 0.001 || q.panR > 0.001)) { const w = ss01(q.slit, 0, f), k = ss01(-0.14, 0.14, u), pan = q.panL * (1 - k) + q.panR * k, au = Math.abs(u);
+    dy += pan * w * H * 0.045 * (1 - 0.55 * Math.min(1, au / 0.6)); dx = u * pan * w * H * 0.06; }
+  o.x = x0 + sx + x0 * wide + dx; o.y = y0 + dy;
+}
+const bo = { x: 0, y: 0 };
 function bendBody(ms, q, inv) {
-  const g = ms.geometry, a = g.attributes.position, b = g.userData.base, H = g.userData.H, hw = g.userData.W / 2;
-  for (let i = 0; i < a.count; i++) {
-    const x0 = b[i * 3], y0 = b[i * 3 + 1], f = 1 + y0 / H, lo = 1 - f, lo2 = lo * lo, u = x0 / hw;
-    const sx = (q.bend * f * f + q.head * ss01(0.68, 1, f) + q.cloak * lo2 * lo) * H * inv;
-    const wide = q.flare * lo2 * 1.7 + q.bulge * 4 * f * lo * (0.5 + 0.5 * lo) + q.breath * Math.max(0, 1 - Math.abs(f - 0.6) / 0.22);
-    const dy = (q.flare * 0.1 * lo2 + q.wave * Math.sin(q.wph + u * 2.7) * lo2 * lo) * H; // the hem lifts only a little: the legs hang from just under it
-    a.setXY(i, x0 + sx + x0 * wide, y0 + dy);
-  }
+  const g = ms.geometry, a = g.attributes.position, b = g.userData.base, H = g.userData.H, hw = g.userData.W / 2; q.inv = inv;
+  for (let i = 0; i < a.count; i++) { bodyAt(b[i * 3], b[i * 3 + 1], q, H, hw, bo); a.setXY(i, bo.x, bo.y); }
   a.needsUpdate = true;
+}
+/* The braid (0.21) hangs from its pivot as a short chain: each row of the strip turns by an angle that grows down its
+   length (the root lies on the nape, the tip is free), a = the pendulum, tip = the lower half's lag; lift shortens the
+   lower half (trailing toward the camera). The result is then carried by the body's own bend, as if painted on it. */
+function bendBraid(ms, body, q, a, tip, lift) {
+  const g = ms.geometry, A = g.attributes.position, b = g.userData.base, n = g.userData.rows, cols = g.userData.cols, L = g.userData.H, px = g.userData.px, oy = ms.position.y;
+  const bg = body.geometry, H = bg.userData.H, hw = bg.userData.W / 2;
+  let cx = px, cy = 0;
+  for (let j = 0; j <= n; j++) {
+    const s = j / n;
+    if (j > 0) { const sm = (j - 0.5) / n, tm = a * Math.min(1, sm / 0.4) + tip * sm * sm, seg = L / n * (1 - lift * sm); cx += Math.sin(tm) * seg; cy -= Math.cos(tm) * seg; }
+    const th = a * Math.min(1, s / 0.4) + tip * s * s, c = Math.cos(th), sn = Math.sin(th);
+    for (let k = 0; k <= cols; k++) { const i = j * (cols + 1) + k, ox = b[i * 3] - px; bodyAt(cx + ox * c, cy + ox * sn + oy, q, H, hw, bo); A.setXY(i, bo.x, bo.y - oy); }
+  }
+  A.needsUpdate = true;
+}
+/* Cut the braid out of a motion sheet (0.21). Returns two canvases the size of the sheet: braid (only the pixels inside
+   the outlines) and body (the sheet with those pixels filled from either side: mirrored from the cloth beside it so its
+   weave and the belt carry across, or left empty where the braid hung over the background). If the browser will not let
+   a page read its own picture (opened as a file), returns null and the painted braid stays painted on. */
+function braidSheets(img, B) {
+  try {
+    const w = img.width, h = img.height, cw = w / 7, mk = function () { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+    const body = mk(), braid = mk(), mask = mk(), bx = body.getContext('2d'), rx = braid.getContext('2d'), mx = mask.getContext('2d');
+    bx.drawImage(img, 0, 0); mx.fillStyle = mx.strokeStyle = '#fff'; mx.lineWidth = 2; mx.lineJoin = 'round';
+    const box = [];
+    for (const key in B.cells) { const c = +key, P = B.cells[key].poly; let x0 = w, x1 = 0, y0 = h, y1 = 0; mx.beginPath();
+      for (let i = 0; i < P.length; i += 2) { const x = (c + P[i]) * cw, y = (1 - P[i + 1]) * h; if (i) mx.lineTo(x, y); else mx.moveTo(x, y); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      mx.closePath(); mx.fill(); mx.stroke(); box.push([Math.max(c * cw, Math.floor(x0) - 3), Math.min((c + 1) * cw - 1, Math.ceil(x1) + 3), Math.max(0, Math.floor(y0) - 3), Math.min(h - 1, Math.ceil(y1) + 3), c * cw, (c + 1) * cw - 1]); }
+    rx.drawImage(img, 0, 0); rx.globalCompositeOperation = 'destination-in'; rx.drawImage(mask, 0, 0);
+    const D = bx.getImageData(0, 0, w, h), d = D.data, M = mx.getImageData(0, 0, w, h).data, O = Uint8ClampedArray.from(d);
+    const on = function (x, y) { return O[(y * w + x) * 4 + 3] >= 128; }, inM = function (x, y) { return M[(y * w + x) * 4 + 3] >= 128; };
+    box.forEach(function (bb) {
+      for (let y = bb[2]; y <= bb[3]; y++) for (let x = bb[0]; x <= bb[1]; x++) {
+        if (!inM(x, y) || !on(x, y)) continue;
+        let b2 = x; while (b2 + 1 <= bb[1] && inM(b2 + 1, y) && on(b2 + 1, y)) b2++;
+        const a = x, L = a - 1, Rr = b2 + 1, lo = L >= bb[4] && on(L, y) && !inM(L, y), ro = Rr <= bb[5] && on(Rr, y) && !inM(Rr, y);
+        const pick = function (xm, xs) { return xm >= bb[4] && xm <= bb[5] && on(xm, y) && !inM(xm, y) ? xm : xs; };
+        for (let xx = a; xx <= b2; xx++) {
+          const o = (y * w + xx) * 4, t = (xx - a + 1) / (b2 - a + 2), pl = pick(2 * a - 1 - xx, L), pr = pick(2 * b2 + 1 - xx, Rr);
+          let wl = lo ? 1 - t : 0, wr = ro ? t : 0;
+          if (lo && !ro) wl = xx - a < 3 ? 1 : 0; else if (ro && !lo) wr = b2 - xx < 3 ? 1 : 0;
+          const sw = wl + wr; if (sw <= 0) { d[o + 3] = 0; continue; }
+          const ol = (y * w + pl) * 4, or = (y * w + pr) * 4;
+          for (let ch = 0; ch < 3; ch++) d[o + ch] = ((lo ? O[ol + ch] : 0) * wl + (ro ? O[or + ch] : 0) * wr) / sw;
+          d[o + 3] = 255;
+        }
+        x = b2;
+      }
+    });
+    bx.putImageData(D, 0, 0);
+    return { body: body, braid: braid };
+  } catch (e) { return null; }
 }
 /* Fold a hanging strip at a joint `at` of the way down (knee, elbow) by angle al (+ swings the lower part toward +x). */
 function bendJoint(ms, al, at) {
@@ -576,16 +646,32 @@ function paperFor(g, id) {
       gq.boundingSphere = new T.Sphere(new T.Vector3(cx, -gq.userData.H / 2, 0), P.h);
       const ms = new T.Mesh(gq, m2 || mt); pp.add(ms); return ms;
     };
-    const P_ = pp.parts = { body: part(0, 1, Math.max(0, hf - 0.035), 1, null, 6, 14), legL: part(0, 0.5, 0, hf, null, 1, 6), legR: part(0.5, 1, 0, hf, null, 1, 6), legA: part(0, 1, 0, hf, null, 1, 8), legB: part(0, 1, 0, hf, null, 1, 8) };
-    P_.body.position.set(0, P.h, 0.03); P_.legB.position.z = -0.02; pp.material = mt; pp.rotation.order = 'YXZ'; /* so a fall tips the card away from the camera */ pp.h = P.h; pp.hem = hf * P.h; g.add(pp);
+    const gr = P.grid || [6, 14], lt = P.legs || hf, vb = Math.max(0, Math.min(hf - 0.035, lt - 0.005));
+    const P_ = pp.parts = { body: part(0, 1, vb, 1, null, gr[0], gr[1]), legL: part(0, 0.5, 0, lt, null, 1, 6), legR: part(0.5, 1, 0, lt, null, 1, 6), legA: part(0, 1, 0, lt, null, 1, 8), legB: part(0, 1, 0, lt, null, 1, 8) };
+    P_.body.position.set(0, P.h, 0.03); P_.legB.position.z = -0.02; pp.material = mt; pp.rotation.order = 'YXZ'; /* so a fall tips the card away from the camera */ pp.h = P.h; pp.hem = lt * P.h; g.add(pp);
+    pp.slitF = P.slit ? (P.slit - vb) / (1 - vb) : 0; // where the coat's slit ends, as a fraction of the body piece from its bottom
     /* The motion sheet, when there is one: bodies drawn without arms (front, side, back), one arm from the side and one from
        the front, and an aiming pose from behind and from the side. The body pieces switch to this picture for those views;
        the arms hang from the shoulders and swing; while the hero is firing the aiming pose is shown. */
     if (P.motion) new T.TextureLoader().load(P.motion, function (t2) {
       t2.minFilter = T.LinearFilter; t2.generateMipmaps = false; t2.repeat.set(1 / 7, 1);
-      pp.mat1 = mt; pp.mat2 = heroize(flatMat(t2), t2.image, 7); pp.r2 = ((t2.image.width / 7) / t2.image.height * P.h) / wd; // how much wider a motion cell is than a turnaround cell
+      /* 0.21: a braid is cut out of the sheet and hung as its own piece, one strip per cell that shows it, all sharing one
+         material whose cell is set each frame; the body then draws from the copy with the braid filled in behind. */
+      const cut = P.braid && !R.reduced ? braidSheets(t2.image, P.braid) : null; let tb = t2;
+      if (cut) { tb = new T.CanvasTexture(cut.body); tb.minFilter = T.LinearFilter; tb.generateMipmaps = false; tb.repeat.set(1 / 7, 1);
+        const tr = new T.CanvasTexture(cut.braid); tr.minFilter = T.LinearFilter; tr.generateMipmaps = false; tr.repeat.set(1 / 7, 1);
+        pp.matB = flatMat(tr); P_.braids = {};
+        for (const key in P.braid.cells) { const B = P.braid.cells[key], Q = B.poly; let u0 = 1, u1 = 0, v0 = 1;
+          for (let i = 0; i < Q.length; i += 2) { u0 = Math.min(u0, Q[i]); u1 = Math.max(u1, Q[i]); v0 = Math.min(v0, Q[i + 1]); }
+          const v1 = B.p[1], br = part(Math.max(0, u0 - 0.012), Math.min(1, u1 + 0.012), Math.max(0, v0 - 0.01), v1, pp.matB, 2, 16);
+          br.geometry.userData.rows = 16; br.geometry.userData.cols = 2; br.geometry.userData.px = (B.p[0] - 0.5) * wd;
+          P_.body.add(br); br.position.set(0, -(1 - v1) * P.h, 0.006); br.renderOrder = 1; br.visible = false; P_.braids[key] = br; }
+      }
+      pp.mat1 = mt; pp.mat2 = heroize(flatMat(tb), tb.image, 7); pp.r2 = ((t2.image.width / 7) / t2.image.height * P.h) / wd; // how much wider a motion cell is than a turnaround cell
       if (P.arms) { const ta = t2.clone(); ta.needsUpdate = true; ta.repeat.set(1 / 7, 1); const ma = heroize(flatMat(ta), t2.image, 7); pp.matA = ma;
-        P_.armL = part(0, 1, 1 - P.arms.len, 1, ma, 1, 6); P_.armR = part(0, 1, 1 - P.arms.len, 1, ma, 1, 6); P_.armR.scale.x = -1; }
+        P_.armL = part(0, 1, 1 - P.arms.len, 1, ma, 1, 6); P_.armR = part(0, 1, 1 - P.arms.len, 1, ma, 1, 6); P_.armR.scale.x = -1;
+        /* 0.21: the far arm, seen from the side, swings behind the body: the side arm picture, a shade darker. */
+        if (LL.paperMotion.gaitOf(id).far) { pp.matF = heroize(flatMat(ta), t2.image, 7); pp.matF.color.setRGB(0.68, 0.66, 0.72); } } // shares the arms' texture (and its cell)
     }, undefined, function () {});
     g.paper = pp; g.body.visible = false; g.legL.visible = false; g.legR.visible = false;
   };
@@ -949,6 +1035,15 @@ R.fx = function (e) {
       break;
     }
     case 'impact': emit(e.x, e.y, e.z, 2, 0xd0c0b0, 3, 0.25, 1.5); break;
+    case 'cast': { /* 0.21: an ability has a pose (LL.paperMotion.cast); a stomp also shakes dust and grit off the ground around the feet */
+      const m = heroM[W.heroes.indexOf(e.u)], a = e.u.def.ab[e.i]; if (!m || !m.rig || R.reduced) break;
+      const what = LL.paperMotion.cast(m.rig, e.kind, a && a.ult);
+      if (what === 'stomp' && m.paper) { const u = e.u;
+        for (let k = 0; k < 16; k++) { const q = k / 16 * 6.283 + Math.random() * 0.25, v = 3.6 + Math.random() * 1.6; puff(u.x + Math.cos(q) * 0.45, 0.14, u.z + Math.sin(q) * 0.45, Math.cos(q) * v, 0.25 + Math.random() * 0.3, Math.sin(q) * v, 0.32, 1.15, 0.7, 0.44); }
+        for (let k = 0; k < 10; k++) { const q = Math.random() * 6.283, v = 1.5 + Math.random() * 2.5; puff(u.x + Math.cos(q) * 0.3, 0.12, u.z + Math.sin(q) * 0.3, Math.cos(q) * v, 3 + Math.random() * 2.5, Math.sin(q) * v, 0.08, 0.07, 0.8, 0.9, true); }
+        if (u === W.player) shake = Math.max(shake, 0.22); }
+      break;
+    }
     case 'death': {
       const col = e.team === 2 ? 0xc9a0ff : SRC_TEAM[e.team];
       if (e.kind === 'trooper') emit(e.x, 1, e.z, 14, col, 6, 0.7, 3);
@@ -1072,22 +1167,26 @@ function buildPuffs() {
   for (let i = 0; i < PUFF_N; i++) puffs.push({ life: 0, t: 0, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, s0: 0, s1: 0, a: 0 });
 }
 function puffCol() { const G = LK.ground; return tmpC.setHex(LK === LOOKS.snow ? 0xdfe0ff : (LK === LOOKS.origami ? 0xb8ab94 : G.laneC)).lerp(new T.Color(0xffffff), LK === LOOKS.snow ? 0 : 0.35); }
-function puff(x, y, z, vx, vy, vz, s0, s1, life, a) {
+/* grit (0.21): a small dark chip of the ground that falls back and skids instead of drifting up. */
+function puff(x, y, z, vx, vy, vz, s0, s1, life, a, grit) {
   if (!puffM) return; const p = puffs[puffK]; puffK = (puffK + 1) % PUFF_N;
-  p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.life = life; p.t = 0; p.a = a; puffCol(); p.r = tmpC.r; p.g = tmpC.g; p.b = tmpC.b;
+  p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.life = life; p.t = 0; p.a = a; puffCol(); if (grit) tmpC.multiplyScalar(0.42); p.r = tmpC.r; p.g = tmpC.g; p.b = tmpC.b; p.grit = !!grit;
 }
 function stepPuffs(dt) {
   if (!puffM) return; let n = 0;
   for (let i = 0; i < PUFF_N; i++) { const p = puffs[i]; if (p.life <= 0) continue; p.t += dt; const f = p.t / p.life; if (f >= 1) { p.life = 0; continue; }
-    const dmp = Math.exp(-dt * 4); p.vx *= dmp; p.vz *= dmp; p.vy = p.vy * dmp + 0.2 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+    if (p.grit) { p.vy -= 13 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; if (p.y < 0.04) { p.y = 0.04; p.vy *= -0.25; p.vx *= 0.55; p.vz *= 0.55; } }
+    else { const dmp = Math.exp(-dt * 4); p.vx *= dmp; p.vz *= dmp; p.vy = p.vy * dmp + 0.2 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; }
     const sc = p.s0 + (p.s1 - p.s0) * (1 - (1 - f) * (1 - f)); dummy.position.set(p.x, p.y, p.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(sc, sc, sc); dummy.updateMatrix();
     puffM.setMatrixAt(n, dummy.matrix); puffA.setX(n, p.a * Math.pow(1 - f, 1.6) * Math.min(1, p.t * 14)); puffC.setXYZ(n, p.r, p.g, p.b); n++; }
   puffM.count = n; puffM.instanceMatrix.needsUpdate = true; puffA.needsUpdate = true; puffC.needsUpdate = true;
 }
 function heroDust(m, h, st, dt) {
   const fx = Math.sin(h.yaw), fz = Math.cos(h.yaw);
-  if (st.contact && h.onGround && !h.zip) { const sd = st.contact === 1 ? 1 : -1, sp = Math.hypot(h.vx, h.vz);
-    for (let k = 0; k < 2; k++) puff(h.x - fx * 0.15 + fz * 0.18 * sd + (Math.random() - 0.5) * 0.2, 0.12, h.z - fz * 0.15 - fx * 0.18 * sd + (Math.random() - 0.5) * 0.2, -h.vx * 0.12 + (Math.random() - 0.5) * 0.5, 0.35 + Math.random() * 0.3, -h.vz * 0.12 + (Math.random() - 0.5) * 0.5, 0.22, 0.6 + sp * 0.03, 0.5, 0.34); }
+  /* 0.21: a heavy foot (st.plant) throws more dust, wider and lower, and flicks a few chips of grit up and back. */
+  if (st.contact && h.onGround && !h.zip) { const sd = st.contact === 1 ? 1 : -1, sp = Math.hypot(h.vx, h.vz), pl = st.plant || 0, fx0 = h.x - fx * 0.15 + fz * 0.18 * sd, fz0 = h.z - fz * 0.15 - fx * 0.18 * sd;
+    for (let k = 0; k < 2 + Math.round(pl * 2); k++) puff(fx0 + (Math.random() - 0.5) * (0.2 + pl * 0.25), 0.12, fz0 + (Math.random() - 0.5) * (0.2 + pl * 0.25), -h.vx * 0.12 + (Math.random() - 0.5) * (0.5 + pl * 0.9), 0.35 + Math.random() * 0.3 - pl * 0.12, -h.vz * 0.12 + (Math.random() - 0.5) * (0.5 + pl * 0.9), 0.22 + pl * 0.06, 0.6 + sp * 0.03 + pl * 0.3, 0.5 + pl * 0.15, 0.34 + pl * 0.06);
+    for (let k = 0; k < Math.round(pl * 3); k++) { const a = Math.random() * 6.283; puff(fx0, 0.1, fz0, -h.vx * 0.25 + Math.cos(a) * 1.3, 2.2 + Math.random() * 1.6, -h.vz * 0.25 + Math.sin(a) * 1.3, 0.07, 0.06, 0.55, 0.85, true); } }
   if (st.landed) for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283 + Math.random() * 0.3, v = 2.4 + st.landed * 2.2; puff(h.x + Math.cos(a) * 0.35, 0.12, h.z + Math.sin(a) * 0.35, Math.cos(a) * v, 0.3 + Math.random() * 0.3, Math.sin(a) * v, 0.3, 1.0, 0.62, 0.42); }
   if (h.dashT > 0 && !m.dashing) for (let k = 0; k < 7; k++) puff(h.x - fx * 0.4 + (Math.random() - 0.5) * 0.6, 0.2 + Math.random() * 0.4, h.z - fz * 0.4 + (Math.random() - 0.5) * 0.6, -fx * (2 + Math.random() * 2), 0.4, -fz * (2 + Math.random() * 2), 0.35, 1.2, 0.55, 0.4);
   m.dashing = h.dashT > 0;
@@ -1156,7 +1255,8 @@ R.frame = function (dt, view) {
     m.lastFlash = h.flash;
     m.position.set(h.x, h.y, h.z); m.rotation.y = h.yaw;
     const ce = camera.matrixWorld.elements; scr.r = h.vx * ce[0] + h.vz * ce[2]; scr.f = -(h.vx * ce[8] + h.vz * ce[10]);
-    const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr);
+    { const q0 = m.paper; scr.m = q0 && q0.sign ? q0.sign : 1; scr.h = q0 ? q0.h : 2.3; scr.fb = !!(q0 && q0.v != null && !(q0.cell === 1 || q0.cell === 6 || (!q0.useM && q0.v === 1))); } // what the braid needs to know of last frame's picture
+    const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr), G = st.g;
     if (!R.reduced) heroDust(m, h, st, dt);
     m.phase = st.phase;
     const sw = h.zip ? 0.55 : (h.onGround ? st.sway * 0.8 : 0.5);
@@ -1177,7 +1277,8 @@ R.frame = function (dt, view) {
       const raw = ad < 0.5 ? 0 : (ad < 1.2 ? 3 : (ad < 2.2 ? 1 : 2)), BAND = { 0: [-1, 0.5], 3: [0.5, 1.2], 1: [1.2, 2.2], 2: [2.2, 9] };
       let v = pp.v; if (v == null || (raw !== v && (ad < BAND[v][0] - 0.1 || ad > BAND[v][1] + 0.1))) v = raw; pp.v = v;
       const side = v === 1, sign = (v === 1 || v === 3) && d * PAPER_FLIP > 0 ? -1 : 1;
-      pp.aiming = pp.aiming ? st.aim > 0.2 : st.aim > 0.55;
+      /* 0.21: a thrown gun shows the painted aim (the release) only after the throw, not while winding up for the next. */
+      pp.aiming = (pp.aiming ? st.aim > 0.2 : st.aim > 0.55) && st.throw > -0.12;
       let useM = !!pp.mat2 && v !== 3, cell = v;
       if (useM) { cell = v === 0 ? 0 : (v === 1 ? 1 : 2); if (pp.aiming && v === 2) cell = 5; else if (pp.aiming && v === 1) cell = 6; }
       const key = (useM ? 'm' : 't') + cell + (sign > 0 ? '+' : '-');
@@ -1187,54 +1288,98 @@ R.frame = function (dt, view) {
         mat.map.offset.x = useM ? cell / 7 : v * 0.25; pp.wide = useM ? pp.r2 : 1; pp.sign = sign; pp.key = key; pp.cell = cell; pp.useM = useM;
       };
       /* PAPER TURN. A change of picture is a card turning over: it narrows to an edge, the picture changes, it opens again.
-         0.15 s for a change of view, 0.09 s for raising or lowering the aim. Reduced motion: an instant change. */
-      if (pp.key == null || R.reduced) apply();
+         0.15 s for a change of view, 0.09 s for raising or lowering the aim. Reduced motion: an instant change. 0.21: a
+         thrown gun cuts between its wind-up and its release like two drawn frames, with no turn. */
+      const aimOnly = pp.key != null && pp.key.slice(0, 2) !== key.slice(0, 2) && pp.key.slice(2) === key.slice(2) && (pp.cell >= 5 || cell >= 5);
+      if (pp.key == null || R.reduced || (aimOnly && G.throw && pp.ft == null)) apply();
       else if (key !== pp.key && pp.ft == null) { pp.ft = 0; pp.fdur = (pp.key.slice(0, 2) !== key.slice(0, 2) && (pp.cell >= 5 || cell >= 5)) ? 0.09 : 0.15; pp.swapped = false; }
       let squeeze = 1;
       if (pp.ft != null) { pp.ft += dt; const f = pp.ft / pp.fdur; if (f >= 0.5 && !pp.swapped) { apply(); pp.swapped = true; } squeeze = Math.max(0.05, Math.abs(Math.cos(Math.PI * Math.min(1, f)))); if (f >= 1) pp.ft = null; }
-      // squash on landing, stretch going up, a small give when firing
-      const sq = st.squash * 0.13 + st.recoil * 0.025 + (h.onGround ? st.run * 0.07 : 0), sx = 1 + sq * 0.45 - Math.max(0, st.stretch) * 0.04, sy = 1 - sq + Math.max(0, st.stretch) * 0.07 - Math.max(0, -st.stretch) * 0.02;
+      // squash on landing, stretch going up, a small give when firing; 0.21: a crouch winding up a throw, a stretch on its release
+      const tw = st.throw, sq = st.squash * 0.13 + st.recoil * 0.025 + (h.onGround ? st.run * 0.07 : 0) + Math.max(0, -tw) * 0.05 - Math.max(0, tw) * 0.035;
+      const sx = 1 + sq * 0.45 - Math.max(0, st.stretch) * 0.04, sy = 1 - sq + Math.max(0, st.stretch) * 0.07 - Math.max(0, -st.stretch) * 0.02;
       pp.rotation.y = toCam - h.yaw;
       pp.scale.set(pp.sign * (pp.wide || 1) * squeeze * sx, sy, 1);
+      pp.position.z = -st.brace + Math.max(0, st.throw) * 0.1; // a braced shot shoves the whole figure back a step, and it walks it back; a throw lunges a little forward
       /* LEAN. Paper cannot lean toward the camera, so it leans across the screen: into the direction the hero is moving
          as seen from here, more when dashing. Eased, so starting and stopping read as weight. */
       const e = camera.matrixWorld.elements, vRight = h.vx * e[0] + h.vz * e[2];
       const leanT = R.reduced ? 0 : Math.max(-0.12, Math.min(0.12, -vRight * (h.dashT > 0 ? 0.02 : 0.01)));
       m.lean += (leanT - m.lean) * (1 - Math.exp(-dt * 9)); pp.rotation.z = m.lean;
-      // arms: hang from the shoulders and swing against the legs; hidden while the painted aim pose is showing
-      if (P_.armL) { const A = PAPER[h.def.id].arms, show = pp.useM && pp.cell < 3, sy2 = A.y * pp.h, sx2 = A.x * pp.h / (pp.wide || 1), asw = h.onGround ? st.sway : -0.5;
-        P_.armL.visible = show; P_.armR.visible = show && pp.cell !== 1;
-        if (show) { pp.matA.map.offset.x = (pp.cell === 1 ? 3 : 4) / 7;
-          if (pp.cell === 1) { P_.armL.position.set(0, sy2 + st.body, 0.05); P_.armL.rotation.z = -asw * 0.55; }
-          else { P_.armL.position.set(-sx2, sy2 + st.body + Math.max(0, -asw) * 0.03, -0.02); P_.armR.position.set(sx2, sy2 + st.body + Math.max(0, asw) * 0.03, -0.02); P_.armL.rotation.z = -0.06 - asw * 0.07 - Math.max(0, st.stretch) * 0.5; P_.armR.rotation.z = 0.06 - asw * 0.07 + Math.max(0, st.stretch) * 0.5; } } }
-      // legs: seen from the side they scissor; from front or back they lift in turn; in the air they tuck
-      const sideLegs = pp.cell === 1 || pp.cell === 6 || (!pp.useM && v === 1);
-      P_.legL.visible = P_.legR.visible = !sideLegs; P_.legA.visible = P_.legB.visible = sideLegs;
-      if (!h.onGround && !h.zip) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = 0.42; P_.legB.rotation.z = -0.18; P_.legL.position.y = pp.hem + pp.hem * 0.22; P_.legR.position.y = pp.hem + pp.hem * 0.1; P_.legL.rotation.z = P_.legR.rotation.z = 0; }
-      else if (sideLegs) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = st.sway * 0.74; P_.legB.rotation.z = -st.sway * 0.74; }
-      else { P_.legL.position.y = pp.hem + st.liftL * pp.hem * 3; P_.legR.position.y = pp.hem + st.liftR * pp.hem * 3; P_.legL.rotation.z = st.sway * 0.1 + st.liftL * 0.25; P_.legR.rotation.z = st.sway * 0.1 - st.liftR * 0.25; P_.legL.position.x = -st.sway * 0.012 * pp.h; P_.legR.position.x = -st.sway * 0.012 * pp.h; }
-      // the body rides the step: up twice per stride, rolls with the step and the turn, breathes when standing
-      P_.body.position.y = pp.h + (h.onGround ? st.body - st.recoil * 0.045 : 0.04);
+      // which way the figure faces: on screen (fS, +1 = right), and in its own x through the mirror (fwd)
+      const fR = Math.sin(h.yaw) * e[0] + Math.cos(h.yaw) * e[2], fS = fR >= 0 ? 1 : -1, fwd = fS * pp.sign, red = R.reduced ? 0 : 1;
+      const sideLegs = pp.cell === 1 || pp.cell === 6 || (!pp.useM && v === 1), sideK = sideLegs ? 1 : (v === 3 ? 0.55 : 0);
       // seen from front or back, a step moves the weight from foot to foot: the body shifts toward the planted leg and rolls more
       const fb = !sideLegs && h.onGround && !R.reduced;
-      P_.body.position.x = fb ? -st.sway * 0.035 * pp.h : 0;
-      P_.body.rotation.z = st.roll * (fb ? 2.2 : 1); P_.body.scale.y = 1 + (R.reduced ? 0 : Math.sin(time * 2.1 + h.id) * 0.01 * (1 - st.mix));
-      if (P_.armL && P_.armL.visible && fb) { P_.armL.position.x += P_.body.position.x; P_.armR.position.x += P_.body.position.x; }
+      const shiftX = fb ? (-st.sway * 0.035 * G.shift + st.idle * 0.012) * pp.h : 0;
+      /* ARMS: hang from the shoulders and swing against the legs; hidden while the painted aim pose is showing. 0.21: the swing
+         is per gait; seen from the side the elbow bends more on the forward swing whichever way the hero faces, and the far
+         arm (where the gait has one) swings behind the body; a thrown gun winds the arm up and back first; a stomp flings both
+         arms out; seen from front or back, an arm swinging toward or away from the camera looks shorter. */
+      // the body: where it hangs from (its top) and how far it rolls; the arms and the braid hang from it
+      const bodyY = pp.h + (h.onGround ? st.body - st.recoil * 0.045 : 0.04), roll = st.roll * (fb ? 2.2 : 1), cr = Math.cos(roll), sr0 = Math.sin(roll);
+      /* ARMS: hang from the shoulders and swing against the legs; hidden while the painted aim pose is showing. 0.21: the
+         shoulders ride the body's shift and roll (so a rolling coat no longer swallows an arm); the swing is per gait; seen
+         from the side the elbow bends more on the forward swing whichever way the hero faces, and the far arm (where the
+         gait has one) swings behind the body; a thrown gun winds the arm up and back first; a stomp flings both arms out;
+         seen from front or back, an arm swinging toward or away from the camera looks shorter. */
+      if (P_.armL) { const A = PAPER[h.def.id].arms, show = pp.useM && pp.cell < 3, sy2 = A.y * pp.h - pp.h, sx2 = A.x * pp.h / (pp.wide || 1), asw = h.onGround ? st.sway * G.arm : -0.5;
+        const sideArm = pp.cell === 1, far = sideArm && !!pp.matF, wind = Math.max(0, -tw), wA = ss01(0.06, 0.45, wind), stomp = st.stomp;
+        const sh = function (ms, x, y, z) { ms.position.set(shiftX + x * cr - y * sr0, bodyY + x * sr0 + y * cr, z); };
+        P_.armL.visible = show; P_.armR.visible = show && (!sideArm || far);
+        if (show) { pp.matA.map.offset.x = (sideArm ? 3 : 4) / 7;
+          if (sideArm) {
+            sh(P_.armL, 0, sy2, 0.05); P_.armL.scale.y = 1;
+            P_.armL.rotation.z = roll - asw * 0.55 * (1 - wA) - fwd * wA * 2.7 + fwd * stomp * 1.1 + fwd * Math.max(0, tw) * 0.7;
+            if (far) { P_.armR.material = pp.matF; P_.armR.scale.set(1, 1, 1); sh(P_.armR, 0, sy2 + 0.01 * pp.h, -0.045); P_.armR.rotation.z = roll + asw * 0.5 + fwd * stomp * 0.7 - fwd * wA * 0.5; }
+          } else {
+            if (P_.armR.material !== pp.matA) P_.armR.material = pp.matA; P_.armR.scale.x = -1;
+            sh(P_.armL, -sx2, sy2 + Math.max(0, -asw) * 0.03, -0.02); sh(P_.armR, sx2, sy2 + Math.max(0, asw) * 0.03, -0.02);
+            const lag = G.arm > 1 ? -0.55 * shiftX / (A.len * pp.h) - asw * 0.05 : 0; // the hands hang back from the body's sway a little
+            P_.armL.rotation.z = roll - 0.06 - asw * 0.07 + lag - Math.max(0, st.stretch) * 0.5 - stomp * 1.2;
+            P_.armR.rotation.z = roll + 0.06 - asw * 0.07 + lag + Math.max(0, st.stretch) * 0.5 + stomp * 1.2 + wA * 2.9 - Math.max(0, tw) * 0.35;
+            const fsh = G.arm > 1 ? 0.12 : 0; P_.armL.scale.y = 1 - fsh * Math.abs(asw); P_.armR.scale.y = 1 - fsh * Math.abs(asw) * (1 - wA) - Math.max(0, tw) * 0.2;
+          } } }
+      // legs: seen from the side they scissor; from front or back they lift in turn; in the air they tuck. 0.21: swing per gait; a stomp or a braced shot plants them wide
+      const brace = Math.min(1, st.brace * 5), stance = Math.max(st.stomp, brace);
+      P_.legL.visible = P_.legR.visible = !sideLegs; P_.legA.visible = P_.legB.visible = sideLegs;
+      if (!h.onGround && !h.zip) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = 0.42; P_.legB.rotation.z = -0.18; P_.legL.position.y = pp.hem + pp.hem * 0.22; P_.legR.position.y = pp.hem + pp.hem * 0.1; P_.legL.rotation.z = P_.legR.rotation.z = 0; }
+      else if (sideLegs) { P_.legA.position.y = P_.legB.position.y = pp.hem; P_.legA.rotation.z = st.sway * 0.74 * G.swing * (1 - stance) + fwd * 0.32 * stance; P_.legB.rotation.z = -st.sway * 0.74 * G.swing * (1 - stance) - fwd * 0.3 * stance; }
+      else { P_.legL.position.y = pp.hem + st.liftL * pp.hem * 3 * (1 - stance); P_.legR.position.y = pp.hem + st.liftR * pp.hem * 3 * (1 - stance); P_.legL.rotation.z = st.sway * 0.1 + st.liftL * 0.25 + stance * 0.12; P_.legR.rotation.z = st.sway * 0.1 - st.liftR * 0.25 - stance * 0.12; P_.legL.position.x = -st.sway * 0.012 * pp.h - stance * 0.035 * pp.h; P_.legR.position.x = -st.sway * 0.012 * pp.h + stance * 0.035 * pp.h; }
+      // the body rides the step: up twice per stride, rolls with the step and the turn, breathes when standing
+      P_.body.position.y = bodyY;
+      P_.body.position.x = shiftX;
+      P_.body.rotation.z = roll; P_.body.scale.y = 1 + (R.reduced ? 0 : Math.sin(time * 2.1 + h.id) * 0.01 * (1 - st.mix));
       /* BENDS (0.20). The body curves into its motion from the hips up, the cloak hem trails and flares and ripples, the head
          lags a change of speed, it bulges as it squashes and breathes at rest. In the side view the knees fold backward,
-         most while a leg swings through, and the swinging arm bends at the elbow. Reduced motion: rest shape. */
+         most while a leg swings through, and the swinging arm bends at the elbow. Reduced motion: rest shape. 0.21: a
+         forward lean into the run per gait, a lean back winding up a throw and forward on its release, a lean back from a
+         braced shot; the coat halves (front and back); the braid. */
       if (pp.sign) {
-        const inv = 1 / (pp.sign * (pp.wide || 1)), red = R.reduced ? 0 : 1;
-        bq.bend = red * Math.max(-0.1, Math.min(0.1, vRight * (h.dashT > 0 ? 0.016 : 0.01))); bq.head = red * st.head; bq.cloak = red * st.cloak;
+        const inv = 1 / (pp.sign * (pp.wide || 1));
+        bq.bend = red * Math.max(-0.14, Math.min(0.14, vRight * (h.dashT > 0 ? 0.016 : 0.01) + fS * sideK * (st.lean + tw * 0.09 - st.brace * 0.45))); bq.head = red * st.head; bq.cloak = red * st.cloak;
         bq.flare = red * st.flare; bq.bulge = red * Math.max(0, sq) * 0.5; bq.breath = red * Math.sin(time * 2.1 + h.id) * 0.012 * (1 - st.mix);
         bq.wave = red * st.wave; bq.wph = st.phase * 2 + time * 3.1;
+        const flaps = pp.slitF > 0 && pp.useM && (pp.cell === 0 || pp.cell === 2 || pp.cell === 5) && h.onGround;
+        bq.slit = flaps ? pp.slitF : 0; bq.panL = flaps ? red * st.flapL : 0; bq.panR = flaps ? red * st.flapR : 0;
         bendBody(P_.body, bq, inv);
-        // which way the figure faces in its own x: the facing seen on screen, through the mirror
-        const fR = Math.sin(h.yaw) * e[0] + Math.cos(h.yaw) * e[2], fwd = (fR >= 0 ? 1 : -1) * pp.sign;
-        if (sideLegs && h.onGround && !h.zip) { bendJoint(P_.legA, -st.kneeA * 0.95 * fwd * red, 0.5); bendJoint(P_.legB, -st.kneeB * 0.95 * fwd * red, 0.5); }
+        if (sideLegs && h.onGround && !h.zip) { bendJoint(P_.legA, -st.kneeA * 0.95 * fwd * red * (1 - stance), 0.5); bendJoint(P_.legB, -st.kneeB * 0.95 * fwd * red * (1 - stance), 0.5); }
         else if (sideLegs) { bendJoint(P_.legA, -0.7 * fwd * red, 0.5); bendJoint(P_.legB, -0.35 * fwd * red, 0.5); }
         else { bendJoint(P_.legL, 0, 0.5); bendJoint(P_.legR, 0, 0.5); }
-        if (P_.armL && P_.armL.visible) bendJoint(P_.armL, pp.cell === 1 ? (0.25 + Math.max(0, -st.sway) * 0.7) * fwd * red * (h.onGround ? 1 : 0.4) : 0, 0.48);
+        if (P_.armL && P_.armL.visible) { const gnd = h.onGround ? 1 : 0.4, wA = ss01(0.06, 0.45, Math.max(0, -tw));
+          if (pp.cell === 1) { bendJoint(P_.armL, ((0.25 + Math.max(0, -st.sway * G.arm * fwd) * 0.7) * gnd * (1 - wA) + wA * 1.3) * fwd * red, 0.48);
+            if (P_.armR.visible) bendJoint(P_.armR, (0.25 + Math.max(0, st.sway * G.arm * fwd) * 0.7) * gnd * fwd * red, 0.48); }
+          else { bendJoint(P_.armL, 0, 0.48); bendJoint(P_.armR, -wA * 1.2 * red, 0.48); } }
+        /* THE BRAID (0.21): shown in the cells it was cut from (the body's copy has it filled in behind, so it must be). The
+           pendulum is in screen terms; the piece is in the body's mirrored, rolled frame, so it is turned back to hang true
+           (mostly: a braid lying on a back is held a little by it), and seen from the side it swings forward only a little,
+           into the back. */
+        if (P_.braids) { const bc = pp.useM ? P_.braids[pp.cell] : null;
+          for (const k in P_.braids) P_.braids[k].visible = P_.braids[k] === bc;
+          if (bc) { pp.matB.map.offset.x = pp.cell / 7;
+            let a = pp.sign * (st.braid - 0.7 * m.lean) - 0.7 * P_.body.rotation.z, tip = pp.sign * st.braidTip;
+            if (sideLegs) { const fa = a * fwd; if (fa > 0.12) a = fwd * (0.12 + (fa - 0.12) * 0.25); const ft = tip * fwd; if (ft > 0.1) tip = fwd * (0.1 + (ft - 0.1) * 0.3); }
+            bendBraid(bc, P_.body, bq, red * a, red * tip, red * (sideLegs ? 0 : st.braidLift)); } }
       }
     }
     m.ring.visible = h.onGround || !!h.zip; m.ring.position.y = h.zip ? 0.05 - h.y : 0.05; m.shield.visible = h.shield > 0;

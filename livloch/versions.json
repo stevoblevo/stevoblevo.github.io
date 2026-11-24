@@ -1,7 +1,13 @@
 {
-  "current": "0.21",
+  "current": "0.22",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.22",
+      "path": "v0.22/",
+      "source": "release/0.22",
+      "note": "Anna moves like herself: heavier gait, a swinging braid, coat halves, a hammer wind-up, cast reactions; the game opens to everyone on GitHub"
+    },
     {
       "v": "0.21",
       "path": "v0.21/",
