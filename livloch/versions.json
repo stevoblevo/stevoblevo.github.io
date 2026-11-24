@@ -1,7 +1,13 @@
 {
-  "current": "0.20",
-  "source": "https://github.com/stevoblevo/livloch (private)",
+  "current": "0.21",
+  "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.21",
+      "path": "v0.21/",
+      "source": "release/0.21",
+      "note": "A recorded score that follows the fight (title, calm, battle, Red Rain, win and lose), a mute button on every screen, effects in tune"
+    },
     {
       "v": "0.20",
       "path": "v0.20/",

@@ -84,8 +84,13 @@ UI.init = function (handlers) {
     if (type === 'c') el.checked = !!cfg[key]; else el.value = cfg[key];
     el.addEventListener('input', function () { cfg[key] = type === 'c' ? el.checked : +el.value; H.save(); H.apply(); });
   };
-  bind('oSens', 'sens'); bind('oVol', 'vol'); bind('oInv', 'invert', 'c'); bind('oAssist', 'assist', 'c'); bind('oLow', 'low', 'c'); bind('oPet', 'pet', 'c'); UI.petStatus();
+  bind('oSens', 'sens'); bind('oVol', 'vol'); bind('oMusic', 'music'); bind('oSfx', 'sfx'); bind('oMute', 'mute', 'c'); bind('oMicro', 'micro', 'c'); bind('oInv', 'invert', 'c'); bind('oAssist', 'assist', 'c'); bind('oLow', 'low', 'c'); bind('oPet', 'pet', 'c'); UI.petStatus();
   $('oAuto').addEventListener('input', function () { cfg.autoFire = $('oAuto').checked; H.save(); });
+};
+/* The mute buttons (one on the title and menus, one in the match HUD) and the Settings box show the same state. */
+UI.muteShow = function (m) {
+  document.querySelectorAll('.mute').forEach(function (b) { b.setAttribute('aria-pressed', String(!!m)); b.setAttribute('aria-label', m ? 'Sound is off. Turn sound on (M)' : 'Sound is on. Mute (M)'); b.title = m ? 'Sound off · M' : 'Mute · M'; });
+  const o = document.getElementById('oMute'); if (o) o.checked = !!m;
 };
 UI.lookChips = function () { const k = LL.cfg.look; document.querySelectorAll('[data-look]').forEach(b => { if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.getAttribute('data-look') === k)); }); const L = LL.gfx.LOOKS[k]; $('lookLine').textContent = L ? 'Look: ' + L.name + ', from ' + L.kit + '.' : ''; };
 /* ---------- the cabinet: easter eggs ---------- */
