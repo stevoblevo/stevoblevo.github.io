@@ -66,10 +66,11 @@ function braidStep(S, G, dt, sc, sway, bodyY, sr, idleX) {
   if (S.bpx == null || Math.abs(px - S.bpx) > 0.1 || Math.abs(py - S.bpy) > 0.2 || dt <= 0) { S.bpx = px; S.bpy = py; S.bvx = 0; S.bvy = 0; S.blr = sr; }
   const vx = dt > 0 ? (px - S.bpx) / dt : 0, vy = dt > 0 ? (py - S.bpy) / dt : 0;
   let ax = dt > 0 ? (vx - S.bvx) / dt : 0, ay = dt > 0 ? (vy - S.bvy) / dt : 0;
-  ax += dt > 0 ? clamp((sr - S.blr) / dt, -22, 22) : 0; // starting, stopping, changing direction on the screen
+  const kb = 0.4 + 0.6 * (sc && sc.k != null ? sc.k : 1); // 0.22.2: strafing while facing away swings it less
+  ax += dt > 0 ? clamp((sr - S.blr) / dt, -22, 22) * kb : 0; // starting, stopping, changing direction on the screen
   S.bpx = px; S.bpy = py; S.bvx = vx; S.bvy = vy; S.blr = sr;
   ax = clamp(ax, -45, 45); ay = clamp(ay, -25, 25);
-  const trail = clamp(-sr * B.drag, -0.6, 0.6), ge = clamp(g + ay, 2, 30);
+  const trail = clamp(-sr * B.drag * kb, -0.45, 0.45), ge = clamp(g + ay, 2, 30);
   for (let hh = Math.min(dt, 1 / 120), left = dt; left > 1e-6; left -= hh, hh = Math.min(hh, left)) {
     S.bav += (-(ge / L) * Math.sin(S.ba - trail) - (ax / L) * Math.cos(S.ba) - 3.1 * S.bav) * hh; S.ba += S.bav * hh;
     if (Math.abs(S.ba) > 0.9) { S.ba = clamp(S.ba, -0.9, 0.9); S.bav *= 0.5; }
@@ -113,9 +114,13 @@ function pose(m, u, dt, t, still, sc) {
      the head kicks against a change of speed, and a landing squashes and rebounds once instead of easing flat. All in
      fractions of the figure's height; the renderer turns them into bends of the paper. 0.21: stiffness per gait. */
   const sr = sc && !still ? sc.r : 0, sf = sc && !still ? sc.f : 0, sp = Math.hypot(sr, sf), kS = G.stiff, cS = Math.sqrt(G.stiff);
-  if (dt > 0 && !still) S.hv -= clamp((sr - S.lr) * 0.045, -0.5, 0.5);
+  /* 0.22.2: k says how much a move across the screen should drag cloth. Running across the screen side-on, fully; strafing
+     while facing away (third-person play, nearly all the time), barely: there the cloak was shearing sideways into a
+     parallelogram, which the owner saw as motion getting worse. */
+  const kx = sc && sc.k != null ? sc.k : 1;
+  if (dt > 0 && !still) S.hv -= clamp((sr - S.lr) * 0.045 * kx, -0.5, 0.5);
   S.lr = sr;
-  spring(S, 'cx', 'cv', still ? 0 : clamp(-sr * 0.032 * G.cloak, -0.22, 0.22) + sway * 0.05 * (1 - clamp(Math.abs(sr) / 4, 0, 1)), 70 * kS, 6.5 * cS, dt);
+  spring(S, 'cx', 'cv', still ? 0 : clamp(-sr * 0.032 * G.cloak * kx, -0.22, 0.22) + sway * 0.05 * (1 - clamp(Math.abs(sr) / 4, 0, 1)), 70 * kS, 6.5 * cS, dt);
   spring(S, 'fx', 'fv', still ? 0 : clamp(sp * 0.014, 0, 0.1) + (m.ground ? 0 : 0.035) + lift * 0.02, 46 * kS, 8 * cS, dt);
   spring(S, 'hx', 'hv', 0, 130, 10, dt);
   /* A heavy foot (plant): each step lands like a small landing, a quick squash that the same spring rebounds. */
