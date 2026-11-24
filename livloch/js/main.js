@@ -6,7 +6,8 @@
      to gfx, audio and ui, then draw.
    - Aim is a ray from the camera through the crosshair; the sim says what it hits. Touch and pad get a gentle pull
      toward a target near the crosshair, and touch fires by itself when the ring is on something.
-   - Looks, including the Inkblot toggle, are switched here and only here. They never reach the sim. */
+   - Looks, including the Inkblot toggle, are switched here. The view the player wears is model state (S.setLens),
+     because some rules depend on it; the renderer only follows W.lens. */
 (function () {
 'use strict';
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
