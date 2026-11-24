@@ -55,6 +55,10 @@ function drawDaySun() {
   if (skin !== 'sb-daylight') return;
   const P = paperPal(), g = ctx3, r = clamp(22 * S, 18, 34), x = phone ? W * 0.86 : W * 0.3, y = TOPH + (LT - TOPH) * (phone ? 0.84 : 0.42);
   const sink = FACE.setT ? clamp((t - FACE.setT) / 0.8, 0, 1) : 0, a = 1 - sink, yy = y + sink * sink * (LT - y), br = reduceMotion ? 0 : Math.sin(t * 0.7);
+  const sp = FACE.sb || (FACE.sb = window.Storeybrook && window.Storeybrook.pen ? (() => { try { return window.Storeybrook.pen('daylight'); } catch (e) { return null; } })() : null);
+  if (sp && sp.sun) {   // Storeybrook's own watercolour sun (the pen, 1.4.0)
+    try { sp.sun(g, { x, y: yy, r: r * 1.15, t, still: reduceMotion, alpha: a }); FACE.orb = { x, y, hit: Math.max(34, r * 1.7), maxY: LT }; return; } catch (e) {}
+  }
   const gam = [212, 146, 15];
   g.save(); g.globalAlpha = a;
   const w = g.createRadialGradient(x, yy, r * 0.6, x, yy, r * 2.6); w.addColorStop(0, rgba(P.sun, 0.55)); w.addColorStop(1, rgba(P.sun, 0)); g.fillStyle = w; g.fillRect(x - r * 3, yy - r * 3, r * 6, r * 6);

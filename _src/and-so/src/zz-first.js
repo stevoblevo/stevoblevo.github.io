@@ -115,8 +115,10 @@ function todayGet() {
   let s = null; try { s = JSON.parse(localStorage.getItem(TODAY_KEY) || 'null'); } catch (e) {}
   if (s && s.day === day && CATI.get(s.id)) return s;
   const early = found.size < 12;   // the first days stay in the tunings a newcomer is already in
-  let pool = CAT.filter(c => !found.has(c.id) && c.hint && (!early || c.mode === 'just' || c.mode === 'easy'));
-  if (!pool.length) pool = CAT.filter(c => !found.has(c.id) && c.hint);
+  // the pet finds need the kits' own pages (and the lattice needs all seventeen), so they are never a day's find
+  const away = new Set(['x-band', 'x-crossing', 'x-lattice']);
+  let pool = CAT.filter(c => !found.has(c.id) && c.hint && !away.has(c.id) && (!early || c.mode === 'just' || c.mode === 'easy'));
+  if (!pool.length) pool = CAT.filter(c => !found.has(c.id) && c.hint && !away.has(c.id));
   if (!pool.length) return null;
   let h = 7; for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0;
   s = { day, id: pool[h % pool.length].id, done: false };

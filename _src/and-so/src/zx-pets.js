@@ -29,7 +29,7 @@ const xpHas = (k, id) => !!XP.found[k + ':' + id];
 function xpCount(k) { return xpList(k).filter(p => xpHas(k, p.id)).length; }
 function xpLatticeCheck() {
   const all = ['sb', 'hmp', 'df'].every(k => xpList(k).length && xpCount(k) === xpList(k).length);
-  if (all) { XP.lattice = true; if (entered) discover('x-lattice'); }
+  XP.all = all; if (all) XP.lattice = true;
 }
 function xpArrived(key) {
   const [k, id] = key.split(':'), p = xpPet(k, id); if (!p) return;
@@ -61,7 +61,7 @@ function xpCrests(n) {
 }
 function xpTick(dt) {
   dtLast = dt || 1 / 60; if (!entered) return;
-  xpRead(false);
+  xpRead(false); if (XP.all) discover('x-lattice');   // all seventeen (discover keeps a find once)
   const who = xpWho(), key = who.map(m => m.k + m.id).join(',');
   if (key !== XP.band.map(m => m.k + m.id).join(',')) {
     const old = new Map(XP.band.map(m => [m.k + m.id, m]));

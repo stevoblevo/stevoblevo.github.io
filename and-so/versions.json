@@ -4,15 +4,25 @@
  "index": "/and-so/versions/",
  "versions": [
   {
+   "id": "10.2",
+   "short": "AND SO 10.2",
+   "name": "AND SO 10.2 · The Band",
+   "date": "2026-11-24",
+   "line": "The three kits' pets come to play: the ones you find on Storeybrook, Hypermetapunk and Depthfield stand on the hills of their own face and dance with a swing, and a touch gets you a lick with a blue note. Your pet is a sticker at dusk and moonlit at night. All seventeen open the lattice.",
+   "path": "/and-so/v10.2/",
+   "latest": true,
+   "commit": "current build",
+   "sha256": "70fc3d3d470e9a7bbd407737985f5b0fb8d8c265e6fbca61690c2ff8ce64dd26"
+  },
+  {
    "id": "10.1",
    "short": "AND SO 10.1",
    "name": "AND SO 10.1 · Three Faces",
    "date": "2026-11-23",
    "line": "The whole scene in each kit's hand: the instrument's words and marks in the kit's inks, chrome lettering at dusk, air and a vignette at night, a watercolour sun by day. Every face has a light to touch, and the face can keep your hours.",
    "path": "/and-so/v10.1/",
-   "latest": true,
-   "commit": "current build",
-   "sha256": "90c24fc900a2b698b350795516e959d87e45c8a218d34d6cf5e2087ec75d9a33"
+   "commit": "bffe174",
+   "sha256": "33a688f7f35e51b7dcb1f3b18ccf9f40475287282e2bbfd29421de86c41354db"
   },
   {
    "id": "10",

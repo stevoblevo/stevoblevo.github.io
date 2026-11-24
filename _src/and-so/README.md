@@ -7,7 +7,7 @@ The modular source of AND SO. `build.py` inlines `src/` into one self-contained 
 
 Ship `dist/and-so.html` as `/and-so/index.html` here and as `worlds/and-so.html` in the Field.
 Before replacing a shipped version, freeze it: `python3 _tools/sae-kirby.py --name and-so --version <v> --src and-so/index.html --play "#enter"`.
-Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.1 · Three Faces.
+Frozen versions live in `/ong.bak/` and keep a friendly route such as `/and-so/v7/`. The current build is AND SO 10.2 · The Band.
 
 Version numbers 8.1.1 to 8.2.0 are taken by open pull requests (the Cursor stack on top of `a283e58`), so the
 leaderboard build is 8.3. Each version keeps its own address; nothing is replaced in place.
@@ -57,11 +57,13 @@ The voices, valleys, finds and sound do not change when the face does (family pl
   `hm-dusk` and `df-night`, and their ground is drawn by each kit's own pen: `Hypermetapunk.pen('dusk')` (sky in toner
   bands, the banded sun, the grid floor, grain) and `Depthfield.pen('night')` (sky, moon, stars, three ridges). The
   panels take each kit's tokens by the family's shared names (`style-sb.css`, the block marked "three faces").
-- The pens are vendored, pinned by version, and listed in `build.py` as `KIT_PENS`:
-  `vendor/depthfield-pen-2.3.0.js` and `vendor/hypermetapunk-pen-0.3.0.js`, copied from each kit's `v/<version>/pen.js`.
-  To move to a newer kit, copy its `v/<version>/pen.js` in under the new name and change `KIT_PENS`; never edit a
-  vendored pen here. They ride in the same script element as Storeybrook, so the mirror's inner copies carry them. If a
-  pen is missing the plain night is drawn.
+- The kits' add-ons are vendored, pinned by version, and listed in `build.py` as `KIT_ADDONS` (10 and 10.1 called it
+  `KIT_PENS` and pinned Depthfield 2.3.0 and Hypermetapunk 0.3.0). Since 10.2: Storeybrook 1.4.0 (`paper.js` for the
+  pen and its sun, `pets.js`), Depthfield 2.4.0 (`pen.js`, `pets.js`) and Hypermetapunk 0.4.0 (`pen.js`, `pets.js`),
+  each copied from the kit's `v/<version>/` as `vendor/<kit>-<file>-<version>.js`. To move to a newer kit, copy the new
+  files in under their new names and change `KIT_ADDONS`; never edit a vendored file here (the build escapes a
+  `</script` in a kit's comment as it inlines it). They ride in the same script element as Storeybrook, so the mirror's
+  inner copies carry them. If a pen is missing the plain night is drawn.
 - The night's weather follows the music, as peachfall's does (`WX.w` in `k-world.js`), but it only tints the night, so
   the instrument always reads: red when it is tense, mint on a settled chord, deep night when the room is quiet.
 - Ways to turn the face: the "three faces" row in the gamut, the Z key (day, dusk, night), and by touch: the dusk sun
@@ -88,7 +90,30 @@ The voices, valleys, finds and sound do not change when the face does (family pl
   it changes. 142 finds in all.
 - The instrument's own chrome (pills, section words, switches) takes each kit's accent in `style-sb.css`.
 
-## Where AND SO is published (16 Nov 2026)
+## The Band (10.2)
+
+The family's crossing pets come to AND SO. Storeybrook has seven day pets, Hypermetapunk five dusk pets and Depthfield
+five night pets, each found on that kit's own page by doing what the kit is for, and all saved together in
+`localStorage['crossing:pets']` on stevoblevo.github.io (family plan F9). AND SO reads the same save.
+
+- `src/zx-pets.js`. The pets you have found stand on the hilltops of their own face (`xpCrests`: the crests of the
+  terrain you are playing, away from the voices in the valleys and from under the panels) and hop when the hills
+  change. Each kit draws its own (`<Kit>.pets.draw`) and they dance to `beatPulse` with a swing.
+- Touch one and it plays a lick in the tuning you are in (`petLick`): one of five swung shapes over the tuning's scale,
+  with the harmonic seventh, 7/4, as the blue note in just and in easy listening. Day pets play the keys, dusk pets
+  the keys over a bass note, night pets the glass bells.
+- A pet found in another tab arrives while you play (the `storage` event); now and then a pet you have not found walks
+  over the hills of its face, faint, and tells you where it lives when touched.
+- All seventeen (or `?lattice=1`, the link the kits show at seventeen) open the lattice: every pet in every face.
+- Your own pet wears the face (`drawPetFace`): drawn to an offscreen canvas, then die-cut as a sticker at dusk
+  (`Hypermetapunk.pen('dusk').sticker`) and lit by the moon at night (`Depthfield.pen('night').rim`). By day the sun is
+  Storeybrook's own (`Storeybrook.pen('daylight').sun`).
+- The gamut has a "crossing pets" section: each kit's pets, found or still out there, with a link to where they live.
+- Gradients on the kit faces take the kits' inks too (`kitCanvas` wraps the gradient makers).
+- Finds: `x-band`, `x-crossing`, `x-visitor`, `x-lattice` (146 in all). None of them is ever a day's find.
+- `__andso.pets()`, `petsRead()` and `ghostNow()` with `?debug`.
+
+## Where AND SO is published
 
 - `stevoblevo.github.io/and-so/` is this source, built. Every version keeps its address under `/and-so/v*/`.
 - `saelion.co/and-so` is served from the `saelion-relay-canary` repository, deployed to production from a chosen commit
@@ -102,11 +127,18 @@ The voices, valleys, finds and sound do not change when the face does (family pl
   saelion.co is the owner's step.
 - Still separate: the board, the app shell and the radio relay of 8.3 are not on that line, and its recorded voices and
   origami invitation are not in this source.
+- 24 Nov (10.2): Bleve asked for every new version to be published and deployed, playable at the public link and
+  choosable. From 10.2 saelion.co carries AND SO as GitHub Pages does: `publish_saelion_co.py <canary checkout>` (after
+  `build.py` and `versions.py`, on a branch made from the commit production serves) writes the latest build at
+  `/and-so/`, every version at the same `/and-so/v*/` paths, `versions.json`, the versions page and the toggle, adds
+  their lines to the canary's `scripts/public-files.json` and exact rewrites to its `vercel.json`, and moves the 8.1
+  line that was there to `/and-so/saelion-8.1/` (playable, and listed with the versions). The picker opens versions in
+  place on saelion.co too (`VER_ON_PAGES` in `r-versions.js`). saelion.co's public-file guard reads the slashed save
+  path as a home folder, so the source now spells it out (`d-game.js`) and the script does the same in older builds.
+  `petBase()` knows that saelion.co serves the page at `/and-so` with no trailing slash.
 
 ## Next (ideas, not promises)
 
-- 10.x: gradients still carry the night colours (only solid styles are inked); a `sun` for `Storeybrook.pen` so the
-  day's sun comes from the kit; `P.misreg` for the landing title at dusk.
-- Carry the three faces onto the saelion.co line once its first-steps port (pull request 38) is promoted.
+- 10.x: `P.misreg` for the landing title at dusk; the pets' licks as a call and response with Saedo.
 - A mastery ladder on the board: today's find and round times as their own columns.
 - Bring the recorded story voices from the saelion.co line into `y-voice.js`.

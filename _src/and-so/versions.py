@@ -12,7 +12,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "and-so"
 VERSIONS = [
-    dict(id="10.1", short="AND SO 10.1", name="AND SO 10.1 · Three Faces", date="2026-11-23", path="/and-so/v10.1/", latest=True, source="dist",
+    dict(id="10.2", short="AND SO 10.2", name="AND SO 10.2 · The Band", date="2026-11-24", path="/and-so/v10.2/", latest=True, source="dist",
+         line="The three kits' pets come to play: the ones you find on Storeybrook, Hypermetapunk and Depthfield stand on the hills of their own face and dance with a swing, and a touch gets you a lick with a blue note. Your pet is a sticker at dusk and moonlit at night. All seventeen open the lattice."),
+    dict(id="10.1", short="AND SO 10.1", name="AND SO 10.1 · Three Faces", date="2026-11-23", path="/and-so/v10.1/", source="bffe174",
          line="The whole scene in each kit's hand: the instrument's words and marks in the kit's inks, chrome lettering at dusk, air and a vignette at night, a watercolour sun by day. Every face has a light to touch, and the face can keep your hours."),
     dict(id="10", short="AND SO 10", name="AND SO 10 · Three Faces", date="2026-11-23", path="/and-so/v10/", source="a41df47",
          line="Day, night and dusk: Storeybrook, Depthfield and Hypermetapunk draw the same voices in the same valleys, the night and the dusk with each kit's own pen. Z turns the face. The night's weather follows the music."),

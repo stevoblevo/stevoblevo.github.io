@@ -7,6 +7,7 @@ function petBase() {
   try {
     const p = location.pathname;
     if (/\/and-so\/[^/]+\/index\.html$/.test(p) || /\/and-so\/[^/]+\/$/.test(p)) return '../';
+    if (/^\/and-so$/.test(p)) return '/and-so/';   // saelion.co serves the page at /and-so, with no trailing slash
   } catch (e) {}
   return '';
 }
