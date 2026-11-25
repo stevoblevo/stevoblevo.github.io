@@ -311,7 +311,7 @@ NS.frame = function (W, dt, time, cam, camera) {
   const idle = !red ? time : 0, look = red ? 0 : Math.sin(idle * 0.43) * 0.5 + Math.sin(idle * 1.1 + 2) * 0.12;
   if (hold && ch.tgt) { // the head goes where the model holds the hero
     const h = ch.tgt, sh = red ? 0 : Math.sin(time * 26) * 0.07; dy = 0.22; const m = 1.45 * HS;
-    hx = h.x - fx * m + fz * sh; hy = h.y + 1.0 - dy * m; hz = h.z - fz * m - fx * sh; jaw = 0.5; rate = 22;
+    hx = h.x - fx * m + fz * sh; hy = h.y + 1.0 - dy * m; hz = h.z - fz * m - fx * sh; jaw = 0.68; rate = 22; /* 0.28 look: wider (was 0.5), so the hero shows between the teeth */
   } else if (st.lunge < 0.22 || open) { // the bite, or lying where it missed
     const tx = st.lx0 != null ? st.lx0 : n.biteX, tz = st.lz0 != null ? st.lz0 : n.biteZ, d = Math.hypot(tx - st.bx, tz - st.bz) || 1; dx = (tx - st.bx) / d; dz = (tz - st.bz) / d; dy = -0.3;
     const m = 1.5 * HS; hx = tx - dx * m; hz = tz - dz * m; hy = NS.waterY(tx, tz) + 0.75; jaw = st.lunge < 0.07 ? 0.9 : (open ? 0.12 + (red ? 0 : Math.sin(time * 5) * 0.04) : 0.02); rate = st.lunge < 0.22 ? 34 : 12;

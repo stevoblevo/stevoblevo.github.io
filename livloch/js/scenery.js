@@ -54,7 +54,7 @@ const PAL = {
     rimB: [0xf0e0a0, 0.3, 2.8], rimP: [0xf0e0a0, 0.22, 3.0], water: [0x0a1830, 0x3d7aa8, 0xc0e4ff], pool: [0xf0c75e, 0x8fb4e8, [0.5, 0.38, 0.16]],
     moon: [0xfff4d8, 0xf0c75e, 0xf0d890, [1, 0.2]], mist: [0x263a57, 0x5a7aa0, 0.4], fly: [0xf0d070, 0.8], petal: [0xe8d8f0, 0xfff4e8, 0.5],
     grass: [0x1a2a3a, 0x4e7090], flowers: [0xf0c75e, 0x8fb4e8, 0xf4efe6, 0xf0c75e], shroom: 0x8fd0f0, litter: [0xe8dcf0, 0.5], glint: [0xf0e0a0, 0.03], ground: [0x18263a, 0.25, 0.92, 0.7] },
-  origami: { bl: [0xe09aaa, 0xf4bcc6, 0xfcdce2, 0xfff4f6], blGlow: 0.05, blDetail: 0.25, trunk: 0x6a5a5a, pine: [0x4f7268, 0x6a8f80, 0x8fb0a0], pineGlow: 0, snow: 0,
+  origami: { bl: [0xf57ca4, 0xff90b4, 0xffa8c4, 0xffdce6], blK: 1.2, blGlow: 0.38, blDetail: 0.25, trunk: 0x6a5a5a, pine: [0x4f7268, 0x6a8f80, 0x8fb0a0], pineGlow: 0, snow: 0,
     rimB: [0xffffff, 0.12, 3.0], rimP: [0xffffff, 0.1, 3.0], water: [0x3a78b0, 0x8cc2e6, 0xffffff], pool: null,
     moon: null, mist: [0xffffff, 0xf6f8f3, 0.32], fly: null, petal: [0xf4a8b8, 0xffe0e6, 0.7],
     grass: [0x8fae7a, 0xc8dca8], flowers: [0xb8311a, 0xf0cf78, 0x2a4c86, 0xffffff], shroom: 0xf0e0c0, litter: [0xf0a0b0, 0.55], ground: null, plantGlow: 0.2 },
@@ -204,7 +204,7 @@ function limb(B, a, b, r0, r1, colr, seg) { // a tapered branch from a to b
 /* A cherry tree: a flared, leaning trunk, four limbs, and a wide umbrella of blossom lumps: a crown, a ring, and a lower
    ring that hangs at the edge. v picks one of two shapes. */
 function blossomGeo(v) {
-  const B = new Bundle(), r = LL.rng(311 + v * 97), stops = P.bl.map(col), trunk = col(P.trunk), trunkD = col(P.trunk).multiplyScalar(0.55);
+  const B = new Bundle(), r = LL.rng(311 + v * 97), stops = P.bl.map(function (h) { return col(h).multiplyScalar(P.blK || 1); }), trunk = col(P.trunk), trunkD = col(P.trunk).multiplyScalar(0.55);
   const lean = v ? -0.45 : 0.55, th = 5.0;
   const tg = new T.CylinderGeometry(0.3, 0.62, th, 8, 6, true); tg.translate(0, th / 2 - 0.3, 0);
   { const p = tg.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i), k = Math.max(0, y) / th, fl = y < 0.7 ? 1 + (0.7 - y) * 0.7 : 1; p.setX(i, p.getX(i) * fl + lean * k * k * 1.4 + Math.sin(y * 1.3 + v) * 0.1); p.setZ(i, p.getZ(i) * fl); } tg.computeVertexNormals(); }
@@ -607,29 +607,42 @@ function poolAdd(x, z, rad, hex, k, s) {
 }
 
 /* ---------- sky: moon, mist, stars ---------- */
+/* 0.28 world (#30): the moon sits in the air instead of on it. The limb is soft (a narrow feather, a little brighter at the rim
+   where the light passes through the most air), the halo is wide and falls off smoothly into the sky, and a band of mist, lit
+   from the moon, drifts across the lower part of the disc and thins out above it. Same ring, same colours per look. uTime is
+   the shared clock (still when reduced motion is on). */
 const MOON_F = [
-  'uniform vec3 uDisc; uniform vec3 uHalo; uniform vec3 uRing; uniform vec2 uOpt; varying vec2 vUv;', GLSL_NOISE,
+  'uniform vec3 uDisc; uniform vec3 uHalo; uniform vec3 uRing; uniform vec2 uOpt; uniform float uTime; varying vec2 vUv;', GLSL_NOISE,
   'void main(){',
   '  vec2 p = (vUv - 0.5) * 7.0; float r = length(p);',
   '  float ca = cos(-0.38), sa = sin(-0.38); vec2 q = vec2(ca * p.x - sa * p.y, sa * p.x + ca * p.y);',
   '  float e = length(vec2(q.x, q.y / 0.24));',
   '  float band = smoothstep(1.55, 1.62, e) * (1.0 - smoothstep(2.05, 2.2, e)) * (0.55 + 0.45 * sin(e * 34.0)) * (0.55 + 0.45 * smoothstep(-2.4, 2.4, q.x));',
   '  band *= 1.0 - 0.8 * smoothstep(1.82, 1.85, e) * (1.0 - smoothstep(1.9, 1.93, e));',
-  '  float disc = 1.0 - smoothstep(0.97, 1.0, r), z = sqrt(max(0.0, 1.0 - r * r));',
+  '  float disc = 1.0 - smoothstep(0.9, 1.0, r), z = sqrt(max(0.0, 1.0 - r * r));',
   '  float lit = clamp(dot(normalize(vec3(p, z)), normalize(vec3(-0.45, 0.35, 0.82))), 0.0, 1.0);',
   '  float cr = noise(p * 2.2 + 3.0) * 0.6 + noise(p * 5.5) * 0.4;',
-  '  vec3 dc = uDisc * (0.42 + 0.46 * lit) * (0.7 + 0.36 * cr) + uHalo * pow(1.0 - z, 2.0) * uOpt.y;',
-  '  float o = max(r - 1.0, 0.0), halo = (exp(-o * 1.7) * 0.55 + exp(-o * 0.5) * 0.2) * (1.0 - disc);',
+  '  float rim = smoothstep(0.62, 0.98, r);',
+  '  vec3 dc = uDisc * (0.42 + 0.46 * lit) * (0.7 + 0.36 * cr) + uHalo * pow(1.0 - z, 2.0) * uOpt.y + uDisc * rim * 0.12;',
+  '  float o = max(r - 1.0, 0.0), halo = (exp(-o * 2.4) * 0.42 + exp(-o * 0.85) * 0.2 + exp(-o * 0.3) * 0.1) * (1.0 - disc);',
+  '  float air = exp(-r * 0.62) * 0.1 * disc;',
   '  float front = step(q.y, 0.0), ring = band * mix(1.0 - disc, 1.0, front) * uOpt.x;',
-  '  vec3 add = (uHalo * halo * 0.8 + uRing * ring * 0.32) * (1.0 - smoothstep(2.9, 3.5, r));',
-  '  gl_FragColor = vec4(dc * disc + add, disc);',
+  '  float t = uTime * 0.012, w = noise(vec2(p.x * 0.4 + t, p.y * 2.2)) * 0.55 + noise(vec2(p.x * 1.3 - t * 1.6, p.y * 5.5 + 4.0)) * 0.45;',
+  '  float vy = p.y + (w - 0.5) * 0.8 + 0.18;',
+  '  float veil = smoothstep(0.05, -0.55, vy) * (0.4 + 0.7 * w) * (1.0 - smoothstep(2.4, 3.4, r));',
+  '  float vtop = smoothstep(-0.55, -0.1, vy) * (1.0 - smoothstep(-0.1, 0.5, vy)) * 0.28 * (1.0 - smoothstep(2.4, 3.4, r));',
+  '  float vk = clamp(veil * 0.9 + vtop, 0.0, 0.85);',
+  '  vec3 vcol = mix(uHalo, uDisc, 0.3) * 0.42 + uRing * 0.04;',
+  '  vec3 add = (uHalo * halo * 1.1 + uRing * ring * 0.32 + uHalo * air) * (1.0 - smoothstep(2.9, 3.5, r));',
+  '  vec3 col = (dc * disc + add) * (1.0 - vk * 0.55) + vcol * vk * (0.55 + 0.8 * (disc + halo));',
+  '  gl_FragColor = vec4(col, clamp(disc * (1.0 - vk * 0.45), 0.0, 1.0));',
   '}'].join('\n');
 function moonMesh() {
   if (!P.moon || !X.sky || LK.star <= 0) return null;
-  const M = P.moon, m = new T.ShaderMaterial({ uniforms: { uDisc: { value: col(M[0]) }, uHalo: { value: col(M[1]) }, uRing: { value: col(M[2]) }, uOpt: { value: new T.Vector2(M[3][0], M[3][1]) } },
+  const M = P.moon, m = new T.ShaderMaterial({ uniforms: { uDisc: { value: col(M[0]) }, uHalo: { value: col(M[1]) }, uRing: { value: col(M[2]) }, uOpt: { value: new T.Vector2(M[3][0], M[3][1]) }, uTime: { value: 0 } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }', fragmentShader: MOON_F,
     transparent: true, depthWrite: false, fog: false, blending: T.CustomBlending, blendSrc: T.OneFactor, blendDst: T.OneMinusSrcAlphaFactor });
-  shared(m);
+  shared(m); if (calm) m.uniforms.uTime = { value: 0 };
   const d = 300, rad = d * Math.tan(2.9 * DEG), o = mine(new T.Mesh(new T.PlaneGeometry(rad * 7, rad * 7), m));
   o.position.set(MOON_DIR[0] * d, MOON_DIR[1] * d, MOON_DIR[2] * d); o.lookAt(0, 0, 0); o.renderOrder = -1; o.frustumCulled = false; X.sky.add(o); return o;
 }

@@ -1,7 +1,8 @@
 /* LIVLOCH · main: states, the loop, and the human's hands on the hero.
 
    DESIGN
-   - States: title (plate, no sim), play, pause, over. One requestAnimationFrame loop.
+   - States: title, entering (0.28: the moment between Walk in and the match), play, pause, over. One requestAnimationFrame
+     loop. On the title the painting shows first; js/face.js decides when the bot world behind it is stepped and drawn.
    - Each frame: read input, turn it into hero.ctl for the player, step the sim in slices of at most 1/45 s, hand W.fx
      to gfx, audio and ui, then draw.
    - Aim is a ray from the camera through the crosshair; the sim says what it hits. Touch and pad get a gentle pull
@@ -10,7 +11,7 @@
      because some rules depend on it; the renderer only follows W.lens. */
 (function () {
 'use strict';
-const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui;
+const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U, R = LL.gfx, A = LL.audio, I = LL.input, UI = LL.ui, F = LL.face; // 0.28 face: LL.face, the title and the walk in
 const KEY = 'livelock.v1';
 const cfg = LL.cfg = { sens: 1, vol: 0.6, music: 0.7, sfx: 0.9, mute: false, micro: false, invert: false, autoFire: null, assist: true, low: false, hero: 0, diff: 1, wins: 0, losses: 0, look: 'snow', lookPrev: 'snow', coached: false, v6: false, mode: 'short', bestStars: 0, pet: false, petUnlocked: false, v17: false, lean: false, dream: false, calls: {}, callNotes: {}, bestT: 0, bestL: 0, unl: {}, all: false, snuffBest: 0, heroes3d: true }; // 0.24 heroes3d: 3D figures (off: painted paper); callNotes: the Dreamwalk debrief's notes (PR #43)
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) for (const k in cfg) if (k in s) cfg[k] = s[k]; } catch (e) {}
@@ -34,12 +35,24 @@ function restoreLook() { if (R.look !== R.LOOKS[cfg.look]) { document.body.setAt
 function nextView() { const L = C.LENSES; setLook(L[(L.indexOf(cfg.look) + 1) % L.length]); }
 /* Inkblot view is a way of looking, never a rule: it flips the look and back. */
 function toggleInk() { if (cfg.look === 'ink') setLook(R.LOOKS[cfg.lookPrev] && cfg.lookPrev !== 'ink' ? cfg.lookPrev : 'snow'); else { cfg.lookPrev = cfg.look; setLook('ink'); } }
-function attract() {
+function attract(again) {
   W = S.newWorld({ auto: true, difficulty: 1, seed: (Date.now() & 0xffff) + 3 });
   W.fx.length = 0; restoreLook(); R.build(W);
   view.mode = 'attract'; view.target = null; state = 'title'; I.play = false; A.duck(false); A.cue('title');
+  if (!again && F) F.title(); /* 0.28 face: the painting first; F decides when the valley shows through */
 }
+/* 0.28 face: from the title, Walk in veils the valley with the painting for a moment (the pointer is captured now, while the
+   click still counts as a gesture), then starts the match under it; F dissolves the painting and settles the camera. */
 function play(auto) {
+  if (state === 'entering') return;
+  if (F && state === 'title') {
+    if (!auto && !cfg.lean) I.lock();
+    A.init(); A.ui('ok'); F.leave(); state = 'entering'; I.play = false;
+    setTimeout(function () { state = 'title'; start(auto); F.enter(); }, F.VEIL); return;
+  }
+  start(auto); if (F) F.plain();
+}
+function start(auto) {
   A.init(); A.ui('ok'); A.duck(false); A.cue('valley');
   W = S.newWorld({ heroPick: cfg.hero, difficulty: cfg.diff, auto: !!auto, seed: (Date.now() & 0xfffff) + 11, lens: cfg.look, mode: cfg.mode, lean: !auto && cfg.lean, dream: !auto && cfg.dream }); speed = 1;
   lens0 = W.lens; restoreLook(); R.build(W); UI.startHUD(W);
@@ -177,7 +190,12 @@ function frame(now) {
       else if (overT > 0) { overT -= dt; if (overT <= 0) { state = 'over'; I.play = false; UI.showOver(); } }
     }
   }
-  if (state !== 'title') R.frame(state === 'pause' ? 0 : dt, view);
+  if (state === 'title' && F && W && F.titleFrame(dt, raw)) { /* 0.28 face: the attract world plays behind the title; only the renderer hears it */
+    const steps = Math.max(1, Math.ceil(dt * 45)), sd = dt / steps; for (let s = 0; s < steps; s++) S.step(sd);
+    for (let i = 0; i < W.fx.length; i++) R.fx(W.fx[i]); W.fx.length = 0;
+    if (W.over) attract(true); else R.frame(dt, view);
+  } else if (state !== 'title' && state !== 'entering') R.frame(state === 'pause' ? 0 : dt, view);
+  if (state === 'play' && F) F.playFrame(); if (F) F.tick(Math.min(0.25, raw / 1000 || 0)); // 0.28 face
   if (state === 'play') { UI.frame(dt, W, view, info); A.frame(dt, W); }
   for (const k in I.e) I.e[k] = false;
   I.lookX = I.lookY = 0;

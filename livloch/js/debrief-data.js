@@ -34,7 +34,11 @@
     memory: ['Memory', 'Memory makes Reign house blackouts pass twice as fast and recovered lights last twice as long in Ever Fallen. Reign soul rewards are halved while this View is worn.'],
     fruit: ['Fruit', 'Lemons speed movement and stamina recovery; rose hips heal and clear slowing and damage over time; Verde Limón strengthens gun and ability hits. The fruit grows back.'],
     bigfruit: ['Big fruit', 'Each rare fruit can be seen and collected only through its matching View. Its benefit reaches all living heroes on the collector\'s side.'],
-    fold: ['The fold', 'After a crease\'s guard falls, activate the cleared crease to send your side\'s troopers onto the neighboring thread for 45 seconds.'],
+    fold: ['The fold', 'After a crease\'s guard falls, activate the cleared crease to send your side\'s troopers onto the neighboring thread for 45 seconds. The thread they left is shut to the Hush until the crease lets go: small troopers that walk into it crumple, and a hollow is pinned there.'],
+    // 0.28 play: three rules found by riding, by going home, and by watching the clock between rains
+    arrive: ['Arrival', 'Let go of a thread after a long ride toward the front and the pull runs on: Hush troopers around the landing and along the thread ahead are struck and slowed. A ride home or a short hop lands quietly.'],
+    ember: ['A light from home', 'A hero the fountain has mended by a good part of its health in one visit leaves carrying a light. On foot beside one of its side\'s hurt or dark houses, the light goes in: the house is lit again, mended, and burns bright for a while. One light at a time, and it goes out if its carrier falls. Match and First Rain only.'],
+    slack: ['The slack thread', 'Halfway between red rains the most worn thread goes slack. Houses of both sides on it stop firing and lose their protection, the thread carries a rider to the far side\'s open house, and on Even and Cruel the Hush sends a hollow down it. The first house to fall pulls it tight. Long match only.'],
     echo: ['Echo', 'Echo replays your recent movement and shots from the same places, with shots at 70% damage. It reaches six seconds back normally, or ten seconds in Memory.'],
     mercy: ['Mercy', 'When Reign has at least two more destroyed structures than Hush, Hush sends one fewer trooper per thread per wave and its thief spawn interval becomes 1.6 times longer.'],
     fishing: ['Fishing', 'AI heroes sometimes regroup at the Ness. A whole side can leave its threads unguarded while it goes to the loch.'],
@@ -238,11 +242,40 @@
         break;
       case 'fold':
         o = card('front', 'Activate a cleared crease to redirect your troopers.', 'timer', duration(foldT),
-          diagram('chain', 'After the crease\'s guard dies, activate the crease nearby. Your side\'s troopers cross onto the neighboring thread for ' + duration(foldT) + '.', [
+          diagram('chain', 'After the crease\'s guard dies, activate the crease nearby. Your side\'s troopers cross onto the neighboring thread for ' + duration(foldT) + '. The thread they left is shut to the Hush for as long: small troopers that walk into the crease crumple, and a hollow is pinned there until it lets go.', [
             step('skull', 'Crease guard falls', '', 'hush'),
             step('map-trifold', 'Activate the crease', 'Move close, then fold'),
-            step('git-branch', 'Troopers cross threads', duration(foldT))
-          ]), 'After a crease\'s guard falls, activate that crease nearby. It redirects your side\'s troopers from one neighboring thread onto the other for ' + duration(foldT) + '.');
+            step('git-branch', 'Troopers cross threads', duration(foldT)),
+            step('lock-open', 'Their thread is shut', 'Small ones crumple · a hollow is pinned', 'hush')
+          ]), 'After a crease\'s guard falls, activate that crease nearby. It redirects your side\'s troopers from one neighboring thread onto the other for ' + duration(foldT) + '. Until it lets go, the thread they left is shut to the Hush: small troopers that walk into the crease crumple and are gone, and a hollow is pinned there and pressed, losing health each second. What was already past the crease keeps coming.');
+        break;
+      // 0.28 play
+      case 'arrive':
+        var AR = C.ARRIVE || {}, arMin = positive(AR.min, 45), arReach = positive(AR.reach, 24), arSlow = Math.round(positive(AR.slow, 0.5) * 100);
+        o = card('front', 'A long ride toward the front lands hard.', 'path', arMin + ' m or more',
+          diagram('chain', 'Ride a thread at least ' + arMin + ' metres toward the front, then let go or reach its end. Hush troopers around the landing and up to ' + arReach + ' metres ahead on that thread are struck and slowed by ' + arSlow + '%. A hollow takes a quarter of the blow.', [
+            step('path', 'Ride ' + arMin + ' m', 'Toward the front'),
+            step('arrow-down', 'Let go', 'Or reach the end'),
+            step('users-three', 'The Hush ahead staggers', 'Struck · slowed ' + arSlow + '%', 'hush')
+          ], 'A ride home or a short hop lands quietly'), 'Let go of a thread after riding at least ' + arMin + ' metres toward the front, or ride it to its end. Hush troopers within ' + positive(AR.r, 8) + ' metres of the landing, or up to ' + arReach + ' metres ahead on that thread, take a blow and are slowed by ' + arSlow + '% for ' + positive(AR.slowT, 2.5) + ' seconds. A hollow takes a quarter of the blow.');
+        break;
+      case 'ember':
+        var EM = C.EMBER || {}, emNeed = Math.round(positive(EM.need, 0.4) * 100), emHeal = Math.round(positive(EM.heal, 0.2) * 100);
+        o = card('light', 'Mending at home sends you out with a light for one house.', 'flame', 'One light · +' + emHeal + '%',
+          diagram('chain', 'When the fountain mends ' + emNeed + '% of a hero\'s health in one visit, the hero leaves carrying a light. On foot beside a hurt or dark house of its side, the light goes in: the house is lit again, gains ' + emHeal + '% of its health and fires faster for ' + positive(EM.bright, 30) + ' seconds. A rider on a thread keeps the light as it passes.', [
+            step('heart', 'Mend at home', emNeed + '% in one visit', 'rain'),
+            step('flame', 'Carry one light', 'Lost if you fall'),
+            step('house', 'Walk it to a house', 'Lit again · +' + emHeal + '% · burns bright', 'mint')
+          ], fallen ? 'Not in Ever Fallen' : 'One light at a time'), 'A hero whom the fountain has mended by ' + emNeed + '% of its health in one visit leaves carrying a light. On foot within ' + positive(EM.r, 9) + ' metres of one of its side\'s houses that is dark or hurt, the light goes in: the house is lit again at once, gains ' + emHeal + '% of its health and fires ' + positive(EM.fire, 2) + ' times as fast for ' + positive(EM.bright, 30) + ' seconds. One light at a time; a hero riding a thread keeps it; it goes out if its carrier falls. Ever Fallen has no such light.');
+        break;
+      case 'slack':
+        var SL = C.SLACK || {}, slT = positive(SL.t, 50), slMul = positive(SL.mul, 1.5), slHollows = ((C.DIFF || [])[W.diff == null ? 1 : W.diff] || {}).slackHollows;
+        o = card('front', 'Between rains one thread goes slack, and its houses stand open.', 'timer', duration(slT),
+          diagram('parallel', 'Halfway between red rains one thread goes slack for ' + duration(slT) + ', said ' + positive(SL.warn, 20) + ' seconds ahead. Houses of both sides on it stop firing, lose their protection and take ' + slMul + ' times the harm.' + (slHollows ? ' The Hush sends a hollow down it.' : '') + ' The thread carries a rider to the far house, and the first house to fall on it pulls it tight.', [
+            step('shield-slash', 'No protection', 'Harm ×' + slMul + ', troopers near or not', 'rain'),
+            step('lamp', 'No house fires', 'Theirs and yours', 'dim'),
+            step('ghost', slHollows ? 'A hollow comes down it' : 'No extra hollow', slHollows ? 'Even and Cruel' : 'Gentle', 'hush')
+          ], 'Long match only · never a patron · not after 15:00'), 'Every ' + duration(positive(SL.every, 300)) + ', first at ' + duration(positive(SL.first, 150)) + ', one thread goes slack for ' + duration(slT) + ', announced ' + positive(SL.warn, 20) + ' seconds ahead. It is the most worn thread: the one whose houses, both sides together, have lost the most. The houses of both sides on it, never a patron, stop firing and take ' + slMul + ' times normal damage whether or not attacking troopers are near. On Even and Cruel the Hush sends an extra hollow down it. While it is slack the thread carries a rider all the way to the far side\'s open house. The first house to fall on it pulls it tight at once, and if that was a Hush house the extra hollow crumples. It does not happen in First Rain or Ever Fallen, or after the threads fray at 15:00.');
         break;
       case 'echo':
         o = card('fight', 'Your recent path and shots replay beside you.', 'rewind', 'Up to ' + duration(echoT),

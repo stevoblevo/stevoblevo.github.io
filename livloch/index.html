@@ -187,7 +187,7 @@ body:not(.touch) #tZip { display: none; }
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .sub { margin: 0 0 12px; color: var(--paper-dim); max-width: 62ch; line-height: 1.45; }
 
-#title { background: linear-gradient(100deg, rgba(var(--wash), 0.94) 0%, rgba(var(--wash), 0.8) 40%, rgba(var(--wash), 0.08) 80%), url(art/title.jpg) center / cover no-repeat rgb(var(--wash)); }
+#title { background: linear-gradient(100deg, rgba(var(--wash), 0.94) 0%, rgba(var(--wash), 0.8) 40%, rgba(var(--wash), 0.08) 80%); } /* 0.28 face: the painting itself is #plate (css/title.css), so the live valley can show through */
 #title .col { width: min(760px, 100%); display: flex; flex-direction: column; gap: 14px; }
 #title h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(54px, 11vw, 112px); line-height: 0.9; letter-spacing: 0.01em; }
 #title h1 em { color: var(--ember); font-style: italic; }
@@ -298,7 +298,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
   .hero ul { display: none; }
   #shopCols { grid-template-columns: minmax(0, 1fr); }
   .opt { grid-template-columns: minmax(0, 1fr); }
-  #title { background: linear-gradient(rgba(var(--wash), 0.7), rgba(var(--wash), 0.9) 55%), url(art/title.jpg) 62% top / auto 60% no-repeat rgb(var(--wash)); }
+  #title { background: linear-gradient(rgba(var(--wash), 0.7), rgba(var(--wash), 0.9) 55%); } /* 0.28 face: painting in #plate */
   #mini { width: 84px; height: 142px; }
   #great { top: calc(var(--st) + 150px); font-size: 12.5px; }
   #score { font-size: 14px; gap: 8px; padding: 3px 9px; } #score b { font-size: 18px; } #clock { font-size: 16px; }
@@ -319,15 +319,18 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
 @media (prefers-reduced-motion: reduce) { #souls.can, #feed p { animation: none; } }
 </style>
 <link rel="stylesheet" href="css/debrief.css">
+<link rel="stylesheet" href="css/title.css"><!-- 0.28 face: the painting over the live valley, the walk in -->
+<link rel="stylesheet" href="css/hud.css"><!-- 0.28 face: the HUD redrawn from the concept plates -->
 </head>
 <body>
 <div id="app">
   <canvas id="gl"></canvas>
+  <div id="plate" aria-hidden="true"></div><!-- 0.28 face: the title painting; js/face.js dissolves it into the live valley -->
 
   <div id="hud" hidden>
     <div id="vig"></div>
     <div id="nums"></div>
-    <canvas id="mini" width="208" height="352" aria-label="Map"></canvas>
+    <div id="miniF"><canvas id="mini" width="208" height="352" aria-label="Map"></canvas></div><!-- 0.28 face: the map's frame and lantern finial -->
     <div id="score"><span class="t0"><span class="nm">Reign </span><b id="k0">0</b></span><span id="clock">0:00</span><span class="t1"><b id="k1">0</b><span class="nm"> Hush</span></span><div id="moons" title="The moons fill until the rain comes down red"><i></i><i></i><i></i><i></i><i></i></div></div>
     <div id="topR"><span id="lvl">Lv 1</span><span id="souls"><i></i><span id="soulN">0</span></span><button class="btn small" id="bEcho" title="Replay your last seconds beside you (C)">Echo</button><button class="btn small" id="bInk" title="Change the view (V)">View</button><button class="btn small" id="bShop">Shop</button><button class="btn small mute" id="bMuteH" aria-pressed="false" aria-label="Mute (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z"/><path class="on" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.5 6a8 8 0 0 1 0 12"/><path class="off" d="M16 9l6 6M22 9l-6 6"/></svg></button><button class="btn small" id="bPause" aria-label="Pause">II</button></div>
     <div id="feed"></div>
@@ -340,6 +343,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     <div id="coach" hidden></div>
     <div id="quest" hidden></div>
     <div id="dreamCard" hidden><small></small><b></b><p></p></div>
+    <div id="viewTag" aria-hidden="true"></div><!-- 0.28 face: the view's name, bottom right, as on the plates -->
     <div id="autoTag" hidden>Auto · the valley plays itself</div>
     <div id="lean" role="group" aria-label="Lean Back controls">
       <button class="btn" id="lCall0" aria-pressed="false">West</button><button class="btn" id="lCall1" aria-pressed="false">Middle</button><button class="btn" id="lCall2" aria-pressed="false">East</button>
@@ -355,7 +359,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
     </div>
     <div id="bottom">
       <div id="stam"></div>
-      <div id="hpWrap"><div id="hpFill"></div><div id="shFill"></div><span id="hpTxt"></span></div>
+      <div id="hpRow"><span id="lvM" title="Level"><b id="lvN">1</b></span><div id="hpWrap"><div id="hpFill"></div><div id="shFill"></div><span id="hpTxt"></span></div></div><!-- 0.28 face: the level medallion beside health -->
       <div id="abil">
         <button class="ab" id="ab0" data-btn="ab0"><b>Q</b><span></span><i></i><em></em></button>
         <button class="ab" id="ab1" data-btn="ab1"><b>E</b><span></span><i></i><em></em></button>
@@ -416,7 +420,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
         <dl class="keys k-pad"><dt>Sticks</dt><dd>move and aim</dd><dt>RT · LT</dt><dd>fire · zoom</dd><dt>A · B · X</dt><dd>jump · dash · reload</dd><dt>LB RB Y</dt><dd>abilities</dd><dt>D-pad up · right · Back · Start</dt><dd>ride thread · change the view · shop · pause</dd></dl>
       </div>
       <p id="worlds">Other doors: </p>
-      <footer>Livloch 0.27 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · <a href="https://github.com/stevoblevo/livloch">made in the open on GitHub</a> · part of <a href="https://saelion.co">Saelion</a> · music made with ElevenLabs Music</footer>
+      <footer>Livloch 0.28 · <a href="https://stevoblevo.github.io/livloch/versions/">every version</a> · <a href="https://github.com/stevoblevo/livloch">made in the open on GitHub</a> · part of <a href="https://saelion.co">Saelion</a> · music made with ElevenLabs Music</footer>
     </div>
   </section>
 
@@ -507,6 +511,7 @@ body[data-look="glow"] #app::after { content: ""; position: absolute; inset: 0; 
 <script src="js/debrief-data.js"></script>
 <script src="js/debrief.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/face.js"></script><!-- 0.28 face: the title and the walk in; before main.js, which calls it -->
 <script src="js/main.js"></script>
 </body>
 </html>
