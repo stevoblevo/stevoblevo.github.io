@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href="./favicon.svg" />
     <title>Anewgam: The Peachfall</title>
-    <meta name="version" content="1.1.0" />
+    <meta name="version" content="1.2.0" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Anewgam: The Peachfall" />
     <meta name="twitter:image" content="https://stevoblevo.github.io/peachfall/og.jpg" />
@@ -19,9 +19,8 @@
     <meta property="og:description" content="A playable vertical slice of Anewgam: Princess Sae falls from the tower, the world answers with mercy, and Knight Steven meets the pieces of her." />
     <meta name="description" content="A playable vertical slice of Anewgam: Princess Sae falls from the tower, the world answers with mercy, and Knight Steven meets the pieces of her." />
     <meta property="x:creator" content="@Stevoblevo" />
-
-    <script type="module" crossorigin src="./assets/main-BPeuWIE_.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/main-CVicfXhU.css">
+    <script type="module" crossorigin src="./assets/index-C9BTGzG-.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BxS-zgUb.css">
     <link rel="stylesheet" href="../anewgam-for-steven-cockpit/colour-language.css">
   </head>
   <body>
@@ -68,11 +67,12 @@
           <button type="button" data-note="1">✧</button>
           <button type="button" data-note="2">★</button>
         </div>
+        <button type="button" id="touch-advance" data-testid="touch-advance" hidden>Advance</button>
         <p id="hint" class="hint"></p>
+        <p id="orient-hint" class="orient-hint">Turn your phone on its side for a larger scene.</p>
       </div>
     </div>
-    <script type="module" src="./sae-wink/sae-wink.js"></script>
-    <script src="./dreamwalk.js" defer></script>
+      <script type="module" src="./sae-wink/sae-wink.js"></script>
     <script type="module">
       import { mountSaeWink } from "./sae-wink/mount.js";
       mountSaeWink({ world: "peachfall", saveKey: "peachfall-playable-v1", bottom: "96px" });
