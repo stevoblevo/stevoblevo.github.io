@@ -1,0 +1,13 @@
+/* LIVLOCH · 0.28 face: the title painting as its own layer over the live valley, and the walk in.
+   js/face.js sets #plate's and #hud's opacity each frame and toggles #title.leaving. The dark gradient that keeps the menu readable stays on #title itself (index.html). */
+#plate { position: absolute; inset: 0; pointer-events: none; background: url(../art/title.jpg) center / cover no-repeat rgb(var(--wash)); } /* opacity set each frame by js/face.js */
+@media (max-width: 760px) {
+  /* phones in portrait: the painting at the top, as before; below it the night, which the valley replaces when it shows */
+  #plate { background: url(../art/title.jpg) 62% top / auto 60% no-repeat rgb(var(--wash)); }
+}
+#title { transition: opacity 0.38s ease; }
+#title.leaving { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { #title { transition: none; } }
+/* 0.28 face: on the title the mute button lives inside #title (ui.js moves it), so it scrolls away with the heading
+   instead of sitting over a hero card */
+#title > #bMute { position: absolute; right: var(--sr); top: calc(var(--st) + 6px); }

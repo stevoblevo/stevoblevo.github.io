@@ -1,7 +1,13 @@
 {
-  "current": "0.27",
+  "current": "0.28",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.28",
+      "path": "v0.28/",
+      "source": "release/0.28",
+      "note": "The title painting opens into the live valley; the HUD redrawn from the plates; arrival, the fold's catch, a light from home and the slack thread; clearer faces, Anna's owl, the Ness hold and boost camera; the moon, pink Origami blossoms, built fruit, strays and cranes"
+    },
     {
       "v": "0.27",
       "path": "v0.27/",
@@ -114,7 +120,7 @@
       "v": "0.8",
       "path": "v0.8/",
       "source": "release/0.8",
-      "note": "Fruit power-ups: lemon, rose hips, Verde Limón little and big"
+      "note": "Fruit power-ups: lemon, rose hips, Verde Lim\u00f3n little and big"
     },
     {
       "v": "0.7",

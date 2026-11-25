@@ -51,6 +51,7 @@ const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t
 const ease = (k, dt) => 1 - Math.exp(-dt * k);
 const frac = (x) => x - Math.floor(x);
 const TAU = Math.PI * 2;
+const HEADK = 1.07; // 0.28 look: the head bone's scale (it grows from the neck, so hair, hats and the face come with it)
 const CC = {};
 function cl(h) { if (h && h.isColor) return h; let c = CC[h]; if (!c) c = CC[h] = new T.Color(h); return c; }
 function mix3(a, b, k) { return _cm.copy(cl(a)).lerp(cl(b), k); }
@@ -168,26 +169,30 @@ function atlas() {
   const S = 512, cv = document.createElement('canvas'); cv.width = cv.height = S; const g = cv.getContext('2d');
   const at = function (k, fn) { g.save(); g.translate((k % 4) * 128, Math.floor(k / 4) * 128); g.beginPath(); g.rect(0, 0, 128, 128); g.clip(); fn(g); g.restore(); };
   at(15, function (g) { g.fillStyle = '#fff'; g.fillRect(0, 0, 128, 128); });
-  const eye = function (g, x, y, rx, ry, iris, lash) { g.fillStyle = '#fff8f0'; g.beginPath(); g.ellipse(x, y, rx * 1.05, ry, 0, 0, TAU); g.fill(); g.fillStyle = iris; g.beginPath(); g.ellipse(x, y + ry * 0.12, rx * 0.86, ry * 0.86, 0, 0, TAU); g.fill();
-    g.fillStyle = '#1a0f12'; g.beginPath(); g.ellipse(x, y + ry * 0.18, rx * 0.45, ry * 0.5, 0, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x - rx * 0.3, y - ry * 0.3, rx * 0.28, 0, TAU); g.fill();
-    if (lash) { g.strokeStyle = lash; g.lineWidth = 1.8; g.beginPath(); g.ellipse(x, y - ry * 0.05, rx * 1.12, ry * 1.1, 0, Math.PI * 1.15, Math.PI * 1.85); g.stroke(); } };
+  /* 0.28 look: the faces read at play distance (5 to 10 m, a head 25 px tall): every eye is drawn 1.38 times as big, a
+     little lower, with a dark rim all round so the white does not melt into the skin when the atlas is mipmapped; brows
+     and mouths are drawn heavier (ES, LW). Same eyes, colours and places, so they stay on model. */
+  const ES = 1.38, LW = 1.6;
+  const eye = function (g, x, y0, rx0, ry0, iris, lash) { const rx = rx0 * ES, ry = ry0 * ES, y = y0 + 3; g.fillStyle = lash || '#2a1810'; g.beginPath(); g.ellipse(x, y, rx * 1.05 + 2.6, ry + 2.6, 0, 0, TAU); g.fill(); g.fillStyle = '#fff8f0'; g.beginPath(); g.ellipse(x, y, rx * 1.05, ry, 0, 0, TAU); g.fill(); g.fillStyle = iris; g.beginPath(); g.ellipse(x, y + ry * 0.12, rx * 0.86, ry * 0.86, 0, 0, TAU); g.fill();
+    g.fillStyle = '#1a0f12'; g.beginPath(); g.ellipse(x, y + ry * 0.18, rx * 0.5, ry * 0.55, 0, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x - rx * 0.3, y - ry * 0.3, rx * 0.28, 0, TAU); g.fill();
+    if (lash) { g.strokeStyle = lash; g.lineWidth = 4.2; g.beginPath(); g.ellipse(x, y - ry * 0.05, rx * 1.12, ry * 1.1, 0, Math.PI * 1.15, Math.PI * 1.85); g.stroke(); } };
   const blush = function (g, x, y, r, c) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(255,120,120,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); };
-  const smile = function (g, x, y, w, c, lw) { g.strokeStyle = c; g.lineWidth = lw || 2.2; g.lineCap = 'round'; g.beginPath(); g.arc(x, y - w * 0.6, w, Math.PI * 0.3, Math.PI * 0.7); g.stroke(); };
+  const smile = function (g, x, y, w, c, lw) { g.strokeStyle = c; g.lineWidth = (lw || 2.2) * LW; g.lineCap = 'round'; w *= 1.25; g.beginPath(); g.arc(x, y - w * 0.6, w, Math.PI * 0.3, Math.PI * 0.7); g.stroke(); };
   // 1 Dora's face: brown eyes, soft brows, a small smile
-  at(1, function (g) { eye(g, 36, 62, 13, 16, '#5a2e1a', '#2a160f'); eye(g, 92, 62, 13, 16, '#5a2e1a', '#2a160f'); g.strokeStyle = '#4a2c20'; g.lineWidth = 3; g.beginPath(); g.moveTo(24, 38); g.quadraticCurveTo(36, 32, 48, 38); g.moveTo(80, 38); g.quadraticCurveTo(92, 32, 104, 38); g.stroke();
+  at(1, function (g) { eye(g, 36, 62, 13, 16, '#5a2e1a', '#2a160f'); eye(g, 92, 62, 13, 16, '#5a2e1a', '#2a160f'); g.strokeStyle = '#4a2c20'; g.lineWidth = 3 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(24, 38); g.quadraticCurveTo(36, 32, 48, 38); g.moveTo(80, 38); g.quadraticCurveTo(92, 32, 104, 38); g.stroke();
     blush(g, 20, 84, 13, 'rgba(240,110,100,0.6)'); blush(g, 108, 84, 13, 'rgba(240,110,100,0.6)'); smile(g, 64, 98, 10, '#8a3a2a', 3); });
   // 2 Anna's face: green eyes, freckles
-  at(2, function (g) { eye(g, 36, 62, 12, 15, '#2f6a3a', '#3a1a10'); eye(g, 92, 62, 12, 15, '#2f6a3a', '#3a1a10'); g.strokeStyle = '#a8461f'; g.lineWidth = 3; g.beginPath(); g.moveTo(24, 40); g.quadraticCurveTo(36, 34, 48, 40); g.moveTo(80, 40); g.quadraticCurveTo(92, 34, 104, 40); g.stroke();
+  at(2, function (g) { eye(g, 36, 62, 12, 15, '#2f6a3a', '#3a1a10'); eye(g, 92, 62, 12, 15, '#2f6a3a', '#3a1a10'); g.strokeStyle = '#a8461f'; g.lineWidth = 3 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(24, 40); g.quadraticCurveTo(36, 34, 48, 40); g.moveTo(80, 40); g.quadraticCurveTo(92, 34, 104, 40); g.stroke();
     g.fillStyle = 'rgba(160,80,40,0.8)'; [[24, 82], [31, 86], [19, 88], [104, 82], [97, 86], [109, 88], [27, 78], [101, 78]].forEach(function (p) { g.beginPath(); g.arc(p[0], p[1], 2, 0, TAU); g.fill(); });
     blush(g, 22, 86, 12, 'rgba(240,110,100,0.45)'); blush(g, 106, 86, 12, 'rgba(240,110,100,0.45)'); smile(g, 64, 98, 10, '#8a3a2a', 3); });
   // 3 Myra's face: round dark eyes, a big smile, pink cheeks
   at(3, function (g) { eye(g, 36, 62, 13, 15, '#2a0f1e', '#2a1020'); eye(g, 92, 62, 13, 15, '#2a0f1e', '#2a1020'); blush(g, 18, 86, 16, 'rgba(240,100,150,0.65)'); blush(g, 110, 86, 16, 'rgba(240,100,150,0.65)'); smile(g, 64, 96, 13, '#6a2040', 3.4); });
   // 4 the Skein Doll's face: button eyes, a stitched smile, a seam down the middle
-  at(4, function (g) { [[36, 60], [92, 60]].forEach(function (p) { g.fillStyle = '#4a2814'; g.beginPath(); g.arc(p[0], p[1], 15, 0, TAU); g.fill(); g.fillStyle = '#6e4024'; g.beginPath(); g.arc(p[0], p[1], 11, 0, TAU); g.fill();
+  at(4, function (g) { [[35, 61], [93, 61]].forEach(function (p) { g.fillStyle = '#2e170a'; g.beginPath(); g.arc(p[0], p[1], 19, 0, TAU); g.fill(); g.fillStyle = '#6e4024'; g.beginPath(); g.arc(p[0], p[1], 14, 0, TAU); g.fill();
       g.strokeStyle = '#f2e6cc'; g.lineWidth = 3; g.beginPath(); g.moveTo(p[0] - 5, p[1] - 5); g.lineTo(p[0] + 5, p[1] + 5); g.moveTo(p[0] + 5, p[1] - 5); g.lineTo(p[0] - 5, p[1] + 5); g.stroke(); });
     g.strokeStyle = 'rgba(150,110,80,0.8)'; g.lineWidth = 1.6; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(64, 0); g.lineTo(64, 128); g.stroke(); g.setLineDash([]);
     blush(g, 24, 78, 10, 'rgba(230,130,100,0.5)'); blush(g, 104, 78, 10, 'rgba(230,130,100,0.5)');
-    g.strokeStyle = '#5a2e18'; g.lineWidth = 3; g.beginPath(); g.arc(64, 84, 15, Math.PI * 0.2, Math.PI * 0.8); g.stroke();
+    g.strokeStyle = '#4a2410'; g.lineWidth = 3 * LW; g.beginPath(); g.arc(64, 86, 15, Math.PI * 0.2, Math.PI * 0.8); g.stroke();
     for (let k = 0; k < 5; k++) { const a = Math.PI * (0.25 + k * 0.125), x = 64 + Math.cos(a) * 15, y = 84 + Math.sin(a) * 15; g.beginPath(); g.moveTo(x, y - 3); g.lineTo(x, y + 3); g.stroke(); } });
   // 0 Dora's stag, gold, front-facing, antlers spread (drawn for a patch about 1.25 times as tall as wide)
   at(0, function (g) { g.fillStyle = '#f0b84e'; g.strokeStyle = '#f0b84e'; g.lineCap = 'round'; g.lineJoin = 'round';
@@ -230,8 +235,8 @@ function atlas() {
     g.strokeStyle = 'rgba(120,80,35,0.24)'; g.lineWidth = 1.1; for (let y = 6; y < 128; y += 13) { g.beginPath(); g.moveTo(0, y); g.lineTo(128, y); g.stroke(); }
     g.fillStyle = 'rgba(90,50,20,0.7)'; g.fillRect(0, 118, 128, 10); });
   // 14 Rook Vale's face (0.25 rook): grey-teal eyes, level brows, a small sideways smile, wind in the cheeks
-  at(14, function (g) { eye(g, 36, 64, 12, 14, '#3a6a70', '#1c2634'); eye(g, 92, 64, 12, 14, '#3a6a70', '#1c2634'); g.strokeStyle = '#2a3446'; g.lineWidth = 3.4; g.lineCap = 'round'; g.beginPath(); g.moveTo(23, 43); g.lineTo(48, 41); g.moveTo(80, 41); g.lineTo(105, 43); g.stroke();
-    blush(g, 20, 86, 13, 'rgba(240,120,100,0.5)'); blush(g, 108, 86, 13, 'rgba(240,120,100,0.5)'); g.strokeStyle = '#7a3a2c'; g.lineWidth = 3; g.beginPath(); g.moveTo(54, 100); g.quadraticCurveTo(66, 106, 78, 97); g.stroke(); });
+  at(14, function (g) { eye(g, 36, 64, 12, 14, '#3a6a70', '#1c2634'); eye(g, 92, 64, 12, 14, '#3a6a70', '#1c2634'); g.strokeStyle = '#2a3446'; g.lineWidth = 3.4 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(23, 41); g.lineTo(48, 41); g.moveTo(80, 41); g.lineTo(105, 43); g.stroke();
+    blush(g, 20, 86, 13, 'rgba(240,120,100,0.5)'); blush(g, 108, 86, 13, 'rgba(240,120,100,0.5)'); g.strokeStyle = '#7a3a2c'; g.lineWidth = 3 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(54, 100); g.quadraticCurveTo(66, 106, 78, 97); g.stroke(); });
   ATLAS = new T.CanvasTexture(cv); ATLAS.anisotropy = 4;
   return ATLAS;
 }
@@ -318,7 +323,7 @@ function headBall(B, P, o) {
   B.add(capG([0, P.neck + 0.02, 0], [0, P.head + 0.04, 0.0], o.neckR || 0.06, o.neckR || 0.06, 8, 2), null, o.skin, [['neck', 0.6], ['head', 0.4]]);
   const S = o.shape || [1, 0.96, 0.95];
   B.add(new T.SphereGeometry(1, 14, 10), M(0, P.headC, 0.01, 0, 0, 0, P.headR * S[0], P.headR * S[1], P.headR * S[2]), o.skin, 'head');
-  if (o.face != null) B.add(facePatch(o.fw || 1.5, o.fh || 1.0, o.fd || 0.12), M(0, P.headC, 0.01, 0, 0, 0, P.headR * S[0], P.headR * S[1], P.headR * S[2]), 0xffffff, 'head', { uv: cellUV(o.face) });
+  if (o.face != null) B.add(facePatch(o.fw || 1.5, o.fh || 1.0, o.fd || 0.12), M(0, P.headC, 0.01, 0, 0, 0, P.headR * S[0], P.headR * S[1], P.headR * S[2]), 0xffffff, 'head', { uv: cellUV(o.face), em: 0.1 }); // 0.28 look: a little light of its own, so a face in the shade still reads
 }
 
 /* ---------- cloth panels: hinged around the body, trailing on springs, pushed out by the legs ---------- */
@@ -932,8 +937,29 @@ function aegisTex() {
     for (let k = 0; k < 6; k++) { const x = -28 + k * 12, s = k % 2 ? -1 : 1; g.beginPath(); g.ellipse(x, 56 + s * 6, 6, 2.6, s * 0.6, 0, TAU); g.stroke(); } // olive leaves
     [-7, 7].forEach(function (x) { g.beginPath(); g.moveTo(x - 4, 50); g.lineTo(x, 55); g.lineTo(x + 4, 50); g.stroke(); }); // the feet
     g.restore(); };
-  owl(1.5, 1.5, 'rgba(255,232,180,0.75)', null); owl(0, 0, '#5a3010', 'rgba(150,90,30,0.35)');
+  owl(1.5, 1.5, 'rgba(255,232,180,0.75)', null); owl(0, 0, '#5a3010', 'rgba(255,214,130,0.55)'); // 0.28 look: the owl filled lighter than the field, so it reads small
   AEGIS = new T.CanvasTexture(c); return AEGIS;
+}
+/* 0.28 look: the shield seen from behind. The play camera is behind Anna, so this is the side the owner sees. Hammered
+   bronze is beaten from behind, so the owl stands in the back as its hollow, reversed (drawn mirrored, which reads the right
+   way round from behind): a bold filled shape with two big eye rings, not fine lines, so it holds at 40 px across. A band
+   of gold at the edge, the leather arm-band across the middle and the hand grip near the rim, as on a real hoplon. */
+let AEGISB = null;
+function aegisBackTex() {
+  if (AEGISB) return AEGISB; const N = 256, c = document.createElement('canvas'); c.width = c.height = N; const g = c.getContext('2d'), C0 = N / 2;
+  let gr = g.createRadialGradient(C0, C0, 8, C0, C0, C0); gr.addColorStop(0, '#9a6a34'); gr.addColorStop(0.7, '#6e4420'); gr.addColorStop(1, '#4a2a10'); g.fillStyle = gr; g.fillRect(0, 0, N, N);
+  const ring = (r, w, col) => { g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.arc(C0, C0, r, 0, TAU); g.stroke(); };
+  ring(120, 14, '#e6b456'); ring(110, 3, '#3a200c');
+  g.save(); g.translate(C0, C0 + 4); g.scale(-1.45, 1.45);
+  g.fillStyle = '#f0c46a'; g.strokeStyle = '#3a200c'; g.lineWidth = 3.4;
+  g.beginPath(); g.moveTo(-30, -38); g.lineTo(-18, -24); g.quadraticCurveTo(0, -32, 18, -24); g.lineTo(30, -38); g.quadraticCurveTo(38, -10, 30, 18); g.quadraticCurveTo(18, 46, 0, 50); g.quadraticCurveTo(-18, 46, -30, 18); g.quadraticCurveTo(-38, -10, -30, -38); g.closePath(); g.fill(); g.stroke();
+  [-13, 13].forEach(function (x) { g.fillStyle = '#3a200c'; g.beginPath(); g.arc(x, -10, 12, 0, TAU); g.fill(); g.fillStyle = '#ffe6a8'; g.beginPath(); g.arc(x, -10, 5.5, 0, TAU); g.fill(); });
+  g.fillStyle = '#3a200c'; g.beginPath(); g.moveTo(-5, 0); g.lineTo(0, 10); g.lineTo(5, 0); g.closePath(); g.fill();
+  g.lineWidth = 4; [-1, 1].forEach(function (s) { g.beginPath(); g.moveTo(s * 24, 6); g.quadraticCurveTo(s * 26, 30, s * 8, 42); g.stroke(); });
+  g.restore();
+  g.fillStyle = 'rgba(70,36,14,0.92)'; g.fillRect(C0 - 112, C0 + 58, 224, 20); g.strokeStyle = '#c89a58'; g.lineWidth = 2; g.strokeRect(C0 - 112, C0 + 58, 224, 20); // the arm-band (porpax)
+  g.fillStyle = '#3a200c'; g.fillRect(C0 + 78, C0 - 26, 14, 52); // the grip (antilabe)
+  AEGISB = new T.CanvasTexture(c); return AEGISB;
 }
 function aegisBuild(fig) {
   const R0 = 0.33, grp = new T.Group(), tex = aegisTex();
@@ -941,7 +967,8 @@ function aegisBuild(fig) {
   const pa = cap.attributes.position, uv = cap.attributes.uv; for (let i = 0; i < pa.count; i++) uv.setXY(i, 0.5 + pa.getX(i) / (2 * R0), 0.5 + pa.getY(i) / (2 * R0));
   const face = own3(new T.MeshPhongMaterial({ map: tex, emissiveMap: tex, emissive: 0x6a4420, color: 0xd8c0a0, shininess: 46, specular: 0x8a6a40, side: T.FrontSide }));
   const back = own3(new T.MeshPhongMaterial({ color: 0x8a5a2a, emissive: 0x4a2c12, shininess: 30, specular: 0x6a4a28, side: T.BackSide }));
-  grp.add(new T.Mesh(cap, face)); grp.add(new T.Mesh(cap, back));
+  const bt = aegisBackTex(), backF = own3(new T.MeshPhongMaterial({ map: bt, emissiveMap: bt, emissive: 0x8a6a40, color: 0xffffff, shininess: 30, specular: 0x6a4a28, side: T.BackSide })); // 0.28 look: the owl in the back
+  grp.add(new T.Mesh(cap, face)); grp.add(new T.Mesh(cap, backF));
   const rim = new T.Mesh(new T.TorusGeometry(R0, 0.024, 6, 40), own3(new T.MeshPhongMaterial({ color: 0xc89a58, emissive: 0x5a3a14, shininess: 70, specular: 0xc0a070 }))); grp.add(rim);
   const strap = new T.Mesh(new T.BoxGeometry(0.16, 0.05, 0.03), back); strap.position.set(0, 0, -0.035); grp.add(strap);
   grp.traverse(function (o) { if (o.isMesh) { o.frustumCulled = false; o.renderOrder = 1; } });
@@ -960,15 +987,17 @@ function aegisBuild(fig) {
       '  float k = (sheen + edge + key * 0.55) * uA * (1.0 + uF * 2.6) * smoothstep(0.0, 0.1, ey);',
       '  gl_FragColor = vec4(uC * k * 0.55, 1.0); }'].join('\n') }));
   const arc = new T.Mesh(arcG, arcM); arc.frustumCulled = false; arc.renderOrder = 3; arc.position.y = 1.15; arc.visible = false; fig.root.parent.add(arc);
-  return { grp: grp, face: face, rim: rim, arc: arc };
+  return { grp: grp, face: face, rim: rim, arc: arc, backF: backF };
 }
 function aegisPose(fig, h, G, dt, t, red) {
   const S = fig.S, e = S.gK === 'aegis' ? S.gE : 0; if (e < 0.005 && !G.ae) return;
   const A = G.ae || (G.ae = aegisBuild(fig)), b = fig.b, show = e > 0.01;
   A.grp.visible = A.arc.visible = show; if (!show) return;
   // the shield: on her left forearm's side, in front of the chest, turned a little out to her left so its rim shows from behind
-  const up = red ? 1 : e; A.grp.position.set(0.4, -0.02 - 0.22 * (1 - up), 0.24 + 0.06 * up); A.grp.rotation.set(-0.08 - (fig.S.gPitch || 0) * 0.5, 0.85, 0); A.grp.scale.setScalar(0.72 + 0.28 * up);
-  A.face.emissiveIntensity = 0.55 + 1.1 * S.gFlash; A.rim.material.emissiveIntensity = 0.7 + 1.8 * S.gFlash;
+  /* 0.28 look: held further out and higher, turned less (0.45 rad, was 0.85), and a tenth bigger, so from behind it is a
+     round disc beside her with its owl showing, not an edge-on oval behind her shoulder */
+  const up = red ? 1 : e; A.grp.position.set(0.5, 0.06 - 0.22 * (1 - up), 0.22 + 0.06 * up); A.grp.rotation.set(-0.08 - (fig.S.gPitch || 0) * 0.5, 0.45, 0); A.grp.scale.setScalar((0.72 + 0.28 * up) * 1.1);
+  A.face.emissiveIntensity = 0.55 + 1.1 * S.gFlash; A.rim.material.emissiveIntensity = 0.7 + 1.8 * S.gFlash; A.backF.emissiveIntensity = 0.45 + 1.2 * S.gFlash;
   A.arc.material.uniforms.uA.value = e; A.arc.material.uniforms.uF.value = S.gFlash; A.arc.material.uniforms.uT.value = red ? 0 : t;
   // the arm that holds it: up and forward, the elbow bent across her front
   const aL = b.armL, fL = b.foreL; aL.rotation.x += (-1.15 - aL.rotation.x) * e; aL.rotation.y += (0.35 - aL.rotation.y) * e; aL.rotation.z += (0.42 - aL.rotation.z) * e; fL.rotation.x += (-1.05 - fL.rotation.x) * e;
@@ -1170,6 +1199,7 @@ H3.pose = function (fig, st, h, o) {
   }
   // --- the whole figure: squash on landing, stretch going up, a shove back from a braced shot, a lunge on a throw
   const sy = 1 - Math.max(0, sq) * 0.07 + Math.max(0, st.stretch || 0) * 0.06 * air, sx = 1 + Math.max(0, sq) * 0.035;
+  b.head.scale.setScalar(HEADK); // 0.28 look: heads a touch larger, so the faces read from the play camera
   fig.root.scale.set(sx, sy, sx); fig.root.position.set(0, 0, -brace * 0.8 + Math.max(0, tw) * 0.08); fig.root.rotation.set(0, 0, 0);
   airRoot(fig, K, dt, red); // 0.25 air: somersault, lean, the hover's tilt and bob; the cloth flare
   // --- cloth, braid, pendulums, wings
