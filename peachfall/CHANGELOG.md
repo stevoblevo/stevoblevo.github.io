@@ -1,5 +1,10 @@
 # Peachfall (github.io) changelog
 
+## 2026-11-25 — kid-safety takedown
+
+- Removed the Gallery GEN22 comic page and its companion plates from `/peachfall/source/` (shared by the root door, `/v1.2.0/`, and `/v1.1.0/`). Also removed the watercolor gen22 page and the source contact sheet. Gallery entries and "Kid Mode" / "Protected source art" copy are dropped from the published bundles.
+
+
 ## 1.2.1 — 2026-11-25
 
 - From `peachfall-playable` v1.2.1 (merge `b9d3dabb`). New hashed bundle `assets/index-BSC8QTo5.js` + `assets/index-DFImuT5e.css`. Esc pauses. The assumed-count HUD follows the constellation. Previous v1.2.0 stays at `/peachfall/v1.2.0/`; v1.1.0 stays at `/peachfall/v1.1.0/`. Goober-pinned `assets/main-BPeuWIE_.js` is unchanged.
