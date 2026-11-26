@@ -1,12 +1,12 @@
 {
-  "current": "0.28",
+  "current": "0.28.1",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
     {
       "v": "0.28",
       "path": "v0.28/",
       "source": "release/0.28",
-      "note": "The title painting opens into the live valley; the HUD redrawn from the plates; arrival, the fold's catch, a light from home and the slack thread; clearer faces, Anna's owl, the Ness hold and boost camera; the moon, pink Origami blossoms, built fruit, strays and cranes"
+      "note": "The title painting opens into the live valley; the HUD redrawn from the plates; arrival, the fold's catch, a light from home and the slack thread; clearer faces, Anna's owl, the Ness hold and boost camera; the moon, pink Origami blossoms, built fruit, strays and cranes. 0.28.1 (root only): the title valley comes alive instead of staying a still painting"
     },
     {
       "v": "0.27",

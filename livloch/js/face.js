@@ -20,7 +20,7 @@
 (function () {
 'use strict';
 const LL = window.LL;
-const HOLD = 1.4, LIVE = 2.6, FADE = 2.4, SLOW_MS = 45, VEIL = 420, SETTLE = 2.6, REVEAL = 1.5;
+const HOLD = 1.0, LIVE = 2.0, FADE = 2.4, SLOW_MS = 55, WAIT = 9, GIVE_UP = 110, VEIL = 420, SETTLE = 2.6, REVEAL = 1.5;
 const F = LL.face = { VEIL: VEIL };
 const HUD_AT = 1.3, HUD_IN = 0.8;
 let hudT = -1, plate = null, pl = 1, plTo = 1, plRate = 0, t = 0, fading = false, fell = false, drawn = 0, ft = [], settleT = -1, pending = 0;
@@ -37,17 +37,23 @@ F.tick = function (sec) {
 };
 F.wantLive = function () { return !!LL.faceForce || (!reduced() && !(LL.gfx && LL.gfx.low) && !fell); };
 /* The title is showing again (boot, or quit from a match): the painting, at once. */
-F.title = function () { t = 0; fading = false; drawn = 0; ft.length = 0; settleT = -1; pending = 0; setPlate(true, 0); const ti = document.getElementById('title'); if (ti) ti.classList.remove('leaving'); };
+F.title = function () { t = 0; fell = false; /* 0.28.1 face: every visit to the title tries the valley again */ fading = false; drawn = 0; ft.length = 0; settleT = -1; pending = 0; setPlate(true, 0); const ti = document.getElementById('title'); if (ti) ti.classList.remove('leaving'); };
 /* Every title frame. raw: this frame's length in ms. Returns true when main.js should step and draw the attract world. */
 F.titleFrame = function (dt, raw) {
-  const sec = Math.min(1, raw / 1000 || 0); t += sec; /* wall time: the painting is held for the person looking at it */
+  /* 0.28.1 face: the valley must come alive on ordinary machines. 0.28 gave up for the session if the first 1.2 s were
+     slow, and a tab opened in the background, the first shader compiles or a 5K screen all tripped that, so the title
+     stayed a still painting. Now: a hidden tab does not count; the painting waits (up to WAIT s) for any 10 frames whose
+     median is under SLOW_MS, then fades; it only gives up if the valley is very slow (median over GIVE_UP ms) once shown,
+     and the next visit to the title tries again. */
+  if (document.hidden) { ft.length = 0; return false; }
+  const sec = Math.min(0.25, raw / 1000 || 0); t += sec; /* wall time: the painting is held for the person looking at it */
   if (!F.wantLive()) { if (fading) { fading = false; setPlate(true, 0.8); } return false; }
-  if (t >= HOLD) { drawn++; if (drawn > 4 && raw > 0 && raw < 2000) { ft.push(raw); if (ft.length > 30) ft.shift(); } } /* the first frames compile shaders */
-  const slow = function () { const s = ft.slice().sort(function (a, b) { return a - b; }); return s[s.length >> 1] > SLOW_MS; };
+  if (t >= HOLD) { drawn++; if (drawn > 6 && raw > 0 && raw < 1000) { ft.push(raw); if (ft.length > 30) ft.shift(); } } /* the first frames compile shaders */
+  const med = function () { const s = ft.slice().sort(function (a, b) { return a - b; }); return s[s.length >> 1]; };
   if (!fading && t >= LIVE) {
-    if (!LL.faceForce && (ft.length < 8 || slow())) { fell = true; return false; } /* fewer than 8 frames in 1.2 s is slow too */
-    fading = true; setPlate(false, FADE);
-  } else if (fading && !LL.faceForce && ft.length >= 12 && slow()) { fell = true; fading = false; setPlate(true, 0.8); return false; }
+    if (LL.faceForce || (ft.length >= 10 && med() <= SLOW_MS)) { fading = true; setPlate(false, FADE); }
+    else if (t >= WAIT) { fell = true; return false; }
+  } else if (fading && !LL.faceForce && ft.length >= 20 && med() > GIVE_UP) { fell = true; fading = false; setPlate(true, 0.8); return false; }
   return t >= HOLD;
 };
 /* Walk in, part one: the painting comes back over the valley and the menu fades. main.js starts the match VEIL ms later. */
