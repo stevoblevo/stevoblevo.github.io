@@ -4,9 +4,6 @@ TWO DOORS
 
 1. GROK IMAGINE
    Attach these three images:
-   - images/anchors/01_gen22_page1_the_princess_who_could_not_leave_the_tower.png
-   - images/anchors/02_astral_assembly_sae_and_little_princesses.png
-   - images/anchors/03_gameplay_assume_her_fragments.png
 
    Then paste:
    - prompts/GROK_IMAGINE_MASTER_PROMPT.txt
