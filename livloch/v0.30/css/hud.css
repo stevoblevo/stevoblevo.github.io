@@ -1,0 +1,178 @@
+/* LIVLOCH · 0.28 face: the HUD redrawn from the concept plates (docs/concepts/02 and 04).
+   What the plates show, and what is taken here:
+   - A top band, not a box: the counters on one line over a soft dark wash that fades out at both ends, a thin gold rule
+     under it with a diamond at the centre, short gold bars between the counters, a crescent by the clock.
+   - The map in a tall gold frame, double ruled, with a lantern-diamond finial hanging under it.
+   - The objective in small capitals beside a knot, with a gold rule running out to the right ("Recover the light").
+   - Ability slots as lanterns: a roof with the key on it and a ring above, a glass body with two frame posts. Ready, the
+     lantern is lit in the hero's colour; cooling, the glass is dark and counts down; locked, it is unlit.
+   - Health as a slim gold-ruled bar with the level in a diamond medallion; stamina as slanted lozenges.
+   - The view's name in the bottom right corner ("XV // SKEPTIC NOIR").
+   Every colour comes from the look's variables (index.html, body[data-look]), so the HUD tints per view. Text keeps a
+   shadow in the look's shadow colour for contrast on bright ground. Rules are untouched: this is presentation only.
+   Loaded after the inline styles in index.html and overrides them; the touch layout keeps its 0.21 to 0.26 positions. */
+#hud { --gl: color-mix(in srgb, var(--gold) 62%, transparent); --gw: color-mix(in srgb, var(--gold) 28%, transparent); --glass: rgba(var(--wash), 0.74); }
+
+/* ---- the top band ---- */
+#hud #score { border: 0; outline: 0; border-radius: 0; padding: 5px 46px 8px; gap: 0; background: linear-gradient(90deg, transparent, var(--glass) 20%, var(--glass) 80%, transparent); }
+#score::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent); }
+#score::before { content: ""; position: absolute; left: 50%; bottom: -3px; width: 7px; height: 7px; margin-left: -3.5px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 6px var(--gw); }
+#score > .t0, #score > .t1 { padding: 0 14px; }
+#clock { padding: 0 14px; border-left: 1px solid var(--gl); border-right: 1px solid var(--gl); display: inline-flex; align-items: center; gap: 7px; justify-content: center; }
+#clock::before { content: ""; width: 12px; height: 12px; border-radius: 50%; box-shadow: inset -3.5px 1.5px 0 0 var(--paper); transform: rotate(-20deg); flex: none; }
+#moons { padding-top: 9px; }
+
+/* ---- top right: souls and the small buttons, on a wash that fades in from the left ---- */
+#topR { padding: 4px 4px 4px 22px; background: linear-gradient(90deg, transparent, var(--glass) 26%); border-bottom: 1px solid; border-image: linear-gradient(90deg, transparent, var(--gl) 30%) 1; }
+#hud .btn.small { outline: 0; border: 1px solid var(--gl); border-radius: 2px; background: rgba(var(--wash), 0.55); font-size: 13px; letter-spacing: 0.08em; padding: 5px 10px; text-shadow: 0 1px 2px var(--shc); }
+#hud .btn.small:hover { border-color: var(--gold); color: var(--gold); background: rgba(var(--wash), 0.8); }
+#souls { padding-right: 4px; }
+
+/* ---- the map ---- */
+#miniF { position: absolute; left: var(--sl); top: var(--st); width: 104px; height: 176px; border: 1px solid var(--gold); border-radius: 16px 16px 6px 6px; background: rgba(var(--wash), 0.6); box-shadow: inset 0 0 0 3px rgba(var(--wash), 0.6), inset 0 0 0 4px var(--gl), 0 2px 10px rgba(var(--shr), 0.35); }
+#miniF #mini { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; outline: 0; clip-path: none; border-radius: inherit; background: none; }
+#miniF::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 11px; height: 11px; margin-left: -5.5px; background: radial-gradient(circle at 40% 40%, #fff7e0, var(--gold) 55%); transform: rotate(45deg); box-shadow: 0 0 8px var(--gold); }
+#miniF::before { content: ""; position: absolute; left: 50%; top: -4px; width: 7px; height: 7px; margin-left: -3.5px; background: var(--gold); transform: rotate(45deg); }
+#great { top: calc(var(--st) + 192px); }
+
+/* ---- the objective ---- */
+#quest { border-left: 0; border-radius: 0; padding: 6px 30px 7px 34px; top: calc(var(--st) + 198px); background: linear-gradient(90deg, var(--glass), rgba(var(--wash), 0.45) 75%, transparent); border-bottom: 1px solid; border-image: linear-gradient(90deg, var(--gold), transparent) 1; text-shadow: 0 1px 2px var(--shc); }
+#quest::before { content: ""; position: absolute; left: 8px; top: 50%; width: 19px; height: 19px; margin-top: -9.5px; background: var(--gold);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.6'%3E%3Crect x='7' y='7' width='10' height='10' transform='rotate(45 12 12)'/%3E%3Ccircle cx='12' cy='4.6' r='2.5'/%3E%3Ccircle cx='12' cy='19.4' r='2.5'/%3E%3Ccircle cx='4.6' cy='12' r='2.5'/%3E%3Ccircle cx='19.4' cy='12' r='2.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.6'%3E%3Crect x='7' y='7' width='10' height='10' transform='rotate(45 12 12)'/%3E%3Ccircle cx='12' cy='4.6' r='2.5'/%3E%3Ccircle cx='12' cy='19.4' r='2.5'/%3E%3Ccircle cx='4.6' cy='12' r='2.5'/%3E%3Ccircle cx='19.4' cy='12' r='2.5'/%3E%3C/svg%3E") center / contain no-repeat; }
+#quest small { letter-spacing: 0.16em; }
+body.touch #quest { top: calc(var(--st) + 164px); }
+@media (max-width: 760px) { #quest { top: calc(var(--st) + 164px); padding-left: 30px; } #quest::before { width: 16px; height: 16px; margin-top: -8px; left: 7px; } }
+
+/* ---- the feed and the banner ---- */
+#feed p { background: linear-gradient(270deg, var(--glass), rgba(var(--wash), 0.4) 80%, transparent); border-right: 2px solid var(--gl); border-radius: 0; padding: 3px 10px 3px 26px; text-shadow: 0 1px 2px var(--shc); }
+#banner::before { content: ""; display: block; width: min(240px, 50%); height: 1px; margin: 0 auto 10px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+/* ---- bottom: stamina, health and level, the lanterns, ammo ---- */
+#bottom { gap: 4px; width: min(470px, 94%); }
+#stam { gap: 6px; } #stam i { width: 16px; height: 6px; border-radius: 1px; transform: skewX(-32deg); background: rgba(var(--ink), 0.18); box-shadow: 0 0 0 1px rgba(var(--shr), 0.35); }
+#stam i.on { background: var(--paper); box-shadow: 0 0 0 1px rgba(var(--shr), 0.35), 0 0 6px rgba(var(--ink), 0.5); }
+#hpRow { display: flex; align-items: center; gap: 12px; width: 100%; }
+#lvM { flex: none; width: 26px; height: 26px; margin-left: 5px; display: grid; place-items: center; transform: rotate(45deg); border: 1.5px solid var(--gold); background: rgba(var(--wash), 0.86); box-shadow: inset 0 0 0 2px rgba(var(--wash), 0.9), inset 0 0 0 3px var(--gl), 0 0 8px rgba(var(--shr), 0.4); }
+#lvM b { transform: rotate(-45deg); font-family: var(--f-display); font-weight: 400; font-size: 16px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+#hud #hpWrap { flex: 1; height: 14px; outline: 0; border: 1px solid var(--gold); border-radius: 7px; background: rgba(var(--wash), 0.8); box-shadow: 0 0 0 2px rgba(var(--wash), 0.45), 0 2px 8px rgba(var(--shr), 0.35); }
+#hpFill { background: linear-gradient(var(--ember) 0%, var(--ember) 45%, var(--ember-deep) 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35); transition: width 0.12s; }
+#hpTxt { font-size: 11.5px; letter-spacing: 0.04em; color: #fff; --shc: #000; text-shadow: 0 0 3px #000, 0 1px 2px #000; }
+#abil { gap: 12px; margin-top: 16px; }
+/* the lanterns */
+#hud .ab { width: 56px; height: 62px; overflow: visible; clip-path: none; outline: 0; border: 1px solid var(--gold); border-radius: 8px 8px 14px 14px; margin-top: 4px;
+  background: linear-gradient(90deg, transparent 6px, var(--gw) 6px 7px, transparent 7px calc(100% - 7px), var(--gw) calc(100% - 7px) calc(100% - 6px), transparent calc(100% - 6px)), rgba(var(--wash), 0.8);
+  box-shadow: inset 0 0 0 2px rgba(var(--wash), 0.7), 0 2px 8px rgba(var(--shr), 0.4); transition: box-shadow 0.25s, background-color 0.25s; }
+#hud .ab::before { content: ""; position: absolute; left: 50%; top: -14px; width: 40px; height: 13px; margin-left: -20px; background: linear-gradient(var(--gold), color-mix(in srgb, var(--gold) 70%, #000)); clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%); }
+#hud .ab::after { content: ""; position: absolute; left: 50%; top: -22px; width: 9px; height: 9px; margin-left: -6px; border: 1.5px solid var(--gold); border-radius: 50%; }
+#hud .ab b { left: 50%; top: -14px; transform: translateX(-50%); z-index: 1; font-size: 11px; line-height: 13px; letter-spacing: 0.04em; color: rgb(var(--wash)); text-shadow: none; }
+#hud .ab span { left: 3px; right: 3px; bottom: 6px; font-size: 10.5px; color: var(--paper); text-shadow: 0 1px 2px var(--shc), 0 0 4px var(--shc); z-index: 1; }
+#hud .ab i { left: 2px; right: 2px; bottom: 2px; border-radius: 0 0 12px 12px; background: rgba(var(--wash), 0.82); max-height: calc(100% - 4px); }
+#hud .ab em { z-index: 1; bottom: 16px; color: var(--paper); text-shadow: 0 1px 3px var(--shc); }
+#hud .ab.ready { border-color: var(--gold); background-color: transparent;
+  background-image: linear-gradient(90deg, transparent 6px, var(--gw) 6px 7px, transparent 7px calc(100% - 7px), var(--gw) calc(100% - 7px) calc(100% - 6px), transparent calc(100% - 6px)), radial-gradient(ellipse 62% 56% at 50% 46%, color-mix(in srgb, var(--hc, var(--gold)) 55%, #fff) 0%, var(--hc, var(--gold)) 38%, rgba(var(--wash), 0.85) 100%);
+  box-shadow: inset 0 0 0 2px rgba(var(--wash), 0.35), 0 0 16px -2px var(--hc, var(--gold)), 0 2px 8px rgba(var(--shr), 0.4); }
+#hud .ab.ready span { color: #fff; --shc: #000; text-shadow: 0 0 3px #000, 0 1px 2px #000; }
+#hud .ab.locked { opacity: 0.55; filter: saturate(0.4); }
+#hud .ab.cd { border-color: var(--gl); }
+@media (prefers-reduced-motion: no-preference) { #hud .ab.ready { animation: lanternLit 0.5s ease-out; } }
+@keyframes lanternLit { from { box-shadow: 0 0 30px 6px var(--hc, var(--gold)); } }
+#ammo { text-shadow: 0 1px 3px var(--shc), 0 0 6px rgba(var(--shr), 0.5); padding: 2px 4px 4px 16px; background: radial-gradient(ellipse 70% 70% at 62% 60%, rgba(var(--wash), 0.55), transparent 100%); }
+body.touch #hud #ammo { bottom: calc(var(--sb) + 2px); right: calc(var(--sr) + 2px); font-size: 20px; }
+#ammo small { border-top: 1px solid; border-image: linear-gradient(270deg, var(--gl), transparent) 1; padding-top: 2px; margin-top: 2px; }
+
+/* ---- the view's name ---- */
+#viewTag { position: absolute; right: var(--sr); bottom: var(--sb); padding: 2px 2px 3px 46px; font-family: var(--f-display); font-style: italic; font-size: 17px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper); text-shadow: 0 1px 3px var(--shc), 0 0 8px rgba(var(--shr), 0.6); border-bottom: 1px solid; border-image: linear-gradient(90deg, transparent, var(--gold)) 1; pointer-events: none; opacity: 0.9; }
+body.touch #viewTag, body.lean #viewTag { display: none; }
+
+/* ---- touch: the same parts at the 0.21 to 0.26 positions ---- */
+body.touch #hpRow { position: absolute; left: 50%; transform: translateX(-50%); top: calc(var(--st) + 54px); width: min(260px, 46%); gap: 9px; }
+body.touch #hud #hpWrap { position: relative; left: auto; top: auto; transform: none; width: auto; height: 13px; }
+body.touch #lvM { width: 21px; height: 21px; margin-left: 3px; } body.touch #lvM b { font-size: 13px; }
+body.touch #stam { top: calc(var(--st) + 79px); }
+body.touch #hud .ab { position: absolute; width: 54px; height: 58px; border-radius: 8px 8px 14px 14px; }
+body.touch #hud .ab b { display: block; font-size: 10px; }
+body.touch #hud .ab span { top: auto; bottom: 7px; transform: none; font-size: 10px; }
+body.touch #abil { margin-top: 0; }
+body.touch #ab0 { bottom: calc(var(--sb) + 168px); } body.touch #ab1 { bottom: calc(var(--sb) + 182px); } body.touch #ab2 { bottom: calc(var(--sb) + 252px); }
+@media (max-width: 760px) {
+  body.touch #banner { top: 31%; }
+  #miniF { width: 84px; height: 142px; }
+  #lvl { display: none; }
+  #topR { gap: 5px; padding-left: 14px; }
+  #hud .btn.small { font-size: 12px; padding: 4px 7px; letter-spacing: 0.05em; }
+  body.touch #hpRow { top: calc(var(--st) + 98px); width: min(250px, 50%); }
+  body.touch #stam { top: calc(var(--st) + 122px); }
+  #great { top: calc(var(--st) + 158px); }
+  #hud #score { padding: 4px 26px 7px; } #score > .t0, #score > .t1 { padding: 0 9px; } #clock { padding: 0 9px; gap: 5px; } #clock::before { width: 10px; height: 10px; }
+}
+@media (max-height: 460px) {
+  #miniF { width: 72px; height: 122px; }
+  #great { top: calc(var(--st) + 138px); }
+  body.touch #quest { top: calc(var(--st) + 146px); }
+  /* a phone on its side: the band moves beside the map, the buttons tighten, health sits under the band, the lanterns
+     stand in a row along the bottom, left of Load, and the banner drops below the health bar */
+  body.touch #hud #score { left: calc(var(--sl) + 86px); transform: none; padding: 3px 24px 7px; font-size: 14px; } body.touch #score b { font-size: 18px; } body.touch #clock { font-size: 16px; }
+  body.touch #lvl { display: none; }
+  body.touch #topR { gap: 4px; padding-left: 12px; } body.touch #hud .btn.small { font-size: 12px; padding: 4px 7px; letter-spacing: 0.04em; }
+  body.touch #hpRow { top: calc(var(--st) + 64px); width: min(280px, 36%); }
+  body.touch #stam { top: calc(var(--st) + 88px); }
+  body.touch #banner { top: 34%; }
+  body.touch #ab0 { right: calc(var(--sr) + 378px); bottom: calc(var(--sb) + 6px); }
+  body.touch #ab1 { right: calc(var(--sr) + 314px); bottom: calc(var(--sb) + 6px); }
+  body.touch #ab2 { right: calc(var(--sr) + 250px); bottom: calc(var(--sb) + 6px); }
+  body.touch #feed { top: calc(var(--st) + 52px); max-width: 34%; }
+}
+/* Origami is a light view: the glass is paper-white, so the lit lantern needs its own dark text shadow, and the frames go square */
+body[data-look="origami"] #hud .ab, body[data-look="origami"] #miniF { border-radius: 2px; }
+body[data-look="origami"] #hud .ab.cd em, body[data-look="origami"] #hud .ab span { color: var(--paper); }
+body[data-look="origami"] #hud .ab.ready { background-image: radial-gradient(ellipse 62% 56% at 50% 46%, color-mix(in srgb, var(--hc, var(--gold)) 70%, #fff) 0%, var(--hc, var(--gold)) 45%, color-mix(in srgb, var(--hc, var(--gold)) 55%, #000) 100%); }
+/* small type over bright ground: the gun's name and the key hints get the same dark halo as the numbers */
+#ammo small { color: var(--paper); opacity: 0.88; text-shadow: 0 0 3px var(--shc), 0 1px 2px var(--shc); }
+#keys { text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.8); }
+body[data-look="origami"] #keys { text-shadow: 0 0 3px #fff, 0 1px 2px #fff; }
+/* 0.29 feel: the ability's drawn sign (js/glyphs.js) sits in the lantern's glass where its name was; dimmed while it cools,
+   white with a dark edge on a lit lantern so it reads on any hero colour */
+#hud .ab span:has(.glyph) { left: 0; right: 0; top: 7px; bottom: auto; display: grid; place-items: center; line-height: 0; }
+#hud .ab .glyph { width: 28px; height: 28px; filter: drop-shadow(0 1px 1px var(--shc)) drop-shadow(0 0 2px var(--shc)); }
+#hud .ab.cd .glyph, #hud .ab.locked .glyph { opacity: 0.38; }
+#hud .ab.ready .glyph { color: #fff; filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 1px 1px #000); }
+#hud .ab em { pointer-events: none; }
+body.touch #hud .ab span:has(.glyph) { top: 6px; bottom: auto; }
+body.touch #hud .ab .glyph { width: 25px; height: 25px; }
+body[data-look="origami"] #hud .ab .glyph { color: var(--paper); }
+
+/* ---- 0.30 feel: the fold's pointer (js/rulefx.js): a gold mark at the screen edge toward a catch that is off screen ---- */
+#foldPtr { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px;
+  pointer-events: none; opacity: 0; visibility: hidden; transition: visibility 0s 0.2s; z-index: 3; }
+#foldPtr.on { visibility: visible; transition: none; }
+#foldPtr i { width: 30px; height: 30px; transform: rotate(var(--a, 0deg)); background: var(--gold, #ffd060); filter: drop-shadow(0 0 6px rgba(255, 208, 96, 0.8));
+  clip-path: polygon(100% 50%, 18% 6%, 38% 50%, 18% 94%); }
+#foldPtr span { font-family: var(--f-sc, serif); font-size: 11px; letter-spacing: 0.14em; color: var(--gold, #ffd060); text-shadow: 0 1px 3px var(--shc, #000); text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) { #foldPtr i { filter: none; } }
+
+/* ---- 0.30 feel: the banner never covers the play ----
+   It sat at 19 % down (24-34 % on phones): over the base house from the spawn, over the lane ahead on a phone, and
+   beside the objective in portrait. Now it hangs in the HUD band at the top, just under the score, a size smaller, and
+   what it would cover makes room while it shows (body.banner-on, set by UI.banner in js/ui.js): on a desktop the feed
+   slides down under it; on a phone, where there is no room beside it, the feed and the objective fade until it goes
+   (on its side the banner goes to the top right, where the feed was).
+   Measured with tools/shots/feel30-banner.js (docs/evidence/feel-0.30-banner-*). */
+#feed, #quest { transition: opacity 0.3s, transform 0.3s; }
+html body #banner, html body.touch #banner { top: calc(var(--st) + 66px); width: min(58%, 600px); font-size: clamp(18px, 2.5vw, 28px); }
+html body #banner::before, html body.touch #banner::before { margin-bottom: 6px; }
+html body #banner small { font-size: 0.6em; margin-top: 2px; }
+body.banner-on #feed { transform: translateY(92px); }
+@media (max-width: 760px) {
+  html body #banner, html body.touch #banner { top: calc(var(--st) + 156px); width: 94%; font-size: 20px; }
+  body.banner-on #feed, body.touch.banner-on #feed { transform: none; opacity: 0; }
+  body.banner-on #quest { opacity: 0; }
+}
+@media (max-height: 460px) {
+  /* on its side the screen is too short for a band under the HUD: the banner goes top right, under the health bar, where
+     the feed was */
+  html body #banner, html body.touch #banner { top: calc(var(--st) + 104px); left: auto; right: calc(var(--sr) + 6px); transform: none; width: min(44%, 400px); font-size: 18px; text-align: right; }
+  html body #banner::before, html body.touch #banner::before { margin: 0 0 4px auto; }
+  body.banner-on #feed, body.touch.banner-on #feed { transform: none; opacity: 0; }
+  body.banner-on #quest { opacity: 0; }
+}

@@ -1,7 +1,13 @@
 {
-  "current": "0.29",
+  "current": "0.30",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.30",
+      "path": "v0.30/",
+      "source": "release/0.30",
+      "note": "The tide takes a house (no more quiet stretches); a readable fold; warm Hypermetapunk; sounds in the music's key; banners off the play centre; Gentle lasts"
+    },
     {
       "v": "0.29",
       "path": "v0.29/",
