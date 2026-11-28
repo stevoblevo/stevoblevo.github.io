@@ -218,7 +218,7 @@ UI.startHUD = function (w) {
 };
 UI.coach = function (text) { const c = $('coach'); c.hidden = !text; if (text) c.textContent = text; };
 UI.banner = function (text, small, secs) {
-  const b = $('banner'); b.innerHTML = esc(text) + (small ? '<small>' + esc(small) + '</small>' : ''); b.classList.add('on'); bannerT = secs || 3.5;
+  const b = $('banner'); b.innerHTML = esc(text) + (small ? '<small>' + esc(small) + '</small>' : ''); b.classList.add('on'); document.body.classList.add('banner-on'); bannerT = secs || 3.5; /* 0.30 feel: banner-on lets the feed and objective make room (css/hud.css) */
 };
 UI.feed = function (html) { feed(html); }; // 0.23 wardrobe: js/wardrobe.js says "New in the wardrobe" here
 function feed(html) { const f = $('feed'), p = document.createElement('p'); p.innerHTML = html; f.appendChild(p); while (f.children.length > 4) f.removeChild(f.firstChild); setTimeout(function () { if (p.parentNode) p.parentNode.removeChild(p); }, 6000); }
@@ -284,7 +284,9 @@ UI.fx = function (e) {
     }
     case 'structdown': {
       const s = e.u, mine = s.team === pl.team, ln = C.LANE_NAME[s.lane];
-      if (mine) UI.banner('Your ' + s.kind + ' on the ' + ln + ' has fallen.', s.kind === 'warden' ? 'Your patron is open' : 'The warden behind it is next', 4.5);
+      /* 0.30 play: a house the tide took says so here (slacktake comes just before; one banner, this one) */
+      if (e.took) UI.banner(mine ? 'The tide takes your ' + s.kind + '.' : 'The tide takes their ' + s.kind + '.', 'The ' + ln + ' pulled tight. ' + (mine ? 'Yours was the more worn' + (s.kind === 'warden' ? '. Your patron is open' : '') : 'Theirs was the more worn · +' + e.bounty + ' souls each' + (s.kind === 'warden' ? ' · their patron is open' : '')), 5);
+      else if (mine) UI.banner('Your ' + s.kind + ' on the ' + ln + ' has fallen.', s.kind === 'warden' ? 'Your patron is open' : 'The warden behind it is next', 4.5);
       else UI.banner('The Hush ' + s.kind + ' on the ' + ln + ' is down.', '+' + e.bounty + ' souls each' + (s.kind === 'warden' ? ' · their patron is open' : ''), 4.5);
       feed('<b class="t' + s.team + '">' + C.TEAM_NAME[s.team] + '</b> lost a ' + s.kind);
       break;
@@ -327,8 +329,11 @@ UI.fx = function (e) {
     case 'mended': if (e.p) UI.banner('The ' + C.LANE_NAME[e.s.lane] + ' ' + e.s.kind + ' takes the light.', (e.relit ? 'Lit again, mended' : e.amt >= 1 ? 'Mended by ' + Math.round(e.amt) : 'Kept') + ': for ' + C.EMBER.bright + ' seconds it burns bright and holds, slack thread or not', 3.5); else feed(hname(e.u) + ' mended the ' + C.LANE_NAME[e.s.lane] + ' ' + e.s.kind); break;
     case 'patrondim': if (!W.dimHint) { W.dimHint = true; UI.banner('Their patron dims.', 'It lives on its houses. Every one that falls, on any thread, takes a part of it', 4.5); } else feed('Their patron dims · ' + e.n + ' of 6 houses gone'); break; // 0.29 play
     case 'slackwarn': UI.banner('The ' + C.LANE_NAME[e.lane] + ' is going slack.', 'In ' + e.in + ' seconds nothing on it will be protected, theirs or yours' + (C.dif(W).slackHollows && C.SLACK.lead ? '. A hollow is setting out down it' : ''), 5); break; // 0.29 play: the hollow sets out early
-    case 'slack': UI.banner('The ' + C.LANE_NAME[e.lane] + ' has gone slack.', 'Its houses cannot fire and stand open until one falls, or ' + e.t + ' seconds pass. The thread carries you all the way' + (C.dif(W).slackHollows ? '. A hollow is coming down it' : ''), 6); feed('The <b>' + C.LANE_NAME[e.lane] + '</b> is slack'); break;
-    case 'slackend': if (e.fell === 1 && e.broke) UI.banner('The ' + C.LANE_NAME[e.lane] + ' pulls tight.', 'Their house fell first. The hollow they sent down it is gone', 4); else feed('The ' + C.LANE_NAME[e.lane] + ' pulls tight'); break;
+    case 'slack': UI.banner('The ' + C.LANE_NAME[e.lane] + ' has gone slack.', (C.dif(W).slackTake ? 'Its houses cannot fire and stand open. In ' + e.t + ' seconds it pulls tight and takes the more worn front house with it, theirs or yours' : 'Its houses cannot fire and stand open until one falls, or ' + e.t + ' seconds pass. The thread carries you all the way') + (C.dif(W).slackHollows ? '. A hollow is coming down it' : ''), 6); feed('The <b>' + C.LANE_NAME[e.lane] + '</b> is slack'); break; // 0.30 play: says the take where the difficulty has it
+    /* 0.30 play: the tide takes a house. Said ten seconds before, and as it happens (slacklast, slacktake; slackend.took) */
+    case 'slacklast': UI.banner(e.u.team === 0 ? 'The ' + C.LANE_NAME[e.lane] + ' will take your ' + e.u.kind + '.' : 'The ' + C.LANE_NAME[e.lane] + ' will take their ' + e.u.kind + '.', e.u.team === 0 ? e.t + ' seconds. Yours is the more worn. Wear theirs down, or walk a light into yours' : e.t + ' seconds. Theirs is the more worn. Keep it so', 4); break;
+    case 'slacktake': break;
+    case 'slackend': if (e.took) feed('The ' + C.LANE_NAME[e.lane] + ' pulls tight'); else if (e.fell === 1 && e.broke) UI.banner('The ' + C.LANE_NAME[e.lane] + ' pulls tight.', 'Their house fell first. The hollow they sent down it is gone', 4); else feed('The ' + C.LANE_NAME[e.lane] + ' pulls tight'); break; // 0.30 play: a take has had its own banner
     case 'death': if (e.kind === 'trooper' && e.by && e.by === W.player) { const hm = $('hitm'); hm.className = ''; void hm.offsetWidth; hm.className = 'pop'; } // 0.23: your trooper kills tick the crosshair
       if (e.kind === 'stray' && Math.hypot(e.x - C.CREASE_X[0], e.z) < 14 && !W.creaseHint) { W.creaseHint = true; feed('The ground under it is creased'); } break;
     case 'nessup': UI.banner('Something large is in the loch.', 'Kill the Ness for the Greatness: ' + C.GREAT_T + ' seconds of harder hits for your whole side', 6); feed('The <b>Ness</b> has surfaced'); break;
@@ -464,7 +469,7 @@ UI.frame = function (dt, w, view, info) {
     n.el.style.opacity = pr.vis ? (f < 0.7 ? 1 : (1 - f) / 0.3) : 0;
     n.el.style.transform = 'translate(' + Math.round(pr.x) + 'px,' + Math.round(pr.y) + 'px) translate(-50%,-50%)';
   }
-  if (bannerT > 0) { bannerT -= dt; if (bannerT <= 0) $('banner').classList.remove('on'); }
+  if (bannerT > 0) { bannerT -= dt; if (bannerT <= 0) { $('banner').classList.remove('on'); document.body.classList.remove('banner-on'); } } /* 0.30 feel */
   hurt = Math.max(0, hurt - dt * 1.6);
   const hpF = p.hp / p.maxHp;
   $('vig').style.opacity = p.alive ? Math.min(0.9, hurt * 0.7 + (hpF < 0.35 ? (0.35 - hpF) * 2 : 0)) : 0;

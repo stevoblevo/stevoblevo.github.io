@@ -682,7 +682,7 @@ function damage(t, amt, src, kind, crit) {
   const hero = src ? (src.kind === 'hero' ? src : (src.owner && src.owner.kind === 'hero' ? src.owner : null)) : null;
   if (t.struct) {
     if (!S.vuln(t)) { if (W.t - t.immuneFx > 0.6 && !W.fallen) { t.immuneFx = W.t; fx({ k: 'immune', u: t, p: hero && hero.isPlayer }); } return 0; }
-    if (W.fray) amt *= 1.4; else if (isSlack(t)) amt *= C.SLACK.mul; else if (!t.pressed) amt *= 0.3; // 0.28 play: a slack thread's houses stand unprotected
+    if (W.fray) amt *= 1.4; else if (isSlack(t)) amt *= C.dif(W).slackMul || C.SLACK.mul; else if (!t.pressed) amt *= 0.3; // 0.28 play: a slack thread's houses stand unprotected
     if (t.brightT > 0) amt *= C.EMBER.guard; // 0.29 play: a kept house holds
     if (src && src.team < 2 && W.great[src.team] > 0) amt *= 1.4;
     if (kind === 'ab') amt *= 0.5;
@@ -775,10 +775,10 @@ function kill(t, src, hero) {
     fx({ k: 'nessdown', team: hero ? hero.team : -1, hero: hero, x: t.x, z: t.z });
   } else if (t.kind === 'guardian' || t.kind === 'warden') {
     const b = t.kind === 'guardian' ? 350 : 600;
-    if (W.slack.t > 0 && W.slack.lane === t.lane) { W.slack.t = 0; let n = 0; if (t.team === 1) for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (u.alive && u.lean === W.slack.n) { u.alive = false; n++; fx({ k: 'death', u: u, x: u.x, y: u.y, z: u.z, team: 1, kind: 'trooper', by: null, creased: true }); } } fx({ k: 'slackend', lane: t.lane, fell: t.team, broke: n }); } // 0.28 play: one house falls and the slack thread pulls tight
+    if (W.slack.t > 0 && W.slack.lane === t.lane) { W.slack.t = 0; let n = 0; if (t.team === 1) for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (u.alive && u.lean === W.slack.n) { u.alive = false; n++; fx({ k: 'death', u: u, x: u.x, y: u.y, z: u.z, team: 1, kind: 'trooper', by: null, creased: true }); } } fx({ k: 'slackend', lane: t.lane, fell: t.team, broke: n, took: !!W.slack.taking }); } // 0.28 play: one house falls and the slack thread pulls tight
     for (let i = 0; i < W.heroes.length; i++) if (W.heroes[i].team !== t.team) give(W.heroes[i], b);
-    fx({ k: 'structdown', u: t, bounty: b });
-    if (t.team === 1 && C.PATRON_DIM > 0 && !W.fallen && !W.short) { const p = W.patron[1]; if (p.alive) { const cut = Math.min(p.hp - 1, p.maxHp * C.PATRON_DIM); p.hp -= cut; p.dims = (p.dims || 0) + 1; fx({ k: 'patrondim', u: p, by: t, n: p.dims, amt: cut }); } } // 0.29 play: the Hush patron lives on its houses; every one that falls, on any thread, takes a part of it (not in First Rain, which must last until its rain)
+    fx({ k: 'structdown', u: t, bounty: b, took: !!W.slack.taking });
+    if (t.team === 1 && C.PATRON_DIM > 0 && !W.fallen && !W.short) { const p = W.patron[1]; if (p.alive) { const dk = C.dif(W).dimK, cut = Math.min(p.hp - 1, p.maxHp * C.PATRON_DIM * (dk == null ? 1 : dk)); p.hp -= cut; p.dims = (p.dims || 0) + 1; fx({ k: 'patrondim', u: p, by: t, n: p.dims, amt: cut }); } } // 0.29 play: the Hush patron lives on its houses; every one that falls, on any thread, takes a part of it (not in First Rain, which must last until its rain)
   } else if (t.kind === 'patron') {
     W.over = true; W.winner = 1 - t.team;
     fx({ k: 'over', winner: W.winner, fallen: W.fallen, t: W.t, lights: W.lights, moods: W.moodsSolved, dream: W.dream });
@@ -1278,7 +1278,7 @@ function rollStart(h, mx, mz) {
      faster) for a while, so a light walked to the house a hollow is about to reach can save it. One light, one house. A hero riding a
      thread keeps the light (it passes houses without stopping), so the rider chooses where to step off.
    Bots follow the same rules: they land arrivals when they ride out, a bot that went home hurt mends the house it
-   comes back to stand by, and a bot shoots a slack house that is in its range. They do not plan around any of it:
+   comes back to stand by, and (0.28 and 0.29; not since 0.30, C.SLACK.bot) a bot shoots a slack house that is in its range. They do not plan around any of it:
    no bot folds, walks a light to the house that needs it, or leaves its thread for the slack one. */
 /* ---------- 0.29 play: a light to place, the tides, and a patron that lives on its houses ----------
    0.28 left lesson 5 worth nothing on Cruel and Even 18 points easier for a player who knows no lesson. What 0.29 found
@@ -1352,11 +1352,42 @@ function tideAfter(t) {
   return best;
 }
 S.tideAfter = tideAfter;
+/* 0.30 play: THE TIDE TAKES A HOUSE. 0.29 measured that about half of all matches had a tide that felled nothing (a
+   hollow killed on the way, a warden too strong for sixty seconds) and then four or five minutes with no building
+   falling. Now a slack thread that nobody pulled tight pulls itself tight and takes one house with it: of the two
+   front houses on it, one a side, the more worn one falls (its health as a share of its full health; a kept house is
+   never taken; two houses equally worn, or both whole, and nothing falls). So every tide is a race with a known end,
+   sixty seconds to make their house the more worn one, and a light walked into yours settles it. On the difficulties
+   whose C.DIFF row has slackTake (Even and Cruel; on Gentle the Hush does not lean and the tide takes nothing).
+   Events: slacklast (C.SLACK.last seconds before, u the house that would go), slacktake (u the house, then its
+   structdown and slackend follow as for any house that falls on a slack thread). */
+function tideTake() {
+  const K = W.slack; if (!C.dif(W).slackTake || K.lane < 0 || !(K.t > 0)) return null;
+  let best = null, bf = 0, tie = false;
+  for (let t = 0; t < 2; t++) {
+    const st = W.st[t][K.lane], s = st.outer.alive ? st.outer : (st.inner.alive ? st.inner : null);
+    if (!s || s.brightT > 0) continue;
+    const f = s.hp / s.maxHp;
+    if (!best || f < bf - 1e-6) { best = s; bf = f; tie = false; } else if (Math.abs(f - bf) <= 1e-6) tie = true;
+  }
+  return best && !tie && bf <= C.SLACK.take ? best : null;
+}
+S.tideTake = tideTake;
 function isSlack(s) { const K = W.slack; return K.t > 0 && s.struct && s.kind !== 'patron' && s.lane === K.lane && !(s.brightT > 0); } // 0.29 play: a kept house is never slack
 S.slack = isSlack;
 function slackStep(dt) {
   const K = W.slack, D = C.SLACK; if (W.short || W.fallen) return;
-  if (K.t > 0) { K.t -= dt; if (K.t <= 0 || W.fray) { K.t = 0; fx({ k: 'slackend', lane: K.lane }); } return; }
+  if (K.t > 0) {
+    K.t -= dt;
+    /* 0.30 play: the tide takes a house. Said `last` seconds before the thread pulls tight (slacklast names the house that would go now) */
+    if (!K.said && K.t <= D.last && K.t > 0 && !W.fray) { K.said = true; const s = tideTake(); if (s) fx({ k: 'slacklast', lane: K.lane, u: s, t: D.last }); }
+    if (K.t <= 0 || W.fray) {
+      K.t = 0.001; const s = W.fray ? null : tideTake(); K.said = false;
+      if (s) { fx({ k: 'slacktake', lane: K.lane, u: s, team: s.team }); K.taking = true; kill(s, null, null); K.taking = false; K.t = 0; }
+      else { K.t = 0; fx({ k: 'slackend', lane: K.lane }); }
+    }
+    return;
+  }
   if (W.fray) return;
   if (!K.warned && W.t >= K.next - D.warn) {
     K.warned = true; let l = -1, bw = -1e9; const o = Math.floor(W.rng() * 3);
@@ -1506,7 +1537,7 @@ function think(h) {
     else if (u.kind === 'thief') sc = 95 - dd * 0.3;
     else if (u.kind === 'trooper') sc = 40 - dd * 0.5 + (1 - u.hp / u.maxHp) * 30 + (u.big ? 22 : 0);
     else if (u.kind === 'knot') sc = 45 - dd * 0.5;
-    else if (u.struct) { if (!S.vuln(u) || (!u.pressed && !W.fray && !isSlack(u))) continue; sc = isSlack(u) ? 44 : 28; } // 0.28 play: bots take the slack house while it is open
+    else if (u.struct) { const sl = C.SLACK.bot && isSlack(u); if (!S.vuln(u) || (!u.pressed && !W.fray && !sl)) continue; sc = sl ? 44 : 28; } // 0.28 play: bots take the slack house while it is open
     else continue;
     if (sc > bs && losClear(h.x, h.z, u.x, u.z)) { bs = sc; best = u; }
   }

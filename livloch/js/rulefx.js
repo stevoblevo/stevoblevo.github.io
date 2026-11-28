@@ -39,6 +39,7 @@ const RF = LL.rulefx = { on: true };
 let X = null, T = null, LK = null, W = null;
 let pend = [], th = [];
 let lampM = null, staffM = null, glowP = null, gA = null, auraM = null, bindM = null, veil = null;
+let colM = null, ptr = null, colTex = null; const COL_N = 24, cols = []; /* 0.30 feel: the fold's columns and pointer */
 const LAMP_N = 12, GLOW_N = 48, AURA_N = 16, BIND_N = 72;
 let dip = 0, dipV = 0, time = 0, GK = 1, GC = null;
 const sw = [];
@@ -111,10 +112,10 @@ function inst(geo, mat, cap) { const m = new T.InstancedMesh(geo, mat, cap); m.c
 
 RF.build = function (ctx) {
   X = ctx; T = ctx.T; LK = ctx.LK; th = [];
-  /* a look with strong bloom (Hypermetapunk) clips stacked warm light to a sour green in its post: there, fewer sparks,
-     a gentler boost (GK) and the glows an unmapped orange that clips toward gold */
+  /* a look with strong bloom (Hypermetapunk): fewer sparks and a gentler boost (GK). (0.29 also drew its glows an
+     unmapped orange, because its post clipped stacked warm light to a sour green; 0.30 fixed the post instead.) */
   GC = new T.Color();
-  GK = (LK.bloom || 0) >= 0.6 ? 0.3 : 1;
+  GK = (LK.bloom || 0) >= 0.6 ? 0.6 : 1; /* 0.30 feel: 0.3 before its post was fixed (gfx.js, hand 4: bloom now in all three channels, warm kept gold) */
   if (GK < 1) { const em = ctx.emit; X.emit = function (x, y, z, n, col, sp, life, up, grav) { em(x, y, z, Math.max(1, Math.round(n * GK)), col, sp, life, up, grav); }; }
   const gold = ctx.tc(0xffd060), dim = new T.Color(LK.add === false ? 0x9c94a8 : 0x6c6888);
   for (let l = 0; l < pend.length; l++) {
@@ -158,6 +159,20 @@ RF.build = function (ctx) {
     const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new T.Float32BufferAttribute(col, 3)); return g; })();
   veil = veilMesh();
   bindM = inst(bandG, new T.MeshBasicMaterial({ vertexColors: true, side: T.DoubleSide }), BIND_N);
+  /* 0.30 feel: a column of folded paper light over each thing the fold has caught or pinned, tall enough to read over
+     the hero's shoulder from across the valley: an open tube 9 m tall, its texture gold chevrons (paper folded zigzag)
+     rising, bright at the foot and gone at the top; a colour per instance carries its strength */
+  if (!colTex) { const cv = document.createElement('canvas'); cv.width = 64; cv.height = 256; const g2 = cv.getContext('2d');
+    for (let y = 0; y < 256; y++) { const f = 1 - y / 256, a = Math.pow(f, 1.6); for (let x = 0; x < 64; x++) { const ph = ((y + Math.abs(x - 32) * 0.9) % 32) / 32, band = ph < 0.42 ? 0.55 + 0.45 * Math.sin(ph / 0.42 * Math.PI) : 0.18, edge = 1 - Math.pow(Math.abs(x - 32) / 32, 3);
+      const v = Math.round(255 * Math.min(1, band * edge)); g2.fillStyle = 'rgba(' + v + ',' + v + ',' + v + ',' + (a * Math.min(1, band * edge + 0.15)).toFixed(3) + ')'; g2.fillRect(x, 255 - y, 1, 1); } }
+    colTex = new T.CanvasTexture(cv); colTex.wrapS = T.RepeatWrapping; colTex.wrapT = T.ClampToEdgeWrapping; }
+  const ct = colTex.clone(); ct.needsUpdate = true; ct.wrapS = T.RepeatWrapping; ct.repeat.set(3, 1);
+  const cg = new T.CylinderGeometry(1.35, 0.8, 9.5, 16, 1, true).translate(0, 4.75, 0);
+  colM = inst(cg, new T.MeshBasicMaterial({ map: ct, transparent: true, depthWrite: false, side: T.DoubleSide, fog: false, blending: add ? T.AdditiveBlending : T.NormalBlending, opacity: add ? 1 : 0.85 }), COL_N);
+  colM.material.userData.bl = colM.material.userData.lk = true; colM.renderOrder = 3;
+  colM.instanceColor = new T.InstancedBufferAttribute(new Float32Array(COL_N * 3), 3); colM.instanceColor.setUsage(T.DynamicDrawUsage); /* sized here: setColorAt would size it to count, which inst() set to 0 */
+  cols.length = 0;
+  if (!ptr) { ptr = document.createElement('div'); ptr.id = 'foldPtr'; ptr.innerHTML = '<i></i><span>caught</span>'; (document.getElementById('hud') || document.body).appendChild(ptr); }
 };
 
 /* the arrival's run along its thread, and what each event looks like */
@@ -176,7 +191,7 @@ RF.fx = function (e, w) {
       break;
     }
     case 'caught': {
-      const cx = creaseX(e.i);
+      const cx = creaseX(e.i); column(cx, e.z, 1.8, 1.7);
       X.ring(cx, 0.04, e.z, 0.2, 1.8, 0xffd060, 0.35); X.emit(cx, 0.5, e.z, red ? 4 : 9, 0xffe2a0, 2.4, 0.5, 2, 2);
       if (X.bits) X.bits(e.x, 1, e.z, red ? 2 : 5, X.PAPER, 1.2, X.BIT_PAPER);
       break;
@@ -184,11 +199,11 @@ RF.fx = function (e, w) {
     case 'death':
       if (e.creased && e.kind === 'trooper') {
         const big = e.u && e.u.big;
-        if (!big) { const cx = nearCrease(e.x); X.ring(cx, 0.04, e.z, 0.3, 2.4, 0xffd060, 0.4); X.emit(cx, 0.35, e.z, red ? 5 : 12, 0xffd060, 3, 0.5, 2.6, 4); if (X.bits) X.bits(e.x, 0.6, e.z, red ? 3 : 9, X.PAPER, 1.6, X.BIT_PAPER); }
+        if (!big) { const cx = nearCrease(e.x); column(cx, e.z, 1.6, 2.1); X.ring(cx, 0.04, e.z, 0.3, 2.4, 0xffd060, 0.4); X.emit(cx, 0.35, e.z, red ? 5 : 12, 0xffd060, 3, 0.5, 2.6, 4); if (X.bits) X.bits(e.x, 0.6, e.z, red ? 3 : 9, X.PAPER, 1.6, X.BIT_PAPER); }
         else { X.ring(e.x, 0.04, e.z, 0.5, 5, 0xffd060, 0.6); if (X.bits) X.bits(e.x, 1.6, e.z, red ? 6 : 18, X.PAPER, 2.6, X.BIT_PAPER); }
       }
       break;
-    case 'pinned': X.ring(e.x, 0.04, e.z, 0.4, 3.4, 0xffd060, 0.45); X.emit(e.x, 1.6, e.z, red ? 6 : 16, 0xffe2a0, 3, 0.6, 1.5, 2); if (X.bits) X.bits(e.x, 2.2, e.z, red ? 3 : 8, X.PAPER, 1.6, X.BIT_PAPER); break;
+    case 'pinned': column(e.x, e.z, 2.2, 2.3); X.ring(e.x, 0.04, e.z, 0.4, 3.4, 0xffd060, 0.45); X.emit(e.x, 1.6, e.z, red ? 6 : 16, 0xffe2a0, 3, 0.6, 1.5, 2); if (X.bits) X.bits(e.x, 2.2, e.z, red ? 3 : 8, X.PAPER, 1.6, X.BIT_PAPER); break;
     case 'unpinned': if (X.bits) X.bits(e.x, 1.8, e.z, red ? 3 : 10, X.PAPER, 2.8, X.BIT_PAPER); break;
     case 'ember': { const u = e.u; if (!u) break; X.ring(u.x, 0.04, u.z, 0.3, 2.6, 0xffd060, 0.45); X.emit(u.x, 1.9, u.z, red ? 6 : 18, 0xffd060, 2.2, 0.8, 2.5, 0); break; }
     case 'mended': {
@@ -201,10 +216,16 @@ RF.fx = function (e, w) {
     }
     case 'brightend': if (e.u) X.emit(e.u.x, 4, e.u.z, red ? 4 : 12, 0xb8a890, 1.2, 1, 1.2, 0); break;
     case 'towershot': { const s = e.u; if (s && s.brightT > 0 && s.team === 0) { const hy = s.kind === 'warden' ? 9 : 6.6; X.emit(s.x, hy, s.z, red ? 2 : 7, 0xfff0c0, 4, 0.3, 1.5, 0); } break; }
+    case 'slacklast': { const u = e.u; if (u) { column(u.x, u.z, 10, 1.8, true); X.ring(u.x, 0.05, u.z, 1, (u.r || 3) + 7, 0xffb060, 0.5); } break; } /* 0.30 lead: the house the tide will take */
+    case 'slacktake': { const u = e.u; if (!u) break; column(u.x, u.z, 1.8, 1.4, true); X.ring(u.x, 0.05, u.z, 1, (u.r || 3) + 10, 0xffd060, 0.8); X.emit(u.x, 4, u.z, red ? 8 : 28, 0xffe2a0, 6, 1, 3, 1.5); if (X.bits) X.bits(u.x, 3, u.z, red ? 6 : 22, X.PAPER, 4, X.BIT_PAPER); break; } /* 0.30 lead */
     case 'slackend': { const t = th[e.lane]; if (t) t.snapW = W ? W.t : 0; break; }
     case 'slack': { const t = th[e.lane]; if (t) t.snapW = -99; break; }
   }
 };
+/* 0.30 feel: a short-lived column where the fold took something (a pinned hollow keeps its own, drawn each frame) */
+function column(x, z, life, k, noPtr) { if (!W) return; if (cols.length >= COL_N - 8) cols.shift(); cols.push({ x: x, z: z, t0: W.t, life: life, k: k }); if (!noPtr) { ptrT = W.t; ptrX = x; ptrZ = z; } } /* 0.30 lead: noPtr, the tide's columns are not a catch */
+let ptrT = -99, ptrX = 0, ptrZ = 0;
+const V3 = { v: null };
 function creaseX(i) { return C.CREASE_X[i] != null ? C.CREASE_X[i] : 0; }
 function nearCrease(x) { let b = C.CREASE_X[0]; for (let i = 1; i < C.CREASE_X.length; i++) if (Math.abs(C.CREASE_X[i] - x) < Math.abs(b - x)) b = C.CREASE_X[i]; return b; }
 function pinCrease(u) { if (!W) return -1; for (let k = 0; k < W.creases.length; k++) { const c = W.creases[k]; if (c.t > 0 && c.team !== u.team && u.lane === c.from) return k; } return -1; }
@@ -228,7 +249,7 @@ RF.troop = function (t, tm) {
 };
 RF.dip = function (dt) { if (!X || X.R.reduced) { dip = dipV = 0; return 0; } let left = dt; while (left > 1e-6) { const h = Math.min(left, 1 / 120); dipV += (-120 * dip - 16 * dipV) * h; dip += dipV * h; left -= h; } return Math.min(0, dip); };
 
-function glow(n, x, y, z, hex, size, k) { if (n >= GLOW_N) return n; const c = GK < 1 ? GC.setHex(0xffa850) : X.tc(hex); gA.p[n * 3] = x; gA.p[n * 3 + 1] = y; gA.p[n * 3 + 2] = z; gA.c[n * 3] = c.r * k; gA.c[n * 3 + 1] = c.g * k; gA.c[n * 3 + 2] = c.b * k; gA.s[n] = size; return n + 1; }
+function glow(n, x, y, z, hex, size, k) { if (n >= GLOW_N) return n; const c = X.tc(hex); gA.p[n * 3] = x; gA.p[n * 3 + 1] = y; gA.p[n * 3 + 2] = z; gA.c[n * 3] = c.r * k; gA.c[n * 3 + 1] = c.g * k; gA.c[n * 3 + 2] = c.b * k; gA.s[n] = size; return n + 1; }
 const M4 = { m: null, q: null, s: null, v: null, e: null };
 function mat4() { if (!M4.m) { M4.m = new T.Matrix4(); M4.q = new T.Quaternion(); M4.s = new T.Vector3(); M4.v = new T.Vector3(); M4.e = new T.Euler(0, 0, 0, 'YXZ'); } return M4; }
 function put(mesh, i, x, y, z, ry, rx, rz, sx, sy, sz) { const K = mat4(); K.e.set(rx, ry, rz, 'YXZ'); K.q.setFromEuler(K.e); K.v.set(x, y, z); K.s.set(sx, sy, sz); K.m.compose(K.v, K.q, K.s); mesh.setMatrixAt(i, K.m); }
@@ -263,15 +284,16 @@ RF.frame = function (dt, tm, w, cam, heroM, structM, creaseM) {
       v.uArrS.value[k] = u.uArrS.value; v.uArrF.value[k] = u.uArrF.value; v.uArrA.value[k] = u.uArrA.value; v.uArrD.value[k] = u.uArrD.value;
       if (t.drain > 0.01 || t.slack > 0.01 || u.uSnap.value > 0.01 || u.uArrA.value > 0.01) any = true; }
     veil.visible = any; }
+  let nl = 0, ng = 0;
   /* creases: the dashed line burns while a crease holds */
   if (creaseM) for (let i = 0; i < creaseM.length; i++) { const cm = creaseM[i], c = W.creases[i]; if (!cm.dash || !c) continue;
     if (cm.op0 == null) cm.op0 = cm.dash.material.opacity;
     const on = c.t > 0; cm.burn = (cm.burn || 0) + ((on ? 1 : 0) - (cm.burn || 0)) * Math.min(1, dt * 4);
     cm.dash.material.opacity = Math.min(1, cm.op0 + cm.burn * (0.5 + (red ? 0 : 0.12 * Math.sin(tm * 5 + i))));
-    cm.dash.scale.x = 1 + cm.burn * 0.8;
+    cm.dash.scale.x = 1 + cm.burn * 1.9; /* 0.30 feel: was 0.8, the line read thin from behind the hero */
+    if (on && cm.burn > 0.3) ng = glow(ng, cm.cx, 0.4, ((tm * 7 + i * 9) % 26) - 13, 0xffd060, 2.4, 0.5 * cm.burn * GK);
     if (on && !red && !low && Math.random() < dt * 9) X.emit(cm.cx + (Math.random() - 0.5) * 0.4, 0.2, (Math.random() - 0.5) * 25, 1, 0xffd060, 0.5, 0.9, 1.6, 0); }
   /* the carried lights */
-  let nl = 0, ng = 0;
   for (let i = 0; i < W.heroes.length; i++) {
     const h = W.heroes[i]; if (!h.alive || !h.ember || nl >= LAMP_N) continue;
     const m = heroM[i]; if (m && m.visible === false) continue;
@@ -332,8 +354,26 @@ RF.frame = function (dt, tm, w, cam, heroM, structM, creaseM) {
     if (!red && !low && Math.random() < dt * 5) X.emit(u.x, 1.2 + Math.random() * 1.4, u.z, 1, 0xffe2a0, 0.8, 0.5, 0.5, 0);
   }
   bindM.count = nb; bindM.visible = nb > 0; if (nb) bindM.instanceMatrix.needsUpdate = true;
+  /* 0.30 feel: the columns: one per fresh catch (rises in 0.25 s, holds, fades), one over each pinned hollow (steady,
+     breathing); the texture's chevrons climb. Then the pointer: when the newest catch is off screen or behind the
+     camera, a gold mark at the screen edge points to it for three seconds. */
+  let nc = 0; const gold = X.tc(0xffd060), CC = M4.c || (M4.c = new T.Color());
+  for (let i = cols.length - 1; i >= 0; i--) { const c = cols[i], a = W.t - c.t0; if (a > c.life || a < -0.1) { cols.splice(i, 1); continue; }
+    if (nc >= COL_N) continue; const up = Math.min(1, Math.max(0, a) / 0.25), fade = 1 - Math.max(0, (a - c.life * 0.45) / (c.life * 0.55)), h = 0.35 + 0.65 * (1 - Math.pow(1 - up, 3));
+    put(colM, nc, c.x, 0.05, c.z, (red ? 0 : tm * 0.6) + i, 0, 0, 1, h, 1); CC.copy(gold).multiplyScalar(c.k * fade * (LK.add === false ? 1 : 0.9)); colM.setColorAt(nc++, CC); ng = glow(ng, c.x, 0.5, c.z, 0xffd060, 5 * h, 0.6 * fade * GK); }
+  for (let i = 0; i < W.troopers.length && nc < COL_N; i++) { const u = W.troopers[i]; if (!u.alive || !u.pinned) continue;
+    const br = red ? 1.3 : 1.2 + 0.25 * Math.sin(tm * 3 + u.id); ng = glow(ng, u.x, 0.6, u.z, 0xffd060, 4, 0.5 * GK); put(colM, nc, u.x, 0.05, u.z, red ? 0 : tm * 0.4, 0, 0, 1.25, 1, 1.25); CC.copy(gold).multiplyScalar(br); colM.setColorAt(nc++, CC); }
+  colM.count = nc; colM.visible = nc > 0; if (nc) { colM.instanceMatrix.needsUpdate = true; colM.instanceColor.needsUpdate = true; colM.material.map.offset.x = red ? 0 : -tm * 0.08; }
+  if (ptr) { let show = false; const age = W.t - ptrT;
+    if (age >= 0 && age < 3 && X.cam && W.player && W.player.alive) { const cm = X.cam(); if (cm) { if (!V3.v) V3.v = new T.Vector3(); V3.v.set(ptrX, 2.5, ptrZ).project(cm);
+      let px = V3.v.x, py = V3.v.y; const behind = V3.v.z > 1; if (behind) { px = -px; py = -py; }
+      if (behind || Math.abs(px) > 0.92 || Math.abs(py) > 0.9) { show = true;
+        /* to the side edge, between the top and bottom HUD: behind the camera it goes to the nearer side, never down */
+        if (behind || Math.abs(px) < 0.3) { px = px < 0 ? -0.86 : 0.86; py = Math.max(-0.3, Math.min(0.4, py * 0.4)); } else { const m = Math.max(Math.abs(px) / 0.86, 1e-3); px /= m; py = Math.max(-0.3, Math.min(0.4, py / m)); }
+        ptr.style.left = (50 + px * 50).toFixed(1) + '%'; ptr.style.top = (50 - py * 50).toFixed(1) + '%'; ptr.style.setProperty('--a', (Math.atan2(-py, px) * 180 / Math.PI).toFixed(0) + 'deg'); ptr.style.opacity = Math.min(1, (3 - age) / 0.6).toFixed(2); } } }
+    ptr.classList.toggle('on', show); }
   for (let i = ng; i < GLOW_N; i++) gA.s[i] = 0;
   glowP.visible = ng > 0; if (ng) { glowP.geometry.attributes.position.needsUpdate = true; glowP.geometry.attributes.aC.needsUpdate = true; glowP.geometry.attributes.aSz.needsUpdate = true; glowP.material.uniforms.uH.value = X.height(); }
 };
-RF._state = function () { return { threads: th.map(function (t) { return t ? { slack: +t.slack.toFixed(2), warn: +t.warn.toFixed(2), drain: +t.drain.toFixed(2), snap: +t.snap.toFixed(2), arr: +t.arrT.toFixed(2) } : null; }), draws: [lampM, staffM, glowP, auraM, bindM, veil].filter(function (o) { return o && o.visible; }).length, lamps: lampM ? lampM.count : 0, auras: auraM ? auraM.count : 0, binds: bindM ? bindM.count : 0, glows: glowP && glowP.visible }; };
+RF._state = function () { return { threads: th.map(function (t) { return t ? { slack: +t.slack.toFixed(2), warn: +t.warn.toFixed(2), drain: +t.drain.toFixed(2), snap: +t.snap.toFixed(2), arr: +t.arrT.toFixed(2) } : null; }), draws: [lampM, staffM, glowP, auraM, bindM, veil, colM].filter(function (o) { return o && o.visible; }).length, lamps: lampM ? lampM.count : 0, auras: auraM ? auraM.count : 0, binds: bindM ? bindM.count : 0, cols: colM ? colM.count : 0, ptr: !!(ptr && ptr.classList.contains('on')), glows: glowP && glowP.visible }; };
 })();
