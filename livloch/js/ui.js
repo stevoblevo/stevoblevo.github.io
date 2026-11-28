@@ -201,7 +201,7 @@ UI.startHUD = function (w) {
   W = w; const p = W.player, d = p.def;
   $('hud').hidden = false; show(null);
   $('hud').style.setProperty('--hc', d.css);
-  for (let i = 0; i < 3; i++) { const b = $('ab' + i); b.querySelector('span').textContent = d.ab[i].name; b.title = d.ab[i].name + ': ' + d.ab[i].desc; }
+  for (let i = 0; i < 3; i++) { const b = $('ab' + i), sp = b.querySelector('span'); if (LL.glyphs) { sp.innerHTML = LL.glyphs.svg(d.id, i, d.ab[i]); b.setAttribute('aria-label', b.querySelector('b').textContent + ': ' + d.ab[i].name); } else sp.textContent = d.ab[i].name; b.title = d.ab[i].name + ': ' + d.ab[i].desc; } // 0.29 feel: a drawn sign per ability in place of its name (js/glyphs.js); the name stays the button's title and accessible name
   $('gunN').textContent = d.gun.name;
   ammoBuild(d); // 0.26 shots: a row of icons in the gun's shape
   viewTag(W.lens); $('lvN').textContent = String(p.level); // 0.28 face
@@ -323,9 +323,10 @@ UI.fx = function (e) {
     case 'caught': if (W.caughtHint !== W.creases[e.i].n) { W.caughtHint = W.creases[e.i].n; feed('The crease has caught the small ones on the ' + C.LANE_NAME[W.creases[e.i].from]); } break;
     case 'pinned': feed('A <b>hollow</b> is pinned in the crease'); break;
     case 'unpinned': if (e.u.alive) feed('The crease lets the <b>hollow</b> go'); break;
-    case 'ember': if (e.p) UI.banner('You leave with a light.', 'Walk it to one of your houses that is hurt or dark. One light, one house', 5); else feed(hname(e.u) + ' carries a light from home'); break;
-    case 'mended': if (e.p) UI.banner('The ' + C.LANE_NAME[e.s.lane] + ' ' + e.s.kind + ' takes the light.', (e.relit ? 'Lit again, mended' : 'Mended by ' + Math.round(e.amt)) + ', and burning bright for ' + C.EMBER.bright + ' seconds', 3.5); else feed(hname(e.u) + ' mended the ' + C.LANE_NAME[e.s.lane] + ' ' + e.s.kind); break;
-    case 'slackwarn': UI.banner('The ' + C.LANE_NAME[e.lane] + ' is going slack.', 'In ' + e.in + ' seconds nothing on it will be protected, theirs or yours', 5); break;
+    case 'ember': if (e.p) UI.banner(e.thief ? 'You have its light.' : 'You leave with a light.', 'Walk it into one of your houses and that house is kept. One light, one house', 5); else feed(hname(e.u) + (e.thief ? ' took a light from a hush' : ' carries a light from home')); break; // 0.29 play: the words, and a light won from a small one
+    case 'mended': if (e.p) UI.banner('The ' + C.LANE_NAME[e.s.lane] + ' ' + e.s.kind + ' takes the light.', (e.relit ? 'Lit again, mended' : e.amt >= 1 ? 'Mended by ' + Math.round(e.amt) : 'Kept') + ': for ' + C.EMBER.bright + ' seconds it burns bright and holds, slack thread or not', 3.5); else feed(hname(e.u) + ' mended the ' + C.LANE_NAME[e.s.lane] + ' ' + e.s.kind); break;
+    case 'patrondim': if (!W.dimHint) { W.dimHint = true; UI.banner('Their patron dims.', 'It lives on its houses. Every one that falls, on any thread, takes a part of it', 4.5); } else feed('Their patron dims · ' + e.n + ' of 6 houses gone'); break; // 0.29 play
+    case 'slackwarn': UI.banner('The ' + C.LANE_NAME[e.lane] + ' is going slack.', 'In ' + e.in + ' seconds nothing on it will be protected, theirs or yours' + (C.dif(W).slackHollows && C.SLACK.lead ? '. A hollow is setting out down it' : ''), 5); break; // 0.29 play: the hollow sets out early
     case 'slack': UI.banner('The ' + C.LANE_NAME[e.lane] + ' has gone slack.', 'Its houses cannot fire and stand open until one falls, or ' + e.t + ' seconds pass. The thread carries you all the way' + (C.dif(W).slackHollows ? '. A hollow is coming down it' : ''), 6); feed('The <b>' + C.LANE_NAME[e.lane] + '</b> is slack'); break;
     case 'slackend': if (e.fell === 1 && e.broke) UI.banner('The ' + C.LANE_NAME[e.lane] + ' pulls tight.', 'Their house fell first. The hollow they sent down it is gone', 4); else feed('The ' + C.LANE_NAME[e.lane] + ' pulls tight'); break;
     case 'death': if (e.kind === 'trooper' && e.by && e.by === W.player) { const hm = $('hitm'); hm.className = ''; void hm.offsetWidth; hm.className = 'pop'; } // 0.23: your trooper kills tick the crosshair

@@ -13,7 +13,8 @@
      smoothness.
    - Runs in the browser (LL.paperMotion) and under Node (module.exports) so tools/test.js can check it.
    - 0.25 air: clocks and envelopes for the air poses (pose().airs, from airStep): take-off, rise, top, fall, a second
-     jump and the hover, read from the unit (vy, onGround, jumps, hoverT). The 3D figures pose from them. */
+     jump and the hover, read from the unit (vy, onGround, jumps, hoverT). The 3D figures pose from them.
+   - 0.29 look: paper life (sc.paper), a breath, a sway and a stirring cloak for the painted cards; see pose(). */
 (function (root) {
 'use strict';
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -201,15 +202,27 @@ function pose(m, u, dt, t, still, sc) {
   /* Knees: a leg folds most while it swings forward under the body, a little while it carries weight. The side view's
      two legs are A (angle +sway) and B (angle -sway); fold is 0 to 1 and the renderer picks the direction from facing. */
   const c = Math.cos(m.phase), K = G.knee;
+  /* 0.29 look: PAPER LIFE. A painted card (sc.paper: Heroes as 3D figures off, or Lighter graphics on a device that turned
+     them off) stood as a still sticker, most of all Rook Vale, whose sheet has no separate arms or motion cells. On paper
+     only (the 3D figures have their own idle): standing, a breath bob and a slow weight sway, the cloak and hem stirring on
+     two slow beats, a small nod; walking, a deeper bob, a waddle roll with the step and a nod on each foot fall, and the
+     hem fluttering. All of it scales with G.idle and fades out in reduced motion (still). Units as the rest: metres for
+     body, radians for roll, fractions of height for cloak, flare, head and wave. */
+  const pap = !!(sc && sc.paper) && !still, pk = pap ? Math.max(0.6, G.idle) : 0, rest = (1 - m.mix) * (m.ground ? 1 : 0);
+  const pBody = pap ? (rest * 0.026 * Math.sin(t * 2.1 + seed) + m.mix * 0.035 * lift * G.bob) * pk : 0;
+  const pRoll = pap ? (rest * 0.02 * Math.sin(t * 0.9 + seed) + sway * 0.035 * G.roll) * pk : 0;
+  const pCloak = pap ? (rest * 0.03 * Math.sin(t * 1.7 + seed * 1.3) + m.mix * 0.02 * Math.sin(m.phase * 2 + 0.8)) * pk : 0;
+  const pHead = pap ? (rest * 0.02 * Math.sin(t * 1.1 + seed * 0.7) + m.mix * 0.03 * Math.sin(m.phase * 2)) * pk : 0;
+  const pWave = pap ? (0.025 * rest + 0.025 * m.mix) * pk : 0, pFlare = pap ? (0.02 * rest * (0.5 + 0.5 * Math.sin(t * 1.3 + seed)) + 0.01 * m.mix) * pk : 0;
   return {
     sway, phase: m.phase, mix: m.mix, aim: m.aim, hem: r.hem, g: G,
     liftL: Math.max(0, sway) * 0.21, liftR: Math.max(0, -sway) * 0.21,
-    body,
-    roll: still ? 0 : sway * 0.03 * G.roll + clamp(-m.turn * 0.02, -0.06, 0.06) + (u.dashT > 0 ? 0.045 : 0) + idleX * 0.018,
+    body: body + pBody,
+    roll: pRoll + (still ? 0 : sway * 0.03 * G.roll) + clamp(-m.turn * 0.02, -0.06, 0.06) + (u.dashT > 0 ? 0.045 : 0) + idleX * 0.018,
     squash: still ? 0 : clamp(m.land * 0.7 - S.q, -0.6, 1.2), stretch: still ? 0 : m.air, recoil, air: !m.ground, turn: m.turn,
     run: still ? 0 : (0.5 - lift) * m.mix, // + at mid-stance (legs passing: compress), - in flight (stretch)
     kneeA: still ? 0 : m.mix * K * (0.14 + 0.9 * Math.pow(Math.max(0, c), 1.4)), kneeB: still ? 0 : m.mix * K * (0.14 + 0.9 * Math.pow(Math.max(0, -c), 1.4)),
-    cloak: S.cx, flare: Math.max(0, S.fx), head: clamp(S.hx, -0.12, 0.12), wave: still ? 0 : 0.012 + 0.03 * m.mix + (m.ground ? 0 : 0.03),
+    cloak: S.cx + pCloak, flare: Math.max(0, S.fx) + pFlare, head: clamp(S.hx + pHead, -0.12, 0.12), wave: still ? 0 : 0.012 + 0.03 * m.mix + (m.ground ? 0 : 0.03) + pWave,
     contact, landed, plant: contact ? G.plant * m.mix : 0,
     // 0.21
     idle: still ? 0 : idleX, lean: still ? 0 : G.lean * m.mix * (m.ground ? 1 : 0.5),

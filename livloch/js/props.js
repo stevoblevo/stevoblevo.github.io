@@ -517,7 +517,7 @@ function leafCard(S, m, c, yaw, pitch, len, wid, fold, c0, c1, glw, sw) {
 const LEAF = { lemon: [0x2e5a34, 0x86b044], hips: [0x2c523a, 0x6e9e5a], lime: [0x24563e, 0x58b064] };
 function bushFoliage(S, r, m, k, big) {
   const pal = LEAF[k] || LEAF.lemon, c0 = new T.Color(pal[0]), c1 = new T.Color(pal[1]), wood = new T.Color(0x5a4228), woodT = new T.Color(0x7a5a38), sc = big ? 1.7 : 1;
-  const rings = [[9, 0.28, 0.2, 0.35, 1.0, 0.5], [7, 0.16, 0.55, 0.85, 0.82, 0.42], [5, 0.08, 0.82, 1.15, 0.62, 0.36]];
+  const rings = [[9, 0.28, 0.2, 0.35, 1.0, 0.5], [7, 0.16, 0.55, 0.85, 0.82, 0.42], [7, 0.15, 0.85, 0.85, 0.9, 0.46], big ? [7, 0.12, 1.0, 0.65, 0.84, 0.46] : [7, 0.12, 1.1, 0.95, 0.82, 0.44]]; // 0.29 world: two more rings up the stem, so the top is full and not a bare rod
   rings.forEach(function (R, ri) {
     for (let i = 0; i < R[0]; i++) {
       const a = i / R[0] * Math.PI * 2 + ri * 0.5 + (r() - 0.5) * 0.4;
@@ -525,7 +525,7 @@ function bushFoliage(S, r, m, k, big) {
     }
   });
   const top = big ? 2.7 : 1.62, rod = function (a, b, r0, r1, col) { const pa = xfPoint(m, a), pb = xfPoint(m, b); S.rod(pa, pb, r0 * sc, r1 * sc, 4, col, 0.15, 0.2, 0.2, 0.9); };
-  rod([0, 0.4, 0], [0.04, top / sc, 0], 0.07, 0.04, wood);
+  rod([0, 0.4, 0], [0.04, top / sc, 0], 0.09, 0.05, wood);
   [[0.3, 0.2], [-0.28, 0.16], [0.02, -0.32]].forEach(function (f) { rod([0.04, (top - 0.18) / sc, 0], [0.04 + f[0] * 0.8, top / sc + 0.22, f[1] * 0.8], 0.035, 0.02, woodT); });
   for (let i = 0; i < 5; i++) { const a = i * 2.4 + r(), y = 0.85 + i * (top / sc - 1.0) / 5; leafCard(S, m, [0.04 * y, y, 0], a, 0.45, 0.55 * (1 - i * 0.07), 0.3, 0.12, c0, c1, 0.5, 0.5); }
   if (k === 'hips') for (let i = 0; i < 7; i++) { const y = 0.7 + r() * (top / sc - 0.9), a = r() * 6.28, q = [0.04 * y + Math.sin(a) * 0.06, y, Math.cos(a) * 0.06], tp = [q[0] + Math.sin(a) * 0.2, y + 0.07, q[2] + Math.cos(a) * 0.2]; const pq = xfPoint(m, q), pt = xfPoint(m, tp); S.rod(pq, pt, 0.035 * sc, 0.004, 3, woodT, 0.1, 0.1, 0, 0); }
@@ -536,6 +536,7 @@ function fruitSoup(k, big, col) {
   const g = function (geo, m, fn) { const n0 = S.p.length / 3; S.geo(geo, m, fn, 1, 0); _v.set(0, 0, 0).applyMatrix4(m); smooth.push([n0, S.p.length / 3, _v.x, _v.y, _v.z]); }; // the fruit itself is shaded smooth, like a real one
   const shade = function (ry, rr) { return function (x, y) { return lerpCol(lo, hi, U_clamp(0.5 + y / (2 * rr), 0, 1)); }; };
   lo.multiplyScalar(1.1);
+  if (k === 'hips' || k === 'bighips') { hi.copy(fc).multiplyScalar(0.92); lo.copy(fc).multiplyScalar(0.62); } // 0.29 world: a deeper red, so it does not blow out to peach in the bright looks
   if (k === 'hips' || k === 'bighips') {
     const hs = big ? 2.6 : 1, dark = new T.Color(0x5a1810), pos = [[0, 0, 0], [0.24, -0.1, 0.1], [-0.2, -0.14, -0.12], [0.02, -0.22, 0.2]];
     pos.forEach(function (p, i) {
@@ -562,11 +563,12 @@ P.fruitBushes = function (t, list, H) {
     const g = new T.Group(), fr = new T.Group(), fs = fruitSoup(f.k, f.big, f.col), fm = propMat({ em: 0xffffff, emI: 0.55, emV: true, sw: 0 });
     const fgeo = fs.build(), fn = fgeo.attributes.normal; fs.smooth.forEach(function (q) { for (let v = q[0]; v < q[1]; v++) { _v.set(fgeo.attributes.position.getX(v) - q[2], fgeo.attributes.position.getY(v) - q[3], fgeo.attributes.position.getZ(v) - q[4]).normalize(); fn.setXYZ(v, _v.x, _v.y, _v.z); } });
     const fo = own(new T.Mesh(fgeo, fm)); fo.frustumCulled = false; fr.add(fo); fr.position.y = f.big ? 3.1 : 1.9; g.add(fr);
-    const glow = H.glowSprite(f.col, f.big ? 9 : 3.4, fr, 0, 0, 0); glow.material.userData.lk = true;
+    const glow = H.glowSprite(f.col, f.big ? 9 : 3.4, fr, 0, 0, 0); glow.material.userData.lk = true; glow.material.userData.halo = true;
     g.fr = fr; g.glow = glow; fruit.push(g);
   });
   const fol = new T.Mesh(S.build(), propMat({ em: 0xffffff, emI: 0.1, emV: true, sw: 0.12, side: T.DoubleSide }));
-  fol.frustumCulled = false; fol.material.userData.lk = true; fol.geometry.userData.lk = true; fol.userData.fruitFol = true; // leaves keep their green in every look, as the old leaves did
+  fol.frustumCulled = false; fol.material.userData.lk = true; fol.geometry.userData.lk = true; fol.material.userData.solid = true; fol.userData.fruitFol = true; // 0.29 world: leaves are solid in Hypermetapunk like the fruit, so the bush is not a wire cage round a solid fruit
+  // leaves keep their green in every look, as the old leaves did
   return { foliage: fol, fruit: fruit };
 };
 
@@ -574,7 +576,7 @@ P.fruitBushes = function (t, list, H) {
    stubby feet, a lilac-tipped tail, and eyes that glow. Faces +z. Body about 2.6 wide and 2.6 tall to the horns' roots. */
 P.stray = function (t, H) {
   init(t);
-  const S = new Soup(), r = rng(515), body = new T.Color(0x4c3e6c), belly = new T.Color(0x7d6ca0), horn = new T.Color(0xf4e8d6), hornT = new T.Color(0xfff7ea), lil = new T.Color(0xc9a0ff), foot = new T.Color(0x2e2444), shard = new T.Color(0xb6a2e4);
+  const S = new Soup(), r = rng(515), body = new T.Color(0x4c3e6c), belly = new T.Color(0x7d6ca0), horn = new T.Color(0xf4e8d6), hornT = new T.Color(0xfff7ea), lil = new T.Color(0xc9a0ff), foot = new T.Color(0x2e2444), shard = new T.Color(0xb6a2e4), scl = new T.Color(0xf6ecdc), irisC = new T.Color(0xc9a0ff), pupil = new T.Color(0x1a1030);
   const ig = new T.IcosahedronGeometry(1, 1), pa = ig.attributes.position, off = {};
   for (let i = 0; i < pa.count; i++) { const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i), key = Math.round(x * 500) + ',' + Math.round(y * 500) + ',' + Math.round(z * 500); if (off[key] == null) off[key] = 0.9 + r() * 0.2; const f = off[key]; pa.setXYZ(i, x * f, y * f, z * f); }
   S.geo(ig, mtx(0, 1.38, 0, 0, 0, 0, 1.22, 1.08, 1.34), function (x, y, z) { return lerpCol(belly, body, U_clamp(0.5 + y * 0.8 + z * 0.1, 0, 1)); }, 0.1, 0);
@@ -584,15 +586,20 @@ P.stray = function (t, H) {
     S.rod([sg * 0.55, 2.2, 0.3], [sg * 0.82, 2.78, 0.22], 0.17, 0.12, 5, horn, 0.05, 0.1, 0, 0.5);
     S.rod([sg * 0.82, 2.78, 0.22], [sg * 0.68, 3.28, 0.3], 0.12, 0.03, 5, hornT, 0.1, 0.3, 0.5, 1);
     S.rod([sg * 0.8, 2.85, 0.22], [sg * 1.2, 3.18, 0.14], 0.08, 0.02, 4, hornT, 0.1, 0.3, 0.5, 1);
-    S.tri([sg * 0.42, 1.62, 1.4, 0.7, 0], [sg * 0.74, 1.74, 1.26, 0.7, 0], [sg * 0.46, 1.5, 1.42, 0.7, 0], lil); S.tri([sg * 0.74, 1.74, 1.26, 0.7, 0], [sg * 0.78, 1.62, 1.24, 0.7, 0], [sg * 0.46, 1.5, 1.42, 0.7, 0], lil); // the eye
-    S.tri([sg * 0.34, 1.0, 1.36, 0.2, 0], [sg * 0.05, 1.2, 1.46, 0.2, 0], [sg * 0.05, 0.84, 1.4, 0.2, 0], belly.clone().lerp(horn, 0.4)); // a pale cheek
+    S.geo(new T.SphereGeometry(1, 10, 8), mtx(sg * 0.5, 1.6, 1.2, 0, 0, 0, 0.27, 0.32, 0.28), scl, 0.15, 0); // 0.29 world: a face. Cream eye, lilac iris, a dark slit pupil, a heavy brow
+    S.geo(new T.SphereGeometry(1, 8, 6), mtx(sg * 0.5, 1.58, 1.41, 0, 0, 0, 0.17, 0.21, 0.11), irisC, 1, 0);
+    S.geo(new T.SphereGeometry(1, 6, 5), mtx(sg * 0.5, 1.58, 1.53, 0, 0, 0, 0.055, 0.19, 0.06), pupil, 0, 0);
+    S.rod([sg * 0.9, 2.0, 1.02], [sg * 0.2, 1.88, 1.4], 0.1, 0.07, 4, body.clone().multiplyScalar(0.55), 0, 0, 0, 0);
+    S.tri([sg * 0.2, 0.95, 1.6, 0.2, 0], [sg * 0.13, 0.78, 1.62, 0.2, 0], [sg * 0.06, 0.95, 1.64, 0.2, 0], hornT); // a fang
   });
-  S.tri([0, 1.25, 1.5, 0.2, 0], [0.18, 1.0, 1.46, 0.2, 0], [-0.18, 1.0, 1.46, 0.2, 0], horn);
+  S.geo(new T.SphereGeometry(1, 10, 8), mtx(0, 1.1, 1.22, 0, 0, 0, 0.58, 0.44, 0.42), function (x, y) { return lerpCol(belly, horn, 0.35 + y * 0.2); }, 0.1, 0); // the muzzle
+  [-1, 1].forEach(function (sg) { S.geo(new T.SphereGeometry(1, 6, 5), mtx(sg * 0.14, 1.14, 1.62, 0, 0, 0, 0.07, 0.05, 0.05), pupil, 0, 0); });
+  S.rod([-0.42, 0.98, 1.5], [0, 0.88, 1.64], 0.045, 0.045, 4, pupil, 0, 0, 0, 0); S.rod([0, 0.88, 1.64], [0.42, 0.98, 1.5], 0.045, 0.045, 4, pupil, 0, 0, 0, 0); // the mouth
   S.rod([0, 1.0, -1.25], [0, 1.45, -1.95], 0.2, 0.08, 5, body, 0.1, 0.1, 0.3, 1);
   S.geo(new T.ConeGeometry(0.28, 0.6, 5), mtx(0, 1.7, -2.12, -2.2, 0, 0), lil, 0.8, 1);
   const g = new T.Group(), mat = propMat({ em: 0xffffff, emI: 0.9, emV: true, sw: 0.1, side: T.DoubleSide });
   const mo = new T.Mesh(S.build(), mat); mo.frustumCulled = false; g.add(mo);
-  H.glowSprite(0xc9a0ff, 2.2, g, 0, 1.6, 1.5);
+  H.glowSprite(0xc9a0ff, 1.7, g, 0, 1.6, 1.5);
   return g;
 };
 
@@ -620,12 +627,12 @@ P.crane = function (t, H) {
     w.tri(a, c, b, lightC, paper, shadeC); w.tri(c, d, b, paper, tipC, shadeC); w.tri(a, e, c, lightC, lightC, paper); w.tri(c, e, d, paper, lightC, tipC);
     return w;
   };
-  const cm = propMat({ em: 0xffffff, emI: 0.3, emV: true, sw: 0, side: T.DoubleSide }), g = new T.Group();
+  const cm = propMat({ em: 0xffffff, emI: 0.16, emV: true, sw: 0, side: T.DoubleSide }), g = new T.Group(); // 0.29 world: less self-light, so the folds read in Lantern and Rainwake
   const mb = own(new T.Mesh(body.build(), cm)), ml = own(new T.Mesh(mk(1).build(), cm)), mr = own(new T.Mesh(mk(-1).build(), cm));
   [mb, ml, mr].forEach(function (o) { o.frustumCulled = false; });
   const wl = new T.Group(), wr = new T.Group(); wl.add(ml); wr.add(mr); wl.position.y = wr.position.y = 0.2; g.add(mb); g.add(wl); g.add(wr);
   g.wl = wl; g.wr = wr;
-  H.glowSprite(0xffe9a8, 3.2, g, 0, 0.2, 0);
+  H.glowSprite(0xffe9a8, 2.1, g, 0, 0.2, 0);
   return g;
 };
 })();

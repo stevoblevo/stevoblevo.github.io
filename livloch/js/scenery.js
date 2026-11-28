@@ -57,7 +57,7 @@ const PAL = {
   origami: { bl: [0xf57ca4, 0xff90b4, 0xffa8c4, 0xffdce6], blK: 1.2, blGlow: 0.38, blDetail: 0.25, trunk: 0x6a5a5a, pine: [0x4f7268, 0x6a8f80, 0x8fb0a0], pineGlow: 0, snow: 0,
     rimB: [0xffffff, 0.12, 3.0], rimP: [0xffffff, 0.1, 3.0], water: [0x3a78b0, 0x8cc2e6, 0xffffff], pool: null,
     moon: null, mist: [0xffffff, 0xf6f8f3, 0.32], fly: null, petal: [0xf4a8b8, 0xffe0e6, 0.7],
-    grass: [0x8fae7a, 0xc8dca8], flowers: [0xb8311a, 0xf0cf78, 0x2a4c86, 0xffffff], shroom: 0xf0e0c0, litter: [0xf0a0b0, 0.55], ground: null, plantGlow: 0.2 },
+    grass: [0x8fae7a, 0xc8dca8], flowers: [0xb8311a, 0xf0cf78, 0x2a4c86, 0xffffff], shroom: 0xf0e0c0, litter: [0xf0a0b0, 0.55], ground: null, plantGlow: 0.2, fogB: [0xffb0c8, 0.8, 0.7], flowerK: 2.3 },
   glow: { bl: [0x12060e, 0x220a1a, 0x3a1030, 0xff4faa], blGlow: 0.45, trunk: 0x0b060c, pine: [0x05080e, 0x0a1220, 0x0f1c2c], pineGlow: 0.1, snow: 0,
     rimB: [0xff4faa, 1.1, 2.2], rimP: [0x62e6ff, 0.9, 2.4], water: [0x020408, 0x0a3040, 0x62e6ff], pool: [0xff4faa, 0x62e6ff, [0.42, 0.4, 0.14]],
     moon: [0x1a0a20, 0xff4faa, 0x62e6ff, [1, 1.4]], mist: [0x1a0e1d, 0x4a1040, 0.32], fly: [0x62e6ff, 0.8], petal: null,
@@ -159,7 +159,7 @@ const LIT_V = [
   '  #include <fog_vertex>',
   '}'].join('\n');
 const LIT_F = [
-  'uniform vec3 uSkyC; uniform vec3 uGndC; uniform vec3 uDirC; uniform vec3 uDir; uniform vec3 uRim; uniform float uRimP; uniform float uGlow; uniform float uBack; uniform vec3 uSpeck; uniform vec2 uDetail;',
+  'uniform vec3 uSkyC; uniform vec3 uGndC; uniform vec3 uDirC; uniform vec3 uDir; uniform vec3 uRim; uniform float uRimP; uniform float uGlow; uniform vec4 uFogT; uniform float uFogM; uniform float uBack; uniform vec3 uSpeck; uniform vec2 uDetail;',
   'varying vec3 vC; varying vec3 vN; varying vec3 vV; varying float vG; varying vec3 vP;',
   'float h31(vec3 p){ return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }',
   'float n31(vec3 p){ vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);',
@@ -177,14 +177,14 @@ const LIT_F = [
   '  vec3 c = base * (hemi + uDirC * max(dot(n, uDir), 0.0)) * k + base * vG * uGlow;',
   '  c += uRim * pow(1.0 - abs(dot(n, v)), uRimP) * (0.25 + 0.75 * min(vG, 1.0)) * k;',
   '  gl_FragColor = vec4(c, 1.0);',
-  '  #include <fog_fragment>',
+  '  #ifdef USE_FOG', '  float fgF = smoothstep(fogNear, fogFar, fogDepth) * uFogT.w; gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(fogColor, uFogT.rgb, uFogM), fgF);', '  #endif', // 0.29 world: the fog can be tinted (far blossoms in Origami stay pink, not grey)
   '}'].join('\n');
 function litMat(o) {
   const m = new T.ShaderMaterial({
     uniforms: fogU({ uSkyC: { value: new T.Color(LK.hemi[0]).multiplyScalar(LK.hemi[2]) }, uGndC: { value: new T.Color(LK.hemi[1]).multiplyScalar(LK.hemi[2]) },
       uDirC: { value: new T.Color(LK.dir[0]).multiplyScalar(LK.dir[1]) }, uDir: { value: new T.Vector3(-40, 80, 60).normalize() },
       uRim: { value: new T.Color(o.rim[0]).multiplyScalar(o.rim[1]) }, uRimP: { value: o.rim[2] }, uGlow: { value: o.glow }, uBack: { value: o.back == null ? 0.55 : o.back },
-      uSway: { value: new T.Vector2(o.pivot, o.sway) }, uSpeck: { value: col(o.speck || 0xffffff) }, uDetail: { value: new T.Vector2(o.detail || 0, o.scale || 3) } }),
+      uSway: { value: new T.Vector2(o.pivot, o.sway) }, uSpeck: { value: col(o.speck || 0xffffff) }, uFogT: { value: new T.Vector4(o.fogTint ? col(o.fogTint[0]).r : 1, o.fogTint ? col(o.fogTint[0]).g : 1, o.fogTint ? col(o.fogTint[0]).b : 1, o.fogTint ? o.fogTint[2] : 1) }, uFogM: { value: o.fogTint ? o.fogTint[1] : 0 }, uDetail: { value: new T.Vector2(o.detail || 0, o.scale || 3) } }),
     vertexShader: LIT_V, fragmentShader: LIT_F, vertexColors: true, fog: true, side: o.side || T.FrontSide });
   return shared(m);
 }
@@ -290,7 +290,7 @@ function treeMeshes(trees, groundH) {
   const items = [[], [], [], []]; // blossom 0, blossom 1, pine 0, pine 1
   trees.forEach(function (o, i) { const bl = o.seed < 0.5, v = Math.floor(o.seed * 17) % 2; items[(bl ? 0 : 2) + v].push({ x: o.x, y: 0, z: o.z, s: 0.82 + o.seed * 0.5, rot: o.seed * 6.283, t: o.seed }); });
   wallSpots(groundH).forEach(function (w) { const bl = w.b > 0.52, v = w.s > 0.5 ? 1 : 0; items[(bl ? 0 : 2) + v].push({ x: w.x, y: w.y - 0.5, z: w.z, s: (bl ? 0.95 : 1.05) + w.s * (bl ? 0.55 : 0.85) + Math.min(0.4, w.o / 90), rot: w.s * 40, t: w.s }); });
-  const mB = litMat({ rim: P.rimB, glow: P.blGlow, pivot: 2.0, sway: 0.0026, side: T.FrontSide, detail: P.blDetail == null ? 0.9 : P.blDetail, scale: 2.6, speck: P.bl[3] });
+  const mB = litMat({ rim: P.rimB, glow: P.blGlow, pivot: 2.0, sway: 0.0026, side: T.FrontSide, detail: P.blDetail == null ? 0.9 : P.blDetail, scale: 2.6, speck: P.bl[3], fogTint: P.fogB });
   const mP = litMat({ rim: P.rimP, glow: P.pineGlow, pivot: 2.0, sway: 0.0022, side: T.DoubleSide, back: 0.45, detail: 0.45, scale: 4.5, speck: P.snow || P.pine[2] });
   const out = [];
   items.forEach(function (list, k) {
@@ -334,9 +334,9 @@ function plantMesh(W) {
     }
   };
   const flower = function (x, z, s, c) { // a stem and a five-petal head, tipped toward a random side so it shows from low cameras
-    const hgt = (0.3 + r() * 0.3) * s, w = 0.02;
+    const fK = P.flowerK || 1, hgt = (0.3 + r() * 0.3) * s * (fK > 1 ? 0.8 : 1), w = 0.02; // 0.29 world: Origami flowers are drawn larger, so they stay flowers at middle distance instead of posterising into specks
     B.tri([x - w, 0.02, z], [x + w, 0.02, z], [x, hgt, z], [0, 0, 1], stem, stem, stem, 0, 0, 0);
-    const pr = 0.13 * s, ta = r() * 6.283, tilt = 0.5 + r() * 0.5, ux = Math.cos(ta) * tilt, uz = Math.sin(ta) * tilt, ul = Math.hypot(ux, 1, uz);
+    const pr = 0.13 * s * fK, ta = r() * 6.283, tilt = 0.5 + r() * 0.5, ux = Math.cos(ta) * tilt, uz = Math.sin(ta) * tilt, ul = Math.hypot(ux, 1, uz);
     const nU = [ux / ul, 1 / ul, uz / ul]; // the head's normal
     // two axes in the head's plane
     const e1 = [1, -ux, 0], l1 = Math.hypot(e1[0], e1[1], e1[2]); e1[0] /= l1; e1[1] /= l1; e1[2] /= l1;

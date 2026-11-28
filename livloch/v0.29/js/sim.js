@@ -683,6 +683,7 @@ function damage(t, amt, src, kind, crit) {
   if (t.struct) {
     if (!S.vuln(t)) { if (W.t - t.immuneFx > 0.6 && !W.fallen) { t.immuneFx = W.t; fx({ k: 'immune', u: t, p: hero && hero.isPlayer }); } return 0; }
     if (W.fray) amt *= 1.4; else if (isSlack(t)) amt *= C.SLACK.mul; else if (!t.pressed) amt *= 0.3; // 0.28 play: a slack thread's houses stand unprotected
+    if (t.brightT > 0) amt *= C.EMBER.guard; // 0.29 play: a kept house holds
     if (src && src.team < 2 && W.great[src.team] > 0) amt *= 1.4;
     if (kind === 'ab') amt *= 0.5;
   }
@@ -760,6 +761,7 @@ function kill(t, src, hero) {
     if (W.fallen && (hero || (src && src.team === 0))) relight(t.x, t.z);
     if (t.victim && t.loot) give(t.victim, t.loot);
     if (hero) give(hero, 70 + Math.floor(min) * 5);
+    if (hero && hero.alive && !hero.ember && !W.fallen && C.EMBER.thief) { hero.ember = true; fx({ k: 'ember', u: hero, p: hero.isPlayer, thief: true }); } // 0.29 play: whoever catches a small one carries off the light it came with
     fx({ k: 'thiefdown', x: t.x, z: t.z, loot: t.loot || 0, carry: t.carry, p: !!(hero && hero.isPlayer), vp: !!(t.victim && t.victim.isPlayer) });
   } else if (t.kind === 'stray') {
     t.respT = 80; t.aggro = null;
@@ -776,6 +778,7 @@ function kill(t, src, hero) {
     if (W.slack.t > 0 && W.slack.lane === t.lane) { W.slack.t = 0; let n = 0; if (t.team === 1) for (let i = 0; i < W.troopers.length; i++) { const u = W.troopers[i]; if (u.alive && u.lean === W.slack.n) { u.alive = false; n++; fx({ k: 'death', u: u, x: u.x, y: u.y, z: u.z, team: 1, kind: 'trooper', by: null, creased: true }); } } fx({ k: 'slackend', lane: t.lane, fell: t.team, broke: n }); } // 0.28 play: one house falls and the slack thread pulls tight
     for (let i = 0; i < W.heroes.length; i++) if (W.heroes[i].team !== t.team) give(W.heroes[i], b);
     fx({ k: 'structdown', u: t, bounty: b });
+    if (t.team === 1 && C.PATRON_DIM > 0 && !W.fallen && !W.short) { const p = W.patron[1]; if (p.alive) { const cut = Math.min(p.hp - 1, p.maxHp * C.PATRON_DIM); p.hp -= cut; p.dims = (p.dims || 0) + 1; fx({ k: 'patrondim', u: p, by: t, n: p.dims, amt: cut }); } } // 0.29 play: the Hush patron lives on its houses; every one that falls, on any thread, takes a part of it (not in First Rain, which must last until its rain)
   } else if (t.kind === 'patron') {
     W.over = true; W.winner = 1 - t.team;
     fx({ k: 'over', winner: W.winner, fallen: W.fallen, t: W.t, lights: W.lights, moods: W.moodsSolved, dream: W.dream });
@@ -1277,24 +1280,43 @@ function rollStart(h, mx, mz) {
    Bots follow the same rules: they land arrivals when they ride out, a bot that went home hurt mends the house it
    comes back to stand by, and a bot shoots a slack house that is in its range. They do not plan around any of it:
    no bot folds, walks a light to the house that needs it, or leaves its thread for the slack one. */
+/* ---------- 0.29 play: a light to place, the tides, and a patron that lives on its houses ----------
+   0.28 left lesson 5 worth nothing on Cruel and Even 18 points easier for a player who knows no lesson. What 0.29 found
+   and changed (tables and what was tried and dropped: docs/evidence/play-0.29-notes.txt):
+   - Even was easier because the two bot teammates landed an arrival on every long ride out. An arrival now needs a
+     landing among the Hush (C.ARRIVE.among); a bot lets go behind its own line, so its ride ends quietly.
+   - A light can be had three ways: mended at home (0.28), by waiting C.EMBER.wait seconds in the fountain, or by
+     catching a small one (kill). The house that takes it is KEPT for C.EMBER.bright seconds: faster fire (0.28), less
+     harm (C.EMBER.guard), never slack, and safe from small ones. Any standing house takes it. One light, one house:
+     which house is the choice.
+   - Harm that was spread did not win: only the houses of one thread stood between a side and the patron. Now every
+     Hush house that falls, anywhere, takes C.PATRON_DIM of the Hush patron's health with it (kill, event patrondim).
+   - The tides come once early and then twice to every rain, before it and as it ends (tideAfter), and the hollow
+     that leans on a slack thread sets out before the thread goes slack (C.SLACK.lead), so it is seen coming. */
 function arrive(h) {
   const zp = h.zip, A = C.ARRIVE; if (!zp || zp.dir < 0 || rel(h.team, zp.lane, zp.s) - rel(h.team, zp.lane, zp.s0) < A.min) return false;
-  const dmg = A.dmg + A.dmgMin * (W.t / 60), ts = rel(h.team, zp.lane, zp.s); let n = 0;
-  for (let i = 0; i < W.troopers.length; i++) {
+  const dmg = A.dmg + A.dmgMin * (W.t / 60), ts = rel(h.team, zp.lane, zp.s); let n = 0, among = !A.among;
+  for (let i = 0; i < W.troopers.length && !among; i++) { const u = W.troopers[i]; if (u.alive && u.team !== h.team && hyp(u.x - h.x, u.z - h.z) <= A.r + u.r) among = true; } // 0.29 play: the pull runs on only for a rider who lands among them; let go behind your own line and it lands quietly
+  for (let i = 0; among && i < W.troopers.length; i++) {
     const u = W.troopers[i]; if (!u.alive || u.team === h.team) continue;
     const ahead = u.lane === zp.lane ? rel(h.team, u.lane, u.s) - ts : -1;
     if (hyp(u.x - h.x, u.z - h.z) > A.r + u.r && !(ahead >= 0 && ahead <= A.reach && Math.abs(u.lat || 0) < 5)) continue;
     n++; applySlow(u, A.slow, A.slowT); damage(u, u.big ? dmg * 0.25 : dmg, h, 'ab');
   }
+  if (!among) return false;
   h.arrivals = (h.arrivals || 0) + 1;
   fx({ k: 'arrive', u: h, x: h.x, z: h.z, r: A.r, reach: A.reach, lane: zp.lane, n: n, p: h.isPlayer });
   return true;
 }
 /* The fountain has mended this much of the hero in one visit: it leaves with a light. Called from heroStep. */
-function emberStep(h, inFount, mended) {
+function emberStep(h, inFount, mended, dt) {
   if (W.fallen) return; const E = C.EMBER;
-  if (!inFount) h.mendAcc = 0;
-  else if (!h.ember) { h.mendAcc = (h.mendAcc || 0) + mended; if (h.mendAcc >= E.need * h.maxHp) { h.ember = true; h.mendAcc = 0; fx({ k: 'ember', u: h, p: h.isPlayer }); } }
+  if (!inFount) { h.mendAcc = 0; h.homeT = 0; }
+  else if (!h.ember) {
+    h.mendAcc = (h.mendAcc || 0) + mended; h.homeT = (h.homeT || 0) + dt; // 0.29 play: homeT, a light can be fetched by waiting for it
+    const mendedEnough = h.mendAcc >= E.need * h.maxHp;
+    if (mendedEnough || (h.homeT >= E.wait && W.t > E.wait + 1)) { h.ember = true; h.mendAcc = 0; h.homeT = 0; fx({ k: 'ember', u: h, p: h.isPlayer, waited: !mendedEnough }); }
+  }
   if (!h.ember || h.zip || inFount) return;
   let best = null, any = false;
   for (let i = 0; i < W.structs.length; i++) {
@@ -1321,7 +1343,16 @@ function emberStep(h, inFount, mended) {
    Which thread: the most worn one, the thread whose houses, both sides' together, have lost the most (a thread where
    one side has no house left comes last; W.rng breaks a tie, so the first is anyone's). The tide goes where the war
    already is, so what is won or lost on a slack thread adds up instead of being spread over three. */
-function isSlack(s) { const K = W.slack; return K.t > 0 && s.struct && s.kind !== 'patron' && s.lane === K.lane; }
+/* 0.29 play: when the tides come. One early (C.SLACK.first), then two to every rain: one that starts C.SLACK.pre seconds before
+   the rain falls, and one as the rain ends. So a thread goes slack about every two and a half minutes and never while it rains. */
+function tideAfter(t) {
+  const D = C.SLACK, E = W.redEvery; let best = 1e9;
+  if (D.first > t) best = D.first;
+  for (let k = 1; k < 8; k++) { const a = k * E - D.pre, b = k * E + C.RED_T; if (a > t && a < best) best = a; if (b > t && b < best) best = b; }
+  return best;
+}
+S.tideAfter = tideAfter;
+function isSlack(s) { const K = W.slack; return K.t > 0 && s.struct && s.kind !== 'patron' && s.lane === K.lane && !(s.brightT > 0); } // 0.29 play: a kept house is never slack
 S.slack = isSlack;
 function slackStep(dt) {
   const K = W.slack, D = C.SLACK; if (W.short || W.fallen) return;
@@ -1333,11 +1364,13 @@ function slackStep(dt) {
       if (sides < 2) w -= 10; if (w > bw) { bw = w; l = ln; } }
     K.lane = l; fx({ k: 'slackwarn', lane: l, in: D.warn });
   }
+  else if (K.warned && !K.leaned && W.t >= K.next - D.lead) { K.leaned = true; for (let i = 0; i < C.dif(W).slackHollows; i++) { spawnHollow(K.lane, true); W.troopers[W.troopers.length - 1].lean = K.n + 1; } } // 0.29 play: the hollow sets out before the thread goes slack, so it is seen coming and is there when the houses open
   else if (K.warned && W.t >= K.next) {
-    K.warned = false; K.next += D.every; K.t = D.t; K.n++;
+    K.warned = false; K.next = tideAfter(K.next); K.t = D.t; K.n++;
     for (let i = 0; i < W.structs.length; i++) { const s = W.structs[i]; if (s.alive && isSlack(s)) s.tgt = null; }
     fx({ k: 'slack', lane: K.lane, t: D.t, n: K.n });
-    for (let i = 0; i < C.dif(W).slackHollows; i++) { spawnHollow(K.lane, true); W.troopers[W.troopers.length - 1].lean = K.n; }
+    if (!K.leaned) for (let i = 0; i < C.dif(W).slackHollows; i++) { spawnHollow(K.lane, true); W.troopers[W.troopers.length - 1].lean = K.n; }
+    K.leaned = false;
   }
 }
 function heroStep(h, dt) {
@@ -1353,7 +1386,7 @@ function heroStep(h, dt) {
   h.incomeAcc += dt * 1.5; if (h.incomeAcc >= 1) { const n = Math.floor(h.incomeAcc); h.incomeAcc -= n; give(h, n); }
   const sgn = h.team === 0 ? -1 : 1;
   const fd = hyp(h.x, h.z - sgn * C.SPAWN_Z);
-  { const hp0 = h.hp; if (fd < C.FOUNT_R) heal(h, h.maxHp * 0.14 * dt); emberStep(h, fd < C.FOUNT_R, h.hp - hp0); } // 0.28 play: mending at home pays
+  { const hp0 = h.hp; if (fd < C.FOUNT_R) heal(h, h.maxHp * 0.14 * dt); emberStep(h, fd < C.FOUNT_R, h.hp - hp0, dt); } // 0.28 play: mending at home pays
   if (hyp(h.x, h.z + sgn * C.SPAWN_Z) < C.FOUNT_R) damage(h, 160 * dt, null, 'dot');
   if (!h.alive) return;
   const sp = d.speed * st.speed * (h.slowT > 0 ? 1 - h.slowAmt : 1) * (h.zestT > 0 ? 1.3 : 1);
@@ -1702,7 +1735,7 @@ function pickMark() {
   if (rich && W.rng() < 0.6) return rich;
   if (W.tune.cap && W.structs.some(s => s.team === 0 && s.alive && s.dark)) return rich;
   const l0 = Math.floor(W.rng() * 3);
-  for (let k = 0; k < 3; k++) { const st = W.st[0][(l0 + k) % 3]; const s = st.outer.alive ? st.outer : (st.inner.alive ? st.inner : null); if (s && !s.dark) return s; }
+  for (let k = 0; k < 3; k++) { const st = W.st[0][(l0 + k) % 3]; const s = st.outer.alive ? st.outer : (st.inner.alive ? st.inner : null); if (s && !s.dark && !(s.brightT > 0)) return s; } // 0.29 play: a small one cannot take the light of a kept house
   return rich;
 }
 function anyReignHero() { const hs = W.heroes.filter(h => h.team === 0 && h.alive); return hs.length ? hs[Math.floor(W.rng() * hs.length)] : null; }
@@ -1804,8 +1837,8 @@ function trooperStep(u, dt) {
 }
 function structStep(s, dt) {
   if (W.fallen && s.team === 0 && !s.dark && s.kind !== 'patron') { s.litT -= dt * (W.lens === 'memory' ? 0.5 : 1); if (s.litT <= 0) { s.dark = true; s.darkT = 0; fx({ k: 'snuff', u: s, faded: true }); } }
-  if (isSlack(s)) { s.tgt = null; return; } // 0.28 play: on a slack thread no house fires
   if (s.dark) { if (s.darkT > 0) { s.darkT -= dt * (W.lens === 'memory' && s.team === 0 ? 2 : 1); if (s.darkT <= 0) { s.dark = false; fx({ k: 'relit', u: s }); } } s.tgt = null; return; }
+  if (isSlack(s)) { s.tgt = null; return; } // 0.28 play: on a slack thread no house fires (0.29 play: after the dark line, so a slack thread does not stop a dark house's clock)
   s.atkT -= dt * (s.brightT > 0 ? C.EMBER.fire : 1); s.scanT -= dt; if (s.brightT > 0) { s.brightT -= dt; if (s.brightT <= 0) fx({ k: 'brightend', u: s }); } // 0.28 play: a house that has just taken a light burns bright
   if (s.scanT <= 0) {
     s.scanT = 0.25; s.pressed = false;
