@@ -1,0 +1,50 @@
+/* LIVLOCH · 0.23 wardrobe: the screen from the title and the box on the end screen (js/wardrobe.js).
+   Built from the page's own variables and frames (gold double frame, cut corners, .btn, .chip), so every look restyles it. */
+#ward .panel { width: min(1000px, 100%); }
+.wHead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.wTop { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 18px; align-items: center; margin: 4px 0 6px; }
+#wardPrev { width: 100%; height: auto; aspect-ratio: 3 / 2; display: block; border: 1px solid var(--gold); outline: 1px solid var(--gold); outline-offset: -4px; border-radius: 3px;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px); }
+#wardInfo .sl, #wardOver .sl { font-family: var(--f-sc); letter-spacing: 0.1em; color: var(--gold); font-size: 13px; }
+#wardInfo b { display: block; font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: clamp(22px, 3vw, 30px); line-height: 1.15; margin: 2px 0 4px; text-wrap: balance; }
+#wardInfo p { margin: 4px 0; color: var(--paper-dim); line-height: 1.45; max-width: 52ch; }
+#wardInfo p.how, #wardOver p.how { color: var(--paper); font-size: 15px; }
+.wSlot h3 small { font-family: var(--f-body); letter-spacing: 0; color: var(--paper-dim); font-size: 13px; margin-left: 10px; }
+.wRow { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
+.wcard { position: relative; text-align: left; padding: 6px 6px 8px; border-radius: 3px; border: 1px solid var(--line); background: rgba(var(--wash), 0.62); cursor: pointer; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.wcard canvas { width: 100%; height: auto; aspect-ratio: 4 / 3; display: block; border-radius: 2px; }
+.wcard b { font-family: var(--f-sc); font-weight: 400; font-size: 15px; line-height: 1.15; }
+.wcard small { font-size: 12px; line-height: 1.28; color: var(--paper-dim); }
+.wcard:hover { border-color: rgba(var(--ink), 0.6); }
+.wcard[aria-pressed="true"] { border-color: var(--ember); background: rgba(70, 28, 30, 0.62); box-shadow: inset 0 0 20px -8px var(--ember); }
+.wcard[aria-pressed="true"]::after { content: "worn"; position: absolute; left: 10px; top: 9px; font-family: var(--f-sc); font-size: 11px; letter-spacing: 0.1em; color: var(--paper); background: var(--ember-deep); padding: 0 6px; border-radius: 2px; }
+.wcard.shut { border-style: dashed; } .wcard.shut b { color: var(--paper-dim); }
+.wcard .nw { position: absolute; right: 10px; top: 9px; font-style: normal; font-family: var(--f-sc); font-size: 11px; letter-spacing: 0.1em; color: var(--night); background: var(--gold); padding: 0 6px; border-radius: 2px; }
+#bWard .wdot { font-style: normal; font-size: 0.75em; margin-left: 6px; padding: 0 6px; border-radius: 999px; background: var(--gold); color: var(--night); vertical-align: 2px; }
+body[data-look="origami"] .wcard, body[data-look="origami"] #wardPrev { border-radius: 0; }
+/* --veil is worked out at :root from the dark wash, so in daylight Origami a panel stays dark under dark text; this screen takes the look's own wash */
+body[data-look="origami"] #ward .panel { background: rgba(var(--wash), 0.9); }
+body[data-look="origami"] .wcard[aria-pressed="true"] { background: rgba(184, 49, 26, 0.1); }
+
+/* the end screen */
+#wardOver { margin: 4px 0 14px; }
+#wardOver .wNewRow { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin: 6px 0; }
+#wardOver .wNew { display: flex; flex-direction: column; gap: 2px; padding: 8px; border: 1px solid var(--gold); border-radius: 3px; background: rgba(var(--wash), 0.5); }
+#wardOver .wNew canvas { margin-bottom: 4px; }
+#wardOver .wNew .chip { align-self: flex-start; margin-top: auto; } /* a chip, not a .btn: the end screen's first .btn (Again) keeps the focus */
+#wardOver .wNext { display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr); gap: 14px; align-items: center; margin-top: 10px; }
+#wardOver canvas { width: 100%; height: auto; display: block; border: 1px solid var(--gold); border-radius: 3px; }
+#wardOver .wNext canvas { border-color: var(--line); border-style: dashed; }
+#wardOver b { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: 22px; display: block; line-height: 1.15; }
+#wardOver .wNext b { display: inline; font-size: 20px; }
+#wardOver .wNext small { display: block; font-family: var(--f-sc); letter-spacing: 0.12em; color: var(--gold); font-size: 12px; }
+#wardOver p { margin: 2px 0 8px; color: var(--paper-dim); line-height: 1.35; font-size: 14px; }
+
+@media (max-width: 760px) {
+  .wTop { grid-template-columns: minmax(0, 1fr); }
+  #wardPrev { max-width: 420px; }
+  .wRow { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
+  #wardOver .wNewRow { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  #wardOver .wNext { grid-template-columns: minmax(0, 100px) minmax(0, 1fr); }
+  #wardOver b { font-size: 20px; }
+}
