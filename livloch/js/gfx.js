@@ -17,12 +17,13 @@
 const LL = window.LL, C = LL.C, S = LL.sim, U = LL.U;
 const R = LL.gfx = { ok: false, low: false };
 const SH = LL.shots || null; // 0.26 shots: js/shots.js, a look per gun (null: the old white tracer for every shot)
+const RF = LL.rulefx || null; // 0.29 feel: js/rulefx.js, the 0.28 rules seen from the play camera (null: banners only)
 const SCN = LL.scenery || null; // js/scenery.js: trees, the loch, pools of light, plants, moon, mist, fireflies, petals (null: the old cone trees and flat loch)
 let T, renderer, scene, camera, W = null, glowTex, time = 0;
 let dummy, tmpC, v1, v2, v3;
 let world, dyn, sky, stars;
 let tr = [null, null], hushEyes, trHat, barBg, barFill, projMesh, orbMesh, parts, staticGlow;
-let nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [], fruitM = [], groundTex = null, petM = null, petThread = null, fovKick = 0, pivotY = null, camBtS = 1;
+let fruitFoliage = null, nessM = null, nessY = -11, creaseM = [], cueDash = null, cueRings = [], fruitM = [], groundTex = null, petM = null, petThread = null, fovKick = 0, pivotY = null, camBtS = 1;
 let pivotV = 0, holdK = 0, holdSide = 1; // 0.28 look: the follow height's speed; how far the camera has swung out to show a hero held by the Ness, and to which side
 R.petEnabled = false;
 R.reduced = false; try { R.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
@@ -131,7 +132,7 @@ function applyLook() {
     const m = o.material; if (!m || !m.userData) return;
     if (!m.userData.bl) {
       m.userData.bl = true;
-      if (!LK.add && m.blending === T.AdditiveBlending) { m.blending = T.NormalBlending; m.transparent = true; m.opacity = m.opacity * 0.85; }
+      if (!LK.add && m.blending === T.AdditiveBlending) { m.blending = T.NormalBlending; m.transparent = true; m.opacity = m.opacity * (m.userData.halo ? 0.45 : 0.85); }
       if (LK.wire && m.isMeshLambertMaterial && !m.userData.solid) m.wireframe = true;
       if (LK.emis != null && m.emissiveIntensity) m.emissiveIntensity *= LK.emis;
       m.needsUpdate = true;
@@ -157,10 +158,12 @@ function construct() {
   world = new T.Group(); scene.add(world); dyn = new T.Group(); scene.add(dyn);
   if (SCN) SCN.begin(scx()); // scenery: this look's palette, before the ground is tinted
   buildSky(); buildGround(); buildThreads(); buildInstanced(); buildParticles(); buildPuffs(); buildFeel(); buildPools(); buildCreaseArt();
+  if (RF) RF.build(rfx()); // 0.29 feel
   if (SCN) SCN.build(scx()); // scenery: the loch, moon, mist and stars (the trees wait for the world, in R.build)
   applyLook();
 }
 function scx() { let id = 'snow'; for (const k in LOOKS) if (LOOKS[k] === LK) id = k; return { T: T, scene: scene, world: world, sky: sky, renderer: renderer, LK: LK, id: id, R: R, groundH: groundH, ground: groundM }; }
+function rfx() { return { T: T, dyn: dyn, LK: LK, R: R, tc: tc, emit: emit, ring: ring, puff: puff, bits: bits, PAPER: PAPER_REIGN, TISSUE: TISSUE, BIT_PAPER: BIT_PAPER, BIT_TISSUE: BIT_TISSUE, shake: function (v) { if (v > shake) shake = v; }, kick: function (v) { kick = Math.min(1.6, kick + v); }, height: function () { return renderer.domElement.height; } }; } // 0.29 feel: what js/rulefx.js is handed
 function nsx() { return { T: T, world: world, dyn: dyn, LK: LK, R: R, renderer: renderer, glowTex: glowTex, emit: emit, ring: ring, puff: puff, near: dist2cam, shake: function (v) { if (v > shake) shake = v; } }; } // 0.26 ness: what js/ness.js is handed
 R.setLook = function (id) {
   if (!LOOKS[id] || !R.ok) return;
@@ -342,7 +345,7 @@ function buildThreads() {
       cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
     }
     g.setAttribute('color', new T.BufferAttribute(cols, 3));
-    world.add(new T.Mesh(g, new T.MeshBasicMaterial({ vertexColors: true, fog: false })));
+    { const tm = new T.Mesh(g, new T.MeshBasicMaterial({ vertexColors: true, fog: false })); world.add(tm); if (RF) RF.thread(l, tm); } // 0.29 feel: rulefx gives the thread its own shader
     for (let s = 0; s <= L.len; s += 2.6) {
       LL.lanePoint(l, s, P); const t = s / L.len; tmpC.setHex(t < 0.5 ? 0xffb070 : 0x8ff5d4).multiplyScalar(0.42);
       gl.push(P.x + Math.sin(s * 0.11 + l * 2) * 1.1, 0.3, P.z); gc.push(tmpC.r, tmpC.g, tmpC.b);
@@ -451,10 +454,19 @@ function hm(col, em) { const m = new T.MeshLambertMaterial({ color: col, emissiv
      ness     1 cell:  side view, facing left    the Ness
      pines    3 cells: three trees               scenery
      rocks    3 cells: three rocks               scenery
+     fruit    6 cells: lemon, rose hips, Verde Limon, big lemon, big rose hips, big Verde Limon   the leaves and stem of the bush (the fruit and its glow stay built, in the fruit's own colour)   // 0.29 world
+     stray    2 cells: front, back               the strays
+     crane    2 cells: wings up, wings down      the fold crane
+     (fruit, stray and crane have paper: true, so they stand in only for Origami, Knight Night and Lighter graphics; the 3D props stay for the full views. always: true puts them in every look)
      backdrop one wide painting (jpg)            the far ridge and sky line, wrapped round the valley
    To switch one on, add a line:  FLATS.house = { src: 'art/flats/house.png', cells: 3 };  See art/flats/README.md. */
 const FLATS = R.FLATS = {};
 FLATS.house = { src: 'art/flats/house.png', cells: 3 };
+FLATS.fruit = { src: 'art/flats/fruit.png', cells: 6, paper: true }; // 0.29 world: stand-in paintings, drawn by tools/flats-standins.py
+FLATS.stray = { src: 'art/flats/stray.png', cells: 2, paper: true };
+FLATS.crane = { src: 'art/flats/crane.png', cells: 2, paper: true };
+function paperUse(name) { const F = FLATS[name]; return !!F && !R.noPaper && (F.always || !F.paper || R.low || LK === LOOKS.origami || LK === LOOKS.knight); } // 0.29 world
+const FRUIT_CELL = { lemon: 0, hips: 1, lime: 2, biglemon: 3, bighips: 4, biglime: 5 };
 /* The far ridge: painted for the Lantern Ford study by the owner's other agent (art/ford-ridge.webp there, described as an original generated backdrop). */
 FLATS.backdrop = { src: 'art/backdrop-ridge.webp', cells: 1 };
 R.info = function () { // for the frame-rate report
@@ -860,7 +872,9 @@ function structModel(s) {
 }
 function strayModel(s) {
   const g = LL.props.stray(T, { glowSprite: glowSprite }); // 0.28 world: a built creature (js/props.js), one mesh and one sprite
-  g.unit = s; dyn.add(g); return g;
+  g.unit = s; dyn.add(g);
+  flatLoad('stray', function (t, F) { const m = new T.Mesh(cellGeo(F.cells, 0), flatMat(t)), h = 3.7, w = h * flatAspect(t, F.cells); m.scale.set(w, h, 1); m.visible = false; g.add(m); g.flat = m; g.cellGeo = [m.geometry, cellGeo(F.cells, 1)]; g.built = g.children[0]; }); // 0.29 world
+  return g;
 }
 function nessModel() {
   const g = new T.Group(), skin = new T.MeshLambertMaterial({ color: 0x27b89e, emissive: 0x128a76, emissiveIntensity: 0.75 }), pale = new T.MeshLambertMaterial({ color: 0xc8f2e0, emissive: 0x6fd8c0, emissiveIntensity: 0.3 });
@@ -898,7 +912,8 @@ function buildCreaseArt() {
     const ridge = new T.Mesh(rg, new T.MeshLambertMaterial({ color: 0xe9e2d0, side: T.DoubleSide, transparent: true, opacity: 0.62, depthWrite: false })); own(ridge); ridge.visible = false; ridge.frustumCulled = false; dyn.add(ridge);
     // a paper crane marks a crease that is ready
     const crane = LL.props.crane(T, { glowSprite: glowSprite }); crane.position.set(cx, 2.4, 0); crane.visible = false; dyn.add(crane); // 0.28 world: a folded paper crane (js/props.js)
-    creaseM.push({ ridge: ridge, crane: crane, f: 0, cx: cx });
+    const cmx = { ridge: ridge, crane: crane, f: 0, cx: cx, dash: im }; creaseM.push(cmx); /* 0.29 world + 0.29 feel: dash, so the crease line can burn while it holds */
+    flatLoad('crane', function (t, F) { const h = 2.2, w = h * flatAspect(t, F.cells); cmx.flats = [0, 1].map(function (c) { const m = new T.Mesh(cellGeo(F.cells, c), flatMat(t)); m.scale.set(w, h, 1); m.position.y = -0.7; m.visible = false; crane.add(m); return m; }); cmx.built = crane.children.slice(0, 3); }); // 0.29 world
   });
 }
 /* Fruit. Colours are the fruit's own in every look, because the colour is how you tell them apart:
@@ -907,11 +922,12 @@ function buildFruitArt() {
   fruitM.forEach(function (m) { dyn.remove(m); }); fruitM = [];
   dyn.children.filter(function (o) { return o.userData.fruitFol; }).forEach(function (o) { dyn.remove(o); }); // 0.28 world: the bushes are one mesh, built in js/props.js
   const FB = LL.props.fruitBushes(T, W.fruit.map(function (f) { const info = C.FRUIT_INFO[f.k]; return { x: f.x, z: f.z, k: f.k, big: !!info.big, col: info.col }; }), { glowSprite: glowSprite });
-  dyn.add(FB.foliage);
+  dyn.add(FB.foliage); fruitFoliage = FB.foliage; const mineF = [];
   W.fruit.forEach(function (f, i) {
     const info = C.FRUIT_INFO[f.k], g = FB.fruit[i];
-    g.position.set(f.x, 0, f.z); g.unit = f; g.big = !!info.big; dyn.add(g); fruitM.push(g);
+    g.position.set(f.x, 0, f.z); g.unit = f; g.big = !!info.big; dyn.add(g); fruitM.push(g); mineF.push(g);
   });
+  flatLoad('fruit', function (t, F) { mineF.forEach(function (g) { const h = g.big ? 3.4 : 2.0, m = new T.Mesh(cellGeo(F.cells, FRUIT_CELL[g.unit.k] || 0), flatMat(t)); m.scale.set(h * flatAspect(t, F.cells), h, 1); m.visible = false; g.add(m); g.flat = m; }); }); // 0.29 world: painted bush, the fruit stays built
 }
 /* Inkblot cues. They draw what the model already knows (a thief's route, which structures can be hurt). They change nothing. */
 function buildCues() {
@@ -1025,6 +1041,7 @@ function ring(x, y, z, r0, r1, col, life) {
 }
 R.fx = function (e) {
   if (LL.ness) LL.ness.fx(e, W); // 0.26 ness: the tell, the bite, the flood
+  if (RF) RF.fx(e, W); // 0.29 feel
   switch (e.k) {
     case 'echo': case 'echoend': for (let k = 0; k < 14; k++) emit(e.x, 0.4 + Math.random() * 1.6, e.z, 1, 0x9fd0ff, 2.2, 0.6, 1.5, 0); break;
     case 'echoshot': emit(e.x, e.y, e.z, 2, 0x9fd0ff, 1.5, 0.25, 0, 0); if (echoM && echoM.u) echoM.u.lastShotT = W.t; /* 0.24 heroes3d: the echo raises its aim */ break;
@@ -1456,6 +1473,7 @@ R.frame = function (dt, view) {
     { const pv = m.paper ? m.paper.v : 2; scr.k = pv === 1 ? 1 : (pv === 3 ? 0.45 : 0.12); } // side view drags cloth fully; facing away or toward, barely
     { const q0 = m.paper; scr.m = q0 && q0.sign ? q0.sign : 1; scr.h = q0 ? q0.h : 2.3; scr.fb = !!(q0 && q0.v != null && !(q0.cell === 1 || q0.cell === 6 || (!q0.useM && q0.v === 1))); } // what the braid needs to know of last frame's picture
     scr.cyc = m.fig ? LL.heroes3d.cyc(m.fig, h) : 1; // 0.24 heroes3d: the figure's stride length at this speed
+    scr.paper = !!m.paper; /* 0.29 look: a painted card gets the rig's paper life (motion.js) */
     const sp = Math.hypot(h.vx, h.vz), st = LL.paperMotion.pose(m.rig, h, dt, W.t, R.reduced, scr), G = st.g;
     if (m.fig) LL.heroes3d.pose(m.fig, st, h, { dt: dt, t: time, reduced: R.reduced }); // 0.24 heroes3d: legs, arms, aim, cloth, braid from the rig
     if (!R.reduced) heroDust(m, h, st, dt);
@@ -1630,12 +1648,14 @@ R.frame = function (dt, view) {
     if (t.flash > 0) tilt -= 0.25 * red; // a hit rocks it back
     if (W.flood && LL.ness) hop += LL.ness.bob(t, time); // 0.26 ness: troopers float in the flood
     const sc = (t.flash > 0 ? 1.2 : 1) * (W.great[t.team] > 0 ? 1.2 : 1);
+    const cq = RF ? RF.troop(t, time) : null; // 0.29 feel: a caught small one crumples into the crease, a pinned hollow strains
     shadowPut(t.x, t.z, (t.big ? 2.3 : 1.15) * (1 - hop * 0.6), 1);
-    const sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1);
+    let sx = t.big ? 2.1 : (t.ranged ? 0.78 : 1), sy = t.big ? 2.3 : (t.ranged ? 1.35 : 1), tx = t.x, tz = t.z; // 0.29 feel: let, and tx, tz
+    if (cq) { sx *= cq.sx; sy *= cq.sy; tx += cq.x; tz += cq.z; hop += cq.y; roll += cq.rz; tilt += cq.rx; } // 0.29 feel
     { const B = t.team === 0 ? (bT ? bd.trooper : null) : (t.big ? (bB ? bd.hollow : null) : (bH ? bd.hush : null));
       if (B) { let d = Math.atan2(camPos.x - t.x, camPos.z - t.z) - t.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
-        B.put(Math.abs(d) < 1.57 ? 0 : 1, t.x, hop, t.z, (t.big ? 4.4 : (t.ranged ? 2.2 : 1.9)) * sc, d * PAPER_FLIP > 0, moving ? Math.sin(time * 9 + t.id) * 0.06 : 0); continue; } }
-    dummy.position.set(t.x, hop, t.z); dummy.rotation.set(tilt, t.yaw, roll); dummy.scale.set(sx * sc * (1 + sq * 0.6), sy * sc * (1 - sq), sx * sc * (1 + sq * 0.6)); dummy.updateMatrix();
+        B.put(Math.abs(d) < 1.57 ? 0 : 1, tx, hop, tz, (t.big ? 4.4 : (t.ranged ? 2.2 : 1.9)) * sc * (cq ? cq.sy : 1), d * PAPER_FLIP > 0, (moving ? Math.sin(time * 9 + t.id) * 0.06 : 0) + (cq ? cq.rz : 0)); continue; } } // 0.29 feel: tx, tz, cq
+    dummy.position.set(tx, hop, tz); // 0.29 feel: tx, tz dummy.rotation.set(tilt, t.yaw, roll); dummy.scale.set(sx * sc * (1 + sq * 0.6), sy * sc * (1 - sq), sx * sc * (1 + sq * 0.6)); dummy.updateMatrix();
     if (t.team === 0) { if (n0 < 90) tr[0].setMatrixAt(n0++, dummy.matrix); if (nh < 180) trHat.setMatrixAt(nh++, dummy.matrix); LL.props.lantern(dummy.matrix, t); } // 0.20 props: the lantern's glow
     else if (t.big && LL.props.hollow(dummy.matrix)) { /* 0.20 props: a hollow has its own shape */ }
     else if (n1 < 110) { hushEyes.setMatrixAt(n1, dummy.matrix); tr[1].setMatrixAt(n1++, dummy.matrix); }
@@ -1679,7 +1699,8 @@ R.frame = function (dt, view) {
   }
   for (i = 0; i < strayM.length; i++) {
     const m = strayM[i], s = m.unit; m.visible = s.alive;
-    if (s.alive) { m.position.set(s.x, Math.sin(time * 2 + i) * 0.12, s.z); m.rotation.y = s.yaw; const sc = s.flash > 0 ? 1.1 : 1; m.scale.set(sc, sc, sc); }
+    if (s.alive) { m.position.set(s.x, Math.sin(time * 2 + i) * 0.12, s.z); m.rotation.y = s.yaw; const sc = s.flash > 0 ? 1.1 : 1; m.scale.set(sc, sc, sc);
+      if (m.flat) { const pu = paperUse('stray'), tc = Math.atan2(camPos.x - s.x, camPos.z - s.z); let d = tc - s.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); m.built.visible = !pu; m.flat.visible = pu; m.flat.geometry = m.cellGeo[Math.abs(d) < 1.57 ? 0 : 1]; m.flat.rotation.y = tc - s.yaw; } } // 0.29 world
   }
   {
     const n = W.ness, tgt = n.alive ? (n.rise - 1) * 8 : -11;
@@ -1698,6 +1719,7 @@ R.frame = function (dt, view) {
     const m = fruitM[i], f = m.unit, here = !f.lens || f.lens === W.lens, s = f.ripe && here ? 1 : (f.lens ? 0.001 : 0.22);
     if (f.ripe && !here && !R.reduced && Math.random() < dt * 2.5) emit(f.x + (Math.random() - 0.5) * 1.5, 0.3 + Math.random() * 2.5, f.z + (Math.random() - 0.5) * 1.5, 1, 0xf4e8d6, 0.3, 1.1, 0.8, 0); // something is here, in another light
     m.fr.scale.x += (s - m.fr.scale.x) * Math.min(1, dt * 5); m.fr.scale.y = m.fr.scale.z = m.fr.scale.x;
+    { const pu = paperUse('fruit'); if (m.flat) { m.flat.visible = pu; m.flat.rotation.y = Math.atan2(camPos.x - f.x, camPos.z - f.z); } if (i === 0 && fruitFoliage) fruitFoliage.visible = !(pu && m.flat); } // 0.29 world
     m.glow.visible = f.ripe && here; m.fr.rotation.y += dt * 0.9; m.fr.position.y = (m.big ? 3.1 : 1.9) + (f.ripe && !R.reduced ? Math.sin(time * 2.2 + i) * 0.14 : 0);
   }
   for (i = 0; i < creaseM.length; i++) {
@@ -1707,6 +1729,7 @@ R.frame = function (dt, view) {
     if (cm.ridge.visible) { const p = cm.ridge.geometry.attributes.position, H = cm.f * 9; [1, 2, 4, 6, 9, 11].forEach(function (v) { p.setY(v, H); }); p.needsUpdate = true; cm.ridge.geometry.computeVertexNormals(); }
     const ready = c.t <= 0 && c.cd <= 0 && !c.guard.alive;
     cm.crane.visible = ready;
+    if (cm.flats) { const pu = paperUse('crane'), up = Math.sin(time * 6) > 0; cm.built.forEach(function (o) { o.visible = !pu; }); cm.flats[0].visible = pu && up; cm.flats[1].visible = pu && !up; cm.flats[0].rotation.y = cm.flats[1].rotation.y = Math.atan2(camPos.x - cm.cx, camPos.z) - cm.crane.rotation.y; } // 0.29 world
     if (ready) { cm.crane.rotation.y += dt * 0.8; cm.crane.position.y = 2.4 + Math.sin(time * 1.7 + i) * 0.25; const fl = Math.sin(time * 6) * 0.5; cm.crane.wl.rotation.z = fl; cm.crane.wr.rotation.z = -fl; }
   }
   for (i = 0; i < knotPool.length; i++) {
@@ -1775,6 +1798,7 @@ R.frame = function (dt, view) {
     const e = 1 - (1 - f) * (1 - f), rad = U.lerp(r.r0, r.r1, e);
     r.m.ring.scale.set(rad, rad, 1); r.m.disc.scale.set(rad, rad, 1); r.m.ring.material.opacity = 0.5 * (1 - f); r.m.disc.material.opacity = 0.08 * (1 - f);
   }
+  if (RF) RF.frame(dt, time, W, camPos, heroM, structM, creaseM); // 0.29 feel
   stepParticles(dt); stepPuffs(dt); stepGhosts(dt); if (LL.heroes3d) LL.heroes3d.step(dt, LK.add); /* 0.24 heroes3d */ stepFeel(dt);
   // camera
   const pl = view.target;
@@ -1807,13 +1831,13 @@ R.frame = function (dt, view) {
     let sx = 0, sy = 0; if (shake > 0) { sx = (Math.random() - 0.5) * shake * 0.5; sy = (Math.random() - 0.5) * shake * 0.5; shake = Math.max(0, shake - dt * 2.2); }
     /* 0.23 shot kick: the camera is pushed back along its own line of sight and rolls a hair, then springs home. Both keep
        the centre of the screen on the same ray, so the crosshair stays exactly where the shot goes. */
-    kick *= Math.exp(-dt * 16); const kb = kick * 0.11;
-    camera.position.set(cp.x + sx - cp.dx * kb, cp.y + sy - cp.dy * kb, cp.z - cp.dz * kb);
-    camera.lookAt(cp.x + sx + cp.dx * 50, cp.y + sy + cp.dy * 50, cp.z + cp.dz * 50);
+    kick *= Math.exp(-dt * 16); const kb = kick * 0.11, dp = RF ? RF.dip(dt) : 0; // 0.29 feel: dp, an arrival's landing dip
+    camera.position.set(cp.x + sx - cp.dx * kb, cp.y + sy - cp.dy * kb + dp, cp.z - cp.dz * kb);
+    camera.lookAt(cp.x + sx + cp.dx * 50, cp.y + sy + cp.dy * 50 + dp, cp.z + cp.dz * 50);
     if (kick > 0.01) camera.rotateZ(kick * 0.006 * kickSide);
     camera.fov = (R.portrait ? 82 : 64) * (1 - view.zoom * 0.3) * (1 + fovKick * 0.07) * (1 + kick * 0.006);
     if (LL.face) LL.face.cam(camera, pl, dt); // 0.28 face: the walk in settles the camera from a crane above the hero
-    heroM.forEach(m => { if (m.unit === pl && cp.dist < 1.4) m.visible = false; });
+    heroM.forEach(m => { if (m.unit === pl && pl.alive) m.visible = cp.dist >= 1.4; }); // 0.29 feel: shown again once the camera backs off (it used to stay hidden for good after one close pull-in, until the hero died)
   }
   camera.updateProjectionMatrix(); camera.updateMatrixWorld();
   sky.position.copy(camera.position);

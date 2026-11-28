@@ -28,6 +28,12 @@
    - Looks: colours are authored for the night valley and kept (the view's own drawing pass does the rest, as it did for
      the painted cards); each view sets the lift, saturation, a tint and the rim colour (LOOKP). Hypermetapunk gets a neon
      rim in the side's colour.
+   - 0.29 look, from the play camera: skin has form (its own hue deepened away from the key light, a warm rim, cheeks in
+     the head's colour) and the mouths are filled shapes, so faces read at 5 to 10 m (SKK per view); cloth over a shoulder or
+     beside an arm follows that arm (shoulderW, armSideW) and arms keep out of skirts and coats (armClear), so a raised arm
+     no longer comes out through cloth; Myra's hover tips her forward with her legs trailing and kicking behind, below a
+     wider flare; Anna's shield sits further out and turns back against her chest's yaw; one idle fidget per hero (FIDGET);
+     a deeper landing squash.
    - Presentation only: reads the unit and the pose it is handed, never writes either. Reduced motion: a still figure
      that still turns and aims.
    - Hooks, all marked "0.24 heroes3d": gfx.js heroModel (a figure in place of the paper), the hero loop (stride, pose,
@@ -73,7 +79,7 @@ function humanoid(P) {
 
 /* ---------- the body: triangles with colour, atlas uv, bone weights, glow and height ---------- */
 let WHITE = [0.875, 0.125];
-function Body(rig, H) { this.rig = rig; this.H = H; this.P = []; this.N = []; this.C = []; this.U = []; this.SI = []; this.SW = []; this.E = []; this.HH = []; }
+function Body(rig, H) { this.rig = rig; this.H = H; this.P = []; this.N = []; this.C = []; this.U = []; this.SI = []; this.SW = []; this.E = []; this.HH = []; this.SK = []; }
 Body.prototype.wt = function (spec, x, y, z) {
   let L = typeof spec === 'function' ? spec(x, y, z) : spec;
   if (typeof L === 'string') L = [[L, 1]];
@@ -85,7 +91,7 @@ Body.prototype.wt = function (spec, x, y, z) {
   for (let k = 0; k < 4; k++) { const q = arr[k]; this.SI.push(q ? q[0] : 0); this.SW.push(q ? q[1] / s : 0); }
 };
 /* add a geometry placed by matrix m. col: hex or fn(lx, ly, lz, wx, wy, wz, u, v) -> hex or Color. w: bone name, list or fn(wx, wy, wz).
-   o.uv: an atlas rect [u0, v0, u1, v1] for the geometry's own uv (decals); o.em: glow 0..1 (or fn). */
+   o.uv: an atlas rect [u0, v0, u1, v1] for the geometry's own uv (decals); o.em: glow 0..1 (or fn); o.sk: skin 0..1 (0.29 look). */
 Body.prototype.add = function (geo, m, col, w, o) {
   o = o || {}; m = m || I4;
   const g = geo.index ? geo.toNonIndexed() : geo; if (!g.attributes.normal) g.computeVertexNormals();
@@ -101,7 +107,7 @@ Body.prototype.add = function (geo, m, col, w, o) {
     const c = fc || cl(col(lx, ly, lz, _v.x, _v.y, _v.z, u, v)); this.C.push(c.r, c.g, c.b);
     if (o.uv && ua) this.U.push(o.uv[0] + u * (o.uv[2] - o.uv[0]), o.uv[1] + v * (o.uv[3] - o.uv[1])); else this.U.push(WHITE[0], WHITE[1]);
     this.wt(w, _v.x, _v.y, _v.z);
-    this.E.push(typeof o.em === 'function' ? o.em(lx, ly, lz) : (o.em || 0)); this.HH.push(_v.y / this.H);
+    this.E.push(typeof o.em === 'function' ? o.em(lx, ly, lz) : (o.em || 0)); this.HH.push(_v.y / this.H); this.SK.push(o.sk || 0);
   }
   return this;
 };
@@ -115,6 +121,8 @@ Body.prototype.build = function () {
   g.setAttribute('skinWeight', new T.Float32BufferAttribute(this.SW, 4));
   g.setAttribute('aEm', new T.Float32BufferAttribute(this.E, 1));
   g.setAttribute('aH', new T.Float32BufferAttribute(this.HH, 1));
+  /* 0.29 look: aSk, how much of a vertex is skin (warm shading, see heroMat) */
+  g.setAttribute('aSk', new T.Float32BufferAttribute(this.SK, 1));
   g.boundingSphere = new T.Sphere(new T.Vector3(0, this.H / 2, 0), this.H);
   g.userData.lk = true;
   return g;
@@ -177,7 +185,12 @@ function atlas() {
     g.fillStyle = '#1a0f12'; g.beginPath(); g.ellipse(x, y + ry * 0.18, rx * 0.5, ry * 0.55, 0, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x - rx * 0.3, y - ry * 0.3, rx * 0.28, 0, TAU); g.fill();
     if (lash) { g.strokeStyle = lash; g.lineWidth = 4.2; g.beginPath(); g.ellipse(x, y - ry * 0.05, rx * 1.12, ry * 1.1, 0, Math.PI * 1.15, Math.PI * 1.85); g.stroke(); } };
   const blush = function (g, x, y, r, c) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(255,120,120,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); };
-  const smile = function (g, x, y, w, c, lw) { g.strokeStyle = c; g.lineWidth = (lw || 2.2) * LW; g.lineCap = 'round'; w *= 1.25; g.beginPath(); g.arc(x, y - w * 0.6, w, Math.PI * 0.3, Math.PI * 0.7); g.stroke(); };
+  /* 0.29 look: the mouth is an open smile, filled, twice as wide as the 0.28 line, darkest inside: at 5 to
+     10 m a line two pixels thick mipmaps away, a filled shape stays a mouth. Same place, same colour, same smile. */
+  const smile = function (g, x, y0, w, c, lw) { const y = y0 - 6, W2 = w * 2.0, D = W2 * (0.7 + 0.04 * (lw || 3));
+    g.fillStyle = c; g.strokeStyle = c; g.lineWidth = 2.4; g.lineJoin = 'round';
+    g.beginPath(); g.moveTo(x - W2, y); g.quadraticCurveTo(x, y + W2 * 0.28, x + W2, y); g.quadraticCurveTo(x, y + D * 1.6, x - W2, y); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = 'rgba(40,10,14,0.55)'; g.beginPath(); g.ellipse(x, y + D * 0.42, W2 * 0.6, D * 0.3, 0, 0, TAU); g.fill(); };
   // 1 Dora's face: brown eyes, soft brows, a small smile
   at(1, function (g) { eye(g, 36, 62, 13, 16, '#5a2e1a', '#2a160f'); eye(g, 92, 62, 13, 16, '#5a2e1a', '#2a160f'); g.strokeStyle = '#4a2c20'; g.lineWidth = 3 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(24, 38); g.quadraticCurveTo(36, 32, 48, 38); g.moveTo(80, 38); g.quadraticCurveTo(92, 32, 104, 38); g.stroke();
     blush(g, 20, 84, 13, 'rgba(240,110,100,0.6)'); blush(g, 108, 84, 13, 'rgba(240,110,100,0.6)'); smile(g, 64, 98, 10, '#8a3a2a', 3); });
@@ -187,13 +200,13 @@ function atlas() {
     blush(g, 22, 86, 12, 'rgba(240,110,100,0.45)'); blush(g, 106, 86, 12, 'rgba(240,110,100,0.45)'); smile(g, 64, 98, 10, '#8a3a2a', 3); });
   // 3 Myra's face: round dark eyes, a big smile, pink cheeks
   at(3, function (g) { eye(g, 36, 62, 13, 15, '#2a0f1e', '#2a1020'); eye(g, 92, 62, 13, 15, '#2a0f1e', '#2a1020'); blush(g, 18, 86, 16, 'rgba(240,100,150,0.65)'); blush(g, 110, 86, 16, 'rgba(240,100,150,0.65)'); smile(g, 64, 96, 13, '#6a2040', 3.4); });
-  // 4 the Skein Doll's face: button eyes, a stitched smile, a seam down the middle
+  // 4 the Skein Doll's face: button eyes, a stitched smile, a seam down the middle (0.29 look: the smile wider and heavier)
   at(4, function (g) { [[35, 61], [93, 61]].forEach(function (p) { g.fillStyle = '#2e170a'; g.beginPath(); g.arc(p[0], p[1], 19, 0, TAU); g.fill(); g.fillStyle = '#6e4024'; g.beginPath(); g.arc(p[0], p[1], 14, 0, TAU); g.fill();
       g.strokeStyle = '#f2e6cc'; g.lineWidth = 3; g.beginPath(); g.moveTo(p[0] - 5, p[1] - 5); g.lineTo(p[0] + 5, p[1] + 5); g.moveTo(p[0] + 5, p[1] - 5); g.lineTo(p[0] - 5, p[1] + 5); g.stroke(); });
     g.strokeStyle = 'rgba(150,110,80,0.8)'; g.lineWidth = 1.6; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(64, 0); g.lineTo(64, 128); g.stroke(); g.setLineDash([]);
     blush(g, 24, 78, 10, 'rgba(230,130,100,0.5)'); blush(g, 104, 78, 10, 'rgba(230,130,100,0.5)');
-    g.strokeStyle = '#4a2410'; g.lineWidth = 3 * LW; g.beginPath(); g.arc(64, 86, 15, Math.PI * 0.2, Math.PI * 0.8); g.stroke();
-    for (let k = 0; k < 5; k++) { const a = Math.PI * (0.25 + k * 0.125), x = 64 + Math.cos(a) * 15, y = 84 + Math.sin(a) * 15; g.beginPath(); g.moveTo(x, y - 3); g.lineTo(x, y + 3); g.stroke(); } });
+    g.strokeStyle = '#4a2410'; g.lineWidth = 4.2 * LW; g.lineCap = 'round'; g.beginPath(); g.arc(64, 82, 22, Math.PI * 0.18, Math.PI * 0.82); g.stroke();
+    g.lineWidth = 3.4; for (let k = 0; k < 5; k++) { const a = Math.PI * (0.24 + k * 0.13), x = 64 + Math.cos(a) * 22, y = 82 + Math.sin(a) * 22; g.beginPath(); g.moveTo(x, y - 6); g.lineTo(x, y + 6); g.stroke(); } });
   // 0 Dora's stag, gold, front-facing, antlers spread (drawn for a patch about 1.25 times as tall as wide)
   at(0, function (g) { g.fillStyle = '#f0b84e'; g.strokeStyle = '#f0b84e'; g.lineCap = 'round'; g.lineJoin = 'round';
     g.save(); g.translate(64, 0); g.scale(1, 1);
@@ -234,9 +247,9 @@ function atlas() {
     g.strokeStyle = 'rgba(120,80,35,0.42)'; g.lineWidth = 1.4; for (let x = 0; x <= 128; x += 8) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 128); g.stroke(); }
     g.strokeStyle = 'rgba(120,80,35,0.24)'; g.lineWidth = 1.1; for (let y = 6; y < 128; y += 13) { g.beginPath(); g.moveTo(0, y); g.lineTo(128, y); g.stroke(); }
     g.fillStyle = 'rgba(90,50,20,0.7)'; g.fillRect(0, 118, 128, 10); });
-  // 14 Rook Vale's face (0.25 rook): grey-teal eyes, level brows, a small sideways smile, wind in the cheeks
+  // 14 Rook Vale's face (0.25 rook): grey-teal eyes, level brows, a small sideways smile, wind in the cheeks (0.29 look: the smile filled)
   at(14, function (g) { eye(g, 36, 64, 12, 14, '#3a6a70', '#1c2634'); eye(g, 92, 64, 12, 14, '#3a6a70', '#1c2634'); g.strokeStyle = '#2a3446'; g.lineWidth = 3.4 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(23, 41); g.lineTo(48, 41); g.moveTo(80, 41); g.lineTo(105, 43); g.stroke();
-    blush(g, 20, 86, 13, 'rgba(240,120,100,0.5)'); blush(g, 108, 86, 13, 'rgba(240,120,100,0.5)'); g.strokeStyle = '#7a3a2c'; g.lineWidth = 3 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(54, 100); g.quadraticCurveTo(66, 106, 78, 97); g.stroke(); });
+    blush(g, 20, 86, 13, 'rgba(240,120,100,0.5)'); blush(g, 108, 86, 13, 'rgba(240,120,100,0.5)'); g.strokeStyle = '#7a3a2c'; g.fillStyle = '#7a3a2c'; g.lineWidth = 4.4 * LW; g.lineCap = 'round'; g.beginPath(); g.moveTo(46, 96); g.quadraticCurveTo(64, 108, 84, 92); g.quadraticCurveTo(66, 100, 46, 96); g.fill(); g.stroke(); });
   ATLAS = new T.CanvasTexture(cv); ATLAS.anisotropy = 4;
   return ATLAS;
 }
@@ -255,35 +268,45 @@ const LOOKP = {
   6: { lift: 0.3, gain: 0.6, key: 0.5, sat: 0.72, tint: [1.03, 1.0, 0.94], rimK: 0.4 },     // Memory
   7: { lift: 0.28, gain: 0.62, key: 0.5, sat: 0.95, tint: [1.04, 0.96, 0.95], rimK: 0.55 }  // Rainwake
 };
+/* 0.29 look: skin. At 5 to 10 m the lift (light added evenly so a figure reads at night) left faces and hands one flat pale
+   tone. Skin now keeps its own hue but deepens it on the side away from the key light (the colour times itself: richer, not
+   greyer), is a touch warmer where lit, and catches a warm rim. SKK scales it per view (by drawing pass, as LOOKP): Inkblot
+   Noir turns everything to tone and a deepened face went to its black band, so a quarter there; Origami is daylight and flat by design, so less there too. */
+const SKK = { 0: 1, 1: 0.25, 2: 0.7, 3: 1, 4: 0.85, 5: 1, 6: 0.8, 7: 1 };
 function lookP(LK, team) {
   const p = LOOKP[LK && LK.post != null ? LK.post : 0] || LOOKP[0];
   const rim = new T.Color(p.team ? LK.team[team || 0] : (LK.rim != null ? LK.rim : (LK.sun ? LK.sun[0] : 0xffe0b0)));
-  return { lift: p.lift, gain: p.gain, key: p.key, sat: p.sat, tint: new T.Vector3(p.tint[0], p.tint[1], p.tint[2]), rim: rim, rimK: p.rimK, emK: 1.6 };
+  const sk = SKK[LK && LK.post != null ? LK.post : 0];
+  return { lift: p.lift, gain: p.gain, key: p.key, sat: p.sat, tint: new T.Vector3(p.tint[0], p.tint[1], p.tint[2]), rim: rim, rimK: p.rimK, emK: 1.6, skK: sk == null ? 1 : sk };
 }
 function heroMat(lp) {
   const m = new T.MeshPhongMaterial({ color: 0xffffff, vertexColors: true, map: atlas(), alphaTest: 0.5, side: T.DoubleSide, skinning: true, shininess: 2, specular: 0x000000 });
   const U = { uRim: { value: lp.rim }, uRimK: { value: lp.rimK }, uLift: { value: lp.lift }, uGain: { value: lp.gain }, uSat: { value: lp.sat }, uTint: { value: lp.tint }, uEmK: { value: lp.emK }, uKey: { value: lp.key },
-    uFray: { value: 0 }, uFT: { value: 0 }, uFrayC: { value: new T.Color(0x5fe8c8) } }; // 0.26 guard: the fray (Skye's guard), 0 for everyone else
+    uFray: { value: 0 }, uFT: { value: 0 }, uFrayC: { value: new T.Color(0x5fe8c8) }, uSkK: { value: lp.skK } }; // 0.26 guard: the fray (Skye's guard), 0 for everyone else
   m.onBeforeCompile = function (sh) {
     for (const k in U) sh.uniforms[k] = U[k];
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aEm;\nattribute float aH;\nvarying float vEm;\nvarying float vH;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvEm = aEm; vH = aH;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uRim; uniform float uRimK; uniform float uLift; uniform float uGain; uniform float uSat; uniform vec3 uTint; uniform float uEmK; uniform float uKey; uniform float uFray; uniform float uFT; uniform vec3 uFrayC;\nvarying float vEm;\nvarying float vH;')
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aEm;\nattribute float aH;\nattribute float aSk;\nvarying float vEm;\nvarying float vH;\nvarying float vSk;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvEm = aEm; vH = aH; vSk = aSk;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uRim; uniform float uRimK; uniform float uLift; uniform float uGain; uniform float uSat; uniform vec3 uTint; uniform float uEmK; uniform float uKey; uniform float uFray; uniform float uFT; uniform vec3 uFrayC; uniform float uSkK;\nvarying float vEm;\nvarying float vH;\nvarying float vSk;')
       .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb = mix(vec3(dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114))), diffuseColor.rgb, uSat) * uTint;')
       .replace('vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;', [
         'vec3 outgoingLight = (reflectedLight.directDiffuse + reflectedLight.indirectDiffuse) * uGain + diffuseColor.rgb * uLift;',
         'outgoingLight += diffuseColor.rgb * uKey * max(dot(normal, normalize(vec3(-0.75, 0.5, 0.45))), 0.0);', // a key light from the camera's upper left, so a back seen from behind still has form
+        // 0.29 look: skin keeps its hue and gets form (see SKK)
+        'float skw = vSk * uSkK; if (skw > 0.001) { float wr = dot(normal, normalize(vec3(-0.75, 0.5, 0.45))) * 0.5 + 0.5; vec3 dc = max(diffuseColor.rgb, vec3(0.04));',
+        '  vec3 sk = mix(dc * dc * 0.98, dc * vec3(1.1, 1.0, 0.93), smoothstep(0.25, 0.9, wr)); outgoingLight = mix(outgoingLight, outgoingLight * sk / dc, skw); }',
         'if (!gl_FrontFacing) outgoingLight *= 0.62;', // the inside of cloth and hats
         'outgoingLight *= mix(0.58, 1.0, smoothstep(0.0, 0.17, vH));', // contact darkness toward the ground
         'vec3 hv = normalize(vViewPosition); float fr = 1.0 - clamp(abs(dot(normal, hv)), 0.0, 1.0);',
         'float rim = smoothstep(0.52, 0.96, fr) * clamp(normal.y * 0.65 + 0.55, 0.0, 1.0);',
         'outgoingLight += uRim * rim * uRimK * (0.3 + 0.7 * smoothstep(0.2, 0.75, vH));',
+        'outgoingLight += diffuseColor.rgb * vec3(1.0, 0.72, 0.6) * smoothstep(0.45, 0.95, fr) * 0.32 * vSk * uSkK;',
         'outgoingLight += diffuseColor.rgb * vEm * uEmK;',
         // 0.26 guard: the fray. The body comes apart in level bands (threads) that slide up; what is left glows at its edges
         'if (uFray > 0.001) { float bd = fract(vH * 31.0 - uFT * 1.6 + 0.12 * sin(vH * 9.0 + uFT * 2.7)); float cut = uFray * 0.66; if (bd < cut) discard;',
         '  float ed = 1.0 - smoothstep(cut, cut + 0.16, bd); outgoingLight = mix(outgoingLight, uFrayC * 0.9, uFray * 0.2) + uFrayC * ed * uFray * 0.75; }'].join('\n'));
   };
-  m.customProgramCacheKey = function () { return 'hero3d2'; }; // 0.26 guard: the fray changed the shader
+  m.customProgramCacheKey = function () { return 'hero3d3'; }; // 0.26 guard: the fray changed the shader
   m.userData.U = U; // 0.25 rook: a figure may turn its own glow up (Rook's lantern in a lift)
   m.userData.lk = m.userData.bl = m.userData.solid = true;
   return m;
@@ -314,15 +337,19 @@ function arms(B, P, o) {
     const s = k > 0 ? 'L' : 'R', x = k * P.shX, eY = P.shY - P.upper, wY = eY - P.fore;
     if (o.puff) B.add(sph(12, 9), M(x + k * 0.01, P.shY - P.upper * 0.48, 0, 0, 0, 0, o.puff, P.upper * 0.62, o.puff * 0.95), o.upper, function (wx, wy) { return wy > P.shY - 0.03 ? [['arm' + s, 0.8], ['chest', 0.2]] : 'arm' + s; });
     else B.add(capG([x, P.shY + 0.02, 0], [x, eY, 0], o.upperR, o.elbowR, 10, 3), null, o.upper, 'arm' + s);
-    B.add(capG([x, eY + 0.02, 0], [x, wY, 0], o.elbowR, o.wristR, 10, 3), null, function (lx, ly, lz, wx, wy) { return o.cuff && wy < wY + o.cuffH ? o.cuff : (o.foreTop && wy > eY - o.foreTopH ? o.foreTop : o.fore); }, 'fore' + s);
-    B.add(sph(8, 6), M(x, wY - o.handR * 0.75, 0.01, 0, 0, 0, o.handR * 0.9, o.handR * 1.1, o.handR), o.hand, 'hand' + s);
+    B.add(capG([x, eY + 0.02, 0], [x, wY, 0], o.elbowR, o.wristR, 10, 3), null, function (lx, ly, lz, wx, wy) { return o.cuff && wy < wY + o.cuffH ? o.cuff : (o.foreTop && wy > eY - o.foreTopH ? o.foreTop : o.fore); }, 'fore' + s, { sk: o.foreSk || 0 });
+    B.add(sph(8, 6), M(x, wY - o.handR * 0.75, 0.01, 0, 0, 0, o.handR * 0.9, o.handR * 1.1, o.handR), o.hand, 'hand' + s, { sk: o.handSk == null ? 1 : o.handSk });
     if (o.cuffRing) B.add(new T.TorusGeometry(o.wristR + 0.008, 0.016, 4, 9), M(x, wY + 0.02, 0, Math.PI / 2), o.cuffRing, 'fore' + s);
   });
 }
+/* 0.29 look: the head and neck are skin (o.sk, default 1), and the cheeks are coloured into the head itself (o.cheek, how
+   much o.cheekK), low and to the sides of the face, so they still read when the face's drawn blush is mipmapped away. */
 function headBall(B, P, o) {
-  B.add(capG([0, P.neck + 0.02, 0], [0, P.head + 0.04, 0.0], o.neckR || 0.06, o.neckR || 0.06, 8, 2), null, o.skin, [['neck', 0.6], ['head', 0.4]]);
+  const skn = o.sk == null ? 1 : o.sk, ck = o.cheek != null ? o.cheek : 0xe0705a, cK = o.cheekK == null ? 0.5 : o.cheekK;
+  B.add(capG([0, P.neck + 0.02, 0], [0, P.head + 0.04, 0.0], o.neckR || 0.06, o.neckR || 0.06, 8, 2), null, o.skin, [['neck', 0.6], ['head', 0.4]], { sk: skn });
   const S = o.shape || [1, 0.96, 0.95];
-  B.add(new T.SphereGeometry(1, 14, 10), M(0, P.headC, 0.01, 0, 0, 0, P.headR * S[0], P.headR * S[1], P.headR * S[2]), o.skin, 'head');
+  const cheeks = function (lx, ly, lz) { const d = Math.min(Math.hypot(lx - 0.52, ly + 0.28, lz - 0.78), Math.hypot(lx + 0.52, ly + 0.28, lz - 0.78)); return mix3(o.skin, ck, cK * Math.exp(-d * d / 0.06)); };
+  B.add(new T.SphereGeometry(1, 14, 10), M(0, P.headC, 0.01, 0, 0, 0, P.headR * S[0], P.headR * S[1], P.headR * S[2]), cheeks, 'head', { sk: skn });
   if (o.face != null) B.add(facePatch(o.fw || 1.5, o.fh || 1.0, o.fd || 0.12), M(0, P.headC, 0.01, 0, 0, 0, P.headR * S[0], P.headR * S[1], P.headR * S[2]), 0xffffff, 'head', { uv: cellUV(o.face), em: 0.1 }); // 0.28 look: a little light of its own, so a face in the shade still reads
 }
 
@@ -353,6 +380,17 @@ function panelW(sp, topBone) {
     return out;
   };
 }
+
+/* 0.29 look: cloth that lies over a shoulder or hangs beside an arm follows that arm a little (skin weights), so a raised arm
+   lifts the cloth over it instead of coming out through it. shoulderW: a mantle or capelet on the chest; near each shoulder,
+   on the front and sides, up to k of a vertex goes with the upper arm. armSideW: wraps another weight function (cloth on
+   panels) so that cloth beside the arm, in front of the back, goes up to k with the arm, the upper arm above the elbow and
+   the forearm below it. */
+function shoulderW(P, k, base) { return function (x, y, z) { const w = k * ss(P.shX - 0.14, P.shX + 0.01, Math.abs(x)) * ss(-0.24, -0.02, z), s = x > 0 ? 'L' : 'R';
+  return [[base || 'chest', 1 - w], ['arm' + s, w]]; }; }
+function armSideW(P, k, inner, y0) { const eY = P.shY - P.upper;
+  return function (x, y, z) { const L = inner(x, y, z), w = k * ss(P.shX - 0.11, P.shX + 0.01, Math.abs(x)) * ss(-0.12, 0.06, z) * ss(y0, y0 + 0.22, y), f = ss(eY + 0.06, eY - 0.1, y), s = x > 0 ? 'L' : 'R';
+    if (w < 1e-3) return L; const out = L.map(function (e) { return [e[0], e[1] * (1 - w)]; }); out.push(['arm' + s, w * (1 - f)], ['fore' + s, w * f]); return out; }; }
 
 /* ---------- the four ---------- */
 const HERO = {};
@@ -394,7 +432,7 @@ HERO.dora = {
     [['sl', 0.05, 0.0, 0.1], ['sr', -0.04, 0.02, 0.09]].forEach(function (c) { for (let i = 0; i < 4; i++) { const y0 = 1.5 - i * 0.125, y1 = y0 - 0.125, x0 = c[1] + c[1] * i * 0.4, w = c[3] * (1 - i * 0.12);
       const g = new T.PlaneGeometry(w, 0.13, 1, 1); B.add(g, M(x0 + c[1] * 0.2, (y0 + y1) / 2, -0.255 - c[2] - i * 0.03 - 0.015, 0.25, 0, 0), function (lx, ly) { return i === 3 && ly < -0.03 ? 0xe8b04a : 0xc8302c; }, c[0] + i); } });
     // the cloak: red, open at the front, gold at the hem and the front edges; weighted to its panels
-    const ck = this.cloak, rows = ck.rows, pw = panelW(ck, 'chest');
+    const ck = this.cloak, rows = ck.rows, pw = armSideW(P, 0.6, panelW(ck, 'chest'), 0.9);
     const vg = function (y) { return ck.VG * ss(ck.VY, ck.hem, y); }, vL = function (y) { return Math.PI - vg(y); }, vR = function (y) { return Math.PI + vg(y); };
     const ckCol = function (lx, ly, lz, wx, wy, wz) { const a = Math.atan2(wx, wz + 0.05), ea = Math.min(Math.abs(a - ck.a0), Math.abs(TAU + a - ck.a1), Math.abs(-a - ck.a0));
       if (wy < 0.7) return gold; if (ea < 0.1 && wy < 1.4) return gold; if (wy < ck.VY - 0.02 && Math.PI - Math.abs(a) < vg(wy) + 0.075) return gold; if (wy < 0.74) return redD; return red; };
@@ -408,7 +446,7 @@ HERO.dora = {
     // a gold tree on each front panel
     [[0.95, 1], [TAU - 0.95, -1]].forEach(function (q) { const tr = []; for (let i = 0; i <= 2; i++) { const y = 1.09 - i * 0.15, A = shellR(rows, y, 0); tr.push([y, shellR(rows, y, Math.PI / 2).r + 0.006, A.r - A.cz + 0.006, A.cz]); } B.add(shellG(tr, 3, q[0] - 0.22, q[0] + 0.22), null, 0xffffff, pw, { uv: cellUV(10) }); });
     // the mantle over the shoulders, so arms come out from under it
-    B.add(shellG([[1.56, 0.13, 0.12, -0.01], [1.52, 0.22, 0.18, -0.015], [1.46, 0.31, 0.24, -0.02], [1.38, 0.35, 0.265, -0.025], [1.32, 0.36, 0.27, -0.025]], 18, 0.5, TAU - 0.5), null, function (lx, ly, lz, wx, wy) { return wy < 1.35 ? gold : red; }, 'chest');
+    B.add(shellG([[1.56, 0.13, 0.12, -0.01], [1.52, 0.22, 0.18, -0.015], [1.46, 0.31, 0.24, -0.02], [1.38, 0.35, 0.265, -0.025], [1.32, 0.36, 0.27, -0.025]], 18, 0.5, TAU - 0.5), null, function (lx, ly, lz, wx, wy) { return wy < 1.35 ? gold : red; }, shoulderW(P, 0.7));
     // the hat: wide straw cone with woven panels, a dark band, on its own bone (it bobs a little after the head)
     B.add(new T.LatheGeometry([[0.0005, 2.46], [0.1, 2.37], [0.25, 2.21], [0.42, 2.07], [0.58, 1.97], [0.615, 1.945], [0.6, 1.935], [0.4, 2.04], [0.19, 2.06]].map(function (p) { return new T.Vector2(p[0], p[1]); }), 22), null, 0xf0b862, 'hat', { uv: cellUV(13, 0) });
     B.add(shellG([[2.1, 0.205, 0.205], [2.03, 0.215, 0.215]], 14, 0, TAU), null, 0x4a2a1c, 'hat');
@@ -428,7 +466,7 @@ HERO.anna = {
   P: { H: 2.4, ankle: 0.1, knee: 0.52, hip: 0.96, hipW: 0.1, pelv: 1.0, spine: 1.13, chest: 1.31, neck: 1.53, head: 1.61, headC: 1.85, headR: 0.25,
     shY: 1.45, shX: 0.215, upper: 0.27, fore: 0.24, foot: 0.14 },
   two: false, item: 'hammer', throws: true,
-  coat: { name: 'ct', parent: 'hips', pivot: 1.2, mid: null, hem: 0.64, top: 1.22, firm: 0.35,
+  coat: { name: 'ct', parent: 'hips', pivot: 1.2, mid: null, hem: 0.64, top: 1.22, firm: 0.35, armClear: 0.05,
     rows: [[1.27, 0.215, 0.165], [1.18, 0.23, 0.18], [1.05, 0.26, 0.2], [0.9, 0.29, 0.23], [0.76, 0.32, 0.25], [0.64, 0.34, 0.27]],
     groups: [{ lo: 0, hi: Math.PI, az: [0.45, Math.PI / 2, Math.PI - 0.45] }, { lo: Math.PI, hi: TAU, az: [Math.PI + 0.45, 1.5 * Math.PI, TAU - 0.45] }] },
   rig: function (r, P) {
@@ -455,7 +493,7 @@ HERO.anna = {
     [1.44, 1.37, 1.3, 1.17, 1.06, 0.95].forEach(function (y) { const A = shellR(y > 1.25 ? [[1.5, 0.19, 0.15], [1.27, 0.215, 0.165]] : ct.rows, y, 0.12); B.add(sph(6, 5), M(A.x + 0.0, y, A.z + 0.008, 0, 0, 0, 0.018, 0.018, 0.012), gold, y > 1.25 ? 'chest' : pw); });
     // the capelet with its gold edge, and the cream collar
     B.add(shellG([[1.58, 0.15, 0.13, -0.01], [1.53, 0.24, 0.19, -0.015], [1.45, 0.31, 0.24, -0.02], [1.37, 0.33, 0.26, -0.02], [1.34, 0.335, 0.265, -0.02]], 24, 0.1, TAU - 0.1), null,
-      function (lx, ly, lz, wx, wy, wz) { const a = Math.atan2(wx, wz + 0.02); return wy < 1.365 || Math.abs(a) < 0.17 ? gold : coat; }, 'chest');
+      function (lx, ly, lz, wx, wy, wz) { const a = Math.atan2(wx, wz + 0.02); return wy < 1.365 || Math.abs(a) < 0.17 ? gold : coat; }, shoulderW(P, 0.7));
     [1, -1].forEach(function (k) { B.add(new T.ConeGeometry(0.06, 0.1, 3), M(k * 0.05, P.neck - 0.02, 0.09, 1.9, 0, k * 0.5, 1, 1, 0.35), 0xf1e7cf, 'chest'); });
     arms(B, P, { upperR: 0.075, upper: coat, elbowR: 0.07, wristR: 0.062, fore: coat, cuff: gold, cuffH: 0.035, hand: skin, handR: 0.058 });
     headBall(B, P, { skin: skin, face: 2, neckR: 0.063 });
@@ -487,7 +525,7 @@ HERO.myra = {
   P: { H: 1.95, ankle: 0.08, knee: 0.34, hip: 0.62, hipW: 0.105, pelv: 0.66, spine: 0.78, chest: 0.94, neck: 1.13, head: 1.19, headC: 1.45, headR: 0.27,
     shY: 1.07, shX: 0.235, upper: 0.2, fore: 0.18, foot: 0.12 },
   two: true, item: 'spool',
-  skirt: { name: 'sk', parent: 'hips', pivot: 0.92, mid: null, hem: 0.38, top: 0.98, firm: 0.4,
+  skirt: { name: 'sk', parent: 'hips', pivot: 0.92, mid: null, hem: 0.38, top: 0.98, firm: 0.4, armClear: 0.07,
     rows: [[0.98, 0.3, 0.27], [0.85, 0.36, 0.32], [0.7, 0.4, 0.35], [0.55, 0.43, 0.38], [0.42, 0.44, 0.39], [0.38, 0.43, 0.38]],
     groups: [{ lo: 0, hi: TAU, wrap: true, az: [0, Math.PI / 3, 2 * Math.PI / 3, Math.PI, 4 * Math.PI / 3, 5 * Math.PI / 3] }] },
   rig: function (r, P) {
@@ -513,9 +551,9 @@ HERO.myra = {
     B.add(new T.TorusGeometry(0.335, 0.022, 4, 16), M(0, 0.8, 0, Math.PI / 2, 0, 0, 1, 0.88, 1), gold, 'hips');
     [['spA', -0.2, 0.3], ['spB', -0.29, 0.22]].forEach(function (s) { B.add(capG([s[1], 0.79, s[2]], [s[1], 0.68, s[2] + 0.01], 0.008, 0.008, 4, 1), null, gold, s[0]);
       B.add(new T.CylinderGeometry(0.045, 0.045, 0.1, 10), M(s[1], 0.64, s[2] + 0.015, 0, 0, Math.PI / 2), function (lx, ly) { return Math.abs(ly) > 0.035 ? 0xd8a04a : 0xe48ab0; }, s[0]); });
-    arms(B, P, { puff: 0.1, upper: 0xefdcbf, elbowR: 0.062, wristR: 0.056, fore: skin, cuff: sm, cuffH: 0.04, hand: skin, handR: 0.058, cuffRing: gold });
-    headBall(B, P, { skin: skin, face: 3, neckR: 0.07, shape: [1.02, 0.95, 0.96], fd: 0.15 });
-    [1, -1].forEach(function (k) { B.add(new T.ConeGeometry(0.055, 0.24, 6), M(k * 0.33, P.headC + 0.04, 0.03, 0, 0, -k * 1.0, 1, 1, 0.45), skin, 'head'); });
+    arms(B, P, { puff: 0.1, upper: 0xefdcbf, elbowR: 0.062, wristR: 0.056, fore: skin, foreSk: 0.8, cuff: sm, cuffH: 0.04, hand: skin, handR: 0.058, cuffRing: gold });
+    headBall(B, P, { skin: skin, face: 3, neckR: 0.07, shape: [1.02, 0.95, 0.96], fd: 0.15, cheek: 0xf06aa0, cheekK: 0.5 });
+    [1, -1].forEach(function (k) { B.add(new T.ConeGeometry(0.055, 0.24, 6), M(k * 0.33, P.headC + 0.04, 0.03, 0, 0, -k * 1.0, 1, 1, 0.45), skin, 'head', { sk: 1 }); });
     /* 0.24.1 hair, after the turnaround: a tousled wavy bob wider than the head, a fringe swept to one side, locks that flip
        out at the jaw, a few lifted over the crown; shaded light on top and dark underneath instead of stripes (which read as a
        raspberry from behind). The curl on top stays on its own bone. */
@@ -548,7 +586,7 @@ HERO.skein = {
   P: { H: 2.2, ankle: 0.1, knee: 0.48, hip: 0.86, hipW: 0.1, pelv: 0.9, spine: 1.03, chest: 1.2, neck: 1.39, head: 1.45, headC: 1.73, headR: 0.29,
     shY: 1.32, shX: 0.205, upper: 0.24, fore: 0.22, foot: 0.13 },
   two: false, item: 'needle',
-  skirt: { name: 'sk', parent: 'hips', pivot: 1.05, mid: null, hem: 0.82, top: 1.08, firm: 0.4,
+  skirt: { name: 'sk', parent: 'hips', pivot: 1.05, mid: null, hem: 0.82, top: 1.08, firm: 0.4, armClear: 0.06,
     rows: [[1.08, 0.24, 0.18], [0.98, 0.265, 0.2], [0.9, 0.285, 0.215], [0.82, 0.3, 0.225]],
     groups: [{ lo: 0, hi: TAU, wrap: true, az: [0, Math.PI / 2, Math.PI, 1.5 * Math.PI] }] },
   rig: function (r, P) {
@@ -580,7 +618,7 @@ HERO.skein = {
       B.add(capG([x, eY + 0.02, 0], [x, wY, 0], 0.054, 0.05, 10, 3), null, function (lx, ly, lz, wx, wy, wz) { return wy < wY + 0.03 ? 0x8a5a3a : wrapC(linen)(lx, ly, lz, wx, wy, wz); }, 'fore' + s);
       B.add(sph(10, 8), M(x, wY - 0.05, 0.01, 0, 0, 0, 0.055, 0.065, 0.05), linen, 'hand' + s);
       B.add(sph(6, 5), M(x - k * 0.035, wY - 0.035, 0.035, 0, 0, 0, 0.022, 0.03, 0.022), linen, 'hand' + s); });
-    headBall(B, P, { skin: 0xdcc39a, face: 4, neckR: 0.06, shape: [1.02, 0.94, 0.96] });
+    headBall(B, P, { skin: 0xdcc39a, face: 4, neckR: 0.06, shape: [1.02, 0.94, 0.96], sk: 0.5, cheek: 0xe08a64, cheekK: 0.35 });
     // the mop of yarn: a cap over the top and back, chunky strands hanging round it on three pendulums
     B.add(new T.SphereGeometry(1, 14, 9, Math.PI / 2 + 0.9, TAU - 1.8, 0, 1.95), M(0, P.headC + 0.03, -0.01, 0, 0, 0, P.headR * 1.13, P.headR * 1.08, P.headR * 1.12), function (lx, ly, lz) { return frac(Math.atan2(lx, lz) * 3.2) < 0.25 ? hairD : hair; }, 'head');
     B.add(new T.SphereGeometry(1, 12, 4, 0, TAU, 0, 1.15), M(0, P.headC + 0.05, 0.02, 0.18, 0, 0, P.headR * 1.1, P.headR * 1.05, P.headR * 1.12), function (lx, ly, lz) { return frac(Math.atan2(lx, lz) * 3.2 + 0.5) < 0.22 ? hairD : hair; }, 'head');
@@ -610,7 +648,7 @@ HERO.rook = {
   P: { H: 2.42, ankle: 0.1, knee: 0.53, hip: 0.98, hipW: 0.105, pelv: 1.02, spine: 1.15, chest: 1.33, neck: 1.54, head: 1.62, headC: 1.85, headR: 0.24,
     shY: 1.46, shX: 0.225, upper: 0.27, fore: 0.24, foot: 0.145 },
   two: false, item: 'striker',
-  coat: { name: 'ct', parent: 'hips', pivot: 1.2, mid: null, hem: 0.72, top: 1.22, firm: 0.35,
+  coat: { name: 'ct', parent: 'hips', pivot: 1.2, mid: null, hem: 0.72, top: 1.22, firm: 0.35, armClear: 0.05,
     rows: [[1.26, 0.21, 0.16], [1.18, 0.225, 0.175], [1.05, 0.25, 0.195], [0.92, 0.275, 0.215], [0.8, 0.295, 0.235], [0.72, 0.31, 0.245]],
     groups: [{ lo: 0, hi: Math.PI, az: [0.45, Math.PI / 2, Math.PI - 0.45] }, { lo: Math.PI, hi: TAU, az: [Math.PI + 0.45, 1.5 * Math.PI, TAU - 0.45] }] },
   /* the scarf's tail: from the nape, over the top of the pack on his left, down beside the lantern. back: the surface it must
@@ -650,7 +688,7 @@ HERO.rook = {
       B.add(capG([k * 0.13, 1.54, 0.06], [k * 0.15, 1.5, -0.14], 0.03, 0.03, 5, 1), null, tan, 'chest');
     });
     B.add(new T.BoxGeometry(0.23, 0.035, 0.02), M(0, 1.39, 0.158), tan, 'chest'); B.add(sph(6, 5), M(0, 1.39, 0.17, 0, 0, 0, 0.022, 0.022, 0.012), brass, 'chest');
-    arms(B, P, { upperR: 0.074, upper: wool, elbowR: 0.068, wristR: 0.06, fore: wool, cuff: glove, cuffH: 0.075, foreTop: woolL, foreTopH: 0.03, hand: glove, handR: 0.058 });
+    arms(B, P, { upperR: 0.074, upper: wool, elbowR: 0.068, wristR: 0.06, fore: wool, cuff: glove, cuffH: 0.075, foreTop: woolL, foreTopH: 0.03, hand: glove, handSk: 0, handR: 0.058 });
     [1, -1].forEach(function (k) { B.add(sph(8, 6), M(k * (P.shX + 0.005), P.shY + 0.005, 0, 0, 0, 0, 0.088, 0.07, 0.09), woolL, [['arm' + (k > 0 ? 'L' : 'R'), 0.6], ['chest', 0.4]]); }); // shoulder caps
     headBall(B, P, { skin: skin, face: 14, neckR: 0.062 });
     // the hood: pale glazed ceramic, open at the face, three cream strokes over the crown, a guard down the back of the neck
@@ -847,8 +885,12 @@ function airFoot(fig, K, k, side, fw, legL, air, t, red) {
     y += ((k ? -0.08 : 0.66) - y) * e; z += ((k ? -0.38 : 0.36) - z) * e; p += ((k ? -0.15 : 0.35) - p) * e; }
   if (K.tuckE > 0) { const e = K.tuckE, l = red ? 0 : Math.sin(K.flip * 1.5 + k * 2.1) * 0.08; // knees in, loosely
     y += (0.64 + l - y) * e; z += (0.32 - l - z) * e; p += (0.5 - p) * e; x += (side * fw * 1.5 - x) * e; }
-  if (K.hov > 0.001) { const e = K.hov, ph = (red ? 0 : t * 3.4) + k * Math.PI, kick = Math.max(0, Math.sin(ph)); // dangling, kicking slowly
-    y += (0.08 + 0.18 * kick - y) * e; z += (0.12 * Math.sin(ph) + (k ? -0.05 : 0.05) - z) * e; p += (0.6 + 0.2 * kick - p) * e; x += (side * fw * 0.85 - x) * e; }
+  /* 0.29 look: the hover. Dangling straight down, her legs hung inside the bell and only the boot toes showed from behind. Now
+     the body tips forward into the hover (airRoot) and the legs trail back and up behind her, knees bent, kicking in turn
+     like a swimmer's flutter, soles toward the camera, so from behind the play camera sees shins and boots below the
+     back of the skirt, which flares. Reduced motion: the same shape, still. */
+  if (K.hov > 0.001) { const e = K.hov, ph = (red ? 0 : t * 4.2) + k * Math.PI, kick = 0.5 + 0.5 * Math.sin(ph);
+    y += (0.2 + 0.2 * kick - y) * e; z += (-0.55 - 0.22 * kick - z) * e; p += (1.1 + 0.25 * kick - p) * e; x += (side * fw * 1.1 - x) * e; }
   AF.x += (x - AF.x) * air; AF.y += (fig.P.ankle + legL * y - AF.y) * air; AF.z += (z * legL - AF.z) * air; AF.p += (p - AF.p) * air;
 }
 /* Arm angles in the air (as the arm loop's p: + back, - forward and up; ab: out from the side; el: elbow bend), then the
@@ -869,10 +911,12 @@ function airArm(fig, K, k, side, air, red) {
 function airRoot(fig, K, dt, red) {
   const S = fig.S, P = fig.P, r = fig.root, A = K.A;
   let rx = K.flip + 0.22 * K.hopE - 0.08 * A.tko, rz = K.groll || 0, dy = 0; // 0.26 guard: K.groll, Rook's barrel roll (guardPrep)
-  if (K.hov > 0.001 && !red) { const e = K.hov; rx += clamp(S.vz * 0.035, -0.12, 0.2) * e; rz -= clamp(S.vx * 0.04, -0.2, 0.2) * e; dy += 0.03 * Math.sin((S.wph || 0) - 0.6) * e; }
+  /* 0.29 look: tipped forward into the hover (0.3 rad), so the legs trailing behind show below the back of the skirt */
+  if (K.hov > 0.001) { const e = K.hov; rx += 0.3 * e; if (!red) { rx += clamp(S.vz * 0.035, -0.12, 0.2) * e; rz -= clamp(S.vx * 0.04, -0.2, 0.2) * e; dy += 0.03 * Math.sin((S.wph || 0) - 0.6) * e; } }
   if (rx || rz) { const cy = P.pelv + 0.12, v = V('apv').set(0, cy, 0); r.rotation.set(rx, 0, rz); v.applyEuler(r.rotation); r.position.x -= v.x; r.position.y += cy - v.y; r.position.z -= v.z; }
   r.position.y += dy;
-  const fT = red ? 0 : 0.14 * K.hov + 0.05 * K.hov * Math.sin((S.wph || 0) + 1.2) + 0.35 * K.tuckE + 0.12 * K.hopE + 0.1 * K.land;
+  /* 0.29 look: the hover's flare 0.26 (was 0.14), and in reduced motion a still flare */
+  const fT = red ? 0.2 * K.hov : 0.26 * K.hov + 0.06 * K.hov * Math.sin((S.wph || 0) + 1.2) + 0.35 * K.tuckE + 0.12 * K.hopE + 0.1 * K.land;
   if (S.afl == null) { S.afl = 0; S.aflv = S.aflv || 0; } spring(S, 'afl', 'aflv', fT, 70, 7, dt);
 }
 /* A second jump whips the braid: its links are given a speed down and to one side (alternating), growing to the tip. */
@@ -885,6 +929,8 @@ function airAfter(fig, K, dt, red, air, dash, mix) {
     b.hat.position.y = b.hat.userData.rest.y + S.hatY; b.hat.rotation.x += S.hatY * 1.2; }
   if (K.tuckE > 0 && b.hairL) { const e = K.tuckE * 0.9; b.hairL.rotation.z += e; b.hairR.rotation.z -= e; b.hairB.rotation.x += e * 0.8; }
   if (b.curl && K.hov > 0.001 && !red) b.curl.rotation.x += 0.35 * Math.sin((S.wph || 0) - 1.4) * K.hov;
+  /* 0.29 look: the head stays up while the body tips into the hover */
+  if (K.hov > 0.001) b.head.rotation.x -= 0.24 * K.hov;
   if (b.wingL) { // folded, they flutter as before; hovering they open wider and beat fast: swept back and forth, tips up and down
     const hv = red ? 0 : K.hov, f = red ? 0 : (air > 0.3 || dash > 0.3 ? 15 : 3 + 8 * mix) * (1 - hv) + 33 * hv, amp = red ? 0 : (0.12 + 0.3 * Math.max(mix, air)) * (1 - hv);
     S.wph = (S.wph || 0) + dt * f; const sn = Math.sin(S.wph), fl = sn * amp, sweep = hv * (0.45 + 0.4 * sn), lift = hv * 0.55 * Math.sin(S.wph + 1.2) + (red ? K.hov * 0.35 : 0);
@@ -996,11 +1042,15 @@ function aegisPose(fig, h, G, dt, t, red) {
   // the shield: on her left forearm's side, in front of the chest, turned a little out to her left so its rim shows from behind
   /* 0.28 look: held further out and higher, turned less (0.45 rad, was 0.85), and a tenth bigger, so from behind it is a
      round disc beside her with its owl showing, not an edge-on oval behind her shoulder */
-  const up = red ? 1 : e; A.grp.position.set(0.5, 0.06 - 0.22 * (1 - up), 0.22 + 0.06 * up); A.grp.rotation.set(-0.08 - (fig.S.gPitch || 0) * 0.5, 0.45, 0); A.grp.scale.setScalar((0.72 + 0.28 * up) * 1.1);
+  /* 0.29 look: from straight behind its inner third was still hidden behind her back and braid (the chest turns with the
+     aim and the stride, and the disc sat 0.5 m out). Now 0.66 m out, a little lower and less far forward, turned 0.3 rad,
+     and turned back against the chest's own yaw, so from the play camera the whole disc and the owl show beside her. */
+  const cyaw = b.chest.rotation.y + b.spine.rotation.y + b.hips.rotation.y;
+  const up = red ? 1 : e; A.grp.position.set(0.66, 0.0 - 0.22 * (1 - up), 0.1 + 0.06 * up); A.grp.rotation.set(-0.08 - (fig.S.gPitch || 0) * 0.5, 0.3 - cyaw * 0.8, 0); A.grp.scale.setScalar((0.72 + 0.28 * up) * 1.1);
   A.face.emissiveIntensity = 0.55 + 1.1 * S.gFlash; A.rim.material.emissiveIntensity = 0.7 + 1.8 * S.gFlash; A.backF.emissiveIntensity = 0.45 + 1.2 * S.gFlash;
   A.arc.material.uniforms.uA.value = e; A.arc.material.uniforms.uF.value = S.gFlash; A.arc.material.uniforms.uT.value = red ? 0 : t;
   // the arm that holds it: up and forward, the elbow bent across her front
-  const aL = b.armL, fL = b.foreL; aL.rotation.x += (-1.15 - aL.rotation.x) * e; aL.rotation.y += (0.35 - aL.rotation.y) * e; aL.rotation.z += (0.42 - aL.rotation.z) * e; fL.rotation.x += (-1.05 - fL.rotation.x) * e;
+  const aL = b.armL, fL = b.foreL; aL.rotation.x += (-1.0 - aL.rotation.x) * e; aL.rotation.y += (0.25 - aL.rotation.y) * e; aL.rotation.z += (0.85 - aL.rotation.z) * e; fL.rotation.x += (-0.85 - fL.rotation.x) * e;
 }
 function bubbleBuild(fig) {
   const mat = own3(new T.ShaderMaterial({ uniforms: { uT: { value: 0 }, uA: { value: 0 }, uFill: { value: 0 }, uHit: { value: 0 }, uHitD: { value: new T.Vector3(0, 0, 1) }, uPop: { value: 0 }, uCol: { value: new T.Color(0xffc46b) }, uCol2: { value: new T.Color(0x4a58d8) } },
@@ -1086,6 +1136,32 @@ H3.guardEvent = function (fig, e) {
   else if (e.k === 'guardend') { S.gPop = 0; S.gPopK = e.kind; }
   else if (e.k === 'hatback') S.hatYv = (S.hatYv || 0) - 1.4;
 };
+
+/* ---------- 0.29 look: idle fidgets ----------
+   Stood still on the ground, not aiming, for two seconds, a hero does one thing of their own every six and a half seconds
+   (1.6 s long, eased in and out), over the idle the rig already has (breath, weight shifts, glances):
+   Dora lifts the lantern to her eye and peers into it; Anna taps the hammer's head into her left palm; Myra Belle gives a
+   little hop of the wings, tipping her head; Skye lets her head flop to one side and the other, yarn swinging; Rook rolls his
+   shoulders under the straps and the kite's fins flick. Anything else (moving, aiming, the air, a cast) cancels it at once.
+   Reduced motion: none. */
+const FIDGET = {
+  dora: function (b, e, w) { b.armR.rotation.x += -1.05 * e; b.armR.rotation.z += 0.1 * e; b.foreR.rotation.x += -1.2 * e; b.head.rotation.y += -0.32 * e; b.head.rotation.x += 0.12 * e; b.chest.rotation.y += -0.12 * e; },
+  anna: function (b, e, w) { const tap = Math.max(0, Math.sin(w * 15)) * e; b.armR.rotation.x += -0.55 * e; b.armR.rotation.z += 0.12 * e; b.foreR.rotation.x += (-1.15 + 0.4 * tap) * e; b.armL.rotation.x += -0.5 * e; b.armL.rotation.z += -0.12 * e; b.foreL.rotation.x += -1.25 * e; b.head.rotation.x += 0.22 * e; b.head.rotation.y += -0.12 * e; },
+  myra: function (b, e, w, fig) { const hop = Math.max(0, Math.sin(w * 6.5)) * e; b.hips.position.y += 0.09 * hop; b.head.rotation.z += 0.2 * e * Math.sin(w * 3.2); b.armL.rotation.z += 0.45 * e; b.armR.rotation.z += -0.45 * e; fig.S.wph = (fig.S.wph || 0) + 0.5 * e; },
+  skein: function (b, e, w) { const f = Math.sin(w * 4.1); b.head.rotation.z += 0.38 * f * e; b.neck.rotation.z += 0.12 * f * e; b.armL.rotation.z += 0.18 * e * Math.max(0, -f); b.armR.rotation.z += -0.18 * e * Math.max(0, f); b.chest.rotation.z += -0.06 * f * e; },
+  rook: function (b, e, w) { const r = Math.sin(w * 4.2); b.chest.rotation.x += (-0.1 + 0.06 * r) * e; b.armL.rotation.x += -0.35 * e; b.armR.rotation.x += -0.35 * e; b.foreL.rotation.x += -1.5 * e; b.foreR.rotation.x += -1.5 * e; b.armL.rotation.z += -0.15 * e; b.armR.rotation.z += 0.15 * e;
+    if (b.finL) { b.finL.rotation.y += 0.35 * e * Math.max(0, r); b.finR.rotation.y += -0.35 * e * Math.max(0, r); } }
+};
+function fidget(fig, h, st, dt, red, mix, air) {
+  const S = fig.S, F = FIDGET[fig.id]; if (!F || red) { S.still = 0; return; }
+  const calm = mix < 0.05 && air < 0.05 && !(st.aim > 0.08) && !(Math.abs(st.throw || 0) > 0.02) && !(st.stomp > 0.01) && !(st.brace > 0.01) && h.alive !== false;
+  S.still = calm ? (S.still || 0) + dt : 0; if (S.still < 2) return;
+  const f = (S.still - 2) % 6.5; if (f > 1.6) return;
+  const e = ss(0, 0.35, f) * (1 - ss(1.2, 1.6, f));
+  F(fig.b, e, f, fig);
+}
+/* 0.29 look, for tools: how long a figure has stood still (its fidget clock). */
+H3._still = function (fig) { return fig.S.still || 0; };
 
 /* ---------- the pose, every frame ---------- */
 /* st: LL.paperMotion.pose() for this unit this frame. h: the unit. o: { dt, t, reduced, dieT }. */
@@ -1181,6 +1257,8 @@ H3.pose = function (fig, st, h, o) {
     A.rotation.set(p, 0, ab); F.rotation.set(-el, 0, 0); Hd.rotation.set(0, 0, 0);
   }
   if (D.pose) D.pose(fig, st, h, { dt: dt, t: t, red: red, mix: mix, runK: runK, air: air, ph: ph }); // 0.25 rook: a hero's own pose over the shared one, before the aim (Rook's lift, fins and lantern)
+  // 0.29 look: one idle fidget per hero, when standing a while
+  fidget(fig, h, st, dt, red, mix, air);
   // the aim: inverse kinematics toward a point ahead of the right shoulder along the aim, in the chest's frame
   const thr = D.throws ? tw : 0, aimW = clamp(Math.max(aim, Math.abs(thr) * 1.4), 0, 1) * (1 - zk) * (1 - dash * 0.7) * (1 - K.tuckE); // 0.25 air: no aim mid-somersault
   if (aimW > 0.002) {
@@ -1197,8 +1275,11 @@ H3.pose = function (fig, st, h, o) {
     if (D.two) { const Tl = V('Tl').copy(Tg).add(V('Tl2').set(0.15, -0.035, -0.07)), ql = Q('ql'), el2 = ik2(b.armL.position, Tl, P.upper, P.fore, V('pl').set(0.55, -0.6, -0.55).normalize(), ql, true);
       const w2 = aimW * (thr ? 0.3 : 1); b.armL.quaternion.slerp(ql, w2); b.foreL.rotation.x += (el2 - b.foreL.rotation.x) * w2; }
   }
+  // 0.29 look: arms out of the skirt or coat
+  armClear(fig, D.cloak || D.coat || D.skirt, hMi);
   // --- the whole figure: squash on landing, stretch going up, a shove back from a braced shot, a lunge on a throw
-  const sy = 1 - Math.max(0, sq) * 0.07 + Math.max(0, st.stretch || 0) * 0.06 * air, sx = 1 + Math.max(0, sq) * 0.035;
+  /* 0.29 look: the landing squash a little deeper and wider (was 0.07 and 0.035), so it reads from behind */
+  const sy = 1 - Math.max(0, sq) * 0.11 + Math.max(0, st.stretch || 0) * 0.06 * air, sx = 1 + Math.max(0, sq) * 0.06;
   b.head.scale.setScalar(HEADK); // 0.28 look: heads a touch larger, so the faces read from the play camera
   fig.root.scale.set(sx, sy, sx); fig.root.position.set(0, 0, -brace * 0.8 + Math.max(0, tw) * 0.08); fig.root.rotation.set(0, 0, 0);
   airRoot(fig, K, dt, red); // 0.25 air: somersault, lean, the hover's tilt and bob; the cloth flare
@@ -1217,6 +1298,24 @@ H3.pose = function (fig, st, h, o) {
   // feet in the world, for dust under the real foot
   if (g) for (let k = 0; k < 2; k++) { const f = fig.feet[k]; _v.set(f.mx, 0, f.mz).applyMatrix4(g.matrixWorld); f.x = _v.x; f.z = _v.z; }
 };
+/* 0.29 look: arms keep out of a skirt or coat (sp.armClear, the margin in metres). The elbow and the hand are found in the
+   hips' frame and compared with the cloth's shell at that height; one inside is swung out about the shoulder (sideways if it
+   is beside the body, forward or back if it is in front or behind) by the angle that clears it, twice. Cheap: four points,
+   no physics. Myra's hands hung inside her bell and came out through it; Skye's, Anna's and Rook's grazed their hems. */
+function armClear(fig, sp, hMi) {
+  if (!sp || !sp.armClear) return; const b = fig.b, P = fig.P, cz = sp.cz || 0;
+  for (let k = 0; k < 2; k++) { const n = k ? 'R' : 'L', A = b['arm' + n], sh = V('acs').set(0, 0, 0).applyMatrix4(modelM(A, Mx('acA'))).applyMatrix4(hMi);
+    for (let it = 0; it < 2; it++) { let rz = 0, rx = 0;
+      for (let j = 0; j < 2; j++) {
+        const p = V('acp').set(0, j ? -0.075 : 0, 0).applyMatrix4(modelM(j ? b['hand' + n] : b['fore' + n], Mx('acM'))).applyMatrix4(hMi);
+        const y = p.y + P.pelv; if (y < sp.hem - 0.03 || y > sp.top) continue;
+        const dz = p.z - cz, rad = Math.hypot(p.x, dz), R0 = shellR(sp.rows, y, Math.atan2(p.x, dz)).r + sp.armClear; if (rad >= R0) continue;
+        const reach = Math.max(0.12, sh.distanceTo(p)), d = (R0 - rad) / reach, lat = Math.abs(p.x) / (rad || 1);
+        const az = Math.sign(p.x || (k ? -1 : 1)) * d * (0.35 + 0.65 * lat), ax = -Math.sign(dz || 1) * d * (1 - lat) * 0.65;
+        if (Math.abs(az) > Math.abs(rz)) rz = az; if (Math.abs(ax) > Math.abs(rx)) rx = ax; }
+      if (!rz && !rx) break;
+      A.quaternion.premultiply(Q('acq').setFromEuler(_e.set(clamp(rx, -0.8, 0.8), 0, clamp(rz, -0.9, 0.9)))); } }
+}
 /* Cloth on hinged panels: trails the way the body moves on two springs (it swings past when you stop), flutters with the
    stride, lifts in the air, and each panel is swung out far enough to clear the knees and shins behind or in front of it. */
 function cloth(fig, sp, h, st, dt, red, runK, air, dash, zk) {

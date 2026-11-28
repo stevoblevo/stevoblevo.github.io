@@ -131,3 +131,13 @@ body[data-look="origami"] #hud .ab.ready { background-image: radial-gradient(ell
 #ammo small { color: var(--paper); opacity: 0.88; text-shadow: 0 0 3px var(--shc), 0 1px 2px var(--shc); }
 #keys { text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.8); }
 body[data-look="origami"] #keys { text-shadow: 0 0 3px #fff, 0 1px 2px #fff; }
+/* 0.29 feel: the ability's drawn sign (js/glyphs.js) sits in the lantern's glass where its name was; dimmed while it cools,
+   white with a dark edge on a lit lantern so it reads on any hero colour */
+#hud .ab span:has(.glyph) { left: 0; right: 0; top: 7px; bottom: auto; display: grid; place-items: center; line-height: 0; }
+#hud .ab .glyph { width: 28px; height: 28px; filter: drop-shadow(0 1px 1px var(--shc)) drop-shadow(0 0 2px var(--shc)); }
+#hud .ab.cd .glyph, #hud .ab.locked .glyph { opacity: 0.38; }
+#hud .ab.ready .glyph { color: #fff; filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 1px 1px #000); }
+#hud .ab em { pointer-events: none; }
+body.touch #hud .ab span:has(.glyph) { top: 6px; bottom: auto; }
+body.touch #hud .ab .glyph { width: 25px; height: 25px; }
+body[data-look="origami"] #hud .ab .glyph { color: var(--paper); }

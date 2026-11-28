@@ -1,7 +1,13 @@
 {
-  "current": "0.28.1",
+  "current": "0.29",
   "source": "https://github.com/stevoblevo/livloch",
   "versions": [
+    {
+      "v": "0.29",
+      "path": "v0.29/",
+      "source": "release/0.29",
+      "note": "The rules seen and heard; lesson 5 wins (kept houses, the patron lives on its houses, tides); heroes with cloth that follows arms, warm skin, Myra's hover, idle fidgets, moving paper heroes; painted fruit, stray and crane slots"
+    },
     {
       "v": "0.28",
       "path": "v0.28/",

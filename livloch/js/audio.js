@@ -226,10 +226,57 @@ function guardSound(e, pl, near) {
     case 'roll': if (g >= 0.02) noise(0.4, 0.16 * g, 600, 1.4, 'bandpass', 0, 2600); break;
   }
 }
+/* 0.29 FEEL. The four 0.28 rules, heard; in the score's key through edo() (A major unless Saelion tuning is on), gentle
+   in the mix (peaks measured with A.offline, tools/shots/feel29-audio.js, under the shots and the toll).
+   - Arrival: a low thump (a sine falling from about 62 to 36 Hz under a puff of low noise), the thread twanging up a
+     fifth, and a dry crack when it strikes something. Loudest for the player; others by distance.
+   - The fold catches: a caught small one is paper crumpling (five short crackles of band-passed noise at random
+     pitches); its end a last crunch with a small gold tick (E6). A pinned hollow: a rope straining (a low sawtooth
+     sagging under a narrow band of noise), and a snap of paper when it is let go.
+   - A light from home: the light taken at the fountain, a warm two-note chime (A4, E5); a house mended, a warm A major
+     bell chord rolled upward, an octave higher on top when it is relit; the bright light going out, a soft falling third.
+   - The slack thread: the warning, the thread trembling (a low A beaten at 7 Hz with a rattle of noise, swelling over
+     three seconds); slack, a plucked thread whose pitch sags a tone and a soft low bell; the end, a resolving sting:
+     rising to A when the Hush house fell, falling to A when yours did, a taut pluck and a fifth when the time ran out. */
+function tremble(f, dur, g, rate) {
+  if (!A.on || g <= 0.002) return;
+  const t = ctx.currentTime, o = ctx.createOscillator(), a = ctx.createGain(), am = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain(), s = ctx.createBufferSource(), fl = ctx.createBiquadFilter();
+  o.type = 'triangle'; o.frequency.value = f; lfo.frequency.value = rate || 7; lg.gain.value = 0.5; am.gain.value = 0.5; lfo.connect(lg); lg.connect(am.gain);
+  s.buffer = nbuf; s.loop = true; fl.type = 'bandpass'; fl.frequency.value = 900; fl.Q.value = 3; const ng = ctx.createGain(); ng.gain.value = 0.6;
+  a.gain.setValueAtTime(0.0001, t); a.gain.exponentialRampToValueAtTime(g, t + dur * 0.7); a.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(am); s.connect(fl); fl.connect(ng); ng.connect(am); am.connect(a); a.connect(sfxBus);
+  o.start(t); lfo.start(t); s.start(t, Math.random()); o.stop(t + dur + 0.02); lfo.stop(t + dur + 0.02); s.stop(t + dur + 0.02);
+}
+function crumple(g, n) { for (let i = 0; i < (n || 5); i++) noise(0.03 + Math.random() * 0.05, g * (0.6 + Math.random() * 0.4), 1800 + Math.random() * 3600, 2.5, 'bandpass', i * 0.09 + Math.random() * 0.05); }
+function ruleSound(e, pl, near) {
+  switch (e.k) {
+    case 'arrive': { const g = e.u === pl ? 1 : 0.5 * near(e.x, e.z, 60); if (g < 0.02) return;
+      tone(62, 0.38, 'sine', 0.22 * g, 36); noise(0.22, 0.16 * g, 320, 0.8, 'lowpass', 0, 90); tone(edo(31), 0.32, 'triangle', 0.05 * g, edo(49)); tone(edo(49), 0.45, 'sine', 0.03 * g, 0, 0.05);
+      if (e.n) noise(0.05, 0.09 * g, 2800, 2, 'bandpass', 0.01); return; }
+    case 'caught': { const g = near(e.x, e.z, 45); if (g < 0.05) return; crumple(0.15 * g, 5); return; }
+    case 'death': if (e.creased && e.kind === 'trooper') { const g = near(e.x, e.z, 50); if (g < 0.05) return; noise(0.12, 0.1 * g, 2400, 1.5, 'bandpass', 0, 700); tone(edo(e.u && e.u.big ? 49 : 93), 0.25, 'sine', 0.035 * g, 0, 0.06); } return;
+    case 'pinned': { const g = near(e.x, e.z, 55); if (g < 0.05) return; tone(edo(-13), 0.9, 'sawtooth', 0.05 * g, edo(-18)); noise(0.8, 0.07 * g, 420, 6, 'bandpass', 0, 300); crumple(0.05 * g, 3); return; }
+    case 'unpinned': { const g = near(e.x, e.z, 50); if (g < 0.05) return; noise(0.08, 0.08 * g, 3200, 1.5, 'bandpass'); return; }
+    case 'ember': { const g = e.u === pl ? 1 : 0.35 * near(e.u.x, e.u.z, 50); if (g < 0.02) return; tone(edo(49), 0.5, 'sine', 0.06 * g); tone(edo(67), 0.7, 'sine', 0.045 * g, 0, 0.09); return; }
+    case 'mended': { const s = e.s, g = e.u === pl ? 1 : 0.4 * near(s.x, s.z, 70); if (g < 0.02) return;
+      [31, 41, 49].forEach(function (n, i) { bell(n, 0.05 * g, 2.2 - i * 0.2); }); tone(edo(62), 0.9, 'sine', 0.04 * g, 0, 0.16); if (e.relit) { bell(62, 0.045 * g, 2.4); tone(edo(93), 0.8, 'sine', 0.025 * g, 0, 0.3); }
+      noise(0.5, 0.03 * g, 1500, 0.8, 'bandpass', 0, 4200); return; }
+    case 'brightend': { const s = e.u, g = s ? near(s.x, s.z, 60) : 0; if (g < 0.1) return; tone(edo(49), 0.6, 'sine', 0.035 * g, edo(41)); return; }
+    case 'slackwarn': tremble(edo(0), 3, 0.075, 7); tone(edo(18), 1.6, 'sine', 0.025, edo(17), 1.2); return;
+    case 'slack': tone(edo(31), 1.5, 'triangle', 0.08, edo(26)); tone(edo(49), 1.2, 'sine', 0.035, edo(44), 0.04); bell(-13, 0.07, 3); noise(1.2, 0.04, 600, 1.4, 'bandpass', 0, 220); return;
+    case 'slackend':
+      if (e.fell === 1) { [41, 49, 62].forEach(function (n, i) { tone(edo(n), 0.4, 'triangle', 0.07, 0, i * 0.09); }); bell(62, 0.06, 2); }
+      else if (e.fell === 0) { [41, 36, 31].forEach(function (n, i) { tone(edo(n), 0.45, 'triangle', 0.065, 0, i * 0.11); }); bell(31, 0.05, 2.2); }
+      else { tone(edo(31), 0.3, 'triangle', 0.07, edo(49)); bell(49, 0.045, 1.8); }
+      if (e.broke) crumple(0.08, 6);
+      return;
+  }
+}
 A.fx = function (e, W, cam) {
   if (!A.on) return;
   const pl = W.player;
   const near = (x, z, R) => { const d = Math.hypot(x - cam.x, z - cam.z); return Math.max(0, 1 - d / (R || 70)); };
+  ruleSound(e, pl, near); // 0.29 feel: the 0.28 rules, heard (ruleSound, above)
   switch (e.k) {
     case 'shot': {
       const mine = e.u === pl; let g = mine ? 0.16 : 0.07 * near(e.x, e.z, 60);
